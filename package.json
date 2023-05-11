@@ -10,5 +10,8 @@
     "all": "concurrently \"npm run server\" \"npm run client\" \"npm run dashboard\""
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.0.1"
+  }
 }
