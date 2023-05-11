@@ -255,7 +255,7 @@ const Finance = () => {
           <h2 className="text-lg font-bold mb-4">Total Earnings</h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-blue-500">
-              ${totalEarnings}
+              ${totalEarnings.toFixed(2)}
             </div>
             <div className="text-lg font-semibold text-gray-500">
               Last 30 days

@@ -128,7 +128,7 @@ const DashboardHome = () => {
               Total Transactions
             </h3>
             <p className="text-4xl md:text-3xl lg:text-4xl">
-              ${transactions || 0}
+              ${transactions.toFixed(2) || 0}
             </p>
           </div>
         </div>
