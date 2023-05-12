@@ -23,6 +23,7 @@ const Products = () => {
         },
       })
       .then((response) => {
+        console.log(response.data.products);
         setProducts([...response.data.products].reverse());
       })
       .catch((error) => {
@@ -274,12 +275,12 @@ const Products = () => {
                   <button className="text-blue-500 hover:text-blue-700">
                     <FaEdit />
                   </button>
-                  <button
+                  {/* <button
                     className="text-red-500 hover:text-red-700 ml-4"
                     onClick={() => deleteProduct(product["_id"])}
                   >
                     <FaTrash />
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}

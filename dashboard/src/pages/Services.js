@@ -258,12 +258,12 @@ const Services = () => {
                   <button className="text-blue-500 hover:text-blue-700">
                     <FaEdit />
                   </button>
-                  <button
+                  {/* <button
                     className="text-red-500 hover:text-red-700 ml-4"
                     onClick={() => deleteService(service["_id"])}
                   >
                     <FaTrash />
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}
