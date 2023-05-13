@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FaUserShield } from "react-icons/fa";
 import * as Yup from "yup";
-import instance from "../axiosConfig/axiosConfig";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const AdminLogin = () => {
     // Check if it's the first time and no admins in the database
     const checkFirstTime = async () => {
       try {
-        const response = await instance.get("/admin/check");
+        const response = await axios.get("http://localhost:4040/admin/check");
         console.log(response.data);
         const adminsLength = response.data.count;
         if (adminsLength === 0) {
@@ -20,7 +20,7 @@ const AdminLogin = () => {
             username: "admin",
             password: "123456",
           };
-          await instance.post("/admin/", adminData);
+          await axios.post("http://localhost:4040/admin/", adminData);
         }
       } catch (error) {
         console.error("Error checking first time:", error);
@@ -31,12 +31,18 @@ const AdminLogin = () => {
   }, []);
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
-    const response = await instance.post("/admin/login", values);
-    const token = response.data.token;
-    localStorage.setItem("adminToken", token);
-    console.log(values);
-    navigate("/ag-admin");
+    axios
+      .post("http://localhost:4040/admin/login", values)
+      .then((response) => {
+        const token = response.data.token;
+        localStorage.setItem("ag_app_admin_token", token);
+        navigate("/ag-admin");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     setSubmitting(false);
+    console.log("logging");
   };
 
   const validationSchema = Yup.object().shape({

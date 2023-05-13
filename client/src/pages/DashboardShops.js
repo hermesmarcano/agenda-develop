@@ -13,7 +13,7 @@ const DashboardShops = () => {
 
   const fetchAdminData = async () => {
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
         console.error("Token not found");
         return;
@@ -43,7 +43,7 @@ const DashboardShops = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const token = localStorage.getItem("adminToken");
+      const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
         console.error("Token not found");
         return;

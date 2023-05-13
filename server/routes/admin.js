@@ -59,7 +59,7 @@ router.post("/uploads-section2-imgs", auth, upload.single("image"), uploadImg);
 router.patch("/", auth, updateAdmin);
 router.get("/check", checkAdmin);
 router.get("/shops", auth, getShops);
-router.get("/", auth, getAdmin);
+router.get("/", getAdmin);
 router.get("/customers", auth, getCustomers);
 router.get("/payments", auth, getPayments);
 router.get("/article/:id", getArticleById);

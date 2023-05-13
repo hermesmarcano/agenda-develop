@@ -67,15 +67,18 @@ const updateAdmin = (req, res) => {
 };
 
 const getAdmin = (req, res) => {
-  Admin.findById(req.id, {
-    heroData: 1,
-    shopsData: 1,
-    articlesData: 1,
-    section1Data: 1,
-    section2Data: 1,
-    servicesData: 1,
-    websiteTitle: 1,
-  })
+  Admin.findOne(
+    { username: "admin" },
+    {
+      heroData: 1,
+      shopsData: 1,
+      articlesData: 1,
+      section1Data: 1,
+      section2Data: 1,
+      servicesData: 1,
+      websiteTitle: 1,
+    }
+  )
     .exec()
     .then((admin) => {
       if (!admin) {

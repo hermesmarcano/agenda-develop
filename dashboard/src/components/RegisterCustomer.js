@@ -32,7 +32,7 @@ const RegisterCustomer = ({ setModelState }) => {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: localStorage.getItem("token"),
+              Authorization: localStorage.getItem("ag_app_shop_token"),
             },
           }
         );

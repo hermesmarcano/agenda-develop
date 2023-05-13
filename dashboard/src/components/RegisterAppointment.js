@@ -9,7 +9,7 @@ import { FaCheck } from "react-icons/fa";
 const RegisterAppointment = ({ setModelState }) => {
   const { shopName } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
   const [clients, setClients] = useState([]);
 
   const [bookingInfo, setBookingInfo] = useState({});

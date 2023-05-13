@@ -34,7 +34,7 @@ const RegisterProduct = ({ setModelState }) => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
         console.error("Token not found");
         return;

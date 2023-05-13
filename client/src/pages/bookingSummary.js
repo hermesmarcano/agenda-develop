@@ -59,7 +59,7 @@ const BookingSummary = () => {
         amount: total,
       })
     );
-    if (localStorage.getItem("customerToken")) {
+    if (localStorage.getItem("ag_app_customer_token")) {
       navigate(`/shops/${params.id}/booking-checkout`);
     } else {
       navigate(`/shops/${params.id}/signIn`);

@@ -13,7 +13,7 @@ const Products = () => {
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [products, setProducts] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
   const [modelState, setModelState] = useState(false);
   useEffect(() => {
     axios

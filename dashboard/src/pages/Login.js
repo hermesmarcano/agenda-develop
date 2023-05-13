@@ -56,7 +56,7 @@ const Login = () => {
                 .then((data) => {
                   console.log(data);
                   if (registered) {
-                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("ag_app_shop_token", data.token);
                     navigate("/");
                   }
                 })

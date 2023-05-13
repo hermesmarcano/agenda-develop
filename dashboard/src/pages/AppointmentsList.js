@@ -30,7 +30,7 @@ const AppointmentsList = () => {
   const [appointmentsPerPage, setAppointmentsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [appointments, setAppointments] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
     axios
       .get(`http://localhost:4040/appointments?shopName=${shopName}`, {

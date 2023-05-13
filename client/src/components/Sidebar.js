@@ -177,7 +177,6 @@ function Sidebar() {
                 to="/ag-admin/"
                 onClick={() => {
                   handleClick("home");
-                  setIsSidebarOpen(true);
                 }}
                 onMouseEnter={() => setShowHomeTooltip(true)}
                 onMouseLeave={() => setShowHomeTooltip(false)}
@@ -336,7 +335,6 @@ function Sidebar() {
                 onMouseLeave={() => setShowSettingsTooltip(false)}
                 onClick={() => {
                   handleClick("settings");
-                  setIsSidebarOpen(true);
                 }}
                 className={`flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                   activeLink === "settings"

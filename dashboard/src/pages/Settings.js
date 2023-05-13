@@ -9,7 +9,7 @@ import ImageUpload from "../components/ImageUpload";
 
 const Settings = () => {
   const { shopName, setShopName } = useContext(SidebarContext);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
   const [shopData, setShopData] = useState({});
   const initialValues = {
     shopName: "",

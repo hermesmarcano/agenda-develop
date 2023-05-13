@@ -51,7 +51,9 @@ function BookingCheckout() {
     // const customerId = localStorage.getItem("customerId");
     instance
       .get(`/customers/id`, {
-        headers: { Authorization: localStorage.getItem("customerToken") },
+        headers: {
+          Authorization: localStorage.getItem("ag_app_customer_token"),
+        },
       })
       .then((response) => {
         const customer = response.data;

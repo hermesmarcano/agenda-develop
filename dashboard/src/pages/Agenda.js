@@ -11,7 +11,7 @@ import SidebarContext from "../context/SidebarContext";
 const Agenda = () => {
   const { isSidebarOpen, toggleSidebar, shopName } = useContext(SidebarContext);
   const [date, setDate] = useState(new Date());
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
   const [appointments, setAppointments] = useState([]);
   const [myShopImg, setMyShopImg] = useState("");
   useEffect(() => {

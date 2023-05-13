@@ -30,7 +30,7 @@ const Finance = () => {
   const [dataByDay, setDataByDay] = useState([]);
   const [dataByService, setDataByService] = useState([]);
   const [dataByProduct, setDataByProduct] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
 
   useEffect(() => {
     fetch(`http://localhost:4040/payments?shopName=${shopName}`, {

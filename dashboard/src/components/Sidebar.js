@@ -71,7 +71,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     fetch("http://localhost:4040/managers/", {
       method: "GET",
       headers: {
-        Authorization: localStorage.getItem("token"),
+        Authorization: localStorage.getItem("ag_app_shop_token"),
       },
     })
       .then((response) => response.json())

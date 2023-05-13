@@ -5,7 +5,7 @@ import { useContext } from "react";
 import SidebarContext from "../context/SidebarContext";
 
 const PrivateRoutes = () => {
-  const isAuthenticated = !!localStorage.getItem("token");
+  const isAuthenticated = !!localStorage.getItem("ag_app_shop_token");
   const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
 
   return isAuthenticated ? (

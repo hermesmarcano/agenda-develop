@@ -4,7 +4,7 @@ import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
 const PrivateRoutes = () => {
-  const isAuthenticated = !!localStorage.getItem("adminToken");
+  const isAuthenticated = !!localStorage.getItem("ag_app_admin_token");
 
   return isAuthenticated ? (
     <>

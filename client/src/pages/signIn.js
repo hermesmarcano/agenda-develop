@@ -13,7 +13,7 @@ const SignIn = () => {
       .post("/customers/login", values)
       .then((response) => {
         console.log(response.data.token);
-        localStorage.setItem("customerToken", response.data.token);
+        localStorage.setItem("ag_app_customer_token", response.data.token);
         if (localStorage.getItem("bookingInfo")) {
           navigate(`/shops/${params.id}/booking-checkout`);
         } else {

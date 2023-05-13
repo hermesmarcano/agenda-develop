@@ -12,7 +12,7 @@ const Clients = () => {
   const [clientsPerPage, setClientsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [clients, setClients] = useState([]);
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
   const [modelState, setModelState] = useState(false);
   useEffect(() => {
     axios

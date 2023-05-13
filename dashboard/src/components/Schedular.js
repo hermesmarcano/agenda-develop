@@ -12,7 +12,7 @@ const Scheduler = ({ date }) => {
   const [loading, setLoading] = useState(false);
   const [modelState, setModelState] = useState(false);
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("ag_app_shop_token");
 
   const fetchAppointments = async () => {
     setLoading(true);

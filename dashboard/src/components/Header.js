@@ -11,7 +11,7 @@ function Header() {
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("ag_app_shop_token");
     navigate("/login");
   };
   return (

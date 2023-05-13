@@ -5,12 +5,10 @@ script_path=$(dirname $script_path)
 
 echo $script_path
 
-# Clean npm cache in each project folder
+# Clean npm cache
 echo "Cleaning npm cache..."
 cd $script_path
-cd server && sudo npm cache clean --force
-cd ../dashboard && sudo npm cache clean --force
-cd ../client && sudo npm cache clean --force
+npm cache clean --force
 
 # Check npm version and update if necessary
 echo "Checking npm version..."
