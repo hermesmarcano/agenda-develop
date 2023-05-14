@@ -2,9 +2,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
 import Popup from "../components/Popup";
 import RegisterProfessional from "../components/RegisterProfessional";
-import { FaPlus, FaSearch } from "react-icons/fa";
+import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
+import UpdateProfessional from "../components/UpdateProfessional";
 
 const Professionals = () => {
   const { shopName } = useContext(SidebarContext);
@@ -13,7 +14,9 @@ const Professionals = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [professionals, setProfessionals] = useState([]);
   const token = localStorage.getItem("ag_app_shop_token");
-  const [modelState, setModelState] = useState(false);
+  const [registerModelState, setRegisterModelState] = useState(false);
+  const [updateModelState, setUpdateModelState] = useState(false);
+  const [selectiedProfessionalId, setSelectiedProfessionalId] = useState("");
 
   useEffect(() => {
     axios
@@ -27,7 +30,7 @@ const Professionals = () => {
       )
       .then((response) => setProfessionals([...response.data.data].reverse()))
       .catch((error) => console.error(error.message));
-  }, [modelState]);
+  }, [registerModelState, updateModelState]);
 
   const filteredProfessionals = professionals.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -119,20 +122,24 @@ const Professionals = () => {
     setDeleting(false);
   };
 
+  const handleProfessionalActiveState = () => {};
+
   return (
     <div className="p-6 bg-gray-200">
       <h1 className="text-2xl text-gray-800 font-bold mb-5">Professionals</h1>
       <div className="flex items-center my-4">
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
-          onClick={() => setModelState(true)}
+          onClick={() => setRegisterModelState(true)}
         >
           <FaPlus className="mr-2" /> Professional
         </button>
         <Popup
-          isOpen={modelState}
-          onClose={() => setModelState(!modelState)}
-          children={<RegisterProfessional setModelState={setModelState} />}
+          isOpen={registerModelState}
+          onClose={() => setRegisterModelState(!registerModelState)}
+          children={
+            <RegisterProfessional setModelState={setRegisterModelState} />
+          }
         />
         <button
           className={`ml-2 ${
@@ -203,11 +210,12 @@ const Professionals = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 text-left">Code</th>
+              <th className="py-3 text-left">ID</th>
               <th className="py-3 text-left">Name</th>
               <th className="py-3 text-left">Office Hours</th>
               <th className="py-3 pr-6 text-left">Description</th>
               <th className="py-3 pr-6 text-right">Activated?</th>
+              <th className="py-3 pr-6 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -227,8 +235,52 @@ const Professionals = () => {
                 <td className="py-2">{professional.name}</td>
                 <td className="py-2">{professional.officeHours}</td>
                 <td className="py-2">{professional.description}</td>
-                <td className="py-2 pr-6 text-right">
-                  {professional.activated ? "active" : "inactive"}
+                <td className="py-2 pr-6 text-center">
+                  {/* {professional.activated ? "active" : "inactive"} */}
+                  <div className="flex justify-center items-center">
+                    <input
+                      type="checkbox"
+                      id="switch"
+                      checked={professional.activated}
+                      onChange={handleProfessionalActiveState}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="switch"
+                      className={`relative flex items-center justify-between w-8 h-4 rounded-full cursor-pointer ${
+                        professional.activated ? "bg-green-400" : "bg-gray-400"
+                      }`}
+                    >
+                      <span
+                        className={`absolute left-0 bg-gray-100 transition-all duration-300 ease-in-out w-4 h-4 rounded-full shadow-md transform ${
+                          !professional.activated
+                            ? "translate-x-full"
+                            : "translate-x-0"
+                        }`}
+                      ></span>
+                    </label>
+                  </div>
+                </td>
+                <td className="py-2 text-center pr-4">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => {
+                      setUpdateModelState(!updateModelState);
+                      setSelectiedProfessionalId(professional._id);
+                    }}
+                  >
+                    <FaEdit />
+                  </button>
+                  <Popup
+                    isOpen={updateModelState}
+                    onClose={() => setUpdateModelState(!updateModelState)}
+                    children={
+                      <UpdateProfessional
+                        setModelState={setUpdateModelState}
+                        professionalId={selectiedProfessionalId}
+                      />
+                    }
+                  />
                 </td>
               </tr>
             ))}

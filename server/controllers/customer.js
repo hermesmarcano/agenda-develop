@@ -66,10 +66,27 @@ const getAllCustomersByShopName = async (req, res) => {
 };
 
 // Function to get a single customer by id
-const getCustomerById = async (req, res) => {
+const getCustomer = async (req, res) => {
   try {
     console.log(req.customerId);
     const id = req.customerId;
+    const customer = await Customer.findById(id).select(
+      "_id shopName name phone"
+    );
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    res.status(200).json(customer);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+// Function to get a single customer by param id
+const getCustomerById = async (req, res) => {
+  try {
+    const id = req.params.id;
     const customer = await Customer.findById(id).select(
       "_id shopName name phone"
     );
@@ -123,6 +140,7 @@ module.exports = {
   loginCustomer,
   getAllCustomers,
   getAllCustomersByShopName,
+  getCustomer,
   getCustomerById,
   updateCustomerById,
   deleteCustomerById,

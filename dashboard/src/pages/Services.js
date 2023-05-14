@@ -5,6 +5,7 @@ import RegisterService from "../components/RegisterService";
 import { FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
+import UpdateService from "../components/UpdateService";
 
 const Services = () => {
   const { shopName } = useContext(SidebarContext);
@@ -13,7 +14,10 @@ const Services = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [services, setServices] = useState([]);
   const token = localStorage.getItem("ag_app_shop_token");
-  const [modelState, setModelState] = useState(false);
+  const [registerModelState, setRegisterModelState] = useState(false);
+  const [updateModelState, setUpdateModelState] = useState(false);
+  const [selectiedServiceId, setSelectiedServiceId] = useState("");
+
   useEffect(() => {
     axios
       .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
@@ -28,7 +32,7 @@ const Services = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [modelState]);
+  }, [registerModelState, updateModelState]);
 
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -153,14 +157,14 @@ const Services = () => {
         <div className="flex items-center my-4">
           <button
             className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
-            onClick={() => setModelState(true)}
+            onClick={() => setRegisterModelState(true)}
           >
             <FaPlus className="mr-2" /> New Service
           </button>
           <Popup
-            isOpen={modelState}
-            onClose={() => setModelState(!modelState)}
-            children={<RegisterService setModelState={setModelState} />}
+            isOpen={registerModelState}
+            onClose={() => setRegisterModelState(!registerModelState)}
+            children={<RegisterService setModelState={setRegisterModelState} />}
           />
         </div>
         <button
@@ -254,16 +258,26 @@ const Services = () => {
                 {/* <td className="py-2 px-4">{service.speciality}</td> */}
                 <td className="py-2 px-4">{service.price}</td>
                 <td className="py-2 px-4">{service.duration}</td>
-                <td className="py-2 text-right pr-4">
-                  <button className="text-blue-500 hover:text-blue-700">
+                <td className="py-2 text-center pr-4">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => {
+                      setUpdateModelState(!updateModelState);
+                      setSelectiedServiceId(service._id);
+                    }}
+                  >
                     <FaEdit />
                   </button>
-                  {/* <button
-                    className="text-red-500 hover:text-red-700 ml-4"
-                    onClick={() => deleteService(service["_id"])}
-                  >
-                    <FaTrash />
-                  </button> */}
+                  <Popup
+                    isOpen={updateModelState}
+                    onClose={() => setUpdateModelState(!updateModelState)}
+                    children={
+                      <UpdateService
+                        setModelState={setUpdateModelState}
+                        serviceId={selectiedServiceId}
+                      />
+                    }
+                  />
                 </td>
               </tr>
             ))}

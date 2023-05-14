@@ -4,7 +4,7 @@ import { FiArrowLeft } from "react-icons/fi";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import axios from "axios";
-import { FiLoader } from "react-icons/fi";
+import { FaSpinner } from "react-icons/fa";
 
 const ArticleView = () => {
   const [article, setArticle] = useState({});
@@ -33,9 +33,9 @@ const ArticleView = () => {
       <Navbar />
       {Object.keys(article).length === 0 ? (
         <div className="flex items-center justify-center h-screen">
-          <div className="flex items-center space-x-2 text-gray-600">
-            <FiLoader className="animate-spin text-xl" />
-            <span>Loading...</span>
+          <div className="flex flex-col justify-center items-center space-x-2">
+            <FaSpinner className="animate-spin text-4xl text-blue-500" />
+            <span className="mt-2">Loading...</span>
           </div>
         </div>
       ) : (

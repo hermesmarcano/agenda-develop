@@ -5,6 +5,7 @@ import Popup from "../components/Popup";
 import { FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
+import UpdateCustomer from "../components/UpdateCustomer";
 
 const Clients = () => {
   const { shopName } = useContext(SidebarContext);
@@ -12,8 +13,10 @@ const Clients = () => {
   const [clientsPerPage, setClientsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [clients, setClients] = useState([]);
+  const [registerModelState, setRegisterModelState] = useState(false);
+  const [updateModelState, setUpdateModelState] = useState(false);
+  const [selectedClientId, setSelectedClientId] = useState("");
   const token = localStorage.getItem("ag_app_shop_token");
-  const [modelState, setModelState] = useState(false);
   useEffect(() => {
     axios
       .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
@@ -28,7 +31,7 @@ const Clients = () => {
       .catch((error) => {
         console.error(error.message);
       });
-  }, [modelState]);
+  }, [registerModelState, updateModelState]);
 
   // const clients = [
   //   {
@@ -203,14 +206,16 @@ const Clients = () => {
       <div className="flex items-center my-4">
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
-          onClick={() => setModelState(true)}
+          onClick={() => {
+            setRegisterModelState(true);
+          }}
         >
           <FaPlus className="mr-2" /> New Client
         </button>
         <Popup
-          isOpen={modelState}
-          onClose={() => setModelState(!modelState)}
-          children={<RegisterCustomer setModelState={setModelState} />}
+          isOpen={registerModelState}
+          onClose={() => setRegisterModelState(!registerModelState)}
+          children={<RegisterCustomer setModelState={setRegisterModelState} />}
         />
 
         <button
@@ -285,7 +290,7 @@ const Clients = () => {
               <th className="py-3 text-left">Name</th>
               <th className="py-3 text-left">Phone</th>
               <th className="py-3 text-left">Payments</th>
-              <th className="py-3 pr-6 text-right">Actions</th>
+              <th className="py-3 pr-6 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -304,16 +309,26 @@ const Clients = () => {
                 <td className="py-2">{client.name}</td>
                 <td className="py-2">{client.phone}</td>
                 <td className="py-2">{client.payments}</td>
-                <td className="py-2 pr-6 text-right">
-                  <button className="text-blue-500 hover:text-blue-700">
+                <td className="py-2 pr-6 text-center">
+                  <button
+                    className="text-blue-500 hover:text-blue-700"
+                    onClick={() => {
+                      setUpdateModelState(!updateModelState);
+                      setSelectedClientId(client._id);
+                    }}
+                  >
                     <FaEdit />
                   </button>
-                  {/* <button
-                    className="text-red-500 hover:text-red-700 ml-4"
-                    onClick={() => deleteCustomer(client.id)}
-                  >
-                    <FaTrash />
-                  </button> */}
+                  <Popup
+                    isOpen={updateModelState}
+                    onClose={() => setUpdateModelState(!updateModelState)}
+                    children={
+                      <UpdateCustomer
+                        setModelState={setUpdateModelState}
+                        customerId={selectedClientId}
+                      />
+                    }
+                  />
                 </td>
               </tr>
             ))}

@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Popup from "./Popup";
 import RegisterAppointment from "./RegisterAppointment";
+import UpdateAppointment from "./UpdateAppointment";
 import DateTimeContext from "../context/DateTimeContext";
 import SidebarContext from "../context/SidebarContext";
 import { FaSpinner } from "react-icons/fa";
@@ -11,6 +12,9 @@ const Scheduler = ({ date }) => {
   const [appointmentsList, setAppointmentsList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modelState, setModelState] = useState(false);
+  const [registerModelState, setRegisterModelState] = useState(false);
+  const [updateModelState, setUpdateModelState] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
 
   const token = localStorage.getItem("ag_app_shop_token");
 
@@ -110,9 +114,8 @@ const Scheduler = ({ date }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mx-4">
           {hoursArr.map((hour, index) => {
             const appointment = appointmentsList.find(
-              (appt) => new Date(appt.dateTime).getTime() === hour.getTime()
+              (appt) => new Date(appt.dateTime).toString() === hour.toString()
             );
-            // console.log("found appointments", appointment);
 
             // Calculate the total duration of the previous appointment's services
             // let prevAppointmentDuration = 0;
@@ -143,7 +146,9 @@ const Scheduler = ({ date }) => {
             return (
               <div
                 key={index}
-                onClick={() => !isDisabled && handleAppointment(hour)}
+                onClick={() =>
+                  !isDisabled && !appointment && handleAppointment(hour)
+                }
                 className={`${
                   isDisabled
                     ? "bg-gray-500 rounded-lg shadow-md p-4 cursor-not-allowed line-through text-white"
@@ -164,7 +169,8 @@ const Scheduler = ({ date }) => {
                         : "text-sm text-gray-100 hover:text-gray-800"
                     }`}
                     onClick={() => {
-                      setModelState(true);
+                      setSelectedAppointmentId(appointment._id);
+                      setUpdateModelState(true);
                     }}
                     disabled={isDisabled}
                   >
@@ -185,6 +191,17 @@ const Scheduler = ({ date }) => {
           isOpen={modelState}
           onClose={() => setModelState(!modelState)}
           children={<RegisterAppointment setModelState={setModelState} />}
+        />
+
+        <Popup
+          isOpen={updateModelState}
+          onClose={() => setUpdateModelState(!updateModelState)}
+          children={
+            <UpdateAppointment
+              setModelState={setUpdateModelState}
+              appointmentId={selectedAppointmentId}
+            />
+          }
         />
       </div>
     </div>
