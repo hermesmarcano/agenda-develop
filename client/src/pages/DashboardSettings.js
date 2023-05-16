@@ -3,6 +3,7 @@ import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import ImageUpload from "../components/ImageUpload";
 
 const DashboardSettings = () => {
   const [websiteTitle, setWebsiteTitle] = useState("");
@@ -91,8 +92,8 @@ const DashboardSettings = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ handleSubmit }) => (
-            <form onSubmit={handleSubmit} className="max-w-sm">
+          {(formikProps) => (
+            <form onSubmit={formikProps.handleSubmit} className="max-w-sm">
               <div className="mb-4">
                 <label
                   htmlFor="websiteTitle"
@@ -163,12 +164,14 @@ const DashboardSettings = () => {
                 >
                   Website Logo
                 </label>
-                <input
-                  type="file"
-                  id="logo"
-                  name="logo"
-                  accept="image/*"
-                  onChange={handleLogoChange}
+                <ImageUpload
+                  field={{
+                    name: `logo`,
+                    value: formikProps.values.logo,
+                    onChange: (file) => formikProps.setFieldValue(`logo`, file),
+                    onBlur: formikProps.handleBlur,
+                  }}
+                  form={formikProps}
                 />
               </div>
 
