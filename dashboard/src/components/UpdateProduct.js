@@ -106,6 +106,24 @@ const UpdateProduct = ({ setModelState, productId }) => {
     setModelState(false);
   };
 
+  const deleteProductImg = () => {
+    axios
+      .delete(
+        `http://localhost:4040/products/image/${productData.productImg}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        // Update productData with the empty product image
+        setProductData({ ...productData, productImg: "" });
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
     <>
       {productData ? (
@@ -242,6 +260,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                       <button
                         type="button"
                         className="absolute right-2 top-2 hover:bg-gray-800 hover:bg-opacity-25 rounded-full w-8 h-8 flex justify-center items-center"
+                        onClick={deleteProductImg}
                       >
                         <FaTrash size={15} className="text-red-500" />
                       </button>

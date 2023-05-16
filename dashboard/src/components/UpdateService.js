@@ -86,6 +86,24 @@ const UpdateService = ({ setModelState, serviceId }) => {
     setModelState(false);
   };
 
+  const deleteServiceImg = () => {
+    axios
+      .delete(
+        `http://localhost:4040/services/image/${serviceData.serviceImg}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        // Update serviceData with the empty service image
+        setServiceData({ ...serviceData, productImg: "" });
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
     <>
       <h2 className="text-xl text-left font-bold mb-4">Update Service</h2>
@@ -183,6 +201,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     <button
                       type="button"
                       className="absolute right-2 top-2 hover:bg-gray-800 hover:bg-opacity-25 rounded-full w-8 h-8 flex justify-center items-center"
+                      onClick={deleteServiceImg}
                     >
                       <FaTrash size={15} className="text-red-500" />
                     </button>

@@ -11,6 +11,7 @@ const {
   getAllProducts,
   getProductById,
   updateProduct,
+  deleteProductImg,
   deleteProduct,
 } = require("../controllers/product");
 const { isManager, isAdmin } = require("../middlewares/roles");
@@ -59,6 +60,7 @@ router.get("/shopname", getAllProductsByShopName);
 router.get("/", getAllProducts);
 router.get("/:id", auth, getProductById);
 router.patch("/:id", auth, updateProduct);
+router.delete("/image/:filename", auth, deleteProductImg);
 router.delete("/:id", auth, deleteProduct);
 
 module.exports = router;

@@ -11,6 +11,7 @@ const {
   getAllServices,
   getServiceById,
   updateService,
+  deleteServiceImg,
   deleteService,
 } = require("../controllers/service");
 const { isManager, isAdmin } = require("../middlewares/roles");
@@ -48,7 +49,6 @@ const limits = {
 // Create multer instance
 const upload = multer({ storage, fileFilter, limits });
 
-
 router.post(
   "/imageUpload",
   auth,
@@ -60,6 +60,7 @@ router.get("/shopname", getAllServicesByShopName);
 router.get("/", getAllServices);
 router.get("/:id", auth, getServiceById);
 router.patch("/:id", auth, updateService);
+router.delete("/image/:filename", auth, deleteServiceImg);
 router.delete("/:id", auth, deleteService);
 
 module.exports = router;

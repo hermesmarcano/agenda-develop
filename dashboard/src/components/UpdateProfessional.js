@@ -44,7 +44,7 @@ const UpdateProfessional = ({ setModelState, professionalId }) => {
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting, resetForm }) => {
             console.log(values);
-            const postData = {
+            const patchData = {
               name: values.name,
               officeHours: values.officeHours,
               description: values.description,
@@ -53,9 +53,9 @@ const UpdateProfessional = ({ setModelState, professionalId }) => {
 
             const fetchRequest = async () => {
               try {
-                const response = await axios.post(
+                const response = await axios.patch(
                   `http://localhost:4040/professionals/${professionalId}`,
-                  postData,
+                  patchData,
                   {
                     headers: {
                       "Content-Type": "application/json",

@@ -30,6 +30,7 @@ const AppointmentsList = () => {
   const [appointmentsPerPage, setAppointmentsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [appointments, setAppointments] = useState([]);
+  const [isDeleting, setDeleting] = useState(false);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
     axios
@@ -45,7 +46,7 @@ const AppointmentsList = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [isDeleting]);
 
   const filteredAppointments = appointments.filter((appointmet) =>
     appointmet.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -147,6 +148,7 @@ const AppointmentsList = () => {
         .then((response) => {
           // Handle successful deletion
           console.log(`Appointment with ID ${id} has been deleted.`);
+          setDeleting(false);
         })
         .catch((error) => {
           // Handle error
@@ -154,8 +156,6 @@ const AppointmentsList = () => {
         });
     });
   };
-
-  const [isDeleting, setDeleting] = useState(false);
 
   const handleCancel = () => {
     setDeleting(false);

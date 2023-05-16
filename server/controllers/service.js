@@ -69,6 +69,50 @@ const updateService = async (req, res) => {
   }
 };
 
+const deleteServiceImg = (req, res) => {
+  const filename = req.params.filename;
+  console.log("filename ", filename);
+  const filePath = path.resolve("uploads/services", filename);
+  console.log("filePath ", filePath);
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File does not exist
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    // Delete the file
+    fs.unlink(filePath, async (err) => {
+      if (err) {
+        // Error occurred while deleting the file
+        return res.status(500).json({ error: "Failed to delete the file" });
+      }
+
+      try {
+        // Delete the serviceImg property from the Service collection
+        const id = req.id;
+        const updatedService = await Service.findOneAndUpdate(
+          { _id: id },
+          { serviceImg: "" },
+          { new: true }
+        );
+
+        if (!updatedService) {
+          return res.status(404).json({ error: "Service not found" });
+        }
+
+        return res.json({
+          message: "File deleted successfully",
+          manager: updatedService,
+        });
+      } catch (err) {
+        // Error occurred while updating the database
+        return res.status(500).json({ error: "Failed to update the database" });
+      }
+    });
+  });
+};
+
 const deleteService = async (req, res) => {
   try {
     const service = await Service.findByIdAndDelete(req.params.id);
@@ -88,5 +132,6 @@ module.exports = {
   getAllServicesByShopName,
   getServiceById,
   updateService,
+  deleteServiceImg,
   deleteService,
 };

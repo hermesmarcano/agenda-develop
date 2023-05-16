@@ -18,6 +18,8 @@ const Products = () => {
   const [registerModelState, setRegisterModelState] = useState(false);
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
+  const [isDeleting, setDeleting] = useState(false);
+
   useEffect(() => {
     axios
       .get(`http://localhost:4040/products/shopname?shopName=${shopName}`, {
@@ -133,6 +135,7 @@ const Products = () => {
         .then((response) => {
           // Handle successful deletion
           console.log(`Product with ID ${id} has been deleted.`);
+          setDeleting(false);
         })
         .catch((error) => {
           // Handle error
@@ -140,8 +143,6 @@ const Products = () => {
         });
     });
   };
-
-  const [isDeleting, setDeleting] = useState(false);
 
   const handleCancel = () => {
     setDeleting(false);

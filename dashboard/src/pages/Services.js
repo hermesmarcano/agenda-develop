@@ -17,6 +17,7 @@ const Services = () => {
   const [registerModelState, setRegisterModelState] = useState(false);
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectiedServiceId, setSelectiedServiceId] = useState("");
+  const [isDeleting, setDeleting] = useState(false);
 
   useEffect(() => {
     axios
@@ -32,7 +33,7 @@ const Services = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [registerModelState, updateModelState]);
+  }, [registerModelState, updateModelState, isDeleting]);
 
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -123,6 +124,7 @@ const Services = () => {
         .then((response) => {
           // Handle successful deletion
           console.log(`Service with ID ${id} has been deleted.`);
+          setDeleting(false);
         })
         .catch((error) => {
           // Handle error
@@ -130,8 +132,6 @@ const Services = () => {
         });
     });
   };
-
-  const [isDeleting, setDeleting] = useState(false);
 
   const handleCancel = () => {
     setDeleting(false);

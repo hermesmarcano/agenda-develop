@@ -17,6 +17,7 @@ const Professionals = () => {
   const [registerModelState, setRegisterModelState] = useState(false);
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectiedProfessionalId, setSelectiedProfessionalId] = useState("");
+  const [isDeleting, setDeleting] = useState(false);
 
   useEffect(() => {
     axios
@@ -30,7 +31,7 @@ const Professionals = () => {
       )
       .then((response) => setProfessionals([...response.data.data].reverse()))
       .catch((error) => console.error(error.message));
-  }, [registerModelState, updateModelState]);
+  }, [registerModelState, updateModelState, isDeleting]);
 
   const filteredProfessionals = professionals.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -108,6 +109,7 @@ const Professionals = () => {
         .then((response) => {
           // Handle successful deletion
           console.log(`Professional with ID ${id} has been deleted.`);
+          setDeleting(false);
         })
         .catch((error) => {
           // Handle error
@@ -115,8 +117,6 @@ const Professionals = () => {
         });
     });
   };
-
-  const [isDeleting, setDeleting] = useState(false);
 
   const handleCancel = () => {
     setDeleting(false);

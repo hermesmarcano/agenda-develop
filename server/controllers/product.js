@@ -70,6 +70,50 @@ const updateProduct = async (req, res) => {
   }
 };
 
+const deleteProductImg = (req, res) => {
+  const filename = req.params.filename;
+  console.log("filename ", filename);
+  const filePath = path.resolve("uploads/products", filename);
+  console.log("filePath ", filePath);
+  // Check if the file exists
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File does not exist
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    // Delete the file
+    fs.unlink(filePath, async (err) => {
+      if (err) {
+        // Error occurred while deleting the file
+        return res.status(500).json({ error: "Failed to delete the file" });
+      }
+
+      try {
+        // Delete the productImg property from the Product collection
+        const id = req.id;
+        const updatedProduct = await Product.findOneAndUpdate(
+          { _id: id },
+          { productImg: "" },
+          { new: true }
+        );
+
+        if (!updatedProduct) {
+          return res.status(404).json({ error: "Product not found" });
+        }
+
+        return res.json({
+          message: "File deleted successfully",
+          product: updatedProduct,
+        });
+      } catch (err) {
+        // Error occurred while updating the database
+        return res.status(500).json({ error: "Failed to update the database" });
+      }
+    });
+  });
+};
+
 const deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
@@ -89,5 +133,6 @@ module.exports = {
   getAllProducts,
   getProductById,
   updateProduct,
+  deleteProductImg,
   deleteProduct,
 };

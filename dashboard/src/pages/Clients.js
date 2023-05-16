@@ -16,6 +16,8 @@ const Clients = () => {
   const [registerModelState, setRegisterModelState] = useState(false);
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState("");
+  const [isDeleting, setDeleting] = useState(false);
+
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
     axios
@@ -31,7 +33,7 @@ const Clients = () => {
       .catch((error) => {
         console.error(error.message);
       });
-  }, [registerModelState, updateModelState]);
+  }, [registerModelState, updateModelState, isDeleting]);
 
   // const clients = [
   //   {
@@ -173,6 +175,7 @@ const Clients = () => {
         .then((response) => {
           // Handle successful deletion
           console.log(`Customer with ID ${id} has been deleted.`);
+          setDeleting(false);
         })
         .catch((error) => {
           // Handle error
@@ -180,8 +183,6 @@ const Clients = () => {
         });
     });
   };
-
-  const [isDeleting, setDeleting] = useState(false);
 
   const handleCancel = () => {
     setDeleting(false);

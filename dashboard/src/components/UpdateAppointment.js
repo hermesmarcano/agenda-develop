@@ -120,13 +120,35 @@ const UpdateAppointment = ({ setModelState, appointmentId }) => {
       shopName: shopName,
     });
 
-    // setBookingInfo({
-    //   customer: values.customer,
-    //   professional: values.professional,
-    //   service: values.service,
-    //   dateTime: new Date(dateTime),
-    //   shopName: shopName,
-    // });
+    setBookingInfo({
+      customer: values.customer,
+      professional: values.professional,
+      service: values.service,
+      dateTime: new Date(dateTime),
+      shopName: shopName,
+    });
+
+    axios
+      .patch(
+        `http://localhost:4040/appointments/${appointmentId}`,
+        JSON.stringify({
+          customer: values.customer,
+          professional: values.professional,
+          service: values.service,
+          dateTime: new Date(dateTime),
+          shopName: shopName,
+        }),
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        setModelState(false);
+      })
+      .catch((error) => console.log(error));
 
     setSubmitting(false);
     resetForm();
