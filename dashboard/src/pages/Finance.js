@@ -53,7 +53,10 @@ const Finance = () => {
 
         data.payments.forEach((payment) => {
           // Earnings by day
-          const date = new Date(payment.dateTime).toLocaleDateString();
+          // const date = new Date(payment.dateTime).toLocaleDateString();
+          const date =
+            payment.dateTime instanceof Date ? payment.dateTime : new Date();
+          // console.log(payment.dateTime);
           if (earningsByDay[date]) {
             earningsByDay[date] += payment.amount;
           } else {
@@ -137,7 +140,7 @@ const Finance = () => {
         setDataByDay(modifiedDataByDay);
         setDataByService(dataByService);
         setDataByProduct(dataByProduct);
-        setTotalEarnings(totalEarningsLast30Days);
+        setTotalEarnings(totalEarnings);
         setTotalEarningsLast30Days(totalEarningsLast30Days);
         setTotalSoldProducts(totalSoldProducts);
         ////////////////////////////////////////////////////////////////
