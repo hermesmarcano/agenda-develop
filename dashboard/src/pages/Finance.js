@@ -261,7 +261,7 @@ const Finance = () => {
               ${totalEarnings.toFixed(2)}
             </div>
             <div className="text-lg font-semibold text-gray-500">
-              Last 30 days
+              {/* Last 30 days */}All time
             </div>
           </div>
         </div>
