@@ -74,7 +74,15 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         Authorization: localStorage.getItem("ag_app_shop_token"),
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        if (!response.ok) {
+          localStorage.removeItem("ag_app_shop_token");
+          navigate("/login");
+        }
+
+        return response.json();
+      })
       .then((data) => {
         console.log(data.shopName);
         setShopName(data.shopName);

@@ -7,9 +7,11 @@ import ArrowRightSrc from "../images/arrow-right.svg";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import SidebarContext from "../context/SidebarContext";
+import { useNavigate } from "react-router-dom";
 
 const Agenda = () => {
   const { isSidebarOpen, toggleSidebar, shopName } = useContext(SidebarContext);
+  const navigate = useNavigate();
   const [date, setDate] = useState(new Date());
   const token = localStorage.getItem("ag_app_shop_token");
   const [appointments, setAppointments] = useState([]);
