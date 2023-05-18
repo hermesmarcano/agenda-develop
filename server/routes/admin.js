@@ -5,6 +5,7 @@ const {
   loginAdmin,
   updateAdmin,
   getAdmin,
+  getAdminById,
   checkAdmin,
   uploadImg,
   getShops,
@@ -18,7 +19,7 @@ const fs = require("fs");
 const { v4: uuidv4 } = require("uuid");
 const Admin = require("../models/admin");
 
-const auth = require("../auth/auth");
+const auth = require("../auth/auth3");
 
 // Set up storage for multer
 const storage = multer.diskStorage({
@@ -60,6 +61,7 @@ router.patch("/", auth, updateAdmin);
 router.get("/check", checkAdmin);
 router.get("/shops", auth, getShops);
 router.get("/", getAdmin);
+router.get("/id", auth, getAdminById);
 router.get("/customers", auth, getCustomers);
 router.get("/payments", auth, getPayments);
 router.get("/article/:id", getArticleById);

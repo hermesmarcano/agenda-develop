@@ -39,7 +39,7 @@ const loginAdmin = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: admin._id, role: "admin" },
+      { adminId: admin._id, role: "admin" },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
@@ -69,6 +69,33 @@ const updateAdmin = (req, res) => {
 const getAdmin = (req, res) => {
   Admin.findOne(
     { username: "admin" },
+    {
+      heroData: 1,
+      shopsData: 1,
+      articlesData: 1,
+      section1Data: 1,
+      section2Data: 1,
+      servicesData: 1,
+      websiteTitle: 1,
+    }
+  )
+    .exec()
+    .then((admin) => {
+      if (!admin) {
+        return res.status(404).json({ error: "Admin not found" });
+      }
+
+      res.json({ admin });
+    })
+    .catch((err) => {
+      console.error("Error fetching admin:", err);
+      res.status(500).json({ error: "Failed to fetch admin" });
+    });
+};
+
+const getAdminById = (req, res) => {
+  Admin.findOne(
+    { username: req.adminId },
     {
       heroData: 1,
       shopsData: 1,
@@ -198,6 +225,7 @@ module.exports = {
   loginAdmin,
   updateAdmin,
   getAdmin,
+  getAdminById,
   checkAdmin,
   uploadImg,
   getShops,

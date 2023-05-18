@@ -270,8 +270,8 @@ const Finance = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="bg-white shadow-md rounded-md p-6">
           <h2 className="text-lg font-bold mb-4">Total Earnings</h2>
-          <div className="flex items-center justify-between bg-gray-100 rounded-lg p-4">
-            <div>
+          <div className="flex flex-col sm:flex-row items-center justify-between bg-gray-100 rounded-lg p-4">
+            <div className="mb-4 sm:mb-0 sm:mr-8">
               <div className="text-3xl font-bold text-blue-500">
                 ${totalEarningsLast30Days.toFixed(2)}
               </div>
