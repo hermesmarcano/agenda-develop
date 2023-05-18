@@ -48,15 +48,14 @@ const Finance = () => {
         let earningsByDay = {};
         let earningsByService = {};
         let earningsByProduct = {};
-        let totalEarnings = 0;
+        let totalEarn = 0;
         let totalSoldProducts = 0;
+        let totalEarnLast30Days = 0;
 
         data.payments.forEach((payment) => {
           // Earnings by day
-          // const date = new Date(payment.dateTime).toLocaleDateString();
-          const date =
-            payment.dateTime instanceof Date ? payment.dateTime : new Date();
-          // console.log(payment.dateTime);
+          const date = new Date(payment.dateTime);
+
           if (earningsByDay[date]) {
             earningsByDay[date] += payment.amount;
           } else {
@@ -85,7 +84,16 @@ const Finance = () => {
             totalSoldProducts++;
           }
 
-          totalEarnings += payment.amount;
+          const timeDiff = Math.abs(new Date().getTime() - date.getTime());
+
+          // Convert the time difference to days
+          const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+          console.log(daysDiff);
+          if (daysDiff <= 30) {
+            totalEarnLast30Days += payment.amount;
+          }
+          totalEarn += payment.amount;
         });
 
         // Convert earnings by day to an array of objects
@@ -116,16 +124,22 @@ const Finance = () => {
 
         // Calculate total earnings for the last 30 days
         const currentDate = new Date();
+        console.log("currentDate: ", currentDate);
+
         currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day
+        console.log("currentDate: ", currentDate);
         const last30Days = new Array(30).fill().map((_, index) => {
           const date = new Date(currentDate);
           date.setDate(date.getDate() - index);
-          return date.toLocaleDateString();
+          return date.toISOString().split("T")[0]; // Format the date to "YYYY-MM-DD" string
         });
-        const totalEarningsLast30Days = last30Days.reduce(
-          (sum, date) => sum + (earningsByDay[date] || 0),
-          0
-        );
+        console.log("last30Days: ", last30Days);
+
+        const totalEarningsLast30Days = last30Days.reduce((sum, date) => {
+          return sum + (earningsByDay[date] || 0);
+        }, 0);
+
+        console.log("totalEarningsLast30Days: ", totalEarningsLast30Days);
 
         // Modify dataByDay to store the maximum of the past 7 days
         const maxEarningsLast30Days = last30Days.reduce((max, date) => {
@@ -140,8 +154,8 @@ const Finance = () => {
         setDataByDay(modifiedDataByDay);
         setDataByService(dataByService);
         setDataByProduct(dataByProduct);
-        setTotalEarnings(totalEarnings);
-        setTotalEarningsLast30Days(totalEarningsLast30Days);
+        setTotalEarnings(totalEarn);
+        setTotalEarningsLast30Days(totalEarnLast30Days);
         setTotalSoldProducts(totalSoldProducts);
         ////////////////////////////////////////////////////////////////
       });
@@ -256,12 +270,22 @@ const Finance = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div className="bg-white shadow-md rounded-md p-6">
           <h2 className="text-lg font-bold mb-4">Total Earnings</h2>
-          <div className="flex items-center justify-between">
-            <div className="text-4xl font-bold text-blue-500">
-              ${totalEarnings.toFixed(2)}
+          <div className="flex items-center justify-between bg-gray-100 rounded-lg p-4">
+            <div>
+              <div className="text-3xl font-bold text-blue-500">
+                ${totalEarningsLast30Days.toFixed(2)}
+              </div>
+              <div className="text-lg font-semibold text-gray-500">
+                Last 30 days
+              </div>
             </div>
-            <div className="text-lg font-semibold text-gray-500">
-              {/* Last 30 days */}All time
+            <div className="flex flex-col items-end">
+              <div className="text-lg font-semibold text-gray-500">
+                Total Earnings
+              </div>
+              <div className="text-2xl font-bold text-blue-500">
+                ${totalEarnings.toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
