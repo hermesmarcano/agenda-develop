@@ -56,20 +56,26 @@ const DashboardSettings = () => {
       formData.append("websiteTitle", websiteTitle);
       formData.append("username", username);
       formData.append("password", password);
-      if (logo) {
-        formData.append("logo", logo, logo.name);
-      }
+      // if (logo) {
+      //   formData.append("logo", logo, logo.name);
+      // }
 
-      const response = await axios.patch(
-        "http://localhost:4040/admin",
-        formData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      alert("Data saved successfully");
+      // const response = await axios.patch(
+      //   "http://localhost:4040/admin",
+      //   formData,
+      //   {
+      //     headers: {
+      //       Authorization: token,
+      //     },
+      //   }
+      // );
+      // alert("Data saved successfully");
+      console.log({
+        websiteTitle: websiteTitle,
+        username: username,
+        password: password,
+        // logo: logo.name,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -88,6 +94,7 @@ const DashboardSettings = () => {
             username: adminUsername,
             password: "",
             websiteTitle: websiteTitle,
+            logo: null,
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}

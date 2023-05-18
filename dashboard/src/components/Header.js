@@ -1,10 +1,13 @@
 import React, { useState } from "react";
-import { FaBell, FaCog, FaUser, FaBars } from "react-icons/fa";
+import { FaBell, FaCog, FaUser, FaPaintBrush, FaXing } from "react-icons/fa";
+import { IoMdColorPalette } from "react-icons/io";
+import { FiX } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 
 function Header() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [colorDiv, setColorDiv] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,13 +43,13 @@ function Header() {
               aria-orientation="vertical"
               aria-labelledby="user-menu"
             >
-              <Link
+              {/* <Link
                 to="#"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 role="menuitem"
               >
                 Your Profile
-              </Link>
+              </Link> */}
               <Link
                 to="/settings"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
@@ -65,9 +68,45 @@ function Header() {
             </div>
           )}
         </div>
-        <button className="ml-4 focus:outline-none">
-          <FaBars className="w-6 h-6" />
-        </button>
+        <div className="relative">
+          <button
+            className="ml-4 focus:outline-none cursor-pointer"
+            onClick={() => setColorDiv(!colorDiv)}
+          >
+            <FaPaintBrush className="w-6 h-6" />
+          </button>
+          {colorDiv && (
+            <>
+              <div
+                className="fixed z-20 inset-0 bg-gray-900 bg-opacity-50"
+                onClick={() => setColorDiv(false)}
+              ></div>
+              <div className="fixed z-30 right-0 top-0 animate-scale-up-tr shadow-md rounded-lg bg-white p-4 space-y-2">
+                <div className="flex flex-wrap justify-center items-center">
+                  <button className="w-10 h-10 rounded-full bg-gray-800 text-white hover:text-gray-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1">
+                    <IoMdColorPalette className="w-6 h-6" />
+                    <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span>
+                  </button>
+                  <button className="w-10 h-10 rounded-full bg-cyan-800 text-white hover:text-cyan-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center mr-1">
+                    <IoMdColorPalette className="w-6 h-6" />
+                  </button>
+                  <button className="w-10 h-10 rounded-full bg-red-800 text-white hover:text-red-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center mr-1">
+                    <IoMdColorPalette className="w-6 h-6" />
+                  </button>
+                  <button className="w-10 h-10 rounded-full bg-black text-white hover:text-black hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center mr-1">
+                    <IoMdColorPalette className="w-6 h-6" />
+                  </button>
+                </div>
+                <button
+                  className="absolute top-1 right-1 text-gray-500 hover:text-gray-800 hover:scale-150 transition-transform focus:outline-none"
+                  onClick={() => setColorDiv(false)}
+                >
+                  <FiX className="w-4 h-4" />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </header>
   );

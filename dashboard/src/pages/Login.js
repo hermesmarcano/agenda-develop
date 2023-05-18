@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
   const [registered, setRegistered] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
   const LoginSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
     password: Yup.string().required("Required"),
@@ -46,23 +47,25 @@ const Login = () => {
               })
                 .then((response) => {
                   if (response.ok) {
-                    setRegistered(true);
+                    setRegistered(() => true);
                   } else {
-                    setRegistered(false);
+                    setRegistered(() => false);
+                    setErrorMessage("Invalid email or password");
                   }
                   return response.json();
                 })
-
                 .then((data) => {
                   console.log(data);
-                  if (registered) {
+                  console.log(registered);
+                  if (data.token) {
                     localStorage.setItem("ag_app_shop_token", data.token);
                     navigate("/");
                   }
                 })
-
-                .catch((errors) => console.log(errors));
-              setSubmitting(false);
+                .catch((errors) => console.log(errors))
+                .finally(() => {
+                  setSubmitting(false);
+                });
             }}
           >
             {({ errors, touched }) => (
@@ -143,7 +146,7 @@ const Login = () => {
                 </div>
                 {!registered ? (
                   <div className="mt-2 text-sm text-red-500">
-                    Invalid email or password
+                    {errorMessage}
                   </div>
                 ) : null}
 
