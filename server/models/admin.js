@@ -91,6 +91,9 @@ const AdminSchema = new Schema(
       type: String,
       default: "My Website",
     },
+    logo: {
+      type: String,
+    },
     isManager: {
       type: Boolean,
       default: false,

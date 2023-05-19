@@ -52,6 +52,7 @@ const upload = multer({ storage, fileFilter });
 
 router.post("/", createAdmin);
 router.post("/login", loginAdmin);
+router.post("/uploads-logo", auth, upload.single("image"), uploadImg);
 router.post("/uploads-articles-imgs", auth, upload.single("image"), uploadImg);
 router.post("/uploads-shops-imgs", auth, upload.single("image"), uploadImg);
 router.post("/uploads-services-imgs", auth, upload.single("image"), uploadImg);

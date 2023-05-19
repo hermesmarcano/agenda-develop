@@ -51,7 +51,7 @@ const loginAdmin = async (req, res) => {
 };
 
 const updateAdmin = (req, res) => {
-  Admin.findByIdAndUpdate(req.id, req.body, { new: true })
+  Admin.findByIdAndUpdate(req.adminId, req.body, { new: true })
     .exec()
     .then((updatedAdmin) => {
       if (!updatedAdmin) {
@@ -97,6 +97,7 @@ const getAdminById = (req, res) => {
   Admin.findOne(
     { username: req.adminId },
     {
+      username: 1,
       heroData: 1,
       shopsData: 1,
       articlesData: 1,
@@ -104,6 +105,7 @@ const getAdminById = (req, res) => {
       section2Data: 1,
       servicesData: 1,
       websiteTitle: 1,
+      logo: 1,
     }
   )
     .exec()

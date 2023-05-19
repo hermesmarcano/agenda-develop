@@ -9,7 +9,7 @@ const DashboardSettings = () => {
   const [websiteTitle, setWebsiteTitle] = useState("");
   const [adminUsername, setAdminUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [logo, setLogo] = useState(null);
+  const [logo, setLogo] = useState("");
 
   useEffect(() => {
     fetchAdminData();
@@ -32,6 +32,7 @@ const DashboardSettings = () => {
       const { admin } = response.data;
       setWebsiteTitle(admin.websiteTitle);
       setAdminUsername(admin.username);
+      setLogo(admin.logo);
     } catch (error) {
       console.log(error);
     }
@@ -43,7 +44,7 @@ const DashboardSettings = () => {
     password: Yup.string().min(6, "Password must be at least 6 characters"),
   });
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
@@ -51,38 +52,56 @@ const DashboardSettings = () => {
         return;
       }
 
-      const { websiteTitle, username, password } = values;
       const formData = new FormData();
-      formData.append("websiteTitle", websiteTitle);
-      formData.append("username", username);
-      formData.append("password", password);
-      // if (logo) {
-      //   formData.append("logo", logo, logo.name);
-      // }
+      formData.append("image", values.logo);
+      formData.append("existingImg", logo);
+      // Upload the logo
+      const uploadResponse = await axios.post(
+        "http://localhost:4040/admin/uploads-logo",
+        formData,
+        {
+          headers: {
+            Authorization: token,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
-      // const response = await axios.patch(
-      //   "http://localhost:4040/admin",
-      //   formData,
-      //   {
-      //     headers: {
-      //       Authorization: token,
-      //     },
-      //   }
-      // );
-      // alert("Data saved successfully");
-      console.log({
-        websiteTitle: websiteTitle,
-        username: username,
-        password: password,
-        // logo: logo.name,
-      });
+      // Get the uploaded logo name from the response
+      const { filename } = uploadResponse.data;
+
+      // Prepare the patch data with only filled fields
+      const patchData = {};
+      if (values.username) {
+        patchData.username = values.username;
+      }
+      if (values.password) {
+        patchData.password = values.password;
+      }
+      if (values.websiteTitle) {
+        patchData.websiteTitle = values.websiteTitle;
+      }
+      if (filename) {
+        patchData.logo = filename;
+      }
+
+      const updateResponse = await axios.patch(
+        "http://localhost:4040/admin",
+        patchData,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      alert("Data saved successfully");
+      console.log(updateResponse.data); // Updated admin data
+      fetchAdminData(); // Call fetchAdminData to update the data after submit
     } catch (error) {
       console.log(error);
     }
-  };
 
-  const handleLogoChange = (event) => {
-    setLogo(event.target.files[0]);
+    setSubmitting(false);
   };
 
   return (
