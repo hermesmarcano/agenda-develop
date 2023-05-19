@@ -12,7 +12,7 @@ const PrivateRoutes = () => {
       <div className="flex h-screen bg-gray-50">
         <Sidebar />
 
-        <div className="flex flex-col flex-1 w-full overflow-x-hidden">
+        <div className="flex flex-col flex-1 w-full overflow-x-hidden mb-20">
           <main className="h-full overflow-y-auto p-6">
             <Outlet />
           </main>

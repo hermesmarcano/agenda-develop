@@ -232,7 +232,7 @@ const Services = () => {
               <th className="py-3 pl-4 text-start">
                 <input type="checkbox" onChange={handleSelectAll} />
               </th>
-              <th className="py-3 px-4 text-left">Code</th>
+              <th className="py-3 px-4 text-left">Id</th>
               <th className="py-3 px-4 text-left">Name</th>
               {/* <th className="py-3 px-4 text-left">Speciality</th> */}
               <th className="py-3 px-4 text-left">Price</th>

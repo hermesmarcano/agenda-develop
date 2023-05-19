@@ -147,8 +147,9 @@ const deleteManager = async (req, res) => {
     if (!manager) {
       return res.status(404).json({ message: "Manager not found" });
     }
-    await manager.remove();
+    await Manager.deleteOne({ _id: id }); // Updated deletion method
     res.json({ message: "Manager deleted successfully" });
+    console.log(manager);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
