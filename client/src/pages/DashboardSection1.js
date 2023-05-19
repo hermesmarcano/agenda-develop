@@ -35,6 +35,7 @@ const DashboardSection1 = () => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
+      console.log("submitting");
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
         console.error("Token not found");
@@ -42,29 +43,36 @@ const DashboardSection1 = () => {
       }
 
       const formData = new FormData();
-      formData.append("image", values.image);
-      formData.append("existingImg", section1Data.image);
-      // Upload the image
-      const uploadResponse = await axios.post(
-        "http://localhost:4040/admin/uploads-section1-imgs",
-        formData,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      if (values.image) {
+        formData.append("image", values.image);
+        formData.append("existingImg", section1Data.image);
+      }
+      // Upload the image if it exists
+      if (values.image) {
+        const uploadResponse = await axios.post(
+          "http://localhost:4040/admin/uploads-section1-imgs",
+          formData,
+          {
+            headers: {
+              Authorization: token,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-      // Get the uploaded image name from the response
-      const { filename } = uploadResponse.data;
+        // Get the uploaded image name from the response
+        const { filename } = uploadResponse.data;
 
-      // Update the admin data with new values (including the image name)
+        // Update the admin data with new image name
+        values.image = filename;
+      }
+
+      // Update the admin data with new values
       const patchData = {
         section1Data: {
-          title: values.title,
-          image: filename,
-          content: values.content,
+          title: values.title || section1Data.title,
+          image: values.image || section1Data.image,
+          content: values.content || section1Data.content,
         },
       };
 
@@ -103,9 +111,8 @@ const DashboardSection1 = () => {
             image: null,
           }}
           validationSchema={Yup.object({
-            title: Yup.string().required("Required"),
-            content: Yup.string().required("Required"),
-            image: Yup.string().required("Required"),
+            title: Yup.string(),
+            content: Yup.string(),
           })}
           onSubmit={handleFormSubmit}
         >

@@ -38,11 +38,10 @@ const DashboardArticles = () => {
   const validationSchema = Yup.object().shape({
     articlesData: Yup.array().of(
       Yup.object().shape({
-        title: Yup.string().required("Title is required"),
-        author: Yup.string().required("Author is required"),
-        date: Yup.string().required("Date is required"),
-        content: Yup.string().required("Content is required"),
-        image: Yup.mixed().required("Image is required"),
+        title: Yup.string(),
+        author: Yup.string(),
+        date: Yup.string(),
+        content: Yup.string(),
       })
     ),
   });
@@ -56,6 +55,10 @@ const DashboardArticles = () => {
       }
 
       const uploadPromises = values.articlesData.map(async (article, index) => {
+        if (!article.image) {
+          return article;
+        }
+
         const formData = new FormData();
         formData.append("image", article.image);
         articlesDataArr[index]

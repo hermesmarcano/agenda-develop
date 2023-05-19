@@ -36,8 +36,7 @@ const DashboardServices = () => {
   const validationSchema = Yup.object().shape({
     servicesData: Yup.array().of(
       Yup.object().shape({
-        title: Yup.string().required("Title is required"),
-        image: Yup.mixed().required("Image is required"),
+        title: Yup.string(),
       })
     ),
   });
@@ -51,6 +50,10 @@ const DashboardServices = () => {
       }
 
       const uploadPromises = values.servicesData.map(async (service, index) => {
+        if (!service.image) {
+          return service;
+        }
+
         const formData = new FormData();
         formData.append("image", service.image);
         servicesDataArr[index]

@@ -38,9 +38,8 @@ const DashboardShops = () => {
   const validationSchema = Yup.object().shape({
     shopsData: Yup.array().of(
       Yup.object().shape({
-        title: Yup.string().required("Title is required"),
-        image: Yup.mixed().required("Image is required"),
-        urlSlug: Yup.string().required("URL Slug is required"),
+        title: Yup.string(),
+        urlSlug: Yup.string(),
       })
     ),
   });
@@ -54,6 +53,9 @@ const DashboardShops = () => {
       }
 
       const uploadPromises = values.shopsData.map(async (shop, index) => {
+        if (!shop.image) {
+          return shop;
+        }
         const formData = new FormData();
         formData.append("image", shop.image);
         shopsDataArr[index]

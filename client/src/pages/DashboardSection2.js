@@ -42,30 +42,36 @@ const DashboardSection2 = () => {
       }
 
       const formData = new FormData();
-      formData.append("image", values.image);
-      formData.append("existingImg", section2Data.image);
+      if (values.image) {
+        formData.append("image", values.image);
+        formData.append("existingImg", section2Data.image);
+      }
+      // Upload the image if it exists
+      if (values.image) {
+        const uploadResponse = await axios.post(
+          "http://localhost:4040/admin/uploads-section2-imgs",
+          formData,
+          {
+            headers: {
+              Authorization: token,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-      // Upload the image
-      const uploadResponse = await axios.post(
-        "http://localhost:4040/admin/uploads-section2-imgs",
-        formData,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+        // Get the uploaded image name from the response
+        const { filename } = uploadResponse.data;
 
-      // Get the uploaded image name from the response
-      const { filename } = uploadResponse.data;
+        // Update the admin data with new image name
+        values.image = filename;
+      }
 
       // Update the admin data with new values (including the image name)
       const patchData = {
         section2Data: {
-          title: values.title,
-          image: filename,
-          content: values.content,
+          title: values.title || section2Data.title,
+          image: values.image || section2Data.image,
+          content: values.content || section2Data.content,
         },
       };
 
@@ -104,9 +110,8 @@ const DashboardSection2 = () => {
             image: null,
           }}
           validationSchema={Yup.object({
-            title: Yup.string().required("Required"),
-            content: Yup.string().required("Required"),
-            image: Yup.string().required("Required"),
+            title: Yup.string(),
+            content: Yup.string(),
           })}
           onSubmit={handleFormSubmit}
         >

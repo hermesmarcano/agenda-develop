@@ -95,7 +95,7 @@ const getAdmin = (req, res) => {
 
 const getAdminById = (req, res) => {
   Admin.findOne(
-    { username: req.adminId },
+    { _id: req.adminId },
     {
       username: 1,
       heroData: 1,

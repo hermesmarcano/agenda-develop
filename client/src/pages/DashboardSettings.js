@@ -23,7 +23,7 @@ const DashboardSettings = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin", {
+      const response = await axios.get("http://localhost:4040/admin/id", {
         headers: {
           Authorization: token,
         },
@@ -190,15 +190,32 @@ const DashboardSettings = () => {
                 >
                   Website Logo
                 </label>
-                <ImageUpload
-                  field={{
-                    name: `logo`,
-                    value: formikProps.values.logo,
-                    onChange: (file) => formikProps.setFieldValue(`logo`, file),
-                    onBlur: formikProps.handleBlur,
-                  }}
-                  form={formikProps}
-                />
+                {logo ? (
+                  <div className="relative">
+                    <img
+                      src={`http://localhost:4040/uploads/admin/${logo}`}
+                      className="h-40"
+                      alt={logo}
+                    />
+                    <button
+                      className="absolute right-2 top-2 text-red-500"
+                      onClick={() => setLogo("")}
+                    >
+                      <FaTrash size={20} />
+                    </button>
+                  </div>
+                ) : (
+                  <ImageUpload
+                    field={{
+                      name: `logo`,
+                      value: formikProps.values.logo,
+                      onChange: (file) =>
+                        formikProps.setFieldValue(`logo`, file),
+                      onBlur: formikProps.handleBlur,
+                    }}
+                    form={formikProps}
+                  />
+                )}
               </div>
 
               <button
