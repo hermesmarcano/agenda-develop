@@ -95,7 +95,7 @@ const RegisterProduct = ({ setModelState }) => {
         validationSchema={validationSchema}
         onSubmit={handleFormSubmit}
       >
-        {({ isSubmitting }) => (
+        {(formikProps) => (
           <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
             <div className="mb-4">
               <label
@@ -204,12 +204,21 @@ const RegisterProduct = ({ setModelState }) => {
               >
                 Image
               </label>
-              <Field name="productImg" component={ImageUpload} />
+              <ImageUpload
+                field={{
+                  name: `productImg`,
+                  value: formikProps.values.productImg,
+                  onChange: (file) =>
+                    formikProps.setFieldValue(`productImg`, file),
+                  onBlur: formikProps.handleBlur,
+                }}
+                form={formikProps}
+              />
             </div>
             <div className="flex items-center justify-between">
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={formikProps.isSubmitting}
                 className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
                 Register Product

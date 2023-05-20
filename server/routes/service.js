@@ -17,37 +17,27 @@ const {
 const { isManager, isAdmin } = require("../middlewares/roles");
 const auth = require("../auth/auth");
 
+// Define storage engine for multer
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const { fieldname } = req.body;
-    let destination;
-
-    destination = path.join(__dirname, "../uploads/services");
-
-    fs.mkdirSync(destination, { recursive: true });
-    cb(null, destination);
+  destination: function (req, file, cb) {
+    cb(null, "uploads/services");
   },
-  filename: (req, file, cb) => {
-    const fileName = `${uuidv4()}${path.extname(file.originalname)}`;
-    cb(null, fileName);
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
   },
 });
 
-// File filter for multer
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(new Error("Only image files are allowed."), false);
-  }
-};
-
+// Define file size limit for multer
 const limits = {
   fileSize: 1024 * 1024 * 5, // 5MB
 };
 
-// Create multer instance
-const upload = multer({ storage, fileFilter, limits });
+// Initialize multer with the storage engine and file size limit
+const upload = multer({ storage, limits });
 
 router.post(
   "/imageUpload",

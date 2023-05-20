@@ -7,6 +7,7 @@ import ImageUpload from "./ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 
 const UpdateService = ({ setModelState, serviceId }) => {
+  console.log("serviceId: ", serviceId);
   const token = localStorage.getItem("ag_app_shop_token");
   const [serviceData, setServiceData] = useState(null);
   useEffect(() => {
@@ -18,6 +19,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
       })
       .then((response) => {
         console.log(response.data.service);
+        console.log(response.data.service.serviceImg);
         setServiceData(response.data.service);
       })
       .catch((error) => {
@@ -30,10 +32,10 @@ const UpdateService = ({ setModelState, serviceId }) => {
     name: Yup.string(),
     price: Yup.number(),
     duration: Yup.string(),
-    serviceImg: Yup.mixed(),
   });
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
+    console.log("submitting");
     try {
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
@@ -41,31 +43,33 @@ const UpdateService = ({ setModelState, serviceId }) => {
         return;
       }
       const formData = new FormData();
-      formData.append("serviceImg", values.serviceImg);
+      if (values.serviceImg) {
+        formData.append("serviceImg", values.serviceImg);
 
-      // Upload the image
-      const uploadResponse = await axios.post(
-        "http://localhost:4040/services/imageUpload",
-        formData,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+        // Upload the image
+        const uploadResponse = await axios.post(
+          "http://localhost:4040/services/imageUpload",
+          formData,
+          {
+            headers: {
+              Authorization: token,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
-      // Get the uploaded image name from the response
-      const { filename } = uploadResponse.data;
+        // Get the uploaded image name from the response
+        const { filename } = uploadResponse.data;
+        values.serviceImg = filename;
+      }
 
       // Update the admin data with new values (including the image name)
       const d = +values.duration;
       const patchData = {
-        name: values.name,
-        price: values.price,
-        duration: d,
-        serviceImg: filename,
-        shopName: shopName,
+        name: values.name || serviceData.name,
+        price: values.price || serviceData.price,
+        duration: d || serviceData.duration,
+        serviceImg: values.serviceImg || serviceData.serviceImg,
       };
 
       const updateResponse = await axios.patch(
@@ -87,6 +91,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
   };
 
   const deleteServiceImg = () => {
+    console.log("deleting ", serviceData.serviceImg);
     axios
       .delete(
         `http://localhost:4040/services/image/${serviceData.serviceImg}`,
@@ -94,12 +99,15 @@ const UpdateService = ({ setModelState, serviceId }) => {
           headers: {
             Authorization: token,
           },
+          data: {
+            id: serviceData._id,
+          },
         }
       )
       .then((response) => {
         console.log(response.data);
         // Update serviceData with the empty service image
-        setServiceData({ ...serviceData, productImg: "" });
+        setServiceData({ ...serviceData, serviceImg: "" });
       })
       .catch((error) => console.log(error));
   };
@@ -192,11 +200,15 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   Image
                 </label>
                 {serviceData.serviceImg ? (
-                  <div className="relative">
+                  <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
+                    {console.log(
+                      "serviceData.serviceImg",
+                      serviceData.serviceImg
+                    )}
                     <img
                       src={`http://localhost:4040/uploads/services/${serviceData.serviceImg}`}
                       alt={serviceData.serviceImg}
-                      className="rounded-md"
+                      className="rounded-md h-[100%]"
                     />
                     <button
                       type="button"
@@ -210,7 +222,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   <ImageUpload
                     field={{
                       name: `serviceImg`,
-                      value: formikProps.values.image,
+                      value: formikProps.values.serviceImg,
                       onChange: (file) =>
                         formikProps.setFieldValue(`serviceImg`, file),
                       onBlur: formikProps.handleBlur,
@@ -225,7 +237,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   disabled={formikProps.isSubmitting}
                 >
-                  Register
+                  Update
                 </button>
               </div>
             </Form>

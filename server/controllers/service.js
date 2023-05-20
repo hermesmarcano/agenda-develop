@@ -1,4 +1,6 @@
 const Service = require("../models/service");
+const path = require("path");
+const fs = require("fs");
 
 const createService = async (req, res) => {
   try {
@@ -70,6 +72,7 @@ const updateService = async (req, res) => {
 };
 
 const deleteServiceImg = (req, res) => {
+  const { id } = req.body;
   const filename = req.params.filename;
   console.log("filename ", filename);
   const filePath = path.resolve("uploads/services", filename);
@@ -89,13 +92,15 @@ const deleteServiceImg = (req, res) => {
       }
 
       try {
-        // Delete the serviceImg property from the Service collection
-        const id = req.id;
+        // Delete the profileImg property from the Manager collection
+        console.log("id ", id);
         const updatedService = await Service.findOneAndUpdate(
           { _id: id },
           { serviceImg: "" },
           { new: true }
         );
+
+        console.log("updatedService ", updatedService);
 
         if (!updatedService) {
           return res.status(404).json({ error: "Service not found" });
@@ -103,7 +108,7 @@ const deleteServiceImg = (req, res) => {
 
         return res.json({
           message: "File deleted successfully",
-          manager: updatedService,
+          service: updatedService,
         });
       } catch (err) {
         // Error occurred while updating the database

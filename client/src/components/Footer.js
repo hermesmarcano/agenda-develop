@@ -11,17 +11,7 @@ const Footer = () => {
 
   const fetchAdminData = async () => {
     try {
-      const token = localStorage.getItem("ag_app_admin_token");
-      if (!token) {
-        console.error("Token not found");
-        return;
-      }
-
-      const response = await axios.get("http://localhost:4040/admin", {
-        headers: {
-          Authorization: token,
-        },
-      });
+      const response = await axios.get("http://localhost:4040/admin");
       console.log(response.data.admin);
 
       if (response.data.admin.websiteTitle) {

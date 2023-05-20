@@ -176,7 +176,7 @@ const RegisterService = ({ setModelState }) => {
               <ImageUpload
                 field={{
                   name: `serviceImg`,
-                  value: formikProps.values.image,
+                  value: formikProps.values.serviceImg,
                   onChange: (file) =>
                     formikProps.setFieldValue(`serviceImg`, file),
                   onBlur: formikProps.handleBlur,

@@ -28,7 +28,7 @@ const Services = () => {
       })
       .then((response) => {
         setServices([...response.data.services].reverse());
-        console.log(services);
+        console.log(response.data.services);
       })
       .catch((error) => {
         console.error(error);
@@ -262,22 +262,24 @@ const Services = () => {
                   <button
                     className="text-blue-500 hover:text-blue-700"
                     onClick={() => {
-                      setUpdateModelState(!updateModelState);
+                      setUpdateModelState(service._id);
                       setSelectiedServiceId(service._id);
                     }}
                   >
                     <FaEdit />
                   </button>
-                  <Popup
-                    isOpen={updateModelState}
-                    onClose={() => setUpdateModelState(!updateModelState)}
-                    children={
-                      <UpdateService
-                        setModelState={setUpdateModelState}
-                        serviceId={selectiedServiceId}
-                      />
-                    }
-                  />
+                  {updateModelState === service._id && (
+                    <Popup
+                      isOpen={true}
+                      onClose={() => setUpdateModelState(null)}
+                      children={
+                        <UpdateService
+                          setModelState={setUpdateModelState}
+                          serviceId={service._id}
+                        />
+                      }
+                    />
+                  )}
                 </td>
               </tr>
             ))}

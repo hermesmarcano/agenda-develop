@@ -1,4 +1,6 @@
 const Product = require("../models/product");
+const path = require("path");
+const fs = require("fs");
 
 const createProduct = async (req, res) => {
   try {
@@ -10,7 +12,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-const uploadServiceImg = (req, res) => {
+const uploadProductImg = (req, res) => {
   try {
     // Image upload successful, respond with the filename
     res.json({ filename: req.file.filename });
@@ -71,6 +73,7 @@ const updateProduct = async (req, res) => {
 };
 
 const deleteProductImg = (req, res) => {
+  const { id } = req.body;
   const filename = req.params.filename;
   console.log("filename ", filename);
   const filePath = path.resolve("uploads/products", filename);
@@ -90,13 +93,15 @@ const deleteProductImg = (req, res) => {
       }
 
       try {
-        // Delete the productImg property from the Product collection
-        const id = req.id;
+        // Delete the profileImg property from the Manager collection
+        console.log("id ", id);
         const updatedProduct = await Product.findOneAndUpdate(
           { _id: id },
           { productImg: "" },
           { new: true }
         );
+
+        console.log("updatedProduct ", updatedProduct);
 
         if (!updatedProduct) {
           return res.status(404).json({ error: "Product not found" });
@@ -128,7 +133,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   createProduct,
-  uploadServiceImg,
+  uploadProductImg,
   getAllProductsByShopName,
   getAllProducts,
   getProductById,

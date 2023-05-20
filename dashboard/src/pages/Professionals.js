@@ -210,10 +210,10 @@ const Professionals = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 text-left">ID</th>
-              <th className="py-3 text-left">Name</th>
-              <th className="py-3 text-left">Office Hours</th>
-              <th className="py-3 pr-6 text-left">Description</th>
+              <th className="py-3 px-4 text-left">Id</th>
+              <th className="py-3 pl-2 text-left">Name</th>
+              <th className="py-3 pl-2 text-center">Office Hours</th>
+              <th className="py-3 pl-2 pr-6 text-left">Description</th>
               <th className="py-3 pr-6 text-right">Activated?</th>
               <th className="py-3 pr-6 text-right">Actions</th>
             </tr>
@@ -224,17 +224,19 @@ const Professionals = () => {
                 key={professional.name}
                 className="border-b border-gray-300 text-gray-800 text-xs"
               >
-                <td className="py-2 ps-2 text-center">
+                <td className="py-2 pl-4 text-start">
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(professional.id)}
                     onChange={() => handleCheckboxChange(professional.id)}
                   />
                 </td>
-                <td className="py-2">{index + 1}</td>
-                <td className="py-2">{professional.name}</td>
-                <td className="py-2">{professional.officeHours}</td>
-                <td className="py-2">{professional.description}</td>
+                <td className="py-2 pl-2">{index + 1}</td>
+                <td className="py-2 pl-2">{professional.name}</td>
+                <td className="py-2 pl-2 text-center">
+                  {professional.officeHours}
+                </td>
+                <td className="py-2 pl-2">{professional.description}</td>
                 <td className="py-2 pr-6 text-center">
                   {/* {professional.activated ? "active" : "inactive"} */}
                   <div className="flex justify-center items-center">

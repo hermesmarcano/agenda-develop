@@ -121,6 +121,7 @@ const Products = () => {
       // Not all IDs are selected, select all IDs
       const allIds = currentProducts.map((product) => product.id);
       setSelectedIds(allIds);
+      console.log(allIds);
     }
   };
 
@@ -247,7 +248,7 @@ const Products = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 px-3 text-left">id</th>
+              <th className="py-3 px-4 text-left">Id</th>
               <th className="py-3 text-left">Name</th>
               <th className="py-3 pr-6 text-left">Speciality</th>
               <th className="py-3 pr-6 text-left">Price R$</th>
@@ -262,11 +263,11 @@ const Products = () => {
                 key={product.name}
                 className="border-b border-gray-300 text-gray-800 text-xs"
               >
-                <td className="py-2 text-center">
+                <td className="py-2 pl-4 text-start">
                   <input
                     type="checkbox"
-                    checked={selectedIds.includes(product.id)}
-                    onChange={() => handleCheckboxChange(product.id)}
+                    checked={selectedIds.includes(product._id)}
+                    onChange={() => handleCheckboxChange(product._id)}
                   />
                 </td>
                 <td className="py-2 px-3 text-left">{index + 1}</td>

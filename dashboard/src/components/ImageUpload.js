@@ -25,7 +25,7 @@ const ImageUpload = ({ field, form, ...props }) => {
           {value ? (
             <img
               src={URL.createObjectURL(value)}
-              alt="Uploaded profileImg"
+              alt={`Uploaded ${field.name}`}
               className="h-full w-full object-contain"
             />
           ) : (

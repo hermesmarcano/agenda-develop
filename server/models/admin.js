@@ -94,10 +94,11 @@ const AdminSchema = new Schema(
     logo: {
       type: String,
     },
-    isManager: {
-      type: Boolean,
-      default: false,
-      enum: [false],
+    Role: {
+      type: String,
+      default: "Admin",
+      enum: ["Admin"],
+      unique: true,
     },
   },
   { timestamps: true }
