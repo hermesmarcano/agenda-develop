@@ -2,10 +2,13 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { animateScroll } from "react-scroll";
 import websiteTitleContext from "../context/WebsiteTitleContext";
+import logoContext from "../context/LogoContext";
 
 function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);
   const { websiteTitle } = useContext(websiteTitleContext);
+  const { logo } = useContext(logoContext);
+  console.log(logo);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -15,7 +18,15 @@ function Navbar() {
     <nav className="bg-white shadow-lg">
       <div className="mx-auto px-4 py-2 max-w-screen-lg flex items-center justify-between">
         <div className="flex items-center">
-          <Link to="/" className="text-gray-800 font-bold text-lg">
+          <Link
+            to="/"
+            className="text-gray-800 font-bold text-lg flex items-center justify-center"
+          >
+            <img
+              src={`http://localhost:4040/uploads/admin/${logo}`}
+              alt={logo}
+              className="w-9 mr-1"
+            />
             {websiteTitle}
           </Link>
           <button

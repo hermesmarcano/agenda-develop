@@ -51,7 +51,17 @@ const loginAdmin = async (req, res) => {
 };
 
 const updateAdmin = (req, res) => {
-  Admin.findByIdAndUpdate(req.adminId, req.body, { new: true })
+  const { password, ...updateData } = req.body;
+
+  // Check if password exists in the sent data
+  if (password) {
+    // Hash the password
+    const hash = bcrypt.hashSync(password, 10);
+    updateData.password = hash;
+    console.log(updateData.password);
+  }
+
+  Admin.findByIdAndUpdate(req.adminId, updateData, { new: true })
     .exec()
     .then((updatedAdmin) => {
       if (!updatedAdmin) {
@@ -77,6 +87,7 @@ const getAdmin = (req, res) => {
       section2Data: 1,
       servicesData: 1,
       websiteTitle: 1,
+      logo: 1,
     }
   )
     .exec()
@@ -169,6 +180,7 @@ const checkAdmin = (req, res) => {
 const uploadImg = async (req, res) => {
   try {
     // Check if the image exists with the sent filename
+    console.log("existingImg: " + req.body.existingImg);
     const existingPath = path.join(
       __dirname,
       "../uploads/admin",
@@ -182,6 +194,7 @@ const uploadImg = async (req, res) => {
     }
 
     // Image upload successful, respond with the new filename
+    console.log("file: " + req.file);
     res.json({ filename: req.file.filename });
   } catch (error) {
     // Error occurred during upload

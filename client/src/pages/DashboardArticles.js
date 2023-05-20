@@ -111,7 +111,7 @@ const DashboardArticles = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Dashboard Articles</h1>
+      <h1 className="text-3xl font-bold mb-4">Articles</h1>
       {dataFetched ? (
         <Formik
           initialValues={{

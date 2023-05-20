@@ -111,8 +111,16 @@ AdminSchema.pre("save", async function (next) {
   next();
 });
 
+// AdminSchema.methods.comparePassword = async function (candidatePassword) {
+//   return await bcrypt.compare(candidatePassword, this.password);
+// };
 AdminSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+
+  // Log the hashed password
+  console.log("Hashed password:", this.password);
+
+  return isMatch;
 };
 
 const Admin = mongoose.model("Admin", AdminSchema);

@@ -64,14 +64,14 @@ const DashboardSection1 = () => {
         const { filename } = uploadResponse.data;
 
         // Update the admin data with new image name
-        values.image = filename;
+        values.image.filename = filename;
       }
 
       // Update the admin data with new values
       const patchData = {
         section1Data: {
           title: values.title || section1Data.title,
-          image: values.image || section1Data.image,
+          image: values.image.filename || section1Data.image,
           content: values.content || section1Data.content,
         },
       };
@@ -102,7 +102,7 @@ const DashboardSection1 = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Dashboard Section 1</h1>
+      <h1 className="text-3xl font-bold mb-4">Section 1</h1>
       {section1Data ? (
         <Formik
           initialValues={{

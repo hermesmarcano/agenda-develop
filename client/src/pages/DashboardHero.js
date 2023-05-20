@@ -57,7 +57,7 @@ const DashboardHero = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Dashboard Hero</h1>
+      <h1 className="text-3xl font-bold mb-4">Hero</h1>
       {heroData ? (
         <Formik
           initialValues={{

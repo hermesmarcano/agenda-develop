@@ -41,13 +41,13 @@ const DashboardSection2 = () => {
         return;
       }
 
+      console.log(values.image);
       const formData = new FormData();
       if (values.image) {
         formData.append("image", values.image);
         formData.append("existingImg", section2Data.image);
-      }
-      // Upload the image if it exists
-      if (values.image) {
+
+        // Upload the image
         const uploadResponse = await axios.post(
           "http://localhost:4040/admin/uploads-section2-imgs",
           formData,
@@ -61,19 +61,19 @@ const DashboardSection2 = () => {
 
         // Get the uploaded image name from the response
         const { filename } = uploadResponse.data;
-
-        // Update the admin data with new image name
-        values.image = filename;
+        values.image.filename = filename;
       }
-
       // Update the admin data with new values (including the image name)
+      console.log(values.image.filename);
       const patchData = {
         section2Data: {
           title: values.title || section2Data.title,
-          image: values.image || section2Data.image,
+          image: values.image.filename || section2Data.image,
           content: values.content || section2Data.content,
         },
       };
+
+      console.log(JSON.stringify(patchData));
 
       const updateResponse = await axios.patch(
         "http://localhost:4040/admin",
@@ -101,7 +101,7 @@ const DashboardSection2 = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Dashboard Section 2</h1>
+      <h1 className="text-3xl font-bold mb-4">Section 2</h1>
       {section2Data ? (
         <Formik
           initialValues={{
