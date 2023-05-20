@@ -40,7 +40,6 @@ const Finance = () => {
       },
     })
       .then((response) => response.json())
-
       .then((data) => {
         setTransactions([...data.payments].reverse());
         console.log(data);
@@ -56,10 +55,17 @@ const Finance = () => {
           // Earnings by day
           const date = new Date(payment.dateTime);
 
-          if (earningsByDay[date]) {
-            earningsByDay[date] += payment.amount;
+          // Get the date without the time component
+          const day = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+          );
+
+          if (earningsByDay[day]) {
+            earningsByDay[day] += payment.amount;
           } else {
-            earningsByDay[date] = payment.amount;
+            earningsByDay[day] = payment.amount;
           }
 
           // Earnings by service
@@ -96,15 +102,25 @@ const Finance = () => {
           totalEarn += payment.amount;
         });
 
-        // Convert earnings by day to an array of objects
-        const dataByDay = Object.entries(earningsByDay).map(
-          ([date, earnings]) => ({
+        // Filter earnings by day to include only the last 7 days and calculate total earnings per day
+        const currentDate = new Date();
+        const lastSevenDays = [];
+        for (let i = 6; i >= 0; i--) {
+          const day = new Date(currentDate);
+          day.setDate(currentDate.getDate() - i);
+          const dayWithoutTime = new Date(
+            day.getFullYear(),
+            day.getMonth(),
+            day.getDate()
+          );
+          const earnings = earningsByDay[dayWithoutTime] || 0;
+          lastSevenDays.push({
             date: new Intl.DateTimeFormat("en", { weekday: "short" }).format(
-              new Date(date)
+              day
             ),
             earnings,
-          })
-        );
+          });
+        }
 
         // Convert earnings by service to an array of objects
         const dataByService = Object.entries(earningsByService).map(
@@ -123,41 +139,15 @@ const Finance = () => {
         );
 
         // Calculate total earnings for the last 30 days
-        const currentDate = new Date();
-        console.log("currentDate: ", currentDate);
-
         currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day
-        console.log("currentDate: ", currentDate);
-        const last30Days = new Array(30).fill().map((_, index) => {
-          const date = new Date(currentDate);
-          date.setDate(date.getDate() - index);
-          return date.toISOString().split("T")[0]; // Format the date to "YYYY-MM-DD" string
-        });
-        console.log("last30Days: ", last30Days);
+        console.log(lastSevenDays);
 
-        const totalEarningsLast30Days = last30Days.reduce((sum, date) => {
-          return sum + (earningsByDay[date] || 0);
-        }, 0);
-
-        console.log("totalEarningsLast30Days: ", totalEarningsLast30Days);
-
-        // Modify dataByDay to store the maximum of the past 7 days
-        const maxEarningsLast30Days = last30Days.reduce((max, date) => {
-          const earnings = earningsByDay[date] || 0;
-          return earnings > max ? earnings : max;
-        }, 0);
-        const modifiedDataByDay = dataByDay.map((entry) => ({
-          ...entry,
-          maxEarningsLast30Days: maxEarningsLast30Days,
-        }));
-
-        setDataByDay(modifiedDataByDay);
+        setDataByDay(lastSevenDays);
         setDataByService(dataByService);
         setDataByProduct(dataByProduct);
         setTotalEarnings(totalEarn);
         setTotalEarningsLast30Days(totalEarnLast30Days);
         setTotalSoldProducts(totalSoldProducts);
-        ////////////////////////////////////////////////////////////////
       });
   }, []);
 

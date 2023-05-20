@@ -24,6 +24,7 @@ const RegisterAppointment = ({ setModelState }) => {
       })
       .then((response) => {
         setClients(response.data);
+        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -133,6 +134,89 @@ const RegisterAppointment = ({ setModelState }) => {
     setSubmitting(false);
     resetForm();
   };
+
+  const handleSubmitPayment = (values, actions) => {
+    console.log(values);
+    let data = {
+      shopName: shopName,
+      customer: bookingInfo.customer,
+      professional: bookingInfo.professional,
+      service: bookingInfo.service,
+      dateTime: new Date(),
+      amount: values.amount,
+      description: values.description,
+    };
+    console.log(data);
+    axios
+      .post("http://localhost:4040/payments", data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        const cuurentClient = clients.find(
+          (client) => client._id === bookingInfo.customer
+        );
+        const updatedClientPayments =
+          Number(cuurentClient.payments) + Number(values.amount);
+        console.log("updatedClientPayments: ", updatedClientPayments);
+        console.log("customer id: ", bookingInfo.customer);
+        axios
+          .patch(
+            `http://localhost:4040/customers/${bookingInfo.customer}`,
+            JSON.stringify({ payments: updatedClientPayments }),
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: localStorage.getItem("ag_app_shop_token"),
+              },
+            }
+          )
+          .then((response) => {
+            console.log(response.data);
+            axios
+              .post(
+                "http://localhost:4040/appointments",
+                {
+                  customer: bookingInfo.customer,
+                  professional: bookingInfo.professional,
+                  service: bookingInfo.service,
+                  dateTime: new Date(dateTime),
+                  shopName: shopName,
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                  },
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+                alert("Booked Successfully");
+                setModelState(false);
+              })
+              .catch((error) => {
+                console.error(error.message);
+                // Handle errors
+              });
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.error(error.message);
+        // Handle errors
+      })
+      .finally(() => {
+        // Reset the form
+        actions.setSubmitting(false);
+      });
+  };
+
   return (
     <>
       {amount === 0 ? (
@@ -273,63 +357,7 @@ const RegisterAppointment = ({ setModelState }) => {
       ) : (
         <Formik
           initialValues={{ amount: amount, description: "" }}
-          onSubmit={(values, actions) => {
-            console.log(values);
-            let data = {
-              shopName: shopName,
-              customer: bookingInfo.customer,
-              professional: bookingInfo.professional,
-              service: bookingInfo.service,
-              dateTime: new Date(),
-              amount: values.amount,
-              description: values.description,
-            };
-            console.log(data);
-            axios
-              .post("http://localhost:4040/payments", data, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: token,
-                },
-              })
-              .then((response) => {
-                console.log(response.data);
-                axios
-                  .post(
-                    "http://localhost:4040/appointments",
-                    {
-                      customer: bookingInfo.customer,
-                      professional: bookingInfo.professional,
-                      service: bookingInfo.service,
-                      dateTime: new Date(dateTime),
-                      shopName: shopName,
-                    },
-                    {
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: token,
-                      },
-                    }
-                  )
-                  .then((response) => {
-                    console.log(response.data);
-                    alert("Booked Successfully");
-                    setModelState(false);
-                  })
-                  .catch((error) => {
-                    console.error(error.message);
-                    // Handle errors
-                  });
-              })
-              .catch((error) => {
-                console.error(error.message);
-                // Handle errors
-              })
-              .finally(() => {
-                // Reset the form
-                actions.setSubmitting(false);
-              });
-          }}
+          onSubmit={handleSubmitPayment}
         >
           {({ values, handleSubmit, isSubmitting }) => (
             <Form>

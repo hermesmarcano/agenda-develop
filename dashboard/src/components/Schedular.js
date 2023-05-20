@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import Popup from "./Popup";
 import RegisterAppointment from "./RegisterAppointment";
-import UpdateAppointment from "./UpdateAppointment";
+import ViewAppointment from "./ViewAppointment";
 import DateTimeContext from "../context/DateTimeContext";
 import SidebarContext from "../context/SidebarContext";
 import { FaSpinner } from "react-icons/fa";
@@ -197,7 +197,7 @@ const Scheduler = ({ date }) => {
           isOpen={updateModelState}
           onClose={() => setUpdateModelState(!updateModelState)}
           children={
-            <UpdateAppointment
+            <ViewAppointment
               setModelState={setUpdateModelState}
               appointmentId={selectedAppointmentId}
             />

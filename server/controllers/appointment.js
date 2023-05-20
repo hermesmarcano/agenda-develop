@@ -38,7 +38,10 @@ const getAllAppointments = async (req, res) => {
 
 const getAppointmentById = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id);
+    const appointment = await Appointment.findById(req.params.id)
+      .populate("customer", "name")
+      .populate("professional", "name")
+      .populate("service", "name duration");
     if (!appointment) {
       return res
         .status(404)

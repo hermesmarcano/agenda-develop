@@ -31,6 +31,35 @@ const UpdateProfessional = ({ setModelState, professionalId }) => {
     description: Yup.string().required("Required"),
   });
 
+  const handleFormSubmit = async (values, { setSubmitting, resetForm }) => {
+    console.log(values);
+    const patchData = {
+      name: values.name,
+      officeHours: values.officeHours,
+      description: values.description,
+      shopName: shopName,
+    };
+
+    try {
+      const response = await axios.patch(
+        `http://localhost:4040/professionals/${professionalId}`,
+        patchData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("ag_app_shop_token"),
+          },
+        }
+      );
+      console.log(response);
+    } catch (e) {
+      console.error(e.message);
+    }
+
+    setSubmitting(false);
+    setModelState(false);
+  };
+
   return (
     <>
       <h2 className="text-xl text-left font-bold mb-4">Update Professional</h2>
@@ -42,38 +71,7 @@ const UpdateProfessional = ({ setModelState, professionalId }) => {
             description: professionalData.description,
           }}
           validationSchema={validationSchema}
-          onSubmit={(values, { setSubmitting, resetForm }) => {
-            console.log(values);
-            const patchData = {
-              name: values.name,
-              officeHours: values.officeHours,
-              description: values.description,
-              shopName: shopName,
-            };
-
-            const fetchRequest = async () => {
-              try {
-                const response = await axios.patch(
-                  `http://localhost:4040/professionals/${professionalId}`,
-                  patchData,
-                  {
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: localStorage.getItem("ag_app_shop_token"),
-                    },
-                  }
-                );
-                console.log(response);
-              } catch (e) {
-                console.error(e.message);
-              }
-            };
-
-            fetchRequest();
-            setSubmitting(false);
-            resetForm();
-            setModelState(false);
-          }}
+          onSubmit={handleFormSubmit}
         >
           {({ isSubmitting }) => (
             <Form className="bg-white text-left rounded px-8 pt-6 pb-8 mb-4">

@@ -33,6 +33,10 @@ const AppointmentsList = () => {
   const [isDeleting, setDeleting] = useState(false);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
+    fetchAppointmentData();
+  }, [isDeleting]);
+
+  const fetchAppointmentData = () =>
     axios
       .get(`http://localhost:4040/appointments?shopName=${shopName}`, {
         headers: {
@@ -46,7 +50,6 @@ const AppointmentsList = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, [isDeleting]);
 
   const filteredAppointments = appointments.filter((appointmet) =>
     appointmet.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -106,6 +109,8 @@ const AppointmentsList = () => {
       .then((data) => console.log(data.appointment))
 
       .catch((error) => console.log(error));
+
+    fetchAppointmentData();
   }
 
   const [selectedIds, setSelectedIds] = useState([]);

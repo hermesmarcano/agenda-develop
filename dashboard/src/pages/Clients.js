@@ -290,7 +290,7 @@ const Clients = () => {
               </th>
               <th className="py-3 text-left">Name</th>
               <th className="py-3 text-left">Phone</th>
-              <th className="py-3 text-left">Payments</th>
+              <th className="py-3 text-left">Payments $</th>
               <th className="py-3 pr-6 text-center">Actions</th>
             </tr>
           </thead>

@@ -113,15 +113,14 @@ const Products = () => {
     });
   };
 
-  const handleSelectAll = () => {
-    if (selectedIds.length === currentProducts.length) {
-      // All IDs are selected, deselect all IDs
-      setSelectedIds([]);
-    } else {
-      // Not all IDs are selected, select all IDs
-      const allIds = currentProducts.map((product) => product.id);
+  const handleSelectAll = (event) => {
+    if (event.target.checked) {
+      // Select all IDs
+      const allIds = currentProducts.map((product) => product["_id"]);
       setSelectedIds(allIds);
-      console.log(allIds);
+    } else {
+      // Deselect all IDs
+      setSelectedIds([]);
     }
   };
 
@@ -241,12 +240,8 @@ const Products = () => {
         <table className="w-full table-auto border border-gray-200 divide-y divide-gray-200">
           <thead>
             <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
-              <th className="py-3 text-center">
-                <input
-                  type="checkbox"
-                  checked={selectedIds.length === currentProducts.length}
-                  onChange={handleSelectAll}
-                />
+              <th className="py-3 pl-4 text-start">
+                <input type="checkbox" onChange={handleSelectAll} />
               </th>
               <th className="py-3 px-4 text-left">Id</th>
               <th className="py-3 text-left">Name</th>

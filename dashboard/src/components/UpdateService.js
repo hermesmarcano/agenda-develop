@@ -35,7 +35,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
   });
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
-    console.log("submitting");
     try {
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {

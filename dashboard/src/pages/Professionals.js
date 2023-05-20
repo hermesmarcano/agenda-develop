@@ -203,14 +203,14 @@ const Professionals = () => {
         <table className="w-full table-auto border border-gray-200 divide-y divide-gray-200">
           <thead>
             <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
-              <th className="py-3 pl-2 text-center">
+              <th className="py-3 pl-4 text-start">
                 <input
                   type="checkbox"
                   checked={selectedIds.length === currentProfessionals.length}
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 px-4 text-left">Id</th>
+              <th className="py-3 px-4 text-center">Id</th>
               <th className="py-3 pl-2 text-left">Name</th>
               <th className="py-3 pl-2 text-center">Office Hours</th>
               <th className="py-3 pl-2 pr-6 text-left">Description</th>
@@ -231,7 +231,7 @@ const Professionals = () => {
                     onChange={() => handleCheckboxChange(professional.id)}
                   />
                 </td>
-                <td className="py-2 pl-2">{index + 1}</td>
+                <td className="py-2 px-3 text-center">{index + 1}</td>
                 <td className="py-2 pl-2">{professional.name}</td>
                 <td className="py-2 pl-2 text-center">
                   {professional.officeHours}

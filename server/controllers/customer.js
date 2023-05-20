@@ -103,12 +103,9 @@ const getCustomerById = async (req, res) => {
 // Function to update a customer by id
 const updateCustomerById = async (req, res) => {
   try {
-    const { name, phone } = req.body;
-    const customer = await Customer.findByIdAndUpdate(
-      req.params.id,
-      { name, phone },
-      { new: true }
-    );
+    const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
     }
