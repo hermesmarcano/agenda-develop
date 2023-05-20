@@ -69,7 +69,7 @@ const Finance = () => {
           }
 
           // Earnings by service
-          if (payment.service) {
+          if (payment.service.length > 0) {
             payment.service.forEach((service) => {
               if (earningsByService[service.name]) {
                 earningsByService[service.name] += service.price;
@@ -80,7 +80,7 @@ const Finance = () => {
           }
 
           // Earnings by product
-          if (payment.product) {
+          if (payment.product.length > 0) {
             const productName = payment.product.name;
             if (earningsByProduct[productName]) {
               earningsByProduct[productName] += payment.product.price;
@@ -370,8 +370,12 @@ const Finance = () => {
                         ""}
                     </td>
 
-                    {transaction.product ? (
-                      <td className="px-4 py-2">{transaction.product.name}</td>
+                    {transaction.product.length > 0 ? (
+                      <td className="px-4 py-2">
+                        {transaction.product
+                          ?.map((prod) => prod.name)
+                          .join(", ") || ""}
+                      </td>
                     ) : (
                       <td className="px-4 py-2">-</td>
                     )}
@@ -392,7 +396,7 @@ const Finance = () => {
                 ))}
                 {transactions.length === 0 && (
                   <tr>
-                    <td colSpan="6" className="px-4 py-2 text-center">
+                    <td colSpan="7" className="px-4 py-2 text-center">
                       <div className="flex flex-col items-center justify-center w-full mt-8">
                         <RiShoppingCartLine size={96} color="#CBD5E0" />
                         <p className="mt-8 text-gray-500 text-xl font-medium">

@@ -74,7 +74,7 @@ const SignIn = () => {
       </Formik>
       <p className="text-gray-500 text-sm mt-4">
         Don't have an account?{" "}
-        <Link to={`/${params.id}/register`} className="text-indigo-600">
+        <Link to={`/shops/${params.id}/register`} className="text-indigo-600">
           Register here
         </Link>
       </p>

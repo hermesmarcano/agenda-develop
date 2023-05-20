@@ -309,7 +309,7 @@ const Clients = () => {
                 </td>
                 <td className="py-2">{client.name}</td>
                 <td className="py-2">{client.phone}</td>
-                <td className="py-2">{client.payments}</td>
+                <td className="py-2">{client.payments || 0}</td>
                 <td className="py-2 pr-6 text-center">
                   <button
                     className="text-blue-500 hover:text-blue-700"

@@ -71,7 +71,7 @@ const getCustomer = async (req, res) => {
     console.log(req.customerId);
     const id = req.customerId;
     const customer = await Customer.findById(id).select(
-      "_id shopName name phone"
+      "_id shopName name phone payments"
     );
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
@@ -118,6 +118,23 @@ const updateCustomerById = async (req, res) => {
   }
 };
 
+const updateCustomer = async (req, res) => {
+  try {
+    const customer = await Customer.findByIdAndUpdate(req.cutomerId, req.body, {
+      new: true,
+    });
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+    res
+      .status(200)
+      .json({ message: "Customer updated successfully!", customer });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // Function to delete a customer by id
 const deleteCustomerById = async (req, res) => {
   try {
@@ -140,5 +157,6 @@ module.exports = {
   getCustomer,
   getCustomerById,
   updateCustomerById,
+  updateCustomer,
   deleteCustomerById,
 };

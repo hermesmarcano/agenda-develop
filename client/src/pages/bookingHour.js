@@ -25,10 +25,9 @@ const BookingHour = () => {
           .then((response) => {
             let apptDates = [];
             response.data.appointments.map((appt) => {
-              apptDates.push(new Date(appt.dateTime));
+              apptDates.push(new Date(appt.dateTime).toString());
             });
             setReservedAppt(apptDates);
-            console.log(apptDates);
           })
           .catch((err) => {
             console.log(err);
@@ -93,9 +92,13 @@ const BookingHour = () => {
                 type="button"
                 className={`${
                   selectedHour === hour ? "ring-2 ring-indigo-500" : ""
-                } bg-white hover:bg-gray-100 text-gray-900 font-semibold py-4 px-6 border rounded-lg text-center text-xl`}
-                onClick={() => handleHourChange({ target: { value: hour } })}
-                disabled={hour < today || reservedAppt.includes(hour)}
+                } bg-white hover:bg-gray-100 text-gray-900 font-semibold py-4 px-6 border rounded-lg text-center text-xl ${
+                  reservedAppt.includes(hour.toString()) && "line-through"
+                }`}
+                onClick={() => {
+                  handleHourChange({ target: { value: hour } });
+                }}
+                disabled={reservedAppt.includes(hour.toString())}
               >
                 {hour.toLocaleTimeString([], {
                   hour: "2-digit",

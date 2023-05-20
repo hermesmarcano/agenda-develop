@@ -15,6 +15,7 @@ const stripePromise = loadStripe("your_publishable_key_here");
 function BookingCheckout() {
   const navigate = useNavigate();
   const params = useParams();
+  const [customerCurrentPayments, setCustomerCurrentPayments] = useState(0);
   const [paymentOption, setPaymentOption] = useState("payOnCounter");
   const [cardErrorMessage, setCardErrorMessage] = useState(null);
   const stripe = useStripe();
@@ -58,6 +59,7 @@ function BookingCheckout() {
       .then((response) => {
         const customer = response.data;
         console.log(response.data);
+        setCustomerCurrentPayments(customer.payments);
         setBookingInfo({
           ...bookingInfo,
           customer: customer._id,
@@ -155,28 +157,45 @@ function BookingCheckout() {
       }
     } else {
       // Handle payOnCounter option here
-      console.log("payment obj: " + JSON.stringify(paymentObj));
-      console.log("appointment obj: " + JSON.stringify(appointmentObj));
+      console.log({
+        payments: Number(customerCurrentPayments) + Number(paymentObj.amount),
+      });
       instance
-        .post(`/payments/`, JSON.stringify(paymentObj), {
+        .post(`/payments/`, paymentObj, {
           headers: { "Content-Type": "application/json" },
         })
         .then((response) => {
           console.log(response);
           instance
-            .post(`/appointments/`, JSON.stringify(appointmentObj), {
-              headers: { "Content-Type": "application/json" },
-            })
+            .patch(
+              `/customers/${paymentObj.customer}`,
+              {
+                payments:
+                  Number(customerCurrentPayments) + Number(paymentObj.amount),
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: localStorage.getItem("ag_app_customer_token"),
+                },
+              }
+            )
             .then((response) => {
-              console.log(response);
-              localStorage.setItem("payment", "on Counter");
-              //   setTwilioPhone('+123 456 7890');
-              //   setRecipientPhone('+123 456 7890');
-              //   setMessageBody("");
-              //   sendSMS();
-              navigate(`/shops/${params.id}/booking-completed`);
-            })
-            .catch((error) => console.log(error));
+              instance
+                .post(`/appointments/`, appointmentObj, {
+                  headers: { "Content-Type": "application/json" },
+                })
+                .then((response) => {
+                  console.log(response);
+                  localStorage.setItem("payment", "on Counter");
+                  //   setTwilioPhone('+123 456 7890');
+                  //   setRecipientPhone('+123 456 7890');
+                  //   setMessageBody("");
+                  //   sendSMS();
+                  navigate(`/shops/${params.id}/booking-completed`);
+                })
+                .catch((error) => console.log(error));
+            });
         })
         .catch((error) => console.log(error));
     }
