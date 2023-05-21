@@ -41,28 +41,28 @@ function Header() {
   };
   return (
     <header
-      className={`fixed top-0 left-0 right-0 text-${theme}-500 shadow-lg py-4 px-6 flex justify-between items-center z-10`}
+      className={`fixed top-0 left-0 right-0 text-gray-500 shadow-lg py-4 px-6 flex justify-between items-center z-10`}
     >
       <div className="flex items-center">
-        <h1 className={`text-xl font-bold text-${theme}-900`}>Dashboard</h1>
+        <h1 className={`text-xl font-bold text-gray-900`}>Dashboard</h1>
       </div>
       <div className="flex items-center">
         <button className={`mr-4 focus:outline-none`}>
-          <FaBell className={`w-6 h-6 text-${theme}-400`} />
+          <FaBell className={`w-6 h-6 text-gray-400`} />
         </button>
         <div className="relative">
           <button
-            className={`relative z-10 flex justify-center items-center border h-8 w-8 rounded-full overflow-hidden shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-${theme}-500`}
+            className={`relative z-10 flex justify-center items-center border h-8 w-8 rounded-full overflow-hidden shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500`}
             aria-expanded={isMenuOpen}
             aria-haspopup="true"
             onClick={toggleMenu}
           >
             <span className="sr-only">Open user menu</span>
-            <FaUser className={`w-6 h-6 text-${theme}-400`} />
+            <FaUser className={`w-6 h-6 text-gray-400`} />
           </button>
           {isMenuOpen && (
             <div
-              className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 text-${theme}-800 bg-white ring-1 ring-black ring-opacity-5`}
+              className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 text-gray-800 bg-white ring-1 ring-black ring-opacity-5`}
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="user-menu"
@@ -73,15 +73,15 @@ function Header() {
                 role="menuitem"
               >
                 <FaCog
-                  className={`inline-block w-4 h-4 mr-2 text-${theme}-700 hover:bg-${theme}-100`}
+                  className={`inline-block w-4 h-4 mr-2 text-gray-700 hover:bg-gray-100`}
                 />
-                <span className={`text-${theme}-700 hover:bg-${theme}-100`}>
+                <span className={`text-gray-700 hover:bg-gray-100`}>
                   Settings
                 </span>
               </Link>
               <button
                 onClick={logout}
-                className={`block px-4 py-2 text-sm text-${theme}-700 hover:bg-${theme}-100 w-full text-left`}
+                className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left`}
                 role="menuitem"
               >
                 Sign out
@@ -94,7 +94,7 @@ function Header() {
             className={`ml-4 focus:outline-none cursor-pointer`}
             onClick={() => setColorDiv(!colorDiv)}
           >
-            <FaPaintBrush className={`w-6 h-6 text-${theme}-400`} />
+            <FaPaintBrush className={`w-6 h-6 text-gray-400`} />
           </button>
           {colorDiv && (
             <>
@@ -104,7 +104,7 @@ function Header() {
               ></div>
               <div className="fixed z-30 right-0 top-0 animate-scale-up-tr shadow-md rounded-lg bg-white p-4 space-y-2">
                 <div className="flex flex-wrap justify-center items-center">
-                  {[
+                  {/* {[
                     "gray",
                     "sky",
                     "orange",
@@ -114,21 +114,41 @@ function Header() {
                     "emerald",
                     "pink",
                     "rose",
-                  ].map((color, index) => (
-                    <button
-                      key={index}
-                      className={`w-10 h-10 rounded-full bg-${color}-800 text-white hover:text-${color}-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
-                      onClick={() => handleThemeChange(color)}
-                    >
-                      <IoMdColorPalette className="w-6 h-6" />
-                      {theme === color && (
-                        <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span>
-                      )}
-                    </button>
-                  ))}
+                  ].map((color, index) => ( */}
+                  <button
+                    // key={index}
+                    className={`w-10 h-10 rounded-full bg-gray-800 text-white  transition-colors flex items-center justify-center relative mr-1`}
+                    // onClick={() => handleThemeChange(color)}
+                  >
+                    <IoMdColorPalette className="w-6 h-6" />
+                    {/* {theme === color && ( */}
+                    <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span>
+                    {/* )} */}
+                  </button>
+                  <button
+                    // key={index}
+                    className={`w-10 h-10 rounded-full bg-sky-800 text-white hover:text-sky-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
+                    // onClick={() => handleThemeChange(color)}
+                  >
+                    <IoMdColorPalette className="w-6 h-6" />
+                    {/* {theme === color && ( */}
+                    {/* <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span> */}
+                    {/* )} */}
+                  </button>
+                  <button
+                    // key={index}
+                    className={`w-10 h-10 rounded-full bg-emerald-800 text-white hover:text-emerald-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
+                    // onClick={() => handleThemeChange(color)}
+                  >
+                    <IoMdColorPalette className="w-6 h-6" />
+                    {/* {theme === color && ( */}
+                    {/* <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span> */}
+                    {/* )} */}
+                  </button>
+                  {/* ))} */}
                 </div>
                 <button
-                  className={`absolute top-1 right-1 text-${theme}-500 hover:text-${theme}-800 hover:scale-150 transition-transform focus:outline-none`}
+                  className={`absolute top-1 right-1 text-gray-500 hover:text-gray-800 hover:scale-150 transition-transform focus:outline-none`}
                   onClick={() => setColorDiv(false)}
                 >
                   <FiX className="w-4 h-4" />

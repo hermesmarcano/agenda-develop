@@ -32,7 +32,17 @@ const ManagerSchema = new Schema(
     theme: {
       type: String,
       default: "gray",
-      enum: ["gray", "cyan", "red", "dark"],
+      enum: [
+        "gray",
+        "sky",
+        "orange",
+        "teal",
+        "yellow",
+        "amber",
+        "emerald",
+        "pink",
+        "rose",
+      ],
     },
     isManager: {
       type: Boolean,
