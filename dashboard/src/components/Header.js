@@ -13,7 +13,6 @@ function Header() {
   const { theme, setTheme } = useContext(ThemeContext);
 
   const handleThemeChange = (color) => {
-    // setTheme(color);
     axios
       .patch(
         "http://localhost:4040/managers",
@@ -39,9 +38,10 @@ function Header() {
     localStorage.removeItem("ag_app_shop_token");
     navigate("/login");
   };
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 text-gray-500 shadow-lg py-4 px-6 flex justify-between items-center z-10`}
+      className={`fixed top-0 left-0 right-0 text-gray-500 shadow-lg py-4 px-6 flex justify-between items-center z-10 bg-gray-100`}
     >
       <div className="flex items-center">
         <h1 className={`text-xl font-bold text-gray-900`}>Dashboard</h1>
@@ -104,48 +104,22 @@ function Header() {
               ></div>
               <div className="fixed z-30 right-0 top-0 animate-scale-up-tr shadow-md rounded-lg bg-white p-4 space-y-2">
                 <div className="flex flex-wrap justify-center items-center">
-                  {/* {[
-                    "gray",
-                    "sky",
-                    "orange",
-                    "teal",
-                    "yellow",
-                    "amber",
-                    "emerald",
-                    "pink",
-                    "rose",
-                  ].map((color, index) => ( */}
                   <button
-                    // key={index}
                     className={`w-10 h-10 rounded-full bg-gray-800 text-white  transition-colors flex items-center justify-center relative mr-1`}
-                    // onClick={() => handleThemeChange(color)}
                   >
                     <IoMdColorPalette className="w-6 h-6" />
-                    {/* {theme === color && ( */}
                     <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span>
-                    {/* )} */}
                   </button>
                   <button
-                    // key={index}
-                    className={`w-10 h-10 rounded-full bg-sky-800 text-white hover:text-sky-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
-                    // onClick={() => handleThemeChange(color)}
+                    className={`w-10 h-10 rounded-full bg-gray-800 text-white hover:text-gray-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
                   >
                     <IoMdColorPalette className="w-6 h-6" />
-                    {/* {theme === color && ( */}
-                    {/* <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span> */}
-                    {/* )} */}
                   </button>
                   <button
-                    // key={index}
-                    className={`w-10 h-10 rounded-full bg-emerald-800 text-white hover:text-emerald-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
-                    // onClick={() => handleThemeChange(color)}
+                    className={`w-10 h-10 rounded-full bg-gray-800 text-white hover:text-gray-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
                   >
                     <IoMdColorPalette className="w-6 h-6" />
-                    {/* {theme === color && ( */}
-                    {/* <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span> */}
-                    {/* )} */}
                   </button>
-                  {/* ))} */}
                 </div>
                 <button
                   className={`absolute top-1 right-1 text-gray-500 hover:text-gray-800 hover:scale-150 transition-transform focus:outline-none`}

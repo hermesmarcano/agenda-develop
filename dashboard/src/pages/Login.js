@@ -161,6 +161,14 @@ const Login = () => {
               </Form>
             )}
           </Formik>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            <Link
+              to="/forgot-password"
+              className="font-medium text-indigo-600 hover:text-indigo-500"
+            >
+              Forgot your password?
+            </Link>
+          </p>
         </div>
       </div>
     </div>

@@ -56,7 +56,9 @@ cd $script_path
 echo "Creating .env file in the server folder..."
 echo "PORT=4040" > server/.env
 echo "DATABASE_URL=mongodb://127.0.0.1:27017/agenda_app" >> server/.env
-echo "JWT_SECRET=v*N\"fpu9IFJHh1FqgK~''@YS55&u5J" >> server/.env
+echo "JWT_SECRET=v*Nfpu9IFJHh1FqgK~@YS55&u5J" >> server/.env
+echo "MAIL_USERNAME=example@outlook.com" >> server/.env
+echo "MAIL_PASSWORD=xxxxxxxxx" >> server/.env
 echo "Successfully created a new .env file in the server folder."
 
 # Installing Nodemon for server as a dev-dependency

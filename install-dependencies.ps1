@@ -16,7 +16,9 @@ Remove-Item -Path "$currentDir\client\node_modules" -Force -Recurse
 @"
 PORT=4040
 DATABASE_URL=mongodb://127.0.0.1:27017/agenda_app
-JWT_SECRET=v*N`"fpu9IFJHh1FqgK~''@YS55&u5J
+JWT_SECRET=v*Nfpu9IFJHh1FqgK~@YS55&u5J
+MAIL_USERNAME=example@outlook.com
+MAIL_PASSWORD=xxxxxxxxx
 "@ | Set-Content -Path "$currentDir\server\.env" -Encoding UTF8
 
 # Create .env file in client directory

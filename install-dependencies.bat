@@ -14,7 +14,9 @@ rmdir /s /q ".\client\node_modules"
 REM Create .env file in server directory
 echo PORT=4040 > ".\server\.env"
 echo DATABASE_URL=mongodb://127.0.0.1:27017/agenda_app >> ".\server\.env"
-echo JWT_SECRET=v*N"fpu9IFJHh1FqgK~''@YS55&u5J >> ".\server\.env"
+echo JWT_SECRET=v*Nfpu9IFJHh1FqgK~@YS55&u5J >> ".\server\.env"
+echo MAIL_USERNAME=example@outlook.com >> ".\server\.env"
+echo MAIL_PASSWORD=xxxxxxxxx >> ".\server\.env"
 
 REM Create .env file in client directory
 echo PORT=3001 > ".\client\.env"

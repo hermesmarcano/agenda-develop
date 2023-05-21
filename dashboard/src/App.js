@@ -22,12 +22,15 @@ import PrivateRoutes from "./utils/PrivateRoutes";
 import DateTimeContext from "./context/DateTimeContext";
 import ThemeContext from "./context/ThemeContext";
 import axios from "axios";
+import ForgotPassword from "./pages/ForgotPassword";
+import PasswordReset from "./pages/PasswordReset";
+import CheckEmail from "./pages/CheckEmail";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
   const [shopName, setShopName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState("gray");
   axios
     .get("http://localhost:4040/managers/id", {
       headers: {
@@ -35,6 +38,7 @@ function App() {
       },
     })
     .then((res) => {
+      console.log("theme: ", res.data.theme);
       setTheme(res.data.theme);
     });
 
@@ -75,6 +79,22 @@ function App() {
                 </Route>
                 <Route path="/register" exact element={<Register />} />
                 <Route path="/login" exact element={<Login />} />
+                <Route
+                  path="/forgot-password"
+                  exact
+                  element={<ForgotPassword />}
+                />
+                <Route path="/check-email" exact element={<CheckEmail />} />
+                <Route
+                  path="/reset-password"
+                  exact
+                  element={<PasswordReset />}
+                />
+                <Route
+                  path="/reset-password/:token"
+                  exact
+                  element={<PasswordReset />}
+                />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </HashRouter>
