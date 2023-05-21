@@ -13,54 +13,56 @@ import {
 } from "react-icons/fa";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SidebarContext from "../context/SidebarContext";
+import ThemeContext from "../context/ThemeContext";
 // import logo from "./logo.png";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("Agenda");
+  const { theme } = useContext(ThemeContext);
 
   const tabs = [
     {
       name: "Agenda",
-      icon1: <FaCalendar className="text-gray-400 h-7 w-7" />,
-      icon2: <FaCalendar className="text-gray-400 h-6 w-6" />,
+      icon1: <FaCalendar className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaCalendar className={`text-${theme}-400 h-6 w-6`} />,
       link: "/",
     },
     {
       name: "Appointments List",
-      icon1: <FaList className="text-gray-400 h-7 w-7" />,
-      icon2: <FaList className="text-gray-400 h-6 w-6" />,
+      icon1: <FaList className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaList className={`text-${theme}-400 h-6 w-6`} />,
       link: "/appointments",
     },
     {
       name: "Clients",
-      icon1: <FaUsers className="text-gray-400 h-7 w-7" />,
-      icon2: <FaUsers className="text-gray-400 h-6 w-6" />,
+      icon1: <FaUsers className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaUsers className={`text-${theme}-400 h-6 w-6`} />,
       link: "/clients",
     },
     {
       name: "Services",
-      icon1: <FaCogs className="text-gray-400 h-7 w-7" />,
-      icon2: <FaCogs className="text-gray-400 h-6 w-6" />,
+      icon1: <FaCogs className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaCogs className={`text-${theme}-400 h-6 w-6`} />,
       link: "/services",
     },
     {
       name: "Finance",
-      icon1: <FaChartPie className="text-gray-400 h-7 w-7" />,
-      icon2: <FaChartPie className="text-gray-400 h-6 w-6" />,
+      icon1: <FaChartPie className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaChartPie className={`text-${theme}-400 h-6 w-6`} />,
       link: "/finance",
     },
     {
       name: "Professionals",
-      icon1: <FaUserTie className="text-gray-400 h-7 w-7" />,
-      icon2: <FaUserTie className="text-gray-400 h-6 w-6" />,
+      icon1: <FaUserTie className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaUserTie className={`text-${theme}-400 h-6 w-6`} />,
       link: "/professionals",
     },
     {
       name: "Products",
-      icon1: <FaShoppingCart className="text-gray-400 h-7 w-7" />,
-      icon2: <FaShoppingCart className="text-gray-400 h-6 w-6" />,
+      icon1: <FaShoppingCart className={`text-${theme}-400 h-7 w-7`} />,
+      icon2: <FaShoppingCart className={`text-${theme}-400 h-6 w-6`} />,
       link: "/products",
     },
   ];
@@ -103,7 +105,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`h-[calc(100%-40px)] z-10 fixed left-0 w-56 bg-gray-800 overflow-y-auto transition-all duration-300 ${
+      className={`h-[calc(100%-40px)] z-10 fixed left-0 w-56 bg-${theme}-800 overflow-y-auto transition-all duration-300 ${
         isSidebarOpen
           ? "translate-x-0 ease-out px-1"
           : "-translate-x-36 ease-in"
@@ -112,7 +114,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       <div className="flex items-center justify-center mt-8">
         {!isSidebarOpen && (
           <div className="w-full flex justify-end pe-6 pb-5 border-b-2">
-            <FaBold className="text-gray-400 h-9 w-9" />
+            <FaBold className={`text-${theme}-400 h-9 w-9`} />
           </div>
         )}
         {isSidebarOpen && (
@@ -127,7 +129,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           <button
             key={tab.name}
             className={`w-full flex items-center mt-4 py-2 px-6 ${
-              activeTab === tab.name ? "bg-gray-700" : "bg-gray-900"
+              activeTab === tab.name ? `bg-${theme}-700` : `bg-${theme}-900`
             } ${isSidebarOpen && "rounded-lg"}`}
             onClick={() => {
               handleClick(tab.name, tab.link);
@@ -147,7 +149,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       </nav>
       <div className="absolute bottom-0 right-0 mb-8">
         <button
-          className="flex items-center mx-auto px-3 py-2 bg-gray-700 rounded-lg"
+          className={`flex items-center mx-auto px-3 py-2 bg-${theme}-700 rounded-lg`}
           onClick={() => toggleSidebar(!isSidebarOpen)}
         >
           {isSidebarOpen ? (

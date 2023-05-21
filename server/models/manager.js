@@ -29,6 +29,11 @@ const ManagerSchema = new Schema(
     profileImg: {
       type: String,
     },
+    theme: {
+      type: String,
+      default: "gray",
+      enum: ["gray", "cyan", "red", "dark"],
+    },
     isManager: {
       type: Boolean,
       default: true,

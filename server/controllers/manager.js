@@ -32,7 +32,7 @@ const getShops = async (req, res) => {
 const getManager = async (req, res) => {
   try {
     const manager = await Manager.findOne({ _id: req.id }).select(
-      "_id name shopName urlSlug profileImg"
+      "_id name shopName urlSlug profileImg theme"
     );
     if (!manager) {
       return res.status(404).json({ message: "Manager not found" });

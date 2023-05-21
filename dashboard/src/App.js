@@ -20,48 +20,67 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import DateTimeContext from "./context/DateTimeContext";
+import ThemeContext from "./context/ThemeContext";
+import axios from "axios";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
   const [shopName, setShopName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
+  const [theme, setTheme] = useState("dark");
+  axios
+    .get("http://localhost:4040/managers/id", {
+      headers: {
+        Authorization: localStorage.getItem("ag_app_shop_token"),
+      },
+    })
+    .then((res) => {
+      setTheme(res.data.theme);
+    });
 
   return (
     <div className="h-screen overflow-hidden">
-      <DateTimeContext.Provider
+      <ThemeContext.Provider
         value={{
-          dateTime: dateTime,
-          setDateTime: setDateTime,
+          theme: theme,
+          setTheme: setTheme,
         }}
       >
-        <SidebarContext.Provider
+        <DateTimeContext.Provider
           value={{
-            isSidebarOpen: isSidebarOpen,
-            toggleSidebar: toggleSidebar,
-            shopName: shopName,
-            setShopName: setShopName,
+            dateTime: dateTime,
+            setDateTime: setDateTime,
           }}
         >
-          <HashRouter>
-            <Routes>
-              <Route element={<PrivateRoutes />}>
-                <Route path="/" exact element={<Agenda />} />
-                <Route path="/agenda" exact element={<Agenda />} />
-                <Route path="/clients" element={<Clients />} />
-                <Route path="/appointments" element={<AppointmentsList />} />
-                <Route path="/professionals" element={<Professionals />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/finance" element={<Finance />} />
-                <Route path="/settings" element={<Settings />} />
-              </Route>
-              <Route path="/register" exact element={<Register />} />
-              <Route path="/login" exact element={<Login />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </HashRouter>
-        </SidebarContext.Provider>
-      </DateTimeContext.Provider>
+          <SidebarContext.Provider
+            value={{
+              isSidebarOpen: isSidebarOpen,
+              toggleSidebar: toggleSidebar,
+              shopName: shopName,
+              setShopName: setShopName,
+            }}
+          >
+            <HashRouter>
+              <Routes>
+                <Route element={<PrivateRoutes />}>
+                  <Route path="/" exact element={<Agenda />} />
+                  <Route path="/agenda" exact element={<Agenda />} />
+                  <Route path="/clients" element={<Clients />} />
+                  <Route path="/appointments" element={<AppointmentsList />} />
+                  <Route path="/professionals" element={<Professionals />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/services" element={<Services />} />
+                  <Route path="/finance" element={<Finance />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
+                <Route path="/register" exact element={<Register />} />
+                <Route path="/login" exact element={<Login />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </HashRouter>
+          </SidebarContext.Provider>
+        </DateTimeContext.Provider>
+      </ThemeContext.Provider>
     </div>
   );
 }

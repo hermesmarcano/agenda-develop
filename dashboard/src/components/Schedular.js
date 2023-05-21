@@ -5,8 +5,10 @@ import ViewAppointment from "./ViewAppointment";
 import DateTimeContext from "../context/DateTimeContext";
 import SidebarContext from "../context/SidebarContext";
 import { FaSpinner } from "react-icons/fa";
+import ThemeContext from "../context/ThemeContext";
 
 const Scheduler = ({ date }) => {
+  const { theme } = useContext(ThemeContext);
   const { shopName } = useContext(SidebarContext);
   const { setDateTime } = useContext(DateTimeContext);
   const [appointmentsList, setAppointmentsList] = useState([]);
@@ -95,16 +97,18 @@ const Scheduler = ({ date }) => {
   return (
     <div className="flex justify-center items-center h-full pb-4">
       <div className="bg-gray-200 w-full lg:w-4/5 xl:w-3/4 pb-4">
-        <h1 className="text-3xl text-center text-gray-800 py-8 font-medium">
+        <h1
+          className={`text-3xl text-center text-${theme}-800 py-8 font-medium`}
+        >
           Schedule an Appointment
         </h1>
 
         <div className="flex items-center justify-between mb-4 mx-4">
-          <h2 className="text-xl font-medium text-gray-800">
+          <h2 className={`text-xl font-medium text-${theme}-800`}>
             {date.toDateString()}
           </h2>
           <button
-            className="text-gray-600 hover:text-gray-800 font-semibold text-sm"
+            className={`text-${theme}-600 hover:text-${theme}-800 font-semibold text-sm`}
             onClick={() => fetchAppointments()}
           >
             {loading ? <FaSpinner className="animate-spin" /> : "Refresh"}
@@ -151,11 +155,11 @@ const Scheduler = ({ date }) => {
                 }
                 className={`${
                   isDisabled
-                    ? "bg-gray-500 rounded-lg shadow-md p-4 cursor-not-allowed line-through text-white"
-                    : "bg-gray-700 rounded-lg shadow-md hover:shadow-lg p-4 cursor-pointer"
+                    ? `bg-${theme}-500 rounded-lg shadow-md p-4 cursor-not-allowed line-through text-white`
+                    : `bg-${theme}-700 rounded-lg shadow-md hover:shadow-lg p-4 cursor-pointer text-white`
                 }`}
               >
-                <p className="text-xl text-gray-100">
+                <p className={`text-xl text-${theme}-100`}>
                   {hour.toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -165,8 +169,8 @@ const Scheduler = ({ date }) => {
                   <button
                     className={`${
                       isDisabled
-                        ? "text-sm text-gray-100"
-                        : "text-sm text-gray-100 hover:text-gray-800"
+                        ? `text-sm text-${theme}-100`
+                        : `text-sm text-${theme}-100 hover:text-${theme}-800`
                     }`}
                     onClick={() => {
                       setSelectedAppointmentId(appointment._id);
