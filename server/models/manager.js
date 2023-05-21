@@ -44,6 +44,10 @@ const ManagerSchema = new Schema(
         "rose",
       ],
     },
+    resetToken: {
+      type: String,
+      default: null,
+    },
     isManager: {
       type: Boolean,
       default: true,

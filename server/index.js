@@ -11,6 +11,7 @@ const productRoute = require("./routes/product");
 const adminRoute = require("./routes/admin");
 const managerRoute = require("./routes/manager");
 const paymentRoute = require("./routes/payment");
+const passwrodRoute = require("./routes/password");
 
 require("dotenv").config();
 
@@ -46,6 +47,7 @@ app.use("/products", productRoute);
 app.use("/admin", adminRoute);
 app.use("/managers", managerRoute);
 app.use("/payments", paymentRoute);
+app.use("/password", passwrodRoute);
 
 app.listen(process.env.PORT || 4040, () => {
   console.log("Server started");
