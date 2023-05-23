@@ -12,6 +12,7 @@ const BookingSummary = () => {
     servicesId.push(service["_id"]);
   });
   const products = JSON.parse(localStorage.getItem("products"));
+  console.log("products: ", products);
   const productsId = [];
   if (products) {
     products.map((product) => {
@@ -83,9 +84,11 @@ const BookingSummary = () => {
         </p>
         <p className="text-lg font-semibold mb-4">Products:</p>
         <p className="text-xl mb-8">
-          {products.map((product) => {
-            return <span>{product.name} </span>;
-          })}
+          {products
+            ? products.map((product) => {
+                return <span>{product.name} </span>;
+              })
+            : "-"}
         </p>
         <p className="text-lg font-semibold mb-4">Selected Date:</p>
         <p className="text-xl mb-8">{date}</p>

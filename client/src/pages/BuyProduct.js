@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { HiCheckCircle } from "react-icons/hi";
 import instance from "../axiosConfig/axiosConfig";
 
 const BuyProduct = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [products, setProducts] = useState([]);
 
@@ -42,6 +43,12 @@ const BuyProduct = () => {
       // If no, add it to the array
       setSelectedProducts([...selectedProducts, product]);
     }
+  };
+
+  const handleSkip = () => {
+    setSelectedProducts([]);
+    localStorage.removeItem("products");
+    navigate(`/shops/${params.id}/booking-summary`);
   };
 
   return (
@@ -117,15 +124,16 @@ const BuyProduct = () => {
             </button>
           </Link>
           <p className="text-gray-500 mt-4">or</p>
-
-          <button
-            className="text-gray-600 hover:text-indigo-600 mt-2 focus:outline-none"
-            onClick={() => setSelectedProducts([])}
-          >
-            Skip
-          </button>
         </div>
       )}
+      <div className="flex flex-col items-center">
+        <button
+          className="text-gray-600 hover:text-indigo-600 mt-2 focus:outline-none"
+          onClick={handleSkip}
+        >
+          Skip
+        </button>
+      </div>
     </div>
   );
 };
