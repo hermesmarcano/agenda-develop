@@ -133,12 +133,12 @@ const Scheduler = ({ date }) => {
 
             // console.log("prevAppointmentDuration: " + prevAppointmentDuration);
 
+            // ||
+            // prevAppointmentDuration > 30; // Disable if previous appointment's total service duration exceeds 30 minutes (30 minutes = 1800000 milliseconds)
             const isDisabled =
               hour < new Date() ||
               (appointment !== undefined &&
                 appointment.dateTime - hour.getTime() < 1800000);
-            // ||
-            // prevAppointmentDuration > 30; // Disable if previous appointment's total service duration exceeds 30 minutes (30 minutes = 1800000 milliseconds)
 
             const customerName = appointment?.customer?.name;
             const professionalName = appointment?.professional?.name;
