@@ -230,11 +230,12 @@ const SchedulerC = ({
     const timeSlots = [];
 
     timeSlots.push(
-      <div key="title" className="flex items-center">
-        <div className="w-10"></div> {/* Empty space for alignment */}
+      <div key="title" className="flex items-center ">
+        <FaUserCircle size={30} className="text-gray-400" />
+        <div className="w-10 "></div> {/* Empty space for alignment */}
         {weekdays.map((weekday, index) => (
           <div
-            className="w-[calc(100%/7)] border-b border-gray-400"
+            className="w-[calc(100%/7)] border-b py-4 border-gray-400"
             key={index}
           >
             <h5 className="text-center">{formatDateWithDayShort(weekday)}</h5>
