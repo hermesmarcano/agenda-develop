@@ -121,6 +121,15 @@ const SchedulerC = ({
     return date.toLocaleDateString(undefined, options);
   };
 
+  const formatDateWithDayShort = (date) => {
+    const options = {
+      weekday: "short",
+      month: "numeric",
+      day: "numeric",
+    };
+    return date.toLocaleDateString(undefined, options);
+  };
+
   const getDateWithOffset = (startDate, offset) => {
     const date = new Date(startDate);
     date.setDate(date.getDate() + offset);
@@ -196,29 +205,39 @@ const SchedulerC = ({
   };
 
   const renderWeeklyView = () => {
-    const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const startDate = getDateWithOffset(selectedDate, -selectedDate.getDay());
+    // const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    // const startDate = getDateWithOffset(selectedDate, -selectedDate.getDay());
 
-    const weekdaysWithDate = weekdays.map((weekday, index) => {
-      const date = getDateWithOffset(startDate, index);
-      const formattedDate = formatDateShort(date);
-      return {
-        day: weekday,
-        date: formattedDate,
-      };
-    });
+    // const weekdaysWithDate = weekdays.map((weekday, index) => {
+    //   const date = getDateWithOffset(startDate, index);
+    //   const formattedDate = formatDateShort(date);
+    //   return {
+    //     day: weekday,
+    //     date: formattedDate,
+    //   };
+    // });
+
+    const weekdays = [];
+    const currentDate = new Date();
+    const startOfWeek = getStartOfWeek(currentDate);
+
+    for (let i = 0; i < 7; i++) {
+      const currentDay = new Date(startOfWeek);
+      currentDay.setDate(startOfWeek.getDate() + i);
+      weekdays.push(currentDay);
+    }
 
     const timeSlots = [];
 
     timeSlots.push(
       <div key="title" className="flex items-center">
         <div className="w-10"></div> {/* Empty space for alignment */}
-        {weekdaysWithDate.map(({ day, date }, index) => (
+        {weekdays.map((weekday, index) => (
           <div
             className="w-[calc(100%/7)] border-b border-gray-400"
             key={index}
           >
-            <h5 className="text-center">{`${day} ${date}`}</h5>
+            <h5 className="text-center">{formatDateWithDayShort(weekday)}</h5>
           </div>
         ))}
       </div>
@@ -235,7 +254,7 @@ const SchedulerC = ({
               })}
             </span>
           </div>
-          {weekdaysWithDate.map(({ day, date }, dayIndex) => {
+          {weekdays.map((weekday, dayIndex) => {
             const startDateTime = new Date(date);
             startDateTime.setHours(hour.getHours());
             startDateTime.setMinutes(hour.getMinutes());
@@ -292,52 +311,52 @@ const SchedulerC = ({
                             startDateTime.getTime()
                       );
 
-                      if (overlappingAppointment) {
-                        return (
-                          <div
-                            key={index}
-                            className={`h-6 bg-red-500 rounded-md p-1 ${
-                              index !== 3 &&
-                              "border-b border-dotted border-gray-600"
-                            } cursor-pointer hover:opacity-80 text-white font-medium text-xs flex items-center justify-center`}
-                            onClick={() => {
-                              setSelectedAppointmentId(
-                                overlappingAppointment._id
-                              );
-                              setUpdateModelState(true);
-                            }}
-                            disabled={isDisabled}
-                          >
-                            <span>Overlapping Appointment</span>
-                          </div>
-                        );
-                      }
+                      // if (overlappingAppointment) {
+                      //   return (
+                      //     <div
+                      //       key={index}
+                      //       className={`h-6 bg-red-500 rounded-md p-1 ${
+                      //         index !== 3 &&
+                      //         "border-b border-dotted border-gray-600"
+                      //       } cursor-pointer hover:opacity-80 text-white font-medium text-xs flex items-center justify-center`}
+                      //       onClick={() => {
+                      //         setSelectedAppointmentId(
+                      //           overlappingAppointment._id
+                      //         );
+                      //         setUpdateModelState(true);
+                      //       }}
+                      //       disabled={isDisabled}
+                      //     >
+                      //       <span>Overlapping Appointment</span>
+                      //     </div>
+                      //   );
+                      // }
 
-                      if (appointment) {
-                        return (
-                          <div
-                            key={index}
-                            className={`h-6 bg-gradient-to-r from-gray-700 to-gray-800 rounded-md p-1 ${
-                              index !== 3 &&
-                              "border-b border-dotted border-gray-600"
-                            } cursor-pointer hover:opacity-80 text-white font-medium text-xs flex items-center justify-center`}
-                            onClick={() => {
-                              setSelectedAppointmentId(appointment._id);
-                              setUpdateModelState(true);
-                            }}
-                            disabled={isDisabled}
-                          >
-                            <span>{`Reserved for `}</span>
-                            <span className="font-bold">{`${customerName}`}</span>
-                            <span>{` with `}</span>
-                            <span className="font-semibold">
-                              {professionalName}
-                            </span>
-                            <span>{`, Services: `}</span>
-                            <span className="italic">{serviceNames}</span>
-                          </div>
-                        );
-                      }
+                      // if (appointment) {
+                      //   return (
+                      //     <div
+                      //       key={index}
+                      //       className={`h-6 bg-gradient-to-r from-gray-700 to-gray-800 rounded-md p-1 ${
+                      //         index !== 3 &&
+                      //         "border-b border-dotted border-gray-600"
+                      //       } cursor-pointer hover:opacity-80 text-white font-medium text-xs flex items-center justify-center`}
+                      //       onClick={() => {
+                      //         setSelectedAppointmentId(appointment._id);
+                      //         setUpdateModelState(true);
+                      //       }}
+                      //       disabled={isDisabled}
+                      //     >
+                      //       <span>{`Reserved for `}</span>
+                      //       <span className="font-bold">{`${customerName}`}</span>
+                      //       <span>{` with `}</span>
+                      //       <span className="font-semibold">
+                      //         {professionalName}
+                      //       </span>
+                      //       <span>{`, Services: `}</span>
+                      //       <span className="italic">{serviceNames}</span>
+                      //     </div>
+                      //   );
+                      // }
 
                       return (
                         <div
