@@ -108,9 +108,9 @@ const Agenda = () => {
   const [modelState, setModelState] = useState(false);
 
   return (
-    <div className="flex mx-auto px-2 mt-2 pb-2">
-      <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 w-52">
-        <div className="md:hidden bg-gray-100 p-4 flex items-center mb-3 md:ml-3 mt-2">
+    <div className="grid grid-cols-1 gap-1 md:grid-cols-2m x-auto px-2 mt-2 pb-2">
+      <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
+        <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
           <img
             className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
             src={`http://localhost:4040/uploads/profile/${myShopImg}`}
@@ -118,7 +118,7 @@ const Agenda = () => {
           />
           <h1 className="text-lg font-bold">{`${shopName}`}</h1>
         </div>
-        <div className="w-full md:w-auto mb-3 md:mb-0 ">
+        <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
           <Calendar
             value={date}
             onChange={handleDateClick}
@@ -138,7 +138,7 @@ const Agenda = () => {
           />
           {/* <h1 className="text-base font-bold">{`Welcome to ${shopName}`}</h1> */}
         </div>
-        <div className="hidden md:flex md:flex-col md:jsutify-center md:items-start border border-gray-400 p-4 mt-3">
+        <div className="flex md:flex-col md:jsutify-center md:items-start border border-gray-400 p-4 mt-3">
           <label className="mb-1">Select Professional</label>
           <select
             className="w-full p-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
