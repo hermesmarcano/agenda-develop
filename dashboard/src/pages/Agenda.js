@@ -108,7 +108,7 @@ const Agenda = () => {
   const [modelState, setModelState] = useState(false);
 
   return (
-    <div className="grid grid-cols-1 gap-1 md:grid-cols-2m x-auto px-2 mt-2 pb-2">
+    <div className="grid grid-cols-1 gap-1 md:flex md: mx-auto px-2 mt-2 pb-2">
       <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
         <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
           <img
