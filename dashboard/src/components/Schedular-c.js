@@ -121,9 +121,15 @@ const SchedulerC = ({
     return date.toLocaleDateString(undefined, options);
   };
 
-  const formatDateWithDayShort = (date) => {
+  const formatDateWithWeekShort = (date) => {
     const options = {
       weekday: "short",
+    };
+    return date.toLocaleDateString(undefined, options);
+  };
+
+  const formatDateWithDayMonthShort = (date) => {
+    const options = {
       month: "numeric",
       day: "numeric",
     };
@@ -205,20 +211,8 @@ const SchedulerC = ({
   };
 
   const renderWeeklyView = () => {
-    // const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    // const startDate = getDateWithOffset(selectedDate, -selectedDate.getDay());
-
-    // const weekdaysWithDate = weekdays.map((weekday, index) => {
-    //   const date = getDateWithOffset(startDate, index);
-    //   const formattedDate = formatDateShort(date);
-    //   return {
-    //     day: weekday,
-    //     date: formattedDate,
-    //   };
-    // });
-
     const weekdays = [];
-    const currentDate = new Date();
+    const currentDate = new Date(startWeekDate);
     const startOfWeek = getStartOfWeek(currentDate);
 
     for (let i = 0; i < 7; i++) {
@@ -238,13 +232,17 @@ const SchedulerC = ({
             className="w-[calc(100%/7)] border-b py-4 border-gray-400"
             key={index}
           >
-            <h5 className="text-center">{formatDateWithDayShort(weekday)}</h5>
+            <h5 className="text-center">{formatDateWithWeekShort(weekday)}</h5>
+            <h5 className="text-center">
+              {formatDateWithDayMonthShort(weekday)}
+            </h5>
           </div>
         ))}
       </div>
     );
 
-    hoursArr.map((hour, hourIndex) => {
+    hoursArrWeek.map((hour, hourIndex) => {
+      let prevEndDateTime = null;
       timeSlots.push(
         <div key={hour} className="flex items-center">
           <div className="w-11 text-center">
@@ -256,7 +254,8 @@ const SchedulerC = ({
             </span>
           </div>
           {weekdays.map((weekday, dayIndex) => {
-            const startDateTime = new Date(date);
+            // console.log("weekday: " + weekday.getDay());
+            const startDateTime = new Date(weekday);
             startDateTime.setHours(hour.getHours());
             startDateTime.setMinutes(hour.getMinutes());
 
@@ -288,76 +287,89 @@ const SchedulerC = ({
                     }`}
                   >
                     {Array.from({ length: 4 }).map((_, index) => {
-                      const duration = appointment?.services?.reduce(
-                        (totalDuration, service) =>
-                          totalDuration + service.duration,
+                      const startDateTime = new Date(weekday);
+                      startDateTime.setHours(hour.getHours());
+                      startDateTime.setMinutes(hour.getMinutes());
+                      startDateTime.setMinutes(index * 15);
+
+                      const appointment = appointmentsList.find(
+                        (appt) =>
+                          new Date(appt.dateTime).toString() ===
+                          startDateTime.toString()
+                      );
+
+                      const isDisabled =
+                        startDateTime < new Date() ||
+                        (appointment !== undefined &&
+                          appointment.dateTime - startDateTime.getTime() <
+                            1800000);
+
+                      const customerName = appointment?.customer?.name;
+                      const professionalName = appointment?.professional?.name;
+                      const serviceNames =
+                        appointment?.service?.map((s) => s.name).join(", ") ||
+                        "";
+
+                      const duration = appointment?.service?.reduce(
+                        (totalDuration, s) => totalDuration + s.duration,
                         0
                       );
+
                       const endDateTime = new Date(startDateTime);
                       endDateTime.setMinutes(
-                        startDateTime.getMinutes() + index * 15 + duration
+                        startDateTime.getMinutes() + duration
                       );
 
-                      const overlappingAppointment = appointmentsList.find(
-                        (appt) =>
-                          new Date(appt.dateTime).getTime() <
-                            endDateTime.getTime() &&
-                          new Date(appt.dateTime).getTime() +
-                            appt.services.reduce(
-                              (totalDuration, service) =>
-                                totalDuration + service.duration,
-                              0
-                            ) *
-                              60000 >
-                            startDateTime.getTime()
-                      );
+                      // Check if previous endDateTime is greater than the current startTime
+                      const isPrevEndGreater =
+                        prevEndDateTime && prevEndDateTime > startDateTime;
 
-                      // if (overlappingAppointment) {
-                      //   return (
-                      //     <div
-                      //       key={index}
-                      //       className={`h-6 bg-red-500 rounded-md p-1 ${
-                      //         index !== 3 &&
-                      //         "border-b border-dotted border-gray-600"
-                      //       } cursor-pointer hover:opacity-80 text-white font-medium text-xs flex items-center justify-center`}
-                      //       onClick={() => {
-                      //         setSelectedAppointmentId(
-                      //           overlappingAppointment._id
-                      //         );
-                      //         setUpdateModelState(true);
-                      //       }}
-                      //       disabled={isDisabled}
-                      //     >
-                      //       <span>Overlapping Appointment</span>
-                      //     </div>
-                      //   );
-                      // }
+                      // Update prevEndDateTime if necessary
+                      if (endDateTime > prevEndDateTime) {
+                        prevEndDateTime = endDateTime;
+                      }
 
-                      // if (appointment) {
-                      //   return (
-                      //     <div
-                      //       key={index}
-                      //       className={`h-6 bg-gradient-to-r from-gray-700 to-gray-800 rounded-md p-1 ${
-                      //         index !== 3 &&
-                      //         "border-b border-dotted border-gray-600"
-                      //       } cursor-pointer hover:opacity-80 text-white font-medium text-xs flex items-center justify-center`}
-                      //       onClick={() => {
-                      //         setSelectedAppointmentId(appointment._id);
-                      //         setUpdateModelState(true);
-                      //       }}
-                      //       disabled={isDisabled}
-                      //     >
-                      //       <span>{`Reserved for `}</span>
-                      //       <span className="font-bold">{`${customerName}`}</span>
-                      //       <span>{` with `}</span>
-                      //       <span className="font-semibold">
-                      //         {professionalName}
-                      //       </span>
-                      //       <span>{`, Services: `}</span>
-                      //       <span className="italic">{serviceNames}</span>
-                      //     </div>
-                      //   );
-                      // }
+                      // Add condition to set gray background and disable slot
+                      if (isPrevEndGreater) {
+                        return (
+                          <div
+                            key={index}
+                            className={`h-6 bg-gray-800 p-1
+                      ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+                      cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
+                            disabled={isDisabled}
+                          ></div>
+                        );
+                      }
+
+                      if (appointment) {
+                        return (
+                          <div
+                            key={index}
+                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex flex-wrap items-center justify-start hover:text-gray-500 ${
+                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                            onClick={() => {
+                              setSelectedAppointmentId(appointment._id);
+                              setUpdateModelState(true);
+                            }}
+                            disabled={isDisabled}
+                          >
+                            <span className="text-gray-300">Reserved for</span>
+                            <span className="font-bold text-white mx-1">
+                              {customerName}
+                            </span>
+                            <span className="text-gray-300">with</span>
+                            <span className="font-semibold text-white mx-1">
+                              {professionalName}
+                            </span>
+                            <span className="text-gray-300">Services:</span>
+                            <span className="italic text-white ml-1">
+                              {serviceNames}
+                            </span>
+                          </div>
+                        );
+                      }
 
                       return (
                         <div
@@ -452,7 +464,7 @@ const SchedulerC = ({
                   return (
                     <div
                       key={index}
-                      className={`h-6 bg-gray-800 p-1 
+                      className={`h-6 bg-gray-800 p-1
                       ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                       cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
                       disabled={isDisabled}
@@ -549,7 +561,7 @@ const SchedulerC = ({
                 className="px-2 py-1 rounded-md text-sm"
                 onClick={handlePreviousWeekDate}
               >
-                <IoIosArrowBack className="inline-block" />
+                <IoIosArrowBack className="inline-block -mr-2" />
                 <IoIosArrowBack className="inline-block" />
               </button>
               <h2 className="font-semibold text-sm">
@@ -560,7 +572,7 @@ const SchedulerC = ({
                 onClick={handleNextWeekDate}
               >
                 <IoIosArrowForward className="inline-block" />
-                <IoIosArrowForward className="inline-block" />
+                <IoIosArrowForward className="inline-block -ml-2" />
               </button>
             </div>
           )}

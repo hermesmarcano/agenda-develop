@@ -8,7 +8,7 @@ const ViewAppointment = ({ setModelState, appointmentId }) => {
   const { shopName } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [appointmentData, setAppointmentData] = useState(null);
-  const { dateTime } = useContext(DateTimeContext);
+  const [dateTime, setDateTime] = useState(new Date());
 
   useEffect(() => {
     axios
@@ -20,6 +20,7 @@ const ViewAppointment = ({ setModelState, appointmentId }) => {
       .then((response) => {
         setAppointmentData(response.data.appointment);
         console.log(response.data.appointment);
+        setDateTime(new Date(response.data.appointment.dateTime));
       })
       .catch((error) => {
         console.error(error);
