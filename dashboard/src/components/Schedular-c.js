@@ -195,11 +195,11 @@ const SchedulerC = ({
     onSelectedWeekDateChange(nextWeekDate); // Call the callback function to update the date in the Agenda component
   };
 
-  const renderDailyView = () => {
-    // Daily view rendering logic
-    // You can use the existing renderTimeSlots() function for this
-    return renderTimeSlots();
-  };
+  // const renderDailyView = () => {
+  //   // Daily view rendering logic
+  //   // You can use the existing renderTimeSlots() function for this
+  //   return renderTimeSlots();
+  // };
 
   const getStartOfWeek = (date) => {
     const startOfWeek = new Date(date);
@@ -216,6 +216,7 @@ const SchedulerC = ({
     const weekdays = [];
     const currentDate = new Date(startWeekDate);
     const startOfWeek = getStartOfWeek(currentDate);
+    const slotWidth = `min-w-[135px] md:w-[100%]`;
 
     for (let i = 0; i < 7; i++) {
       const currentDay = new Date(startOfWeek);
@@ -228,7 +229,7 @@ const SchedulerC = ({
     timeSlots.push(
       <div
         key="title"
-        className="flex items-center relative border-b border-gray-400 ps-10"
+        className="flex items-center relative border-b border-gray-400 ps-10 min-w-[989px]"
       >
         {/* <div className="hidden md:flex absolute left-0 top-5 items-center rounded-full shadow-inner p-2 bg-gray-300">
           <FaUserCircle size={30} className="text-gray-400" />
@@ -237,7 +238,7 @@ const SchedulerC = ({
 
         {/* <div className="w-10 "></div> Empty space for alignment */}
         {weekdays.map((weekday, index) => (
-          <div className="w-[calc(100%/7)] py-4" key={index}>
+          <div className={`${slotWidth} py-4`} key={index}>
             <h5 className="text-center">{formatDateWithWeekShort(weekday)}</h5>
             <h5 className="text-center">
               {formatDateWithDayMonthShort(weekday)}
@@ -261,7 +262,7 @@ const SchedulerC = ({
           </div>
           {weekdays.map((weekday, dayIndex) => {
             return (
-              <div className="w-[calc(100%/7)]" key={dayIndex}>
+              <div className={`${slotWidth}`} key={dayIndex}>
                 <div className="flex-grow">
                   <div
                     className={`flex flex-col ${
@@ -348,14 +349,14 @@ const SchedulerC = ({
                             }}
                             disabled={isDisabled}
                           >
-                            <span className="text-gray-300">Reserved for</span>
+                            {/* <span className="text-gray-300">Reserved for</span> */}
                             <span className="font-bold text-white mx-1">
                               {customerName}
                             </span>
-                            <span className="text-gray-300">with</span>
+                            {/* <span className="text-gray-300">with</span>
                             <span className="font-semibold text-white mx-1">
                               {professionalName}
-                            </span>
+                            </span> */}
                             <span className="text-gray-300">Services:</span>
                             <span className="italic text-white ml-1">
                               {serviceNames}
@@ -390,7 +391,10 @@ const SchedulerC = ({
       // Add separator between hours
       if (hour.getHours() !== 17) {
         timeSlots.push(
-          <div key={`separator-${hour}`} className="h-px bg-gray-400"></div>
+          <div
+            key={`separator-${hour}`}
+            className="h-px bg-gray-400 min-w-[989px]"
+          ></div>
         );
       }
     });
@@ -398,15 +402,17 @@ const SchedulerC = ({
     return timeSlots;
   };
 
-  const renderTimeSlots = () => {
+  const renderDailyView = () => {
     const timeSlots = [];
     const numProfessionals = selectedProfessionals.length;
-    const slotWidth = `min-w-[150px] md:w-[100%]`;
+    const slotWidth = `min-w-[135px] md:w-[100%]`;
 
     timeSlots.push(
       <div
         key="title"
-        className="flex items-center ps-10 border-b border-gray-400"
+        className={`flex items-center ps-10 border-b border-gray-400 min-w-[calc(${
+          selectedProfessionals.length * 135
+        }px+44px)]`}
       >
         {selectedProfessionals.map((pro, index) => (
           <div
@@ -517,7 +523,7 @@ const SchedulerC = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 z-10 p-1 ${slotWidth} cursor-pointer text-white font-medium text-xs flex flex-wrap items-center justify-start hover:text-gray-500 ${
+                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex flex-wrap items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                             onClick={() => {
@@ -526,14 +532,14 @@ const SchedulerC = ({
                             }}
                             disabled={isDisabled}
                           >
-                            <span className="text-gray-300">Reserved for</span>
+                            {/* <span className="text-gray-300">Reserved for</span> */}
                             <span className="font-bold text-white mx-1">
                               {customerName}
                             </span>
-                            <span className="text-gray-300">with</span>
+                            {/* <span className="text-gray-300">with</span>
                             <span className="font-semibold text-white mx-1">
                               {professionalName}
-                            </span>
+                            </span> */}
                             <span className="text-gray-300">Services:</span>
                             <span className="italic text-white ml-1">
                               {serviceNames}
@@ -564,11 +570,15 @@ const SchedulerC = ({
           })}
         </div>
       );
-
       // Add separator between hours
       if (hourIndex < hoursArr.length - 1) {
         timeSlots.push(
-          <div key={`separator-${hour}`} className="h-px bg-gray-400"></div>
+          <div
+            key={`separator-${hour}`}
+            className={`h-px bg-gray-400 min-w-[calc(${
+              selectedProfessionals.length * 135
+            }px+44px)]`}
+          ></div>
         );
       }
     });
@@ -579,7 +589,13 @@ const SchedulerC = ({
   const renderScheduler = () => {
     return (
       <div className="border border-gray-400 p-4 mb-3 overflow-y-auto">
-        <div className="flex items-center justify-between">
+        <div
+          className={`flex items-center justify-between ${
+            viewMode === "daily"
+              ? `min-w-[calc(${selectedProfessionals.length * 135}px+44px)]`
+              : `min-w-[989px]`
+          }`}
+        >
           {renderTabs()}
           {viewMode === "daily" && (
             <div className="flex items-center">
@@ -623,10 +639,21 @@ const SchedulerC = ({
           )}
         </div>
 
+        <div
+          className={`h-px bg-gray-500 mt-3 mb-1 ${
+            viewMode === "daily"
+              ? `min-w-[calc(${selectedProfessionals.length * 135}px+44px)]`
+              : `hidden`
+          }`}
+        ></div>
+
         {viewMode === "daily" && (
           <>
-            <div className="h-px bg-gray-500 mt-3 mb-1"></div>
-            <div className="grid grid-cols-4 pt-2">
+            <div
+              className={`grid grid-cols-4 pt-2 min-w-[calc(${
+                selectedProfessionals.length * 135
+              }px+44px)`}
+            >
               <div>
                 <p className=" text-gray-500">
                   {formatDateShort(selectedDate)}
@@ -636,7 +663,13 @@ const SchedulerC = ({
           </>
         )}
 
-        <div className="h-px bg-gray-500 mt-3"></div>
+        <div
+          className={`h-px bg-gray-500 mt-3 ${
+            viewMode === "daily"
+              ? `min-w-[calc(${selectedProfessionals.length * 135}px+44px)]`
+              : `min-w-[989px]`
+          }`}
+        ></div>
 
         {viewMode === "daily" ? renderDailyView() : renderWeeklyView()}
         <ProcessAppointment
