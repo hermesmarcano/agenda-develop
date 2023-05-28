@@ -155,8 +155,17 @@ const RegisterService = ({ setModelState }) => {
                 className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
               >
                 <option value="">Select Duration</option>
+                <option value="5">5 min</option>
+                <option value="10">10 min</option>
+                <option value="15">15 min</option>
+                <option value="20">20 min</option>
+                <option value="25">25 min</option>
                 <option value="30">30 min</option>
+                <option value="35">35 min</option>
+                <option value="40">40 min</option>
                 <option value="45">45 min</option>
+                <option value="50">50 min</option>
+                <option value="55">55 min</option>
                 <option value="60">1 h</option>
               </Field>
 
@@ -187,7 +196,7 @@ const RegisterService = ({ setModelState }) => {
             <div className="flex items-center justify-between">
               <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 disabled={formikProps.isSubmitting}
               >
                 Register

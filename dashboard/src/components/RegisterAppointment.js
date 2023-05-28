@@ -5,16 +5,29 @@ import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
 import { FaCheck } from "react-icons/fa";
+import BlockSchedule from "./BlockSchedule";
+import SubmitPayment from "./SubmitPayment";
 
-const RegisterAppointment = ({ setModelState }) => {
+const RegisterAppointment = ({
+  amount,
+  clients,
+  setClients,
+  setBookingInfo,
+  setAmount,
+}) => {
   const { shopName } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
-  const [clients, setClients] = useState([]);
 
-  const [bookingInfo, setBookingInfo] = useState({});
-  const [amount, setAmount] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [activeTab, setActiveTab] = useState("appointment");
+  const [professionals, setProfessionals] = useState([]);
+  const [services, setServices] = useState([]);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   useEffect(() => {
     axios
       .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
@@ -31,7 +44,6 @@ const RegisterAppointment = ({ setModelState }) => {
       });
   }, [shopName]);
 
-  const [professionals, setProfessionals] = useState([]);
   useEffect(() => {
     axios
       .get(
@@ -50,7 +62,6 @@ const RegisterAppointment = ({ setModelState }) => {
       });
   }, []);
 
-  const [services, setServices] = useState([]);
   useEffect(() => {
     axios
       .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
@@ -115,14 +126,6 @@ const RegisterAppointment = ({ setModelState }) => {
     setAmount(totalPrice);
     setDuration(totalDuration);
 
-    console.log({
-      customer: values.customer,
-      professional: values.professional,
-      service: values.service,
-      dateTime: new Date(dateTime),
-      shopName: shopName,
-    });
-
     setBookingInfo({
       customer: values.customer,
       professional: values.professional,
@@ -135,296 +138,134 @@ const RegisterAppointment = ({ setModelState }) => {
     resetForm();
   };
 
-  const handleSubmitPayment = (values, actions) => {
-    console.log(values);
-    let data = {
-      shopName: shopName,
-      customer: bookingInfo.customer,
-      professional: bookingInfo.professional,
-      service: bookingInfo.service,
-      dateTime: new Date(),
-      amount: values.amount,
-      description: values.description,
-    };
-    console.log(data);
-    axios
-      .post("http://localhost:4040/payments", data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        const cuurentClient = clients.find(
-          (client) => client._id === bookingInfo.customer
-        );
-        const updatedClientPayments =
-          Number(cuurentClient.payments) + Number(values.amount);
-        console.log("updatedClientPayments: ", updatedClientPayments);
-        console.log("customer id: ", bookingInfo.customer);
-        axios
-          .patch(
-            `http://localhost:4040/customers/${bookingInfo.customer}`,
-            JSON.stringify({ payments: updatedClientPayments }),
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: localStorage.getItem("ag_app_shop_token"),
-              },
-            }
-          )
-          .then((response) => {
-            console.log(response.data);
-            axios
-              .post(
-                "http://localhost:4040/appointments",
-                {
-                  customer: bookingInfo.customer,
-                  professional: bookingInfo.professional,
-                  service: bookingInfo.service,
-                  dateTime: new Date(dateTime),
-                  shopName: shopName,
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                  },
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
-                alert("Booked Successfully");
-                setModelState(false);
-              })
-              .catch((error) => {
-                console.error(error.message);
-                // Handle errors
-              });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error.message);
-        // Handle errors
-      })
-      .finally(() => {
-        // Reset the form
-        actions.setSubmitting(false);
-      });
-  };
-
   return (
     <>
-      {amount === 0 ? (
-        <>
-          <h2 className="text-xl font-bold mb-4">Book an Appointment</h2>
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({
-              isSubmitting,
-              values,
-              getFieldProps,
-              handleChange,
-              handleBlur,
-            }) => (
-              <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4">
-                <div className="mb-4">
+      {/* <h2 className="text-xl font-bold mb-4">Book an Appointment</h2> */}
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({
+          isSubmitting,
+          values,
+          getFieldProps,
+          handleChange,
+          handleBlur,
+        }) => (
+          <Form className="bg-white rounded-lg px-8 py-6 mb-4">
+            <div className="mb-4">
+              <label
+                htmlFor="customer"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Customer
+              </label>
+              <Field
+                as="select"
+                id="customer"
+                name="customer"
+                className="input-field"
+              >
+                <option value="">Select customer</option>
+                {clients.map((client) => (
+                  <option key={client._id} value={client._id}>
+                    {client.name}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="customer"
+                component="p"
+                className="text-red-500 text-xs italic"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="professional"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Professional
+              </label>
+              <Field
+                as="select"
+                id="professional"
+                name="professional"
+                className="input-field"
+              >
+                <option value="">Select professional</option>
+                {professionals.map((professional) => (
+                  <option key={professional._id} value={professional._id}>
+                    {professional.name}
+                  </option>
+                ))}
+              </Field>
+              <ErrorMessage
+                name="professional"
+                component="p"
+                className="text-red-500 text-xs italic"
+              />
+            </div>
+            <div className="mb-4">
+              <label
+                htmlFor="service"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Services
+              </label>
+              <div className="services-container">
+                {services.map((service) => (
                   <label
-                    htmlFor="customer"
-                    className="block text-sm text-gray-700 font-bold mb-2"
+                    key={service._id}
+                    className="service-item flex items-center"
                   >
-                    Customer
+                    <Field
+                      as="input"
+                      type="checkbox"
+                      name="service"
+                      value={service._id}
+                      checked={values.service.includes(service._id)}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      className="hidden"
+                    />
+                    <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
+                      {values.service.includes(service._id) && (
+                        <FaCheck className="w-3 h-3 text-green-600" />
+                      )}
+                    </div>
+                    <span className="service-name text-sm font-medium text-gray-700">
+                      {service.name}
+                    </span>
                   </label>
-                  <Field
-                    as="select"
-                    id="customer"
-                    name="customer"
-                    placeholder="Select customer"
-                    className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-                  >
-                    <option value="">Select customer</option>
-                    {clients.map((client) => {
-                      return (
-                        <option key={client["_id"]} value={client["_id"]}>
-                          {client.name}
-                        </option>
-                      );
-                    })}
-                  </Field>
-                  <ErrorMessage
-                    name="customer"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="professional"
-                    className="block text-sm text-gray-700 font-bold mb-2"
-                  >
-                    Professional
-                  </label>
-                  <Field
-                    as="select"
-                    id="professional"
-                    name="professional"
-                    placeholder="Select professional"
-                    className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-                  >
-                    <option value="">Select professional</option>
-                    {professionals.map((professional) => {
-                      return (
-                        <option
-                          key={professional["_id"]}
-                          value={professional["_id"]}
-                        >
-                          {professional.name}
-                        </option>
-                      );
-                    })}
-                  </Field>
-                  <ErrorMessage
-                    name="professional"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="service"
-                    className="block text-sm text-gray-700 font-bold mb-2"
-                  >
-                    Services
-                  </label>
-                  <div className="grid grid-cols-1 gap-3 mt-2 bg-gray-100 rounded h-20 overflow-y-auto">
-                    {services.map((service) => (
-                      <label key={service._id} className="flex items-center">
-                        <Field
-                          as="input"
-                          type="checkbox"
-                          name="service"
-                          value={service._id}
-                          checked={values.service.includes(service._id)}
-                          onChange={handleChange}
-                          onBlur={handleBlur}
-                          className="sr-only"
-                        />
-                        <div className="w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
-                          {values.service.includes(service._id) && (
-                            <FaCheck className="w-3 h-3 text-green-600" />
-                          )}
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">
-                          {service.name}
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                  <ErrorMessage
-                    name="service"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-                <div className="mb-4 flex justify-between">
-                  <p className="block text-sm text-gray-500 font-bold mb-2">
-                    {new Intl.DateTimeFormat("en", {
-                      timeStyle: "short",
-                    }).format(dateTime)}
-                  </p>
-                  <p className="block text-sm text-gray-500 font-bold mb-2">
-                    {new Intl.DateTimeFormat(["ban", "id"]).format(dateTime)}
-                  </p>
-                </div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                >
-                  Book Appointment
-                </button>
-              </Form>
-            )}
-          </Formik>
-        </>
-      ) : (
-        <Formik
-          initialValues={{ amount: amount, description: "" }}
-          onSubmit={handleSubmitPayment}
-        >
-          {({ values, handleSubmit, isSubmitting }) => (
-            <Form>
-              <h2 className="text-xl font-bold mb-4">Register Payment</h2>
-              <div className="mb-4">
-                <label htmlFor="amount" className="block font-bold mb-2">
-                  Amount
-                </label>
-                <Field
-                  type="text"
-                  id="amount"
-                  name="amount"
-                  placeholder="$"
-                  className="border border-gray-300 rounded-md p-2 w-full"
-                  disabled
-                />
+                ))}
               </div>
-              <div className="mb-4">
-                <label htmlFor="date" className="block font-bold mb-2">
-                  Date
-                </label>
-                <Field
-                  type="text"
-                  id="date"
-                  name="date"
-                  value={new Intl.DateTimeFormat(["ban", "id"]).format(
-                    new Date()
-                  )}
-                  className="border border-gray-300 rounded-md p-2 w-full"
-                  disabled
-                />
-              </div>
-              <div className="mb-4">
-                <label htmlFor="description" className="block font-bold mb-2">
-                  Description
-                </label>
-                <Field
-                  type="text"
-                  id="description"
-                  name="description"
-                  className="border border-gray-300 rounded-md p-2 w-full"
-                />
-              </div>
-              <div className="flex justify-end mt-6">
-                <button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded-md mr-2"
-                  disabled={isSubmitting}
-                  onClick={handleSubmit}
-                >
-                  Submit Payment
-                </button>
-                <button
-                  type="button"
-                  className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-4 rounded-md"
-                  onClick={() => {
-                    console.log("Payment registration canceled");
-                    setModelState(false);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+              <ErrorMessage
+                name="service"
+                component="p"
+                className="text-red-500 text-xs italic"
+              />
+            </div>
+            <div className="mb-4 flex justify-between">
+              <p className="block text-sm text-gray-500 font-semibold">
+                {new Intl.DateTimeFormat("en", { timeStyle: "short" }).format(
+                  dateTime
+                )}
+              </p>
+              <p className="block text-sm text-gray-500 font-semibold">
+                {new Intl.DateTimeFormat(["ban", "id"]).format(dateTime)}
+              </p>
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="submit-button bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              Book Now
+            </button>
+          </Form>
+        )}
+      </Formik>
     </>
   );
 };

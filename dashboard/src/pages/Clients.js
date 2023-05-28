@@ -206,7 +206,7 @@ const Clients = () => {
 
       <div className="flex items-center my-4">
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
+          className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
           onClick={() => {
             setRegisterModelState(true);
           }}

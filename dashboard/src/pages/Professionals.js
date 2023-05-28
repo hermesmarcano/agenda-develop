@@ -6,6 +6,7 @@ import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import UpdateProfessional from "../components/UpdateProfessional";
+import Switch from "react-switch";
 
 const Professionals = () => {
   const { shopName } = useContext(SidebarContext);
@@ -129,7 +130,7 @@ const Professionals = () => {
       <h1 className="text-2xl text-gray-800 font-bold mb-5">Professionals</h1>
       <div className="flex items-center my-4">
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
+          className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
           onClick={() => setRegisterModelState(true)}
         >
           <FaPlus className="mr-2" /> Professional
@@ -240,7 +241,7 @@ const Professionals = () => {
                 <td className="py-2 pr-6 text-center">
                   {/* {professional.activated ? "active" : "inactive"} */}
                   <div className="flex justify-center items-center">
-                    <input
+                    {/* <input
                       type="checkbox"
                       id="switch"
                       checked={professional.activated}
@@ -260,7 +261,23 @@ const Professionals = () => {
                             : "translate-x-0"
                         }`}
                       ></span>
-                    </label>
+                    </label> */}
+                    <Switch
+                      id="blockAllDay"
+                      name="blockAllDay"
+                      checked={professional.activated}
+                      onChange={handleProfessionalActiveState}
+                      onColor="#86d3ff"
+                      onHandleColor="#2693e6"
+                      handleDiameter={20}
+                      uncheckedIcon={false}
+                      checkedIcon={false}
+                      boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                      activeBoxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                      height={14}
+                      width={30}
+                      className="ml-2"
+                    />
                   </div>
                 </td>
                 <td className="py-2 text-center pr-4">

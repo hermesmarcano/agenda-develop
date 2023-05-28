@@ -156,42 +156,39 @@ const Settings = () => {
         </Formik>
       </div>
       <h2 className="text-2xl font-semibold mt-6">Profile Image</h2>
-      <div className="flex items-center mt-4">
-        {shopData.profileImg ? (
-          <>
-            <img
-              src={`http://localhost:4040/uploads/profile/${shopData.profileImg}`}
-              alt="Shop Image"
-              className="w-24 h-24 rounded-full object-cover"
-            />
-            <button
-              onClick={deleteProfileImg}
-              className="ml-4 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              <FaTrash className="mr-1" />
-            </button>
-          </>
-        ) : (
-          <div className="text-gray-600">No profile image available</div>
-        )}
-      </div>
-      {!shopData.profileImg && (
-        <div className="mt-6">
-          <Formik initialValues={initialValues2} onSubmit={uploadProfileImg}>
-            {({ isSubmitting }) => (
-              <Form>
-                <Field name="profileImg" component={ImageUpload} />
-                <button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mt-3 rounded focus:outline-none focus:shadow-outline"
-                  disabled={isSubmitting}
-                >
-                  Upload
-                </button>
-              </Form>
-            )}
-          </Formik>
+
+      {shopData.profileImg && (
+        <div className="relative">
+          <img
+            src={`http://localhost:4040/uploads/profile/${shopData.profileImg}`}
+            alt={`${shopData.profileImg}`}
+            className="w-screen rounded-md max-h-40 object-cover mt-2"
+          />
+          <button
+            type="button"
+            onClick={deleteProfileImg}
+            className="text-red-600 font-medium mt-2 absolute right-1 top-1"
+          >
+            <FaTrash />
+          </button>
         </div>
+      )}
+
+      {!shopData.profileImg && (
+        <Formik initialValues={initialValues2} onSubmit={uploadProfileImg}>
+          {({ isSubmitting }) => (
+            <Form>
+              <Field name="profileImg" component={ImageUpload} />
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mt-3 rounded focus:outline-none focus:shadow-outline"
+                disabled={isSubmitting}
+              >
+                Upload
+              </button>
+            </Form>
+          )}
+        </Formik>
       )}
     </div>
   );

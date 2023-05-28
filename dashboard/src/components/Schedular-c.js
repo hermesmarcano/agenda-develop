@@ -3,9 +3,10 @@ import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import SidebarContext from "../context/SidebarContext";
 import Popup from "./Popup";
-import RegisterAppointment from "./RegisterAppointment";
 import ViewAppointment from "./ViewAppointment";
 import DateTimeContext from "../context/DateTimeContext";
+import ViewModeContext from "../context/ViewModeContext";
+import ProcessAppointment from "./ProcessAppointment";
 
 const schedulerData = [];
 
@@ -15,12 +16,13 @@ const SchedulerC = ({
   onSelectedDateChange,
   onSelectedWeekDateChange,
   selectedProfessional,
+  selectedProfessionals,
 }) => {
   const { shopName } = React.useContext(SidebarContext);
   const { setDateTime } = React.useContext(DateTimeContext);
   const [selectedDate, setSelectedDate] = React.useState(date);
   const [selectedWeekDate, setSelectedWeekDate] = React.useState(startWeekDate);
-  const [viewMode, setViewMode] = React.useState("daily");
+  const { viewMode, setViewMode } = React.useContext(ViewModeContext);
   const [appointmentsList, setAppointmentsList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [modelState, setModelState] = React.useState(false);
@@ -224,14 +226,18 @@ const SchedulerC = ({
     const timeSlots = [];
 
     timeSlots.push(
-      <div key="title" className="flex items-center ">
-        <FaUserCircle size={30} className="text-gray-400" />
-        <div className="w-10 "></div> {/* Empty space for alignment */}
+      <div
+        key="title"
+        className="flex items-center relative border-b border-gray-400 ps-10"
+      >
+        {/* <div className="hidden md:flex absolute left-0 top-5 items-center rounded-full shadow-inner p-2 bg-gray-300">
+          <FaUserCircle size={30} className="text-gray-400" />
+          <h1 className="ml-1 text-sm">{selectedProfessional?.name}</h1>
+        </div> */}
+
+        {/* <div className="w-10 "></div> Empty space for alignment */}
         {weekdays.map((weekday, index) => (
-          <div
-            className="w-[calc(100%/7)] border-b py-4 border-gray-400"
-            key={index}
-          >
+          <div className="w-[calc(100%/7)] py-4" key={index}>
             <h5 className="text-center">{formatDateWithWeekShort(weekday)}</h5>
             <h5 className="text-center">
               {formatDateWithDayMonthShort(weekday)}
@@ -246,36 +252,14 @@ const SchedulerC = ({
       timeSlots.push(
         <div key={hour} className="flex items-center">
           <div className="w-11 text-center">
-            <span className="text-sm">
+            <div className="w-11 text-sm">
               {hour.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
-            </span>
+            </div>
           </div>
           {weekdays.map((weekday, dayIndex) => {
-            // console.log("weekday: " + weekday.getDay());
-            const startDateTime = new Date(weekday);
-            startDateTime.setHours(hour.getHours());
-            startDateTime.setMinutes(hour.getMinutes());
-
-            const appointment = appointmentsList.find(
-              (appt) =>
-                new Date(appt.dateTime).toString() === startDateTime.toString()
-            );
-
-            const isDisabled =
-              startDateTime < new Date() ||
-              (appointment !== undefined &&
-                appointment.dateTime - startDateTime.getTime() < 1800000);
-
-            const customerName = appointment?.customer?.name;
-            const professionalName = appointment?.professional?.name;
-            const serviceNames =
-              appointment?.services
-                ?.map((service) => service.name)
-                .join(", ") || "";
-
             return (
               <div className="w-[calc(100%/7)]" key={dayIndex}>
                 <div className="flex-grow">
@@ -292,11 +276,20 @@ const SchedulerC = ({
                       startDateTime.setMinutes(hour.getMinutes());
                       startDateTime.setMinutes(index * 15);
 
-                      const appointment = appointmentsList.find(
-                        (appt) =>
+                      // const appointment = appointmentsList.find(
+                      //   (appt) =>
+                      //     new Date(appt.dateTime).toString() ===
+                      //     startDateTime.toString()
+                      // );
+
+                      const appointment = appointmentsList.find((appt) => {
+                        const isDateTimeMatch =
                           new Date(appt.dateTime).toString() ===
-                          startDateTime.toString()
-                      );
+                          startDateTime.toString();
+                        const isProfessionalIdMatch =
+                          appt.professional._id === selectedProfessional._id;
+                        return isDateTimeMatch && isProfessionalIdMatch;
+                      });
 
                       const isDisabled =
                         startDateTime < new Date() ||
@@ -407,116 +400,168 @@ const SchedulerC = ({
 
   const renderTimeSlots = () => {
     const timeSlots = [];
-    let prevEndDateTime = null;
+    const numProfessionals = selectedProfessionals.length;
+    const slotWidth = `min-w-[150px] md:w-[100%]`;
+
+    timeSlots.push(
+      <div
+        key="title"
+        className="flex items-center ps-10 border-b border-gray-400"
+      >
+        {selectedProfessionals.map((pro, index) => (
+          <div
+            className={`${slotWidth} flex justify-center items-center py-4`}
+            key={index}
+          >
+            <FaUserCircle size={30} className="text-gray-400 mr-1" />
+            <h1>{pro.name}</h1>
+          </div>
+        ))}
+      </div>
+    );
 
     hoursArr.map((hour, hourIndex) => {
+      let prevEndDateTime = null;
+      let prevProfessionalId = null;
       timeSlots.push(
-        <div key={hour} className="flex items-center">
+        <div key={hour} className="flex items-center w-full">
           <div className="w-11 text-center">
-            <span className="text-sm">
+            <div className="text-sm w-11 ">
               {hour.toLocaleTimeString([], {
                 hour: "2-digit",
                 minute: "2-digit",
               })}
-            </span>
-          </div>
-          <div className="flex-grow border-l border-gray-400">
-            <div className="flex flex-col">
-              {Array.from({ length: 4 }).map((_, index) => {
-                const startDateTime = new Date(hour);
-                startDateTime.setMinutes(index * 15);
-
-                const appointment = appointmentsList.find(
-                  (appt) =>
-                    new Date(appt.dateTime).toString() ===
-                    startDateTime.toString()
-                );
-
-                const isDisabled =
-                  startDateTime < new Date() ||
-                  (appointment !== undefined &&
-                    appointment.dateTime - startDateTime.getTime() < 1800000);
-
-                const customerName = appointment?.customer?.name;
-                const professionalName = appointment?.professional?.name;
-                const serviceNames =
-                  appointment?.service?.map((s) => s.name).join(", ") || "";
-
-                const duration = appointment?.service?.reduce(
-                  (totalDuration, s) => totalDuration + s.duration,
-                  0
-                );
-
-                const endDateTime = new Date(startDateTime);
-                endDateTime.setMinutes(startDateTime.getMinutes() + duration);
-
-                // Check if previous endDateTime is greater than the current startTime
-                const isPrevEndGreater =
-                  prevEndDateTime && prevEndDateTime > startDateTime;
-
-                // Update prevEndDateTime if necessary
-                if (endDateTime > prevEndDateTime) {
-                  prevEndDateTime = endDateTime;
-                }
-
-                // Add condition to set gray background and disable slot
-                if (isPrevEndGreater) {
-                  return (
-                    <div
-                      key={index}
-                      className={`h-6 bg-gray-800 p-1
-                      ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
-                      cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
-                      disabled={isDisabled}
-                    ></div>
-                  );
-                }
-
-                if (appointment) {
-                  return (
-                    <div
-                      key={index}
-                      className={`h-6 bg-gray-800 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-center hover:text-gray-500 ${
-                        isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                      }`}
-                      onClick={() => {
-                        setSelectedAppointmentId(appointment._id);
-                        setUpdateModelState(true);
-                      }}
-                      disabled={isDisabled}
-                    >
-                      <span className="text-gray-300">Reserved for</span>
-                      <span className="font-bold text-white mx-1">
-                        {customerName}
-                      </span>
-                      <span className="text-gray-300">with</span>
-                      <span className="font-semibold text-white mx-1">
-                        {professionalName}
-                      </span>
-                      <span className="text-gray-300">Services:</span>
-                      <span className="italic text-white ml-1">
-                        {serviceNames}
-                      </span>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div
-                    key={index}
-                    className={`h-6 bg-gray-200 p-1 ${
-                      index !== 3 && "border-b border-dotted border-gray-400"
-                    } cursor-crosshair hover:bg-gray-300`}
-                    onClick={() =>
-                      !isDisabled &&
-                      !appointment &&
-                      handleAppointment(startDateTime)
-                    }
-                  ></div>
-                );
-              })}
             </div>
           </div>
+
+          {selectedProfessionals.map((pro, proIndex) => {
+            if (proIndex === 0) {
+              prevProfessionalId = pro._id;
+            }
+            return (
+              <div className={`${slotWidth}`} key={proIndex}>
+                <div className="flex-grow">
+                  <div
+                    className={`flex flex-col w-full
+                    ${
+                      proIndex !== numProfessionals - 1
+                        ? "border-l border-gray-400"
+                        : "border-x border-gray-400"
+                    }
+                    `}
+                  >
+                    {Array.from({ length: 4 }).map((_, index) => {
+                      const startDateTime = new Date(hour);
+                      startDateTime.setMinutes(index * 15);
+
+                      // const appointment = appointmentsList.find(
+                      //   (appt) =>
+                      //     new Date(appt.dateTime).toString() ===
+                      //     startDateTime.toString()
+                      // );
+                      const appointment = appointmentsList.find((appt) => {
+                        const isDateTimeMatch =
+                          new Date(appt.dateTime).toString() ===
+                          startDateTime.toString();
+                        const isProfessionalIdMatch =
+                          appt.professional._id === pro._id;
+                        return isDateTimeMatch && isProfessionalIdMatch;
+                      });
+
+                      const isDisabled =
+                        startDateTime < new Date() ||
+                        (appointment !== undefined &&
+                          appointment.dateTime - startDateTime.getTime() <
+                            1800000);
+
+                      const customerName = appointment?.customer?.name;
+                      const professionalName = appointment?.professional?.name;
+                      const serviceNames =
+                        appointment?.service?.map((s) => s.name).join(", ") ||
+                        "";
+
+                      const duration = appointment?.service?.reduce(
+                        (totalDuration, s) => totalDuration + s.duration,
+                        0
+                      );
+
+                      const endDateTime = new Date(startDateTime);
+                      endDateTime.setMinutes(
+                        startDateTime.getMinutes() + duration
+                      );
+
+                      // Check if previous endDateTime is greater than the current startTime
+                      const isPrevEndGreater =
+                        prevEndDateTime && prevEndDateTime > startDateTime;
+
+                      // Update prevEndDateTime if necessary
+                      if (endDateTime > prevEndDateTime) {
+                        prevEndDateTime = endDateTime;
+                      }
+
+                      // Add condition to set gray background and disable slot
+                      if (isPrevEndGreater && prevProfessionalId === pro._id) {
+                        return (
+                          <div
+                            key={index}
+                            className={`h-6 bg-gray-800 p-1 ${slotWidth}
+                        ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
+                        cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
+                            disabled={isDisabled}
+                          ></div>
+                        );
+                      }
+
+                      if (appointment) {
+                        prevProfessionalId = pro._id;
+                        return (
+                          <div
+                            key={index}
+                            className={`h-6 bg-gray-800 z-10 p-1 ${slotWidth} cursor-pointer text-white font-medium text-xs flex flex-wrap items-center justify-start hover:text-gray-500 ${
+                              isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                            onClick={() => {
+                              setSelectedAppointmentId(appointment._id);
+                              setUpdateModelState(true);
+                            }}
+                            disabled={isDisabled}
+                          >
+                            <span className="text-gray-300">Reserved for</span>
+                            <span className="font-bold text-white mx-1">
+                              {customerName}
+                            </span>
+                            <span className="text-gray-300">with</span>
+                            <span className="font-semibold text-white mx-1">
+                              {professionalName}
+                            </span>
+                            <span className="text-gray-300">Services:</span>
+                            <span className="italic text-white ml-1">
+                              {serviceNames}
+                            </span>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={index}
+                          className={`h-6 bg-gray-200 ${slotWidth} p-1 ${
+                            index !== 3 &&
+                            "border-b border-dotted border-gray-400"
+                          } cursor-crosshair hover:bg-gray-300`}
+                          onClick={() =>
+                            !isDisabled &&
+                            !appointment &&
+                            handleAppointment(startDateTime)
+                          }
+                        ></div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       );
 
@@ -533,7 +578,7 @@ const SchedulerC = ({
 
   const renderScheduler = () => {
     return (
-      <div className="border  border-gray-400 p-4">
+      <div className="border border-gray-400 p-4 mb-3 overflow-y-auto">
         <div className="flex items-center justify-between">
           {renderTabs()}
           {viewMode === "daily" && (
@@ -587,12 +632,6 @@ const SchedulerC = ({
                   {formatDateShort(selectedDate)}
                 </p>
               </div>
-              <div className="flex items-center justify-center text-gray-500 col-span-3">
-                <FaUserCircle size={30} className="text-gray-400 mr-1" />
-                <h1>
-                  {selectedProfessional ? selectedProfessional.name : "All"}
-                </h1>
-              </div>
             </div>
           </>
         )}
@@ -600,10 +639,10 @@ const SchedulerC = ({
         <div className="h-px bg-gray-500 mt-3"></div>
 
         {viewMode === "daily" ? renderDailyView() : renderWeeklyView()}
-        <Popup
+        <ProcessAppointment
           isOpen={modelState}
           onClose={() => setModelState(!modelState)}
-          children={<RegisterAppointment setModelState={setModelState} />}
+          setModelState={setModelState}
         />
 
         <Popup

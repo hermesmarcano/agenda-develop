@@ -12,6 +12,8 @@ import Sidebar from "../components/Sidebar";
 import SidebarContext from "../context/SidebarContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ViewModeContext from "../context/ViewModeContext";
+import { FaSpinner } from "react-icons/fa";
 
 const Agenda = () => {
   const { isSidebarOpen, toggleSidebar, shopName } = useContext(SidebarContext);
@@ -33,6 +35,10 @@ const Agenda = () => {
   const [professionals, setProfessionals] = useState([]);
   const [myShopImg, setMyShopImg] = useState("");
   const [selectedProfessional, setSelectedProfessional] = useState(null);
+  const [selectedProfessionals, setSelectedProfessionals] = useState([]);
+  const { viewMode, setViewMode } = useContext(ViewModeContext);
+  const [modelState, setModelState] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     axios
@@ -41,11 +47,11 @@ const Agenda = () => {
           Authorization: token,
         },
       })
-      .then((response) => response.json())
 
-      .then((data) => {
-        setAppointments(data.appointments);
-        console.log(data.appointments);
+      .then((response) => {
+        setAppointments(response.data.appointments);
+        console.log(response.data.appointments);
+        // setIsLoading(false);
       });
   }, [shopName]);
 
@@ -57,32 +63,75 @@ const Agenda = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         setMyShopImg(response.data.profileImg);
+        axios
+          .get(
+            `http://localhost:4040/professionals/shopname?shopName=${response.data.shopName}`,
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((response) => {
+            setProfessionals([...response.data.data].reverse());
+            console.log([...response.data.data].reverse());
+            setSelectedProfessionals([...response.data.data].reverse());
+            setSelectedProfessional([...response.data.data].reverse()[0]);
+            setIsLoading(false);
+          })
+          .catch((error) => console.error(error.message));
       })
       .catch((error) => console.log(error));
   }, []);
 
-  useEffect(() => {
-    axios
-      .get(
-        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((response) => setProfessionals([...response.data.data].reverse()))
-      .catch((error) => console.error(error.message));
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col justify-center items-center space-x-2">
+          <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          <span className="mt-2">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   const handleProfessionalChange = (event) => {
-    const selectedProfessionalId = event.target.value;
-    const selectedProfessionalObject = professionals.find(
-      (professional) => professional._id === selectedProfessionalId
+    const professionalId = event.target.value;
+    const selectedProfessional = professionals.find(
+      (professional) => professional._id === professionalId
     );
-    setSelectedProfessional(selectedProfessionalObject);
+    setSelectedProfessional(selectedProfessional);
+  };
+
+  const handleCheckboxChange = (event) => {
+    const professionalId = event.target.value;
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      const selectedProfessional = professionals.find(
+        (professional) => professional._id === professionalId
+      );
+      setSelectedProfessionals((prevSelectedProfessionals) => [
+        ...prevSelectedProfessionals,
+        selectedProfessional,
+      ]);
+    } else {
+      setSelectedProfessionals((prevSelectedProfessionals) =>
+        prevSelectedProfessionals.filter(
+          (professional) => professional._id !== professionalId
+        )
+      );
+    }
+  };
+
+  const handleSelectAllCheckbox = (event) => {
+    const isChecked = event.target.checked;
+
+    if (isChecked) {
+      setSelectedProfessionals(professionals);
+    } else {
+      setSelectedProfessionals([]);
+    }
   };
 
   const formattedDate = new Intl.DateTimeFormat("en-US", {
@@ -105,67 +154,122 @@ const Agenda = () => {
     setStartWeekDate(date);
   };
 
-  const [modelState, setModelState] = useState(false);
-
   return (
-    <div className="grid grid-cols-1 gap-1 md:flex md: mx-auto px-2 mt-2 pb-2">
-      <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
-        <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
-          <img
-            className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-            src={`http://localhost:4040/uploads/profile/${myShopImg}`}
-            alt="Shop logo"
-          />
-          <h1 className="text-lg font-bold">{`${shopName}`}</h1>
+    <>
+      <div className="grid grid-cols-1 gap-1 md:flex md: mx-auto px-2 mt-2 pb-2">
+        <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
+          <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
+            <img
+              className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+              src={`http://localhost:4040/uploads/profile/${myShopImg}`}
+              alt="Shop logo"
+            />
+            <h1 className="text-lg font-bold">{`${shopName}`}</h1>
+          </div>
+          <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
+            <Calendar
+              value={date}
+              onChange={handleDateClick}
+              className="border-none text-xs p-2"
+              locale="en"
+              next2Label={null}
+              prev2Label={null}
+              prevLabel={<ArrowLeft />}
+              nextLabel={<ArrowRight />}
+            />
+          </div>
+          <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
+            <img
+              className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+              src={`http://localhost:4040/uploads/profile/${myShopImg}`}
+              alt="Shop logo"
+            />
+            {/* <h1 className="text-base font-bold">{`Welcome to ${shopName}`}</h1> */}
+          </div>
+          <div className="flex flex-col items-start border border-gray-400 p-4 mt-3">
+            {viewMode === "daily" ? (
+              <>
+                <label className="mb-1 font-bold">Select Professionals:</label>
+                <div>
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="select-all-checkbox"
+                      checked={
+                        selectedProfessionals.length === professionals.length
+                      }
+                      onChange={handleSelectAllCheckbox}
+                    />
+                    <label htmlFor="select-all-checkbox" className="ml-2">
+                      Select All
+                    </label>
+                  </div>
+                  {professionals.map((professional) => (
+                    <div key={professional._id} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={professional._id}
+                        value={professional._id}
+                        checked={selectedProfessionals.some(
+                          (p) => p._id === professional._id
+                        )}
+                        onChange={handleCheckboxChange}
+                      />
+                      <label htmlFor={professional._id} className="ml-2">
+                        {professional.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <label className="mb-1 font-bold">Select Professional:</label>
+                <div>
+                  {professionals.map((professional, index) => (
+                    <div key={professional._id} className="flex items-center">
+                      <input
+                        type="radio"
+                        id={professional._id}
+                        value={professional._id}
+                        checked={
+                          index === 0 && !selectedProfessional
+                            ? true
+                            : selectedProfessional?._id === professional._id
+                        }
+                        onChange={handleProfessionalChange}
+                      />
+                      <label htmlFor={professional._id} className="ml-2">
+                        {professional.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
-        <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
-          <Calendar
-            value={date}
-            onChange={handleDateClick}
-            className="border-none text-xs p-2"
-            locale="en"
-            next2Label={null}
-            prev2Label={null}
-            prevLabel={<ArrowLeft />}
-            nextLabel={<ArrowRight />}
-          />
-        </div>
-        <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
-          <img
-            className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-            src={`http://localhost:4040/uploads/profile/${myShopImg}`}
-            alt="Shop logo"
-          />
-          {/* <h1 className="text-base font-bold">{`Welcome to ${shopName}`}</h1> */}
-        </div>
-        <div className="flex md:flex-col md:jsutify-center md:items-start border border-gray-400 p-4 mt-3">
-          <label className="mb-1">Select Professional</label>
-          <select
-            className="w-full p-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500"
-            value={selectedProfessional ? selectedProfessional._id : ""}
-            onChange={handleProfessionalChange}
-          >
-            <option disabled value="">
-              Select professional
-            </option>
-            {professionals.map((professional) => (
-              <option key={professional._id} value={professional._id}>
-                {professional.name}
-              </option>
-            ))}
-          </select>
+        <div className="w-full md:flex-1">
+          {viewMode === "daily" ? (
+            <SchedularC
+              selectedProfessionals={selectedProfessionals}
+              startWeekDate={startWeekDate}
+              date={date}
+              onSelectedDateChange={handleSelectedDateChange}
+              onSelectedWeekDateChange={handleSelectedWeekDateChange}
+            />
+          ) : (
+            <SchedularC
+              selectedProfessional={selectedProfessional}
+              startWeekDate={startWeekDate}
+              date={date}
+              onSelectedDateChange={handleSelectedDateChange}
+              onSelectedWeekDateChange={handleSelectedWeekDateChange}
+            />
+          )}
         </div>
       </div>
-      <div className="w-full pb-3">
-        <SchedularC
-          startWeekDate={startWeekDate}
-          date={date}
-          onSelectedDateChange={handleSelectedDateChange}
-          onSelectedWeekDateChange={handleSelectedWeekDateChange}
-          selectedProfessional={selectedProfessional}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 

@@ -75,7 +75,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       },
     })
       .then((response) => {
-        console.log(response);
         if (!response.ok) {
           localStorage.removeItem("ag_app_shop_token");
           navigate("/login");
