@@ -96,7 +96,7 @@ const SubmitPayment = ({ amount, clients, setModelState, bookingInfo }) => {
       onSubmit={handleSubmitPayment}
     >
       {({ values, handleSubmit, isSubmitting }) => (
-        <Form>
+        <Form className="p-4">
           <h2 className="text-xl font-bold mb-4">Register Payment</h2>
           <div className="mb-4">
             <label htmlFor="amount" className="block font-bold mb-2">

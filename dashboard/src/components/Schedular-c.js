@@ -7,6 +7,7 @@ import ViewAppointment from "./ViewAppointment";
 import DateTimeContext from "../context/DateTimeContext";
 import ViewModeContext from "../context/ViewModeContext";
 import ProcessAppointment from "./ProcessAppointment";
+import { zipObjectDeep } from "lodash";
 
 const schedulerData = [];
 
@@ -45,7 +46,6 @@ const SchedulerC = ({
       );
       const data = await response.json();
       setAppointmentsList(data.appointments);
-      console.log(appointmentsList);
     } catch (error) {
       console.log(error);
     } finally {
@@ -231,12 +231,6 @@ const SchedulerC = ({
         key="title"
         className="flex items-center relative border-b border-gray-400 ps-10 min-w-[989px]"
       >
-        {/* <div className="hidden md:flex absolute left-0 top-5 items-center rounded-full shadow-inner p-2 bg-gray-300">
-          <FaUserCircle size={30} className="text-gray-400" />
-          <h1 className="ml-1 text-sm">{selectedProfessional?.name}</h1>
-        </div> */}
-
-        {/* <div className="w-10 "></div> Empty space for alignment */}
         {weekdays.map((weekday, index) => (
           <div className={`${slotWidth} py-4`} key={index}>
             <h5 className="text-center">{formatDateWithWeekShort(weekday)}</h5>
@@ -248,8 +242,8 @@ const SchedulerC = ({
       </div>
     );
 
+    let prevEndDateTime = Array(weekdays.length).fill(null);
     hoursArrWeek.map((hour, hourIndex) => {
-      let prevEndDateTime = null;
       timeSlots.push(
         <div key={hour} className="flex items-center">
           <div className="w-11 text-center">
@@ -316,13 +310,12 @@ const SchedulerC = ({
 
                       // Check if previous endDateTime is greater than the current startTime
                       const isPrevEndGreater =
-                        prevEndDateTime && prevEndDateTime > startDateTime;
+                        prevEndDateTime[dayIndex] > startDateTime;
 
                       // Update prevEndDateTime if necessary
-                      if (endDateTime > prevEndDateTime) {
-                        prevEndDateTime = endDateTime;
+                      if (endDateTime > prevEndDateTime[dayIndex]) {
+                        prevEndDateTime[dayIndex] = endDateTime;
                       }
-
                       // Add condition to set gray background and disable slot
                       if (isPrevEndGreater) {
                         return (
@@ -349,14 +342,9 @@ const SchedulerC = ({
                             }}
                             disabled={isDisabled}
                           >
-                            {/* <span className="text-gray-300">Reserved for</span> */}
                             <span className="font-bold text-white mx-1">
                               {customerName}
                             </span>
-                            {/* <span className="text-gray-300">with</span>
-                            <span className="font-semibold text-white mx-1">
-                              {professionalName}
-                            </span> */}
                             <span className="text-gray-300">Services:</span>
                             <span className="italic text-white ml-1">
                               {serviceNames}
@@ -426,9 +414,10 @@ const SchedulerC = ({
       </div>
     );
 
+    let prevEndDateTime = Array(selectedProfessionals.length).fill(null);
+    let professionalsId = Array(selectedProfessionals.length).fill(null);
+
     hoursArr.map((hour, hourIndex) => {
-      let prevEndDateTime = null;
-      let prevProfessionalId = null;
       timeSlots.push(
         <div key={hour} className="flex items-center w-full">
           <div className="w-11 text-center">
@@ -439,11 +428,7 @@ const SchedulerC = ({
               })}
             </div>
           </div>
-
           {selectedProfessionals.map((pro, proIndex) => {
-            if (proIndex === 0) {
-              prevProfessionalId = pro._id;
-            }
             return (
               <div className={`${slotWidth}`} key={proIndex}>
                 <div className="flex-grow">
@@ -492,21 +477,26 @@ const SchedulerC = ({
                       );
 
                       const endDateTime = new Date(startDateTime);
+
                       endDateTime.setMinutes(
                         startDateTime.getMinutes() + duration
                       );
 
                       // Check if previous endDateTime is greater than the current startTime
+
                       const isPrevEndGreater =
-                        prevEndDateTime && prevEndDateTime > startDateTime;
+                        prevEndDateTime[proIndex] > startDateTime;
 
                       // Update prevEndDateTime if necessary
-                      if (endDateTime > prevEndDateTime) {
-                        prevEndDateTime = endDateTime;
+                      if (endDateTime > prevEndDateTime[proIndex]) {
+                        prevEndDateTime[proIndex] = endDateTime;
                       }
 
                       // Add condition to set gray background and disable slot
-                      if (isPrevEndGreater && prevProfessionalId === pro._id) {
+                      if (
+                        isPrevEndGreater &&
+                        professionalsId[proIndex] === pro._id
+                      ) {
                         return (
                           <div
                             key={index}
@@ -519,7 +509,7 @@ const SchedulerC = ({
                       }
 
                       if (appointment) {
-                        prevProfessionalId = pro._id;
+                        professionalsId[proIndex] = pro._id;
                         return (
                           <div
                             key={index}
@@ -532,14 +522,9 @@ const SchedulerC = ({
                             }}
                             disabled={isDisabled}
                           >
-                            {/* <span className="text-gray-300">Reserved for</span> */}
                             <span className="font-bold text-white mx-1">
                               {customerName}
                             </span>
-                            {/* <span className="text-gray-300">with</span>
-                            <span className="font-semibold text-white mx-1">
-                              {professionalName}
-                            </span> */}
                             <span className="text-gray-300">Services:</span>
                             <span className="italic text-white ml-1">
                               {serviceNames}
@@ -672,6 +657,7 @@ const SchedulerC = ({
         ></div>
 
         {viewMode === "daily" ? renderDailyView() : renderWeeklyView()}
+
         <ProcessAppointment
           isOpen={modelState}
           onClose={() => setModelState(!modelState)}

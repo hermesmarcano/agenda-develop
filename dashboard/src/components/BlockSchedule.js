@@ -7,7 +7,7 @@ import SidebarContext from "../context/SidebarContext";
 import { FaCheck, FaChevronDown, FaChevronUp, FaSpinner } from "react-icons/fa";
 import Switch from "react-switch";
 
-const BlockSchedule = () => {
+const BlockSchedule = ({ setModelState }) => {
   const [blockAllDay, setBlockAllDay] = useState(false);
   const [showFrequency, setShowFrequency] = useState(false);
   const { dateTime } = useContext(DateTimeContext);
@@ -73,8 +73,81 @@ const BlockSchedule = () => {
   });
 
   const handleSubmit = (values) => {
-    // Handle form submission
     console.log(values);
+    let blockingDate = new Date(values.startDate);
+    blockingDate.setHours(values.startTimeHour);
+    blockingDate.setMinutes(values.startTimeMinute);
+    let blockingEndDate = new Date(values.endDate);
+    let endOfDay = new Date(values.startDate);
+    endOfDay.setHours(18);
+    endOfDay.setMinutes(0);
+    const maxDuration = (endOfDay - blockingDate) / (1000 * 60);
+    if (values.endTimeHour && !values.blockAllDay) {
+      blockingEndDate.setHours(values.endTimeHour);
+      if (values.endTimeMinute)
+        blockingEndDate.setMinutes(values.endTimeMinute);
+    } else {
+      blockingEndDate.setHours(8);
+      blockingEndDate.setMinutes(0);
+    }
+
+    const duration = (blockingEndDate - blockingDate) / (1000 * 60);
+    // console.log(
+    //   `The difference between ${blockingDate} and ${blockingEndDate} is ${duration} minutes`
+    // );
+    // if (duration < maxDuration) {
+    //   console.log(
+    //     `The Maximum duration between ${blockingDate} and End of the day is ${maxDuration} minutes is less than blocking time`
+    //   );
+    // }
+    // let d1 = duration;
+    // let blockingDatesArr = [];
+    // while (duration > d1) {
+    //   // blockingDatesArr.push({startDate: startDate, duration: maxDuration})
+    //   let d = new Date(values.startDate);
+    //   d.setDate(new Date(values.startDate).getDate() + 1);
+    //   d.setHours(8);
+    //   d.setMinutes(0);
+    //   console.log(d);
+
+    //   const durationMore = (blockingEndDate - d) / (1000 * 60);
+
+    //   console.log(
+    //     `The Maximum duration between ${blockingDate} and ${blockingEndDate} minutes is ${maxDuration} for the first day and ${durationMore} for the second day`
+    //   );
+    // }
+
+    axios
+      .post(
+        "http://localhost:4040/appointments",
+        {
+          professional: values.professional,
+          dateTime: new Date(blockingDate),
+          shopName: shopName,
+          blocking: true,
+          blockingDuration: duration,
+          blockingReason: values.blockingReason,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        alert(
+          `${professionals.find(
+            (professional) => (professional._id = values.professional)
+          )} will be unavailable starting from ${blockingDate}`
+        );
+        setModelState(false);
+      })
+      .catch((error) => {
+        console.error(error.message);
+        // Handle errors
+      });
   };
 
   if (loading) {

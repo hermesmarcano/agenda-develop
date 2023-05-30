@@ -101,7 +101,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                         ) : (
                           <>
                             {/* <h2 className="text-xl font-bold mb-4">Block Schedule</h2> */}
-                            <BlockSchedule />
+                            <BlockSchedule setModelState={setModelState} />
                           </>
                         )}
                       </div>
