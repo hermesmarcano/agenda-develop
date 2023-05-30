@@ -13,7 +13,7 @@ import SidebarContext from "../context/SidebarContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ViewModeContext from "../context/ViewModeContext";
-import { FaSpinner } from "react-icons/fa";
+import { FaCheck, FaSpinner } from "react-icons/fa";
 
 const Agenda = () => {
   const { isSidebarOpen, toggleSidebar, shopName } = useContext(SidebarContext);
@@ -160,7 +160,7 @@ const Agenda = () => {
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
           <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
             <img
-              className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+              className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
               src={`http://localhost:4040/uploads/profile/${myShopImg}`}
               alt="Shop logo"
             />
@@ -180,7 +180,7 @@ const Agenda = () => {
           </div>
           <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
             <img
-              className="h-11 w-11 rounded-full object-cover mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+              className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
               src={`http://localhost:4040/uploads/profile/${myShopImg}`}
               alt="Shop logo"
             />
@@ -199,13 +199,23 @@ const Agenda = () => {
                         selectedProfessionals.length === professionals.length
                       }
                       onChange={handleSelectAllCheckbox}
+                      className="hidden"
                     />
-                    <label htmlFor="select-all-checkbox" className="ml-2">
+                    <label
+                      htmlFor="select-all-checkbox"
+                      className="flex items-center"
+                    >
+                      <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
+                        <FaCheck className="w-3 h-3 text-green-600" />
+                      </div>
                       Select All
                     </label>
                   </div>
                   {professionals.map((professional) => (
-                    <div key={professional._id} className="flex items-center">
+                    <div
+                      key={professional._id}
+                      className="service-item flex items-center"
+                    >
                       <input
                         type="checkbox"
                         id={professional._id}
@@ -214,8 +224,17 @@ const Agenda = () => {
                           (p) => p._id === professional._id
                         )}
                         onChange={handleCheckboxChange}
+                        className="hidden"
                       />
-                      <label htmlFor={professional._id} className="ml-2">
+                      <label
+                        htmlFor={professional._id}
+                        className="service-name text-sm font-medium text-gray-700 flex  items-center"
+                      >
+                        <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
+                          {selectedProfessionals.some(
+                            (p) => p._id === professional._id
+                          ) && <FaCheck className="w-3 h-3 text-green-600" />}
+                        </div>
                         {professional.name}
                       </label>
                     </div>

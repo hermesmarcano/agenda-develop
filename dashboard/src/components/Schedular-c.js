@@ -243,6 +243,7 @@ const SchedulerC = ({
     );
 
     let prevEndDateTime = Array(weekdays.length).fill(null);
+    let prevBlocking = Array(weekdays.length).fill(null);
     hoursArrWeek.map((hour, hourIndex) => {
       timeSlots.push(
         <div key={hour} className="flex items-center">
@@ -303,10 +304,18 @@ const SchedulerC = ({
                         0
                       );
 
+                      const blockingDuration = appointment?.blockingDuration;
+
                       const endDateTime = new Date(startDateTime);
                       endDateTime.setMinutes(
                         startDateTime.getMinutes() + duration
                       );
+
+                      if (appointment?.blocking) {
+                        endDateTime.setMinutes(
+                          startDateTime.getMinutes() + blockingDuration
+                        );
+                      }
 
                       // Check if previous endDateTime is greater than the current startTime
                       const isPrevEndGreater =
@@ -318,6 +327,15 @@ const SchedulerC = ({
                       }
                       // Add condition to set gray background and disable slot
                       if (isPrevEndGreater) {
+                        if (prevBlocking[dayIndex]) {
+                          return (
+                            <div
+                              key={index}
+                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              disabled
+                            ></div>
+                          );
+                        }
                         return (
                           <div
                             key={index}
@@ -330,10 +348,26 @@ const SchedulerC = ({
                       }
 
                       if (appointment) {
+                        if (appointment?.blocking) {
+                          prevBlocking[dayIndex] = true;
+                          return (
+                            <div
+                              key={index}
+                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              disabled
+                            >
+                              <span className="italic text-white ml-1 truncate">
+                                {appointment?.blockingReason}
+                              </span>
+                            </div>
+                          );
+                        } else {
+                          prevBlocking[dayIndex] = false;
+                        }
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex flex-wrap items-center justify-start hover:text-gray-500 ${
+                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                             onClick={() => {
@@ -342,11 +376,11 @@ const SchedulerC = ({
                             }}
                             disabled={isDisabled}
                           >
-                            <span className="font-bold text-white mx-1">
+                            <span className="font-bold text-white mr-1 whitespace-nowrap">
                               {customerName}
                             </span>
                             <span className="text-gray-300">Services:</span>
-                            <span className="italic text-white ml-1">
+                            <span className="italic text-white ml-1 truncate">
                               {serviceNames}
                             </span>
                           </div>
@@ -415,7 +449,10 @@ const SchedulerC = ({
     );
 
     let prevEndDateTime = Array(selectedProfessionals.length).fill(null);
-    let professionalsId = Array(selectedProfessionals.length).fill(null);
+    let professionalsId = Array(selectedProfessionals.length).fill({
+      id: null,
+      blocking: false,
+    });
 
     hoursArr.map((hour, hourIndex) => {
       timeSlots.push(
@@ -476,11 +513,19 @@ const SchedulerC = ({
                         0
                       );
 
+                      const blockingDuration = appointment?.blockingDuration;
+
                       const endDateTime = new Date(startDateTime);
 
                       endDateTime.setMinutes(
                         startDateTime.getMinutes() + duration
                       );
+
+                      if (appointment?.blocking) {
+                        endDateTime.setMinutes(
+                          startDateTime.getMinutes() + blockingDuration
+                        );
+                      }
 
                       // Check if previous endDateTime is greater than the current startTime
 
@@ -495,8 +540,17 @@ const SchedulerC = ({
                       // Add condition to set gray background and disable slot
                       if (
                         isPrevEndGreater &&
-                        professionalsId[proIndex] === pro._id
+                        professionalsId[proIndex].id === pro._id
                       ) {
+                        if (professionalsId[proIndex].blocking) {
+                          return (
+                            <div
+                              key={index}
+                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              disabled
+                            ></div>
+                          );
+                        }
                         return (
                           <div
                             key={index}
@@ -509,11 +563,27 @@ const SchedulerC = ({
                       }
 
                       if (appointment) {
-                        professionalsId[proIndex] = pro._id;
+                        professionalsId[proIndex].id = pro._id;
+                        if (appointment?.blocking) {
+                          professionalsId[proIndex].blocking = true;
+                          return (
+                            <div
+                              key={index}
+                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              disabled
+                            >
+                              <span className="italic text-white ml-1 truncate">
+                                {appointment?.blockingReason}
+                              </span>
+                            </div>
+                          );
+                        } else {
+                          professionalsId[proIndex].blocking = false;
+                        }
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex flex-wrap items-center justify-start hover:text-gray-500 ${
+                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                             onClick={() => {
@@ -522,11 +592,11 @@ const SchedulerC = ({
                             }}
                             disabled={isDisabled}
                           >
-                            <span className="font-bold text-white mx-1">
+                            <span className="font-bold text-white mr-1 whitespace-nowrap">
                               {customerName}
                             </span>
                             <span className="text-gray-300">Services:</span>
-                            <span className="italic text-white ml-1">
+                            <span className="italic text-white ml-1 truncate">
                               {serviceNames}
                             </span>
                           </div>

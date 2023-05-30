@@ -102,26 +102,7 @@ const RegisterService = ({ setModelState }) => {
                 className="text-red-500 text-xs italic"
               />
             </div>
-            {/* <div className="mb-4">
-              <label
-                htmlFor="speciality"
-                className="block text-sm text-gray-700 font-bold mb-2"
-              >
-                Speciality
-              </label>
-              <Field
-                type="text"
-                id="speciality"
-                name="speciality"
-                placeholder="Enter the speciality"
-                className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-              />
-              <ErrorMessage
-                name="speciality"
-                component="p"
-                className="text-red-500 text-xs italic"
-              />
-            </div> */}
+
             <div className="mb-4">
               <label
                 htmlFor="price"
