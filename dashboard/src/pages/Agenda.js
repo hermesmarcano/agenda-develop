@@ -5,19 +5,15 @@ import SchedularC from "../components/Schedular-c";
 import "react-calendar/dist/Calendar.css";
 import ArrowLeftSrc from "../images/arrow-left.svg";
 import ArrowRightSrc from "../images/arrow-right.svg";
-import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import { FcPrevious, FcNext } from "react-icons/fc";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
 import SidebarContext from "../context/SidebarContext";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ViewModeContext from "../context/ViewModeContext";
-import { FaCheck, FaSpinner } from "react-icons/fa";
+import { FaCheck, FaCircle, FaCheckCircle, FaSpinner } from "react-icons/fa";
+import { AiOutlineInbox } from "react-icons/ai";
+import { HiEmojiSad } from "react-icons/hi";
 
 const Agenda = () => {
-  const { isSidebarOpen, toggleSidebar, shopName } = useContext(SidebarContext);
-  const navigate = useNavigate();
+  const { shopName } = useContext(SidebarContext);
   const [date, setDate] = useState(new Date());
   const getStartOfWeek = (date) => {
     const startOfWeek = new Date(date);
@@ -36,8 +32,7 @@ const Agenda = () => {
   const [myShopImg, setMyShopImg] = useState("");
   const [selectedProfessional, setSelectedProfessional] = useState(null);
   const [selectedProfessionals, setSelectedProfessionals] = useState([]);
-  const { viewMode, setViewMode } = useContext(ViewModeContext);
-  const [modelState, setModelState] = useState(false);
+  const { viewMode } = useContext(ViewModeContext);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
 
   useEffect(() => {
@@ -83,7 +78,7 @@ const Agenda = () => {
           .catch((error) => console.error(error.message));
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [token]);
 
   if (isLoading) {
     return (
@@ -134,12 +129,12 @@ const Agenda = () => {
     }
   };
 
-  const formattedDate = new Intl.DateTimeFormat("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
+  // const formattedDate = new Intl.DateTimeFormat("en-US", {
+  //   weekday: "long",
+  //   year: "numeric",
+  //   month: "long",
+  //   day: "numeric",
+  // }).format(date);
 
   function handleDateClick(date) {
     // console.log(date);
@@ -206,7 +201,10 @@ const Agenda = () => {
                       className="flex items-center"
                     >
                       <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
-                        <FaCheck className="w-3 h-3 text-green-600" />
+                        {selectedProfessionals.length ===
+                          professionals.length && (
+                          <FaCheck className="w-3 h-3 text-green-600" />
+                        )}
                       </div>
                       Select All
                     </label>
@@ -245,21 +243,31 @@ const Agenda = () => {
               <>
                 <label className="mb-1 font-bold">Select Professional:</label>
                 <div>
-                  {professionals.map((professional, index) => (
-                    <div key={professional._id} className="flex items-center">
+                  {professionals.map((professional) => (
+                    <div
+                      key={professional._id}
+                      className="flex items-center mb-2"
+                    >
                       <input
                         type="radio"
                         id={professional._id}
                         value={professional._id}
-                        checked={
-                          index === 0 && !selectedProfessional
-                            ? true
-                            : selectedProfessional?._id === professional._id
-                        }
+                        checked={selectedProfessional?._id === professional._id}
                         onChange={handleProfessionalChange}
+                        className="hidden"
                       />
-                      <label htmlFor={professional._id} className="ml-2">
-                        {professional.name}
+                      <label
+                        htmlFor={professional._id}
+                        className="flex items-center cursor-pointer"
+                      >
+                        <span className="mr-2">
+                          {selectedProfessional?._id === professional._id ? (
+                            <FaCheckCircle className="text-gray-800" />
+                          ) : (
+                            <FaCircle className="text-gray-400" />
+                          )}
+                        </span>
+                        <span>{professional.name}</span>
                       </label>
                     </div>
                   ))}
@@ -270,13 +278,26 @@ const Agenda = () => {
         </div>
         <div className="w-full md:flex-1">
           {viewMode === "daily" ? (
-            <SchedularC
-              selectedProfessionals={selectedProfessionals}
-              startWeekDate={startWeekDate}
-              date={date}
-              onSelectedDateChange={handleSelectedDateChange}
-              onSelectedWeekDateChange={handleSelectedWeekDateChange}
-            />
+            selectedProfessionals.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-full">
+                <div className="text-3xl font-bold mb-4">
+                  <AiOutlineInbox className="inline-block mr-2" />
+                  No Professionals Selected
+                </div>
+                <div className="text-gray-600 text-lg mb-8">
+                  Please select professionals to show the Schedular.
+                </div>
+                <HiEmojiSad className="text-6xl text-gray-500" />
+              </div>
+            ) : (
+              <SchedularC
+                selectedProfessionals={selectedProfessionals}
+                startWeekDate={startWeekDate}
+                date={date}
+                onSelectedDateChange={handleSelectedDateChange}
+                onSelectedWeekDateChange={handleSelectedWeekDateChange}
+              />
+            )
           ) : (
             <SchedularC
               selectedProfessional={selectedProfessional}
@@ -297,7 +318,7 @@ export default Agenda;
 const ArrowLeft = () => {
   return (
     <div className="flex justify-center items-center">
-      <img src={ArrowLeftSrc} />
+      <img src={ArrowLeftSrc} alt="" />
     </div>
   );
 };
@@ -305,7 +326,7 @@ const ArrowLeft = () => {
 const ArrowRight = () => {
   return (
     <div className="flex justify-center items-center">
-      <img src={ArrowRightSrc} />
+      <img src={ArrowRightSrc} alt="" />
     </div>
   );
 };
