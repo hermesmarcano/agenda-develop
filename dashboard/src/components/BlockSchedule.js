@@ -151,12 +151,14 @@ const BlockSchedule = ({ setModelState }) => {
 
       currentDuration = duration;
 
-      createAppointment(
-        currentDate,
-        currentDuration,
-        values.professional,
-        values.blockingReason
-      );
+      if (currentDuration > 0) {
+        createAppointment(
+          currentDate,
+          currentDuration,
+          values.professional,
+          values.blockingReason
+        );
+      }
     }
   };
 
@@ -186,13 +188,13 @@ const BlockSchedule = ({ setModelState }) => {
       )
       .then((response) => {
         console.log(response.data);
-        alert(
-          `${
-            professionals.find(
-              (professional) => (professional._id = professionalId)
-            ).name
-          } will be unavailable starting from ${dateTime}`
-        );
+        // alert(
+        //   `${
+        //     professionals.find(
+        //       (professional) => (professional._id = professionalId)
+        //     ).name
+        //   } will be unavailable starting from ${dateTime}`
+        // );
         setModelState(false);
       })
       .catch((error) => {

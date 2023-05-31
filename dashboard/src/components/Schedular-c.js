@@ -449,10 +449,8 @@ const SchedulerC = ({
     );
 
     let prevEndDateTime = Array(selectedProfessionals.length).fill(null);
-    let professionalsId = Array(selectedProfessionals.length).fill({
-      id: null,
-      blocking: false,
-    });
+    let professionalsId = Array(selectedProfessionals.length).fill(null);
+    let appointmentBlocking = Array(selectedProfessionals.length).fill(false);
 
     hoursArr.map((hour, hourIndex) => {
       timeSlots.push(
@@ -540,9 +538,9 @@ const SchedulerC = ({
                       // Add condition to set gray background and disable slot
                       if (
                         isPrevEndGreater &&
-                        professionalsId[proIndex].id === pro._id
+                        professionalsId[proIndex] === pro._id
                       ) {
-                        if (professionalsId[proIndex].blocking) {
+                        if (appointmentBlocking[proIndex]) {
                           return (
                             <div
                               key={index}
@@ -563,9 +561,10 @@ const SchedulerC = ({
                       }
 
                       if (appointment) {
-                        professionalsId[proIndex].id = pro._id;
+                        professionalsId[proIndex] = pro._id;
                         if (appointment?.blocking) {
-                          professionalsId[proIndex].blocking = true;
+                          appointmentBlocking[proIndex] = true;
+                          console.log(professionalsId[1]);
                           return (
                             <div
                               key={index}
@@ -578,7 +577,7 @@ const SchedulerC = ({
                             </div>
                           );
                         } else {
-                          professionalsId[proIndex].blocking = false;
+                          appointmentBlocking[proIndex] = false;
                         }
                         return (
                           <div
