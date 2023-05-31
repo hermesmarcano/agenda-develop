@@ -91,42 +91,91 @@ const BlockSchedule = ({ setModelState }) => {
       blockingEndDate.setMinutes(0);
     }
 
-    const duration = (blockingEndDate - blockingDate) / (1000 * 60);
-    // console.log(
-    //   `The difference between ${blockingDate} and ${blockingEndDate} is ${duration} minutes`
-    // );
-    // if (duration < maxDuration) {
-    //   console.log(
-    //     `The Maximum duration between ${blockingDate} and End of the day is ${maxDuration} minutes is less than blocking time`
-    //   );
-    // }
-    // let d1 = duration;
-    // let blockingDatesArr = [];
-    // while (duration > d1) {
-    //   // blockingDatesArr.push({startDate: startDate, duration: maxDuration})
-    //   let d = new Date(values.startDate);
-    //   d.setDate(new Date(values.startDate).getDate() + 1);
-    //   d.setHours(8);
-    //   d.setMinutes(0);
-    //   console.log(d);
+    let duration = (blockingEndDate - blockingDate) / (1000 * 60);
+    const dayStart = new Date();
+    dayStart.setHours(8);
+    dayStart.setMinutes(0);
+    const dayEnd = new Date();
+    dayEnd.setHours(18);
+    dayEnd.setMinutes(0);
+    let dayHours = (dayEnd - dayStart) / (1000 * 60);
 
-    //   const durationMore = (blockingEndDate - d) / (1000 * 60);
+    if (duration <= maxDuration) {
+      // If the duration is less than or equal to maxDuration, create a single appointment
+      // createAppointment(
+      //   blockingDate,
+      //   maxDuration,
+      //   values.professional,
+      //   values.blockingReason
+      // );
+      alert("duration is less than a day");
+    } else {
+      // If the duration is larger than maxDuration, create multiple appointments
+      const appointments = [];
+      let currentDate = blockingDate;
+      let currentDuration = 0;
+      do {
+        if (currentDate.getDate() === blockingDate.getDate()) {
+          currentDuration = maxDuration;
+          createAppointment(
+            currentDate,
+            currentDuration,
+            values.professional,
+            values.blockingReason
+          );
 
-    //   console.log(
-    //     `The Maximum duration between ${blockingDate} and ${blockingEndDate} minutes is ${maxDuration} for the first day and ${durationMore} for the second day`
-    //   );
-    // }
+          currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+          currentDate.setHours(8);
+          currentDate.setMinutes(0);
+        } else {
+          if (duration > dayHours) {
+            // If the remaining duration is larger than the available day hours
+            currentDuration = dayHours;
 
+            createAppointment(
+              currentDate,
+              currentDuration,
+              values.professional,
+              values.blockingReason
+            );
+
+            // Move to the next day at 8:00 AM
+            currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+            currentDate.setHours(8);
+            currentDate.setMinutes(0);
+          }
+        }
+
+        duration = (blockingEndDate - currentDate) / (1000 * 60);
+      } while (duration > dayHours);
+
+      currentDuration = duration;
+
+      createAppointment(
+        currentDate,
+        currentDuration,
+        values.professional,
+        values.blockingReason
+      );
+    }
+  };
+
+  const createAppointment = (
+    dateTime,
+    duration,
+    professionalId,
+    blockingReason
+  ) => {
     axios
       .post(
         "http://localhost:4040/appointments",
         {
-          professional: values.professional,
-          dateTime: new Date(blockingDate),
+          professional: professionalId,
+          dateTime: new Date(dateTime),
           shopName: shopName,
           blocking: true,
           blockingDuration: duration,
-          blockingReason: values.blockingReason,
+          blockingReason: blockingReason,
         },
         {
           headers: {
@@ -138,9 +187,11 @@ const BlockSchedule = ({ setModelState }) => {
       .then((response) => {
         console.log(response.data);
         alert(
-          `${professionals.find(
-            (professional) => (professional._id = values.professional)
-          )} will be unavailable starting from ${blockingDate}`
+          `${
+            professionals.find(
+              (professional) => (professional._id = professionalId)
+            ).name
+          } will be unavailable starting from ${dateTime}`
         );
         setModelState(false);
       })
