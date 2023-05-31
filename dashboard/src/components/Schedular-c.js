@@ -8,6 +8,7 @@ import DateTimeContext from "../context/DateTimeContext";
 import ViewModeContext from "../context/ViewModeContext";
 import ProcessAppointment from "./ProcessAppointment";
 import { zipObjectDeep } from "lodash";
+import ProfessionalIdContext from "../context/ProfessionalIdContext";
 
 const schedulerData = [];
 
@@ -21,6 +22,7 @@ const SchedulerC = ({
 }) => {
   const { shopName } = React.useContext(SidebarContext);
   const { setDateTime } = React.useContext(DateTimeContext);
+  const { setProfessionalId } = React.useContext(ProfessionalIdContext);
   const [selectedDate, setSelectedDate] = React.useState(date);
   const [selectedWeekDate, setSelectedWeekDate] = React.useState(startWeekDate);
   const { viewMode, setViewMode } = React.useContext(ViewModeContext);
@@ -55,13 +57,13 @@ const SchedulerC = ({
 
   React.useEffect(() => {
     fetchAppointments();
-  }, [shopName]);
+  }, [shopName, modelState]);
 
   React.useEffect(() => {
     setSelectedDate(date);
   }, [date]);
 
-  function handleAppointment(hour) {
+  function handleAppointment(hour, professionalId) {
     const now = new Date();
     const nextAppointment = new Date(hour.getTime() + 30 * 60000);
 
@@ -73,6 +75,7 @@ const SchedulerC = ({
       );
     } else {
       setDateTime(hour);
+      setProfessionalId(professionalId);
       setModelState(true);
     }
   }
@@ -397,7 +400,10 @@ const SchedulerC = ({
                           onClick={() =>
                             !isDisabled &&
                             !appointment &&
-                            handleAppointment(startDateTime)
+                            handleAppointment(
+                              startDateTime,
+                              selectedProfessional
+                            )
                           }
                         ></div>
                       );
@@ -564,7 +570,6 @@ const SchedulerC = ({
                         professionalsId[proIndex] = pro._id;
                         if (appointment?.blocking) {
                           appointmentBlocking[proIndex] = true;
-                          console.log(professionalsId[1]);
                           return (
                             <div
                               key={index}
@@ -612,7 +617,7 @@ const SchedulerC = ({
                           onClick={() =>
                             !isDisabled &&
                             !appointment &&
-                            handleAppointment(startDateTime)
+                            handleAppointment(startDateTime, pro._id)
                           }
                         ></div>
                       );

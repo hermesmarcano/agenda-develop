@@ -6,11 +6,13 @@ import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
 import { FaCheck, FaChevronDown, FaChevronUp, FaSpinner } from "react-icons/fa";
 import Switch from "react-switch";
+import ProfessionalIdContext from "../context/ProfessionalIdContext";
 
 const BlockSchedule = ({ setModelState }) => {
-  const [blockAllDay, setBlockAllDay] = useState(false);
+  const [blockAllDay, setBlockAllDay] = useState(true);
   const [showFrequency, setShowFrequency] = useState(false);
   const { dateTime } = useContext(DateTimeContext);
+  const { professionalId } = useContext(ProfessionalIdContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const { shopName } = useContext(SidebarContext);
   const [loading, setLoading] = React.useState(true);
@@ -46,20 +48,20 @@ const BlockSchedule = ({ setModelState }) => {
     setShowFrequency(!showFrequency);
   };
 
-  const initialValues = {
-    professional: "",
-    blockAllDay: blockAllDay,
-    startDate: "",
-    startTimeHour: "",
-    startTimeMinute: "",
-    endDate: "",
-    endTimeHour: "",
-    endTimeMinute: "",
-    repetitions: "",
-    frequency: "",
-    repeat: "",
-    blockingReason: "",
-  };
+  // const initialValues = {
+  //   professional: "",
+  //   blockAllDay: blockAllDay,
+  //   startDate: "",
+  //   startTimeHour: "",
+  //   startTimeMinute: "",
+  //   endDate: "",
+  //   endTimeHour: "",
+  //   endTimeMinute: "",
+  //   repetitions: "",
+  //   frequency: "",
+  //   repeat: "",
+  //   blockingReason: "",
+  // };
 
   const validationSchema = Yup.object({
     professional: Yup.string().required("Professional is required"),
@@ -100,38 +102,35 @@ const BlockSchedule = ({ setModelState }) => {
     dayEnd.setMinutes(0);
     let dayHours = (dayEnd - dayStart) / (1000 * 60);
 
-    if (duration <= maxDuration) {
-      // If the duration is less than or equal to maxDuration, create a single appointment
-      // createAppointment(
-      //   blockingDate,
-      //   maxDuration,
-      //   values.professional,
-      //   values.blockingReason
-      // );
-      alert("duration is less than a day");
+    if (blockAllDay) {
+      console.log("blockAllDay");
+      const startingDate = new Date(values.startDate);
+      startingDate.setHours(8);
+      startingDate.setMinutes(0);
+      console.log(startingDate);
+      createAppointment(
+        startingDate,
+        600,
+        values.professional,
+        values.blockingReason
+      );
     } else {
-      // If the duration is larger than maxDuration, create multiple appointments
-      const appointments = [];
-      let currentDate = blockingDate;
-      let currentDuration = 0;
-      do {
-        if (currentDate.getDate() === blockingDate.getDate()) {
-          currentDuration = maxDuration;
-          createAppointment(
-            currentDate,
-            currentDuration,
-            values.professional,
-            values.blockingReason
-          );
-
-          currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
-          currentDate.setHours(8);
-          currentDate.setMinutes(0);
-        } else {
-          if (duration > dayHours) {
-            // If the remaining duration is larger than the available day hours
-            currentDuration = dayHours;
-
+      if (duration <= maxDuration) {
+        // If the duration is less than or equal to maxDuration, create a single appointment
+        createAppointment(
+          blockingDate,
+          duration,
+          values.professional,
+          values.blockingReason
+        );
+      } else {
+        // If the duration is larger than maxDuration, create multiple appointments
+        const appointments = [];
+        let currentDate = blockingDate;
+        let currentDuration = 0;
+        do {
+          if (currentDate.getDate() === blockingDate.getDate()) {
+            currentDuration = maxDuration;
             createAppointment(
               currentDate,
               currentDuration,
@@ -139,25 +138,43 @@ const BlockSchedule = ({ setModelState }) => {
               values.blockingReason
             );
 
-            // Move to the next day at 8:00 AM
             currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
             currentDate.setHours(8);
             currentDate.setMinutes(0);
+          } else {
+            if (duration > dayHours) {
+              // If the remaining duration is larger than the available day hours
+              currentDuration = dayHours;
+
+              createAppointment(
+                currentDate,
+                currentDuration,
+                values.professional,
+                values.blockingReason
+              );
+
+              // Move to the next day at 8:00 AM
+              currentDate = new Date(
+                currentDate.getTime() + 24 * 60 * 60 * 1000
+              );
+              currentDate.setHours(8);
+              currentDate.setMinutes(0);
+            }
           }
+
+          duration = (blockingEndDate - currentDate) / (1000 * 60);
+        } while (duration > dayHours);
+
+        currentDuration = duration;
+
+        if (currentDuration > 0) {
+          createAppointment(
+            currentDate,
+            currentDuration,
+            values.professional,
+            values.blockingReason
+          );
         }
-
-        duration = (blockingEndDate - currentDate) / (1000 * 60);
-      } while (duration > dayHours);
-
-      currentDuration = duration;
-
-      if (currentDuration > 0) {
-        createAppointment(
-          currentDate,
-          currentDuration,
-          values.professional,
-          values.blockingReason
-        );
       }
     }
   };
@@ -217,17 +234,17 @@ const BlockSchedule = ({ setModelState }) => {
   return (
     <Formik
       initialValues={{
-        professional: "",
+        professional: professionalId,
         blockAllDay: blockAllDay,
-        startDate: "",
-        startTimeHour: new Date(),
+        startDate: dateTime.toISOString().substring(0, 10),
+        startTimeHour: "",
         startTimeMinute: "",
-        endDate: new Date(),
+        endDate: dateTime.toISOString().substring(0, 10),
         endTimeHour: "",
         endTimeMinute: "",
-        repetitions: "",
-        frequency: "",
-        repeat: "",
+        // repetitions: "",
+        // frequency: "",
+        // repeat: "",
         blockingReason: "",
       }}
       validationSchema={validationSchema}
@@ -426,7 +443,7 @@ const BlockSchedule = ({ setModelState }) => {
             </div>
           </div>
           <div>
-            <div className="flex items-center">
+            {/* <div className="flex items-center my-2">
               <label
                 htmlFor="repetitions"
                 className="block text-sm text-gray-700 font-bold"
@@ -443,7 +460,7 @@ const BlockSchedule = ({ setModelState }) => {
                   <FaChevronUp className="text-gray-600" />
                 )}
               </div>
-            </div>
+            </div> */}
             {showFrequency && (
               <>
                 <div>

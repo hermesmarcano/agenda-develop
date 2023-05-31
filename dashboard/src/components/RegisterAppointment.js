@@ -4,9 +4,10 @@ import * as Yup from "yup";
 import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
-import { FaCheck } from "react-icons/fa";
+import { FaCheck, FaSpinner } from "react-icons/fa";
 import BlockSchedule from "./BlockSchedule";
 import SubmitPayment from "./SubmitPayment";
+import ProfessionalIdContext from "../context/ProfessionalIdContext";
 
 const RegisterAppointment = ({
   amount,
@@ -18,7 +19,8 @@ const RegisterAppointment = ({
   const { shopName } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
-
+  const [loading, setLoading] = React.useState(true);
+  const { professionalId } = useContext(ProfessionalIdContext);
   const [duration, setDuration] = useState(0);
   const [activeTab, setActiveTab] = useState("appointment");
   const [professionals, setProfessionals] = useState([]);
@@ -46,24 +48,6 @@ const RegisterAppointment = ({
 
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((response) => {
-        setProfessionals(response.data.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    axios
       .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
         headers: {
           Authorization: token,
@@ -76,13 +60,6 @@ const RegisterAppointment = ({
         console.error(error);
       });
   }, []);
-
-  const initialValues = {
-    customer: "",
-    professional: "",
-    service: [],
-    dateTime: "",
-  };
 
   const validationSchema = Yup.object().shape({
     customer: Yup.string().required("Customer is required"),
@@ -98,6 +75,25 @@ const RegisterAppointment = ({
       .of(Yup.string().required("A service name is required")),
     // dateTime: Yup.string().required("Start time is required"),
   });
+
+  useEffect(() => {
+    axios
+      .get(
+        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        setProfessionals(response.data.data);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
     values.dateTime = dateTime;
@@ -138,11 +134,27 @@ const RegisterAppointment = ({
     resetForm();
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col justify-center items-center space-x-2">
+          <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          <span className="mt-2">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* <h2 className="text-xl font-bold mb-4">Book an Appointment</h2> */}
       <Formik
-        initialValues={initialValues}
+        initialValues={{
+          customer: "",
+          professional: professionalId,
+          service: [],
+          dateTime: "",
+        }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
