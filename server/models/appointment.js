@@ -9,12 +9,12 @@ const appointmentSchema = new mongoose.Schema(
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Customer",
-      required: true,
+      // required: true,
     },
     professional: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Professional",
-      required: true,
+      // required: true,
     },
     service: [{ type: mongoose.Schema.Types.ObjectId, ref: "Service" }],
     dateTime: {
@@ -26,6 +26,16 @@ const appointmentSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "confirmed", "completed", "cancelled"],
       default: "pending",
+    },
+    blocking: {
+      type: Boolean,
+      default: false,
+    },
+    blockingDuration: {
+      type: Number,
+    },
+    blockingReason: {
+      type: String,
     },
   },
   {

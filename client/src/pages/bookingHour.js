@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../axiosConfig/axiosConfig";
+import { FaSpinner } from "react-icons/fa";
 
 const BookingHour = () => {
   const [selectedHour, setSelectedHour] = useState(null);
   const [isHourSelected, setIsHourSelected] = useState(false);
   const [reservedAppt, setReservedAppt] = useState([]);
+  const [loading, setLoading] = React.useState(true);
   const params = useParams();
   const navigate = useNavigate();
 
@@ -19,15 +21,23 @@ const BookingHour = () => {
       .get(`/managers/shopname?urlSlug=${params.id}`)
       .then((response) => {
         console.log(response.data);
-        // setShopName(response.data.shopName);
         instance
           .get(`/appointments?shopName=${response.data.shopName}`)
           .then((response) => {
-            let apptDates = [];
-            response.data.appointments.map((appt) => {
-              apptDates.push(new Date(appt.dateTime).toString());
+            const professionalId = JSON.parse(
+              localStorage.getItem("professional")
+            );
+            let apptPro = response.data.appointments.filter((appt) => {
+              return appt.professional._id === professionalId._id;
             });
-            setReservedAppt(apptDates);
+
+            console.log(apptPro);
+            // let apptDates = [];
+            // apptPro.map((appt) => {
+            //   apptDates.push(new Date(appt.dateTime).toString());
+            // });
+            setReservedAppt(apptPro);
+            setLoading(false);
           })
           .catch((err) => {
             console.log(err);
@@ -41,21 +51,24 @@ const BookingHour = () => {
   const date = localStorage.getItem("selectedDate");
   const hours = useMemo(() => {
     const arr = [];
-    for (let i = 1; i <= 9; i++) {
-      let d = i + 8;
-      let d1 = new Date(date);
-      d1.setHours(d);
-      d1.setMinutes(0);
-      d1.setSeconds(0);
-      let d2 = new Date(d1);
-      d2.setMinutes(30);
+    let startHour = 8; // Starting hour
+    let startMinute = 0; // Starting minute
 
-      if (i === 9) {
-        arr.push(d1);
-      } else {
-        arr.push(d1, d2);
+    while (startHour < 17 || (startHour === 17 && startMinute === 0)) {
+      let d1 = new Date(date);
+      d1.setHours(startHour);
+      d1.setMinutes(startMinute);
+      arr.push(d1);
+
+      startMinute += 15; // Increase the minute by 15
+
+      if (startMinute === 60) {
+        // If the minute reaches 60, reset it to 0 and increase the hour
+        startMinute = 0;
+        startHour++;
       }
     }
+
     return arr;
   }, [date]);
 
@@ -65,16 +78,50 @@ const BookingHour = () => {
     const selectedDate = localStorage.getItem("selectedDate");
     const d = new Date(selectedDate);
 
-    // const timeArr = selectedHour.split(":");
-    // d.setHours(+timeArr[0]);
-    // d.setMinutes(+timeArr[1]);
     localStorage.setItem("dateTime", selectedHour);
     navigate(`/shops/${params.id}/buy-product`);
-    // Implement booking logic here
   };
 
+  const isHourDisabled = (hour) => {
+    if (reservedAppt.length === 0) return false;
+    const selectedDate = new Date(hour);
+
+    for (let i = 0; i < reservedAppt.length; i++) {
+      const apptStart = new Date(reservedAppt[i].dateTime);
+      const apptEnd = new Date(apptStart);
+      apptEnd.setMinutes(
+        apptEnd.getMinutes() +
+          (reservedAppt[i].blocking
+            ? reservedAppt[i].blockingDuration
+            : reservedAppt[i].service.reduce(
+                (sum, service) => sum + service.duration,
+                0
+              ))
+      );
+      // duration is in minutes
+      if (selectedDate >= apptStart && selectedDate <= apptEnd) {
+        // if (new Date(hour) >= apptStart && new Date(hour) <= apptEnd) {
+        return true;
+        // }
+      }
+    }
+
+    return false;
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col justify-center items-center space-x-2">
+          <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          <span className="mt-2">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-6">
+    <div className="flex flex-col items-center justify-center bg-gray-100 p-6 overflow-y-auto">
       <h1 className="text-5xl font-extrabold mb-8 text-gray-900">
         Select an Hour
       </h1>
@@ -93,12 +140,14 @@ const BookingHour = () => {
                 className={`${
                   selectedHour === hour ? "ring-2 ring-indigo-500" : ""
                 } bg-white hover:bg-gray-100 text-gray-900 font-semibold py-4 px-6 border rounded-lg text-center text-xl ${
-                  reservedAppt.includes(hour.toString()) && "line-through"
+                  isHourDisabled(hour) || hour < new Date()
+                    ? "line-through"
+                    : ""
                 }`}
                 onClick={() => {
                   handleHourChange({ target: { value: hour } });
                 }}
-                disabled={reservedAppt.includes(hour.toString())}
+                disabled={isHourDisabled(hour) || hour < new Date()}
               >
                 {hour.toLocaleTimeString([], {
                   hour: "2-digit",
