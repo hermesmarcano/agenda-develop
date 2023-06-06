@@ -32,19 +32,21 @@ function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
   const [shopName, setShopName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
-  const [theme, setTheme] = useState("gray");
+  const currentTheme = localStorage.getItem("currentTheme");
+  const [theme, setTheme] = useState(currentTheme ? currentTheme : "light");
+  // themes [
+  //   "gray",
+  //   "sky",
+  //   "orange",
+  //   "teal",
+  //   "yellow",
+  //   "amber",
+  //   "emerald",
+  //   "pink",
+  //   "rose",
+  // ]
   const [viewMode, setViewMode] = useState("daily");
   const [professionalId, setProfessionalId] = useState("");
-  axios
-    .get("http://localhost:4040/managers/id", {
-      headers: {
-        Authorization: localStorage.getItem("ag_app_shop_token"),
-      },
-    })
-    .then((res) => {
-      console.log("theme: ", res.data.theme);
-      setTheme(res.data.theme);
-    });
 
   return (
     <div className="h-screen overflow-hidden">

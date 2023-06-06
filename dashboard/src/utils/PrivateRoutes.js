@@ -16,10 +16,17 @@ const PrivateRoutes = () => {
         <div
           className={`bg-gray-200 ${
             isSidebarOpen ? "ml-[224.102px]" : "ml-[80px]"
-          } flex-1 overflow-auto bg-gray-100`}
+          } flex-1 overflow-auto`}
         >
           <Outlet />
         </div>
+        {/* <div
+          className={`bg-gray-800 text-cyan-600 ${
+            isSidebarOpen ? "ml-[224.102px]" : "ml-[80px]"
+          } flex-1 overflow-auto`}
+        >
+          <Outlet />
+        </div> */}
       </div>
     </>
   ) : (

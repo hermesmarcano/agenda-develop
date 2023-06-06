@@ -7,8 +7,10 @@ import SidebarContext from "../context/SidebarContext";
 import { FaCheck, FaChevronDown, FaChevronUp, FaSpinner } from "react-icons/fa";
 import Switch from "react-switch";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
+import ThemeContext from "../context/ThemeContext";
 
 const BlockSchedule = ({ setModelState }) => {
+  const { theme } = useContext(ThemeContext);
   const [blockAllDay, setBlockAllDay] = useState(true);
   const [showFrequency, setShowFrequency] = useState(false);
   const { dateTime } = useContext(DateTimeContext);
@@ -256,7 +258,7 @@ const BlockSchedule = ({ setModelState }) => {
             <div>
               <label
                 htmlFor="professional"
-                className="block text-sm text-gray-700 font-bold mb-2"
+                className={`block text-sm text-${theme}-700 font-bold mb-2`}
               >
                 Select the professional
               </label>
@@ -264,7 +266,7 @@ const BlockSchedule = ({ setModelState }) => {
                 as="select"
                 id="professional"
                 name="professional"
-                className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-64"
+                className={`py-2 pl-8 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500 w-64`}
               >
                 <option value="">Select professional</option>
                 {professionals.map((professional) => {
@@ -285,7 +287,7 @@ const BlockSchedule = ({ setModelState }) => {
               <div className="flex justify-start items-center">
                 <label
                   htmlFor="blockAllDay"
-                  className="block text-sm text-gray-700 font-bold"
+                  className={`block text-sm text-${theme}-700 font-bold`}
                 >
                   Block all day
                 </label>
@@ -310,7 +312,7 @@ const BlockSchedule = ({ setModelState }) => {
             <div className="flex items-end mt-2 pr-3">
               <label
                 //   htmlFor="startDate"
-                className="block text-sm text-gray-700 font-bold mr-2"
+                className={`block text-sm text-${theme}-700 font-bold mr-2`}
               >
                 Start
               </label>
@@ -319,7 +321,7 @@ const BlockSchedule = ({ setModelState }) => {
                   type="date"
                   id="startDate"
                   name="startDate"
-                  className="py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500"
+                  className={`py-2 pl-3 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500`}
                 />
                 <ErrorMessage
                   name="startDate"
@@ -335,7 +337,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="startTimeHour"
                       name="startTimeHour"
-                      className="py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500"
+                      className={`py-2 pl-3 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Hour</option>
                       {hoursArr.map((hour, index) => {
@@ -358,7 +360,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="startTimeMinute"
                       name="startTimeMinute"
-                      className="py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500"
+                      className={`py-2 pl-3 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Minute</option>
                       <option value="0">00</option>
@@ -378,7 +380,7 @@ const BlockSchedule = ({ setModelState }) => {
             <div className="flex items-end">
               <label
                 // htmlFor="endDate"
-                className="block text-sm text-gray-700 font-bold mr-4"
+                className={`block text-sm text-${theme}-700 font-bold mr-4`}
               >
                 End
               </label>
@@ -387,7 +389,7 @@ const BlockSchedule = ({ setModelState }) => {
                   type="date"
                   id="endDate"
                   name="endDate"
-                  className="py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500"
+                  className={`py-2 pl-3 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500`}
                 />
                 <ErrorMessage
                   name="endDate"
@@ -402,7 +404,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="endTimeHour"
                       name="endTimeHour"
-                      className="py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500"
+                      className={`py-2 pl-3 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Hour</option>
                       {hoursArr.map((hour, index) => {
@@ -424,7 +426,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="endTimeMinute"
                       name="endTimeMinute"
-                      className="py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500"
+                      className={`py-2 pl-3 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Minute</option>
                       <option value="0">00</option>
@@ -444,29 +446,29 @@ const BlockSchedule = ({ setModelState }) => {
           </div>
           <div>
             {/* <div className="flex items-center my-2">
-              <label
-                htmlFor="repetitions"
-                className="block text-sm text-gray-700 font-bold"
-              >
-                Repetitions
-              </label>
-              <div
-                className="ml-2 cursor-pointer"
-                onClick={handleShowFrequencyChange}
-              >
-                {showFrequency ? (
-                  <FaChevronDown className="text-gray-600" />
-                ) : (
-                  <FaChevronUp className="text-gray-600" />
-                )}
-              </div>
-            </div> */}
+          <label
+            htmlFor="repetitions"
+            className={`block text-sm text-${theme}-700 font-bold`}
+          >
+            Repetitions
+          </label>
+          <div
+            className="ml-2 cursor-pointer"
+            onClick={handleShowFrequencyChange}
+          >
+            {showFrequency ? (
+              <FaChevronDown className={`text-${theme}-600`} />
+            ) : (
+              <FaChevronUp className={`text-${theme}-600`} />
+            )}
+          </div>
+        </div> */}
             {showFrequency && (
               <>
                 <div>
                   <label
                     htmlFor="frequency"
-                    className="block text-sm text-gray-700 font-bold mb-2"
+                    className={`block text-sm text-${theme}-700 font-bold mb-2`}
                   >
                     Frequency
                   </label>
@@ -474,7 +476,7 @@ const BlockSchedule = ({ setModelState }) => {
                     as="select"
                     id="frequency"
                     name="frequency"
-                    className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-64"
+                    className={`py-2 pl-8 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500 w-64`}
                   >
                     <option value="">Select frequency</option>
                     <option value="single">Single</option>
@@ -491,7 +493,7 @@ const BlockSchedule = ({ setModelState }) => {
                 <div>
                   <label
                     htmlFor="repeat"
-                    className="block text-sm text-gray-700 font-bold mb-2"
+                    className={`block text-sm text-${theme}-700 font-bold mb-2`}
                   >
                     Repeat
                   </label>
@@ -499,7 +501,7 @@ const BlockSchedule = ({ setModelState }) => {
                     as="select"
                     id="repeat"
                     name="repeat"
-                    className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-64"
+                    className={`py-2 pl-8 border-b-2 border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500 w-64`}
                   >
                     <option value="">Select repeat</option>
                     {[...Array(100)].map((_, index) => (
@@ -521,7 +523,7 @@ const BlockSchedule = ({ setModelState }) => {
         <div className="mt-3">
           <label
             htmlFor="blockingReason"
-            className="block text-sm text-gray-700 font-bold mb-2"
+            className={`block text-sm text-${theme}-700 font-bold mb-2`}
           >
             Blocking Reason
           </label>
@@ -529,7 +531,7 @@ const BlockSchedule = ({ setModelState }) => {
             as="textarea"
             id="blockingReason"
             name="blockingReason"
-            className="py-2 px-4 border border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 resize-none w-full"
+            className={`py-2 px-4 border border-${theme}-300 text-${theme}-700 focus:outline-none focus:border-blue-500 resize-none w-full`}
             rows="3"
           ></Field>
           <ErrorMessage
@@ -541,7 +543,7 @@ const BlockSchedule = ({ setModelState }) => {
         <div className="flex items-center justify-between">
           <button
             type="submit"
-            className="bg-gray-800 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className={`bg-${theme}-800 hover:bg-${theme}-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
           >
             Submit
           </button>

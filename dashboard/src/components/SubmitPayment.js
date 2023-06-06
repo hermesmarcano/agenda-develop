@@ -4,7 +4,13 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import { Field, Form, Formik } from "formik";
 
-const SubmitPayment = ({ amount, clients, setModelState, bookingInfo }) => {
+const SubmitPayment = ({
+  amount,
+  clients,
+  setModelState,
+  bookingInfo,
+  setAmount,
+}) => {
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const { shopName } = useContext(SidebarContext);
@@ -71,6 +77,7 @@ const SubmitPayment = ({ amount, clients, setModelState, bookingInfo }) => {
                 console.log(response.data);
                 alert("Booked Successfully");
                 setModelState(false);
+                setAmount(0);
               })
               .catch((error) => {
                 console.error(error.message);
@@ -87,6 +94,7 @@ const SubmitPayment = ({ amount, clients, setModelState, bookingInfo }) => {
       })
       .finally(() => {
         // Reset the form
+
         actions.setSubmitting(false);
       });
   };
@@ -97,7 +105,7 @@ const SubmitPayment = ({ amount, clients, setModelState, bookingInfo }) => {
     >
       {({ values, handleSubmit, isSubmitting }) => (
         <Form className="p-4">
-          <h2 className="text-xl font-bold mb-4">Register Payment</h2>
+          <h2 className="text-xl font-bold mb-4">Confirm Payment</h2>
           <div className="mb-4">
             <label htmlFor="amount" className="block font-bold mb-2">
               Amount

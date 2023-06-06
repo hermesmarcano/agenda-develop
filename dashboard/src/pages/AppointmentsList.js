@@ -45,8 +45,10 @@ const AppointmentsList = () => {
       })
       .then((response) => {
         console.log(response.data.appointments);
-        let appts = response.data.appointments.filter((appt) => !appt.blocking);
-        setAppointments([...appts].reverse());
+        const registeredAppointments = response.data.appointments.filter(
+          (appt) => !appt.blocking
+        );
+        setAppointments([...registeredAppointments].reverse());
       })
       .catch((error) => {
         console.log(error);

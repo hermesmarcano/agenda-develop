@@ -38,7 +38,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   return (
     <>
       {isOpen && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
+        <div className="fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto">
           <div className="flex items-center justify-center min-h-screen">
             <div
               className="fixed inset-0 bg-gray-500 opacity-75"
@@ -112,6 +112,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                       bookingInfo={bookingInfo}
                       clients={clients}
                       setModelState={setModelState}
+                      setAmount={setAmount}
                     />
                   )}
                 </>

@@ -1,7 +1,15 @@
 import React, { useContext, useState } from "react";
-import { FaBell, FaCog, FaUser, FaPaintBrush, FaXing } from "react-icons/fa";
+import {
+  FaBell,
+  FaCog,
+  FaUser,
+  FaPaintBrush,
+  FaXing,
+  FaSun,
+  FaMoon,
+} from "react-icons/fa";
 import { IoMdColorPalette } from "react-icons/io";
-import { FiX } from "react-icons/fi";
+import { FiX, FiSun, FiMoon } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import ThemeContext from "../context/ThemeContext";
 import axios from "axios";
@@ -11,23 +19,17 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [colorDiv, setColorDiv] = useState(false);
   const { theme, setTheme } = useContext(ThemeContext);
+  console.log("theme: " + theme);
 
   const handleThemeChange = (color) => {
-    axios
-      .patch(
-        "http://localhost:4040/managers",
-        { theme: color },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("ag_app_shop_token"),
-          },
-        }
-      )
-      .then((res) => {
-        setTheme(color);
-        console.log(res);
-      });
+    setTheme(color);
+  };
+
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+    // You can also add logic to persist the user's preference using local storage or a state management library
   };
 
   const toggleMenu = () => {
@@ -89,14 +91,22 @@ function Header() {
             </div>
           )}
         </div>
-        <div className="relative">
+        <div className="flex items-center ml-2">
           <button
-            className={`ml-4 focus:outline-none cursor-pointer`}
-            onClick={() => setColorDiv(!colorDiv)}
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${
+              isDarkMode ? "bg-gray-700" : "bg-yellow-400"
+            }`}
+            onClick={toggleDarkMode}
+            style={{ transition: "background-color 0.3s" }}
           >
-            <FaPaintBrush className={`w-6 h-6 text-gray-400`} />
+            {isDarkMode ? (
+              <FiMoon className="text-white text-xl" />
+            ) : (
+              <FiSun className="text-yellow-500 text-xl" />
+            )}
           </button>
-          {colorDiv && (
+
+          {/* {colorDiv && (
             <>
               <div
                 className={`fixed z-20 inset-0 bg-gray-900 bg-opacity-50`}
@@ -129,7 +139,7 @@ function Header() {
                 </button>
               </div>
             </>
-          )}
+          )} */}
         </div>
       </div>
     </header>

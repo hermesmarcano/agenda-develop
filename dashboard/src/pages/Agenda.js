@@ -14,6 +14,7 @@ import { HiEmojiSad } from "react-icons/hi";
 
 const Agenda = () => {
   const { shopName } = useContext(SidebarContext);
+
   const [date, setDate] = useState(new Date());
   const getStartOfWeek = (date) => {
     const startOfWeek = new Date(date);

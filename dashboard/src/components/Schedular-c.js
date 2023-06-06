@@ -9,6 +9,7 @@ import ViewModeContext from "../context/ViewModeContext";
 import ProcessAppointment from "./ProcessAppointment";
 import { zipObjectDeep } from "lodash";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
+import stripeBackground from "../images/stripe.svg";
 
 const schedulerData = [];
 
@@ -334,7 +335,8 @@ const SchedulerC = ({
                           return (
                             <div
                               key={index}
-                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              className={`h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              style={{ backgroundColor: "#AD8C8C" }}
                               disabled
                             ></div>
                           );
@@ -356,10 +358,11 @@ const SchedulerC = ({
                           return (
                             <div
                               key={index}
-                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              className={`h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              style={{ backgroundColor: "#AD8C8C" }}
                               disabled
                             >
-                              <span className="italic text-white ml-1 truncate">
+                              <span className="font-extrabold text-white ml-1 truncate">
                                 {appointment?.blockingReason}
                               </span>
                             </div>
@@ -390,23 +393,37 @@ const SchedulerC = ({
                         );
                       }
 
-                      return (
-                        <div
-                          key={index}
-                          className={`h-6 bg-gray-200 p-1 ${
-                            index !== 3 &&
-                            "border-b border-dotted border-gray-400"
-                          } cursor-crosshair hover:bg-gray-300`}
-                          onClick={() =>
-                            !isDisabled &&
-                            !appointment &&
-                            handleAppointment(
-                              startDateTime,
-                              selectedProfessional
-                            )
-                          }
-                        ></div>
-                      );
+                      if (!isDisabled && !appointment) {
+                        return (
+                          <div
+                            key={index}
+                            className={`h-6 bg-gray-200 p-1 ${
+                              index !== 3 &&
+                              "border-b border-dotted border-gray-400"
+                            } cursor-crosshair hover:bg-gray-300`}
+                            onClick={() =>
+                              !isDisabled &&
+                              !appointment &&
+                              handleAppointment(
+                                startDateTime,
+                                selectedProfessional
+                              )
+                            }
+                          ></div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            key={index}
+                            className="h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed"
+                            disabled
+                            style={{
+                              backgroundImage: `url(${stripeBackground})`,
+                              backgroundRepeat: "repeat",
+                            }}
+                          ></div>
+                        );
+                      }
                     })}
                   </div>
                 </div>
@@ -550,7 +567,8 @@ const SchedulerC = ({
                           return (
                             <div
                               key={index}
-                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              className={`h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              style={{ backgroundColor: "#AD8C8C" }}
                               disabled
                             ></div>
                           );
@@ -573,10 +591,11 @@ const SchedulerC = ({
                           return (
                             <div
                               key={index}
-                              className={`h-6 bg-sky-800 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              className={`h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
+                              style={{ backgroundColor: "#AD8C8C" }}
                               disabled
                             >
-                              <span className="italic text-white ml-1 truncate">
+                              <span className="font-extrabold text-white ml-1 truncate">
                                 {appointment?.blockingReason}
                               </span>
                             </div>
@@ -607,20 +626,34 @@ const SchedulerC = ({
                         );
                       }
 
-                      return (
-                        <div
-                          key={index}
-                          className={`h-6 bg-gray-200 ${slotWidth} p-1 ${
-                            index !== 3 &&
-                            "border-b border-dotted border-gray-400"
-                          } cursor-crosshair hover:bg-gray-300`}
-                          onClick={() =>
-                            !isDisabled &&
-                            !appointment &&
-                            handleAppointment(startDateTime, pro._id)
-                          }
-                        ></div>
-                      );
+                      if (!isDisabled && !appointment) {
+                        return (
+                          <div
+                            key={index}
+                            className={`h-6 bg-gray-200 ${slotWidth} p-1 ${
+                              index !== 3 &&
+                              "border-b border-dotted border-gray-400"
+                            } cursor-crosshair hover:bg-gray-300`}
+                            onClick={() =>
+                              !isDisabled &&
+                              !appointment &&
+                              handleAppointment(startDateTime, pro._id)
+                            }
+                          ></div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            key={index}
+                            className="h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed"
+                            disabled
+                            style={{
+                              backgroundImage: `url(${stripeBackground})`,
+                              backgroundRepeat: "repeat",
+                            }}
+                          ></div>
+                        );
+                      }
                     })}
                   </div>
                 </div>
