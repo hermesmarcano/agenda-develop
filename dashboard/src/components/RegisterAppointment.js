@@ -14,6 +14,8 @@ const RegisterAppointment = ({
   setClients,
   setBookingInfo,
   setAmount,
+  addCustomerClicked,
+  setAddCustomerClicked
 }) => {
   const { shopName } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
@@ -23,7 +25,6 @@ const RegisterAppointment = ({
   const [duration, setDuration] = useState(0);
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
-  const [addCustomerClicked, setAddCustomerClicked] = useState(false);
 
   useEffect(() => {
     axios
@@ -115,41 +116,23 @@ const RegisterAppointment = ({
       });
     });
 
-    try {
-      if (addCustomerClicked) {
-        const response = await axios.post(
-          "http://localhost:4040/customers/",
-          {
-            name: values.name,
-            phone: values.phone,
-            shopName: shopName,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: localStorage.getItem("ag_app_shop_token"),
-            },
-          }
-        );
-        const { customer } = response.data;
-        setBookingInfo({
-          customer: customer._id,
-          professional: values.professional,
-          service: values.service,
-          dateTime: new Date(dateTime),
-          shopName: shopName,
-        });
-      } else {
-        setBookingInfo({
-          customer: values.customer,
-          professional: values.professional,
-          service: values.service,
-          dateTime: new Date(dateTime),
-          shopName: shopName,
-        });
-      }
-    } catch (error) {
-      console.log(error);
+    if (addCustomerClicked) {
+      setBookingInfo({
+        name: values.name,
+        phone: values.phone,
+        professional: values.professional,
+        service: values.service,
+        dateTime: new Date(dateTime),
+        shopName: shopName,
+      });
+    } else {
+      setBookingInfo({
+        customer: values.customer,
+        professional: values.professional,
+        service: values.service,
+        dateTime: new Date(dateTime),
+        shopName: shopName,
+      });
     }
 
     setAmount(totalPrice);

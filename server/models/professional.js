@@ -14,8 +14,12 @@ const professionalSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    officeHours: {
-      type: String,
+    startHour: {
+      type: Number,
+      required: true,
+    },
+    endHour: {
+      type: Number,
       required: true,
     },
     description: {

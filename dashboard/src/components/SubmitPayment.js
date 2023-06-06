@@ -3,6 +3,7 @@ import DateTimeContext from "../context/DateTimeContext";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import { Field, Form, Formik } from "formik";
+import { TiTickOutline, TiTimesOutline } from "react-icons/ti";
 
 const SubmitPayment = ({
   amount,
@@ -10,6 +11,7 @@ const SubmitPayment = ({
   setModelState,
   bookingInfo,
   setAmount,
+  addCustomerClicked,
 }) => {
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -27,77 +29,171 @@ const SubmitPayment = ({
       description: values.description,
     };
     console.log(data);
-    axios
-      .post("http://localhost:4040/payments", data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        console.log(response.data);
-        const cuurentClient = clients.find(
-          (client) => client._id === bookingInfo.customer
-        );
-        const updatedClientPayments =
-          Number(cuurentClient.payments) + Number(values.amount);
-        console.log("updatedClientPayments: ", updatedClientPayments);
-        console.log("customer id: ", bookingInfo.customer);
-        axios
-          .patch(
-            `http://localhost:4040/customers/${bookingInfo.customer}`,
-            JSON.stringify({ payments: updatedClientPayments }),
-            {
+
+    if (addCustomerClicked) {
+      axios
+        .post(
+          "http://localhost:4040/customers/",
+          {
+            name: bookingInfo.name,
+            phone: bookingInfo.phone,
+            shopName: shopName,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("ag_app_shop_token"),
+            },
+          }
+        )
+        .then((response) => {
+          const { customer } = response.data;
+          data.customer = customer._id;
+          axios
+            .post("http://localhost:4040/payments", data, {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: localStorage.getItem("ag_app_shop_token"),
+                Authorization: token,
               },
-            }
-          )
-          .then((response) => {
-            console.log(response.data);
-            axios
-              .post(
-                "http://localhost:4040/appointments",
-                {
-                  customer: bookingInfo.customer,
-                  professional: bookingInfo.professional,
-                  service: bookingInfo.service,
-                  dateTime: new Date(dateTime),
-                  shopName: shopName,
-                },
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                  },
-                }
-              )
-              .then((response) => {
-                console.log(response.data);
-                alert("Booked Successfully");
-                setModelState(false);
-                setAmount(0);
-              })
-              .catch((error) => {
-                console.error(error.message);
-                // Handle errors
-              });
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.error(error.message);
-        // Handle errors
-      })
-      .finally(() => {
-        // Reset the form
+            })
+            .then((response) => {
+              console.log(response.data);
+              const cuurentClient = clients.find(
+                (client) => client._id === bookingInfo.customer
+              );
+              const updatedClientPayments =
+                Number(cuurentClient.payments) + Number(values.amount);
+              console.log("updatedClientPayments: ", updatedClientPayments);
+              console.log("customer id: ", bookingInfo.customer);
+              axios
+                .patch(
+                  `http://localhost:4040/customers/${bookingInfo.customer}`,
+                  JSON.stringify({ payments: updatedClientPayments }),
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: localStorage.getItem("ag_app_shop_token"),
+                    },
+                  }
+                )
+                .then((response) => {
+                  console.log(response.data);
+                  axios
+                    .post(
+                      "http://localhost:4040/appointments",
+                      {
+                        customer: bookingInfo.customer,
+                        professional: bookingInfo.professional,
+                        service: bookingInfo.service,
+                        dateTime: new Date(dateTime),
+                        shopName: shopName,
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: token,
+                        },
+                      }
+                    )
+                    .then((response) => {
+                      console.log(response.data);
+                      alert("Booked Successfully");
+                      setModelState(false);
+                      setAmount(0);
+                    })
+                    .catch((error) => {
+                      console.error(error.message);
+                      // Handle errors
+                    });
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            })
+            .catch((error) => {
+              console.error(error.message);
+              // Handle errors
+            })
+            .finally(() => {
+              // Reset the form
 
-        actions.setSubmitting(false);
-      });
+              actions.setSubmitting(false);
+            });
+        });
+    } else {
+      axios
+        .post("http://localhost:4040/payments", data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          const cuurentClient = clients.find(
+            (client) => client._id === bookingInfo.customer
+          );
+          const updatedClientPayments =
+            Number(cuurentClient.payments) + Number(values.amount);
+          console.log("updatedClientPayments: ", updatedClientPayments);
+          console.log("customer id: ", bookingInfo.customer);
+          axios
+            .patch(
+              `http://localhost:4040/customers/${bookingInfo.customer}`,
+              JSON.stringify({ payments: updatedClientPayments }),
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: localStorage.getItem("ag_app_shop_token"),
+                },
+              }
+            )
+            .then((response) => {
+              console.log(response.data);
+              axios
+                .post(
+                  "http://localhost:4040/appointments",
+                  {
+                    customer: bookingInfo.customer,
+                    professional: bookingInfo.professional,
+                    service: bookingInfo.service,
+                    dateTime: new Date(dateTime),
+                    shopName: shopName,
+                  },
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: token,
+                    },
+                  }
+                )
+                .then((response) => {
+                  console.log(response.data);
+                  alert("Booked Successfully");
+                  setModelState(false);
+                  setAmount(0);
+                })
+                .catch((error) => {
+                  console.error(error.message);
+                  // Handle errors
+                });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error.message);
+          // Handle errors
+        })
+        .finally(() => {
+          // Reset the form
+
+          actions.setSubmitting(false);
+        });
+    }
   };
+
   return (
     <Formik
       initialValues={{ amount: amount, description: "" }}
@@ -150,6 +246,7 @@ const SubmitPayment = ({
               disabled={isSubmitting}
               onClick={handleSubmit}
             >
+              <TiTickOutline className="inline-block mr-2" />
               Submit Payment
             </button>
             <button
@@ -160,6 +257,7 @@ const SubmitPayment = ({
                 setModelState(false);
               }}
             >
+              <TiTimesOutline className="inline-block mr-2" />
               Cancel
             </button>
           </div>

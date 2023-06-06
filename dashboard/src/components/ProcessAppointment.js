@@ -12,6 +12,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   const [bookingInfo, setBookingInfo] = useState({});
   const [amount, setAmount] = useState(0);
   const [clients, setClients] = useState([]);
+  const [addCustomerClicked, setAddCustomerClicked] = useState(false);
   const { shopName } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
 
@@ -96,6 +97,8 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                               setClients={setClients}
                               setAmount={setAmount}
                               setBookingInfo={setBookingInfo}
+                              addCustomerClicked={addCustomerClicked}
+                              setAddCustomerClicked={setAddCustomerClicked}
                             />
                           </>
                         ) : (
@@ -113,6 +116,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                       clients={clients}
                       setModelState={setModelState}
                       setAmount={setAmount}
+                      addCustomerClicked={addCustomerClicked}
                     />
                   )}
                 </>

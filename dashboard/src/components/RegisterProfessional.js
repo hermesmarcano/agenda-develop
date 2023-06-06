@@ -8,9 +8,35 @@ const RegisterProfessional = ({ setModelState }) => {
   const { shopName } = useContext(SidebarContext);
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
-    officeHours: Yup.string().required("Required"),
+    startHour: Yup.number()
+      .required("Start hour is required")
+      .min(8, "Start hour must be between 8 and 17")
+      .max(17, "Start hour must be between 8 and 17"),
+    endHour: Yup.number()
+      .required("End hour is required")
+      .min(8, "End hour must be between 8 and 17")
+      .max(17, "End hour must be between 8 and 17")
+      .test(
+        "is-greater-than-start",
+        "End hour must be greater than Start hour",
+        function (value) {
+          const startHour = this.resolve(Yup.ref("startHour"));
+          return value > startHour;
+        }
+      ),
     description: Yup.string().required("Required"),
   });
+
+  const hoursOptions = [];
+  for (let i = 8; i <= 17; i++) {
+    const hour = i <= 12 ? i : i - 12;
+    const period = i < 12 ? "AM" : "PM";
+    hoursOptions.push(
+      <option key={i} value={i}>
+        {hour}:00 {period}
+      </option>
+    );
+  }
 
   return (
     <>
@@ -18,7 +44,8 @@ const RegisterProfessional = ({ setModelState }) => {
       <Formik
         initialValues={{
           name: "",
-          officeHours: "",
+          startHour: "",
+          endHour: "",
           description: "",
         }}
         validationSchema={validationSchema}
@@ -26,7 +53,8 @@ const RegisterProfessional = ({ setModelState }) => {
           console.log(values);
           const postData = {
             name: values.name,
-            officeHours: values.officeHours,
+            startHour: values.startHour,
+            endHour: values.endHour,
             description: values.description,
             shopName: shopName,
           };
@@ -79,23 +107,55 @@ const RegisterProfessional = ({ setModelState }) => {
             </div>
             <div className="mb-4">
               <label
-                htmlFor="officeHours"
+                htmlFor="hours"
                 className="block text-sm text-gray-700 font-bold mb-2"
               >
                 Office Hours
               </label>
-              <Field
-                type="text"
-                id="officeHours"
-                name="officeHours"
-                placeholder="Enter the office hours"
-                className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-              />
-              <ErrorMessage
-                name="officeHours"
-                component="p"
-                className="text-red-500 text-xs italic"
-              />
+              <div className="flex">
+                <div className="mr-4">
+                  <label
+                    htmlFor="startHour"
+                    className="block text-xs text-gray-700 font-bold"
+                  >
+                    Start Time
+                  </label>
+                  <Field
+                    as="select"
+                    id="startHour"
+                    name="startHour"
+                    className="py-2 px-4 border border-gray-300 focus:outline-none focus:border-blue-500"
+                  >
+                    {hoursOptions}
+                  </Field>
+                  <ErrorMessage
+                    name="startHour"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="endHour"
+                    className="block text-xs text-gray-700 font-bold"
+                  >
+                    End Time
+                  </label>
+                  <Field
+                    as="select"
+                    id="endHour"
+                    name="endHour"
+                    className="py-2 px-4 border border-gray-300 focus:outline-none focus:border-blue-500"
+                  >
+                    {hoursOptions}
+                  </Field>
+                  <ErrorMessage
+                    name="endHour"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div>
+              </div>
             </div>
             <div className="mb-4">
               <label
