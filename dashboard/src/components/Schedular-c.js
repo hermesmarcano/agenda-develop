@@ -7,9 +7,9 @@ import ViewAppointment from "./ViewAppointment";
 import DateTimeContext from "../context/DateTimeContext";
 import ViewModeContext from "../context/ViewModeContext";
 import ProcessAppointment from "./ProcessAppointment";
-import { zipObjectDeep } from "lodash";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import stripeBackground from "../images/stripe.svg";
+import stripeBackground2 from "../images/stripe2.svg";
 
 const schedulerData = [];
 
@@ -584,7 +584,10 @@ const SchedulerC = ({
                             <div
                               key={index}
                               className={`h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
-                              style={{ backgroundColor: "#AD8C8C" }}
+                              style={{
+                                backgroundColor:
+                                  proIndex % 2 === 0 ? "#AD8C8C" : "#AD8C8C",
+                              }}
                               disabled
                             ></div>
                           );
@@ -592,7 +595,9 @@ const SchedulerC = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 p-1 ${slotWidth}
+                            className={`h-6 ${
+                              proIndex % 2 === 0 ? "bg-gray-800" : "bg-sky-800"
+                            } p-1 ${slotWidth}
                         ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                         cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
                             disabled={isDisabled}
@@ -608,7 +613,10 @@ const SchedulerC = ({
                             <div
                               key={index}
                               className={`h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed`}
-                              style={{ backgroundColor: "#AD8C8C" }}
+                              style={{
+                                backgroundColor:
+                                  proIndex % 2 === 0 ? "#AD8C8C" : "#AD8C8C",
+                              }}
                               disabled
                             >
                               <span className="font-extrabold text-white ml-1 truncate">
@@ -622,7 +630,9 @@ const SchedulerC = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
+                            className={`h-6 ${
+                              proIndex % 2 === 0 ? "bg-gray-800" : "bg-sky-800"
+                            } z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                             onClick={() => {
@@ -646,7 +656,7 @@ const SchedulerC = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-200 ${slotWidth} p-1 ${
+                            className={`h-6 ${slotWidth} p-1 ${
                               index !== 3 &&
                               "border-b border-dotted border-gray-400"
                             } cursor-crosshair hover:bg-gray-300`}
@@ -664,7 +674,10 @@ const SchedulerC = ({
                             className="h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed"
                             disabled
                             style={{
-                              backgroundImage: `url(${stripeBackground})`,
+                              backgroundImage:
+                                proIndex % 2 === 0
+                                  ? `url(${stripeBackground})`
+                                  : `url(${stripeBackground})`,
                               backgroundRepeat: "repeat",
                             }}
                           ></div>
