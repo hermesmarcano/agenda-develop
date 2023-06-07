@@ -199,12 +199,12 @@ const Agenda = () => {
                     />
                     <label
                       htmlFor="select-all-checkbox"
-                      className="flex items-center"
+                      className="flex items-center font-semibold"
                     >
                       <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
                         {selectedProfessionals.length ===
                           professionals.length && (
-                          <FaCheck className="w-3 h-3 text-green-600" />
+                          <FaCircle className="w-3 h-3 text-green-600" />
                         )}
                       </div>
                       Select All

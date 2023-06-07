@@ -291,11 +291,23 @@ const SchedulerC = ({
                         return isDateTimeMatch && isProfessionalIdMatch;
                       });
 
+                      // const isDisabled =
+                      //   startDateTime < new Date() ||
+                      //   (appointment !== undefined &&
+                      //     appointment.dateTime - startDateTime.getTime() <
+                      //       1800000);
+
                       const isDisabled =
                         startDateTime < new Date() ||
                         (appointment !== undefined &&
                           appointment.dateTime - startDateTime.getTime() <
-                            1800000);
+                            1800000) ||
+                        (selectedProfessional.startHour !== undefined &&
+                          startDateTime.getHours() <
+                            selectedProfessional.startHour) ||
+                        (selectedProfessional.endHour !== undefined &&
+                          startDateTime.getHours() >
+                            selectedProfessional.endHour);
 
                       const customerName = appointment?.customer?.name;
                       const professionalName = appointment?.professional?.name;
@@ -503,11 +515,6 @@ const SchedulerC = ({
                       const startDateTime = new Date(hour);
                       startDateTime.setMinutes(index * 15);
 
-                      // const appointment = appointmentsList.find(
-                      //   (appt) =>
-                      //     new Date(appt.dateTime).toString() ===
-                      //     startDateTime.toString()
-                      // );
                       const appointment = appointmentsList.find((appt) => {
                         const isDateTimeMatch =
                           new Date(appt.dateTime).toString() ===
@@ -517,11 +524,20 @@ const SchedulerC = ({
                         return isDateTimeMatch && isProfessionalIdMatch;
                       });
 
+                      // const isDisabled =
+                      //   startDateTime < new Date() ||
+                      //   (appointment !== undefined &&
+                      //     appointment.dateTime - startDateTime.getTime() <
+                      //       1800000);
                       const isDisabled =
                         startDateTime < new Date() ||
                         (appointment !== undefined &&
                           appointment.dateTime - startDateTime.getTime() <
-                            1800000);
+                            1800000) ||
+                        (pro.startHour !== undefined &&
+                          startDateTime.getHours() < pro.startHour) ||
+                        (pro.endHour !== undefined &&
+                          startDateTime.getHours() > pro.endHour);
 
                       const customerName = appointment?.customer?.name;
                       const professionalName = appointment?.professional?.name;

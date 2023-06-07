@@ -235,7 +235,14 @@ const Professionals = () => {
                 <td className="py-2 px-3 text-center">{index + 1}</td>
                 <td className="py-2 pl-2">{professional.name}</td>
                 <td className="py-2 pl-2 text-center">
-                  {professional.officeHours}
+                  {professional.officeHours ||
+                    new Intl.DateTimeFormat("en", {
+                      timeStyle: "short",
+                    }).format(new Date().setHours(professional.startHour, 0)) +
+                      " to " +
+                      new Intl.DateTimeFormat("en", {
+                        timeStyle: "short",
+                      }).format(new Date().setHours(professional.endHour, 0))}
                 </td>
                 <td className="py-2 pl-2">{professional.description}</td>
                 <td className="py-2 pr-6 text-center">
