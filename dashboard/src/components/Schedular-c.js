@@ -541,8 +541,14 @@ const SchedulerC = ({
                         return isDateTimeMatch && isProfessionalIdMatch;
                       });
 
-                      const professionalAppointmnets =
-                        appointmentsObject[pro._id];
+                      let professionalAppointmnets = [];
+
+                      if (
+                        appointmentsObject &&
+                        appointmentsObject.hasOwnProperty(pro._id)
+                      ) {
+                        professionalAppointmnets = appointmentsObject[pro._id];
+                      }
 
                       let appointmentIndex = 0;
                       if (

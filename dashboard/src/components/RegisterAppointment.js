@@ -15,7 +15,7 @@ const RegisterAppointment = ({
   setBookingInfo,
   setAmount,
   addCustomerClicked,
-  setAddCustomerClicked
+  setAddCustomerClicked,
 }) => {
   const { shopName } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
@@ -164,7 +164,11 @@ const RegisterAppointment = ({
           dateTime: "",
           date: dateTime.toISOString().split("T")[0], // Set initial date value
           time: dateTime.toTimeString().slice(0, 5), // Set initial time value
-          callTime: "",
+          // callTime: "",
+          appointmentDuration: {
+            hours: "",
+            minutes: "",
+          },
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -306,7 +310,7 @@ const RegisterAppointment = ({
                   name="professional"
                   options={professionals}
                 />
-                <div className="mb-4 mt-4">
+                {/* <div className="mb-4 mt-4">
                   <label
                     htmlFor="callTime"
                     className="block text-sm font-semibold text-gray-700 mb-2"
@@ -341,6 +345,48 @@ const RegisterAppointment = ({
                   </Field>
                   <ErrorMessage
                     name="callTime"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div> */}
+                <div className="mb-4">
+                  <label
+                    htmlFor="appointmentDuration.hours"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Appointment Duration (Hours)
+                  </label>
+                  <input
+                    type="number"
+                    id="appointmentDuration.hours"
+                    name="appointmentDuration.hours"
+                    value={values.appointmentDuration.hours}
+                    className="input-field"
+                    {...getFieldProps("appointmentDuration.hours")}
+                  />
+                  <ErrorMessage
+                    name="appointmentDuration.hours"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="appointmentDuration.minutes"
+                    className="block text-sm font-semibold text-gray-700 mb-2"
+                  >
+                    Appointment Duration (Minutes)
+                  </label>
+                  <input
+                    type="number"
+                    id="appointmentDuration.minutes"
+                    name="appointmentDuration.minutes"
+                    value={values.appointmentDuration.minutes}
+                    className="input-field"
+                    {...getFieldProps("appointmentDuration.minutes")}
+                  />
+                  <ErrorMessage
+                    name="appointmentDuration.minutes"
                     component="p"
                     className="text-red-500 text-xs italic"
                   />
