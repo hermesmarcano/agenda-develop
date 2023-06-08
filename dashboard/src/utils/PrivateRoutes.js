@@ -11,7 +11,7 @@ const PrivateRoutes = () => {
   return isAuthenticated ? (
     <>
       <Header />
-      <div className="flex mt-[65px] h-[calc(100%-50px)]">
+      <div className="flex mt-[72px] h-[calc(100%-50px)]">
         <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <div
           className={`bg-gray-200 ${

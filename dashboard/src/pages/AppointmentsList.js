@@ -170,7 +170,7 @@ const AppointmentsList = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-200">
+    <div className="p-6">
       <h1 className="text-2xl text-gray-800 font-bold mb-5">Appointments</h1>
       <div className="flex items-center relative">
         <input

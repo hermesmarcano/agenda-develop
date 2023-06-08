@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import SidebarContext from "../context/SidebarContext";
@@ -33,6 +33,7 @@ const SchedulerC = ({
   const [registerModelState, setRegisterModelState] = React.useState(false);
   const [updateModelState, setUpdateModelState] = React.useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
+  const [appointmentsObject, setAppointmentsObject] = React.useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
 
   const fetchAppointments = async () => {
@@ -49,6 +50,21 @@ const SchedulerC = ({
       );
       const data = await response.json();
       setAppointmentsList(data.appointments);
+      const appointmentsObject = data.appointments.reduce(
+        (acc, appointment) => {
+          const professionalId = appointment.professional._id;
+
+          if (!acc[professionalId]) {
+            acc[professionalId] = [];
+          }
+
+          acc[professionalId].push(appointment);
+
+          return acc;
+        },
+        {}
+      );
+      setAppointmentsObject(appointmentsObject);
     } catch (error) {
       console.log(error);
     } finally {
@@ -486,6 +502,7 @@ const SchedulerC = ({
     let prevEndDateTime = Array(selectedProfessionals.length).fill(null);
     let professionalsId = Array(selectedProfessionals.length).fill(null);
     let appointmentBlocking = Array(selectedProfessionals.length).fill(false);
+    let professionalsAppt = Array(selectedProfessionals.length).fill(null);
 
     hoursArr.map((hour, hourIndex) => {
       timeSlots.push(
@@ -523,6 +540,20 @@ const SchedulerC = ({
                           appt.professional._id === pro._id;
                         return isDateTimeMatch && isProfessionalIdMatch;
                       });
+
+                      const professionalAppointmnets =
+                        appointmentsObject[pro._id];
+
+                      let appointmentIndex = 0;
+                      if (
+                        professionalAppointmnets !== undefined &&
+                        appointment !== undefined
+                      ) {
+                        appointmentIndex = professionalAppointmnets.findIndex(
+                          (appt) => appt._id === appointment._id
+                        );
+                        console.log("appointmentIndex: ", appointmentIndex);
+                      }
 
                       // const isDisabled =
                       //   startDateTime < new Date() ||
@@ -596,7 +627,13 @@ const SchedulerC = ({
                           <div
                             key={index}
                             className={`h-6 ${
-                              proIndex % 2 === 0 ? "bg-gray-800" : "bg-sky-800"
+                              proIndex % 2 === 0
+                                ? professionalsAppt[proIndex] % 2 === 0
+                                  ? "bg-gray-800"
+                                  : "bg-slate-700"
+                                : professionalsAppt[proIndex] % 2 === 0
+                                ? "bg-cyan-700"
+                                : "bg-sky-800"
                             } p-1 ${slotWidth}
                         ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                         cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
@@ -607,6 +644,7 @@ const SchedulerC = ({
 
                       if (appointment) {
                         professionalsId[proIndex] = pro._id;
+                        professionalsAppt[proIndex] = appointmentIndex;
                         if (appointment?.blocking) {
                           appointmentBlocking[proIndex] = true;
                           return (
@@ -631,7 +669,13 @@ const SchedulerC = ({
                           <div
                             key={index}
                             className={`h-6 ${
-                              proIndex % 2 === 0 ? "bg-gray-800" : "bg-sky-800"
+                              proIndex % 2 === 0
+                                ? appointmentIndex % 2 === 0
+                                  ? "bg-gray-800"
+                                  : "bg-slate-700"
+                                : appointmentIndex % 2 === 0
+                                ? "bg-cyan-700"
+                                : "bg-sky-800"
                             } z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}

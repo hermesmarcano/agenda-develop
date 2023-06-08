@@ -6,9 +6,11 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import { FaTrash } from "react-icons/fa";
 import ImageUpload from "../components/ImageUpload";
+import ThemeContext from "../context/ThemeContext";
 
 const Settings = () => {
   const { shopName, setShopName } = useContext(SidebarContext);
+  const { theme } = useContext(ThemeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [shopData, setShopData] = useState({});
   const initialValues = {
@@ -108,7 +110,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="p-6 ">
+    <div className="p-6 pb-9">
       <h1 className="text-3xl font-bold mb-6">Dashboard Settings</h1>
       <div>
         <Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -145,7 +147,7 @@ const Settings = () => {
               <div className="flex items-center justify-end">
                 <button
                   type="submit"
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                  className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                   disabled={isSubmitting}
                 >
                   Save Changes
@@ -181,7 +183,7 @@ const Settings = () => {
               <Field name="profileImg" component={ImageUpload} />
               <button
                 type="submit"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 mt-3 rounded focus:outline-none focus:shadow-outline"
+                className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 mt-3 rounded focus:outline-none focus:shadow-outline"
                 disabled={isSubmitting}
               >
                 Upload

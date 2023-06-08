@@ -23,13 +23,15 @@ function Header() {
 
   const handleThemeChange = (color) => {
     setTheme(color);
+    localStorage.setItem("currentTheme", color);
   };
 
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
+    theme === "light" ? setTheme("dark") : setTheme("light");
+    localStorage.setItem("currentTheme", theme);
     setIsDarkMode(!isDarkMode);
-    // You can also add logic to persist the user's preference using local storage or a state management library
   };
 
   const toggleMenu = () => {
