@@ -331,10 +331,12 @@ const SchedulerC = ({
                         appointment?.service?.map((s) => s.name).join(", ") ||
                         "";
 
-                      const duration = appointment?.service?.reduce(
-                        (totalDuration, s) => totalDuration + s.duration,
-                        0
-                      );
+                      const duration =
+                        appointment?.duration ||
+                        appointment?.service?.reduce(
+                          (totalDuration, s) => totalDuration + s.duration,
+                          0
+                        );
 
                       const blockingDuration = appointment?.blockingDuration;
 
@@ -479,13 +481,12 @@ const SchedulerC = ({
     const timeSlots = [];
     const numProfessionals = selectedProfessionals.length;
     const slotWidth = `min-w-[135px] md:w-[100%]`;
-
     timeSlots.push(
       <div
         key="title"
-        className={`flex items-center ps-10 border-b border-gray-400 min-w-[calc(${
-          selectedProfessionals.length * 135
-        }px+44px)]`}
+        className={`flex items-center ps-10 border-b border-gray-400 min-w-[${
+          numProfessionals * 135 + 44
+        }px]`}
       >
         {selectedProfessionals.map((pro, index) => (
           <div
@@ -558,7 +559,6 @@ const SchedulerC = ({
                         appointmentIndex = professionalAppointmnets.findIndex(
                           (appt) => appt._id === appointment._id
                         );
-                        console.log("appointmentIndex: ", appointmentIndex);
                       }
 
                       // const isDisabled =
@@ -582,10 +582,12 @@ const SchedulerC = ({
                         appointment?.service?.map((s) => s.name).join(", ") ||
                         "";
 
-                      const duration = appointment?.service?.reduce(
-                        (totalDuration, s) => totalDuration + s.duration,
-                        0
-                      );
+                      const duration =
+                        appointment?.duration ||
+                        appointment?.service?.reduce(
+                          (totalDuration, s) => totalDuration + s.duration,
+                          0
+                        );
 
                       const blockingDuration = appointment?.blockingDuration;
 
@@ -721,7 +723,7 @@ const SchedulerC = ({
                         return (
                           <div
                             key={index}
-                            className="h-6 z-10 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed"
+                            className="h-6 p-1 text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 cursor-not-allowed"
                             disabled
                             style={{
                               backgroundImage:
@@ -746,9 +748,9 @@ const SchedulerC = ({
         timeSlots.push(
           <div
             key={`separator-${hour}`}
-            className={`h-px bg-gray-400 min-w-[calc(${
-              selectedProfessionals.length * 135
-            }px+44px)]`}
+            className={`h-px bg-gray-400 min-w-[${
+              numProfessionals * 135 + 44
+            }px]`}
           ></div>
         );
       }
@@ -763,7 +765,7 @@ const SchedulerC = ({
         <div
           className={`flex items-center justify-between ${
             viewMode === "daily"
-              ? `min-w-[calc(${selectedProfessionals.length * 135}px+44px)]`
+              ? `min-w-[${selectedProfessionals.length * 135 + 44}px]`
               : `min-w-[989px]`
           }`}
         >
@@ -813,7 +815,7 @@ const SchedulerC = ({
         <div
           className={`h-px bg-gray-500 mt-3 mb-1 ${
             viewMode === "daily"
-              ? `min-w-[calc(${selectedProfessionals.length * 135}px+44px)]`
+              ? `min-w-[${selectedProfessionals.length * 135 + 44}px]`
               : `hidden`
           }`}
         ></div>
@@ -821,9 +823,9 @@ const SchedulerC = ({
         {viewMode === "daily" && (
           <>
             <div
-              className={`grid grid-cols-4 pt-2 min-w-[calc(${
-                selectedProfessionals.length * 135
-              }px+44px)`}
+              className={`grid grid-cols-4 pt-2 min-w-[${
+                selectedProfessionals.length * 135 + 44
+              }px)`}
             >
               <div>
                 <p className=" text-gray-500">
@@ -837,7 +839,7 @@ const SchedulerC = ({
         <div
           className={`h-px bg-gray-500 mt-3 ${
             viewMode === "daily"
-              ? `min-w-[calc(${selectedProfessionals.length * 135}px+44px)]`
+              ? `min-w-[${selectedProfessionals.length * 135 + 44}px]`
               : `min-w-[989px]`
           }`}
         ></div>

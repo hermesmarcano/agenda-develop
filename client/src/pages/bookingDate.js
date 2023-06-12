@@ -7,11 +7,10 @@ const BookingDate = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const params = useParams();
   const navigate = useNavigate();
-  console.log(navigate);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Selected date:", selectedDate);
+    // console.log("Selected date:", selectedDate);
     localStorage.setItem("selectedDate", selectedDate);
     navigate(`/shops/${params.id}/booking-hour`);
     // Implement logic to check if the selected date has any reserved appointments

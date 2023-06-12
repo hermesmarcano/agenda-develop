@@ -21,6 +21,10 @@ const appointmentSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    duration: {
+      type: Number,
+      required: true,
+    },
     product: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     status: {
       type: String,

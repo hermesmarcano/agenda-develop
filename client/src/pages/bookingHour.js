@@ -6,7 +6,7 @@ import { FaSpinner } from "react-icons/fa";
 const BookingHour = () => {
   const [selectedHour, setSelectedHour] = useState(null);
   const [isHourSelected, setIsHourSelected] = useState(false);
-  const [reservedAppt, setReservedAppt] = useState([]);
+  const [reservedAppts, setReservedAppts] = useState([]);
   const [loading, setLoading] = React.useState(true);
   const params = useParams();
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ const BookingHour = () => {
     instance
       .get(`/managers/shopname?urlSlug=${params.id}`)
       .then((response) => {
-        console.log(response.data);
         instance
           .get(`/appointments?shopName=${response.data.shopName}`)
           .then((response) => {
@@ -31,12 +30,18 @@ const BookingHour = () => {
               return appt.professional._id === professionalId._id;
             });
 
-            console.log(apptPro);
             // let apptDates = [];
             // apptPro.map((appt) => {
             //   apptDates.push(new Date(appt.dateTime).toString());
             // });
-            setReservedAppt(apptPro);
+
+            const today = new Date().toISOString().slice(0, 10);
+            const filteredAppts = apptPro.filter(
+              (appt) =>
+                new Date(appt.dateTime).toISOString().slice(0, 10) === today
+            );
+            console.log(filteredAppts);
+            setReservedAppts(filteredAppts);
             setLoading(false);
           })
           .catch((err) => {
@@ -74,7 +79,7 @@ const BookingHour = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(`Hour selected: ${selectedHour}`);
+    // console.log(`Hour selected: ${selectedHour}`);
     const selectedDate = localStorage.getItem("selectedDate");
     const d = new Date(selectedDate);
 
@@ -83,26 +88,27 @@ const BookingHour = () => {
   };
 
   const isHourDisabled = (hour) => {
-    if (reservedAppt.length === 0) return false;
-    const selectedDate = new Date(hour);
+    for (let i = 0; i < reservedAppts.length; i++) {
+      const appointment = reservedAppts[i];
+      const appointmentTime = new Date(appointment.dateTime);
+      const appointmentEndTime = new Date(appointment.dateTime);
+      let minutes;
+      if (appointment.duration) {
+        minutes = appointmentEndTime.getMinutes() + appointment.duration;
+      } else {
+        minutes = appointment?.service?.reduce(
+          (totalDuration, s) => totalDuration + s.duration,
+          0
+        );
+      }
 
-    for (let i = 0; i < reservedAppt.length; i++) {
-      const apptStart = new Date(reservedAppt[i].dateTime);
-      const apptEnd = new Date(apptStart);
-      apptEnd.setMinutes(
-        apptEnd.getMinutes() +
-          (reservedAppt[i].blocking
-            ? reservedAppt[i].blockingDuration
-            : reservedAppt[i].service.reduce(
-                (sum, service) => sum + service.duration,
-                0
-              ))
-      );
-      // duration is in minutes
-      if (selectedDate >= apptStart && selectedDate <= apptEnd) {
-        // if (new Date(hour) >= apptStart && new Date(hour) <= apptEnd) {
+      appointmentEndTime.setMinutes(minutes);
+
+      if (
+        hour.toLocaleTimeString() >= appointmentTime.toLocaleTimeString() &&
+        hour.toLocaleTimeString() <= appointmentEndTime.toLocaleTimeString()
+      ) {
         return true;
-        // }
       }
     }
 

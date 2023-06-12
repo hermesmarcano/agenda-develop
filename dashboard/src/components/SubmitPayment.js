@@ -85,6 +85,7 @@ const SubmitPayment = ({
                         customer: bookingInfo.customer,
                         professional: bookingInfo.professional,
                         service: bookingInfo.service,
+                        duration: bookingInfo.duration,
                         dateTime: new Date(dateTime),
                         shopName: shopName,
                       },
@@ -157,6 +158,7 @@ const SubmitPayment = ({
                     customer: bookingInfo.customer,
                     professional: bookingInfo.professional,
                     service: bookingInfo.service,
+                    duration: bookingInfo.duration,
                     dateTime: new Date(dateTime),
                     shopName: shopName,
                   },
@@ -184,7 +186,6 @@ const SubmitPayment = ({
         })
         .catch((error) => {
           console.error(error.message);
-          // Handle errors
         })
         .finally(() => {
           // Reset the form
@@ -255,6 +256,7 @@ const SubmitPayment = ({
               onClick={() => {
                 console.log("Payment registration canceled");
                 setModelState(false);
+                setAmount(0);
               }}
             >
               <TiTimesOutline className="inline-block mr-2" />

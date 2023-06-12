@@ -7,6 +7,7 @@ import SidebarContext from "../context/SidebarContext";
 import { FaCheck, FaPlus, FaSpinner } from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
+import Switch from "react-switch";
 
 const RegisterAppointment = ({
   amount,
@@ -25,6 +26,7 @@ const RegisterAppointment = ({
   const [duration, setDuration] = useState(0);
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
+  const [allowManualDuration, setAllowManualDuration] = useState(false);
 
   useEffect(() => {
     axios
@@ -116,12 +118,18 @@ const RegisterAppointment = ({
       });
     });
 
+    if (allowManualDuration) {
+      const [hours, minutes] = values.appointmentDuration.split(":");
+      totalDuration = parseInt(hours) * 60 + parseInt(minutes);
+    }
+
     if (addCustomerClicked) {
       setBookingInfo({
         name: values.name,
         phone: values.phone,
         professional: values.professional,
         service: values.service,
+        duration: totalDuration,
         dateTime: new Date(dateTime),
         shopName: shopName,
       });
@@ -130,6 +138,7 @@ const RegisterAppointment = ({
         customer: values.customer,
         professional: values.professional,
         service: values.service,
+        duration: totalDuration,
         dateTime: new Date(dateTime),
         shopName: shopName,
       });
@@ -165,10 +174,7 @@ const RegisterAppointment = ({
           date: dateTime.toISOString().split("T")[0], // Set initial date value
           time: dateTime.toTimeString().slice(0, 5), // Set initial time value
           // callTime: "",
-          appointmentDuration: {
-            hours: "",
-            minutes: "",
-          },
+          appointmentDuration: "00:00",
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -179,278 +185,328 @@ const RegisterAppointment = ({
           getFieldProps,
           handleChange,
           handleBlur,
-        }) => (
-          <Form className="bg-white rounded-lg px-8 py-6 mb-4">
-            <div className="grid grid-cols-2 gap-5">
-              <div>
-                <div className="flex flex-col mb-4">
-                  <div>
-                    {!addCustomerClicked ? (
-                      <CustomSelect
-                        label="Client"
-                        id="customer"
-                        name="customer"
-                        options={clients}
-                      />
-                    ) : (
-                      <>
-                        <label
-                          htmlFor="name"
-                          className="block text-sm font-semibold text-gray-700 mb-2"
-                        >
-                          New Client
-                        </label>
-                        <div className="mb-4">
+          setFieldValue,
+        }) => {
+          function calculateTotalDuration(valueService, services) {
+            let totalDuration = 0;
+
+            // Iterate over each service ID in `value.service`
+            valueService.forEach((serviceId) => {
+              // Find the service in `services` array with matching ID
+              const service = services.find(
+                (service) => service._id === serviceId
+              );
+
+              // If the service is found, add its duration to the total duration
+              if (service) {
+                totalDuration += service.duration;
+              }
+            });
+
+            return totalDuration;
+          }
+
+          const handleDurationChange = (e) => {
+            const { name, value } = e.target;
+            let hours = parseInt(values.appointmentDuration.split(":")[0]);
+            let minutes = parseInt(values.appointmentDuration.split(":")[1]);
+
+            if (name === "hours") {
+              hours = parseInt(value) || 0;
+            } else if (name === "minutes") {
+              minutes = parseInt(value) || 0;
+            }
+
+            hours = Math.max(0, Math.min(hours, 23));
+            minutes = Math.max(0, Math.min(minutes, 55));
+
+            const updatedDuration = `${hours
+              .toString()
+              .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+
+            handleChange({
+              target: {
+                name: "appointmentDuration",
+                value: updatedDuration,
+              },
+            });
+          };
+
+          function handleServicesChange(selectedOptions) {
+            handleChange({
+              target: {
+                name: "service",
+                value: selectedOptions
+                  ? selectedOptions.map((option) => option.value)
+                  : [],
+              },
+            });
+
+            // const totalDuration = calculateTotalDuration(
+            //   values.service,
+            //   services
+            // );
+            // const hours = Math.floor(totalDuration / 60);
+            // const minutes = totalDuration % 60;
+            // const updatedDuration = `${hours
+            //   .toString()
+            //   .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+
+            // setFieldValue("appointmentDuration", updatedDuration);
+          }
+
+          return (
+            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto">
+              <div className="grid grid-cols-2 gap-5">
+                <div>
+                  <div className="flex flex-col mb-4">
+                    <div>
+                      {!addCustomerClicked ? (
+                        <CustomSelect
+                          label="Client"
+                          id="customer"
+                          name="customer"
+                          options={clients}
+                        />
+                      ) : (
+                        <>
                           <label
                             htmlFor="name"
-                            className="block text-xs font-semibold text-gray-700 mb-2"
+                            className="block text-sm font-semibold text-gray-700 mb-2"
                           >
-                            Name
+                            New Client
                           </label>
-                          <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            {...getFieldProps("name")}
-                          />
-                          <ErrorMessage
-                            name="name"
-                            component="p"
-                            className="text-red-500 text-xs italic"
-                          />
-                        </div>
-                        <div className="mb-4">
-                          <label
-                            htmlFor="phone"
-                            className="block text-xs font-semibold text-gray-700 mb-2"
-                          >
-                            Phone
-                          </label>
-                          <input
-                            type="text"
-                            id="phone"
-                            name="phone"
-                            className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            {...getFieldProps("phone")}
-                          />
-                          <ErrorMessage
-                            name="phone"
-                            component="p"
-                            className="text-red-500 text-xs italic"
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                  <div>
-                    <button
-                      type="button"
-                      className="add-customer-button w-full flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      onClick={() => setAddCustomerClicked(!addCustomerClicked)}
-                    >
-                      {!addCustomerClicked ? (
-                        <>
-                          <FaPlus className="mr-2" />
-                          Add Customer
+                          <div className="mb-4">
+                            <label
+                              htmlFor="name"
+                              className="block text-xs font-semibold text-gray-700 mb-2"
+                            >
+                              Name
+                            </label>
+                            <input
+                              type="text"
+                              id="name"
+                              name="name"
+                              className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              {...getFieldProps("name")}
+                            />
+                            <ErrorMessage
+                              name="name"
+                              component="p"
+                              className="text-red-500 text-xs italic"
+                            />
+                          </div>
+                          <div className="mb-4">
+                            <label
+                              htmlFor="phone"
+                              className="block text-xs font-semibold text-gray-700 mb-2"
+                            >
+                              Phone
+                            </label>
+                            <input
+                              type="text"
+                              id="phone"
+                              name="phone"
+                              className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              {...getFieldProps("phone")}
+                            />
+                            <ErrorMessage
+                              name="phone"
+                              component="p"
+                              className="text-red-500 text-xs italic"
+                            />
+                          </div>
                         </>
-                      ) : (
-                        "Select Customer"
                       )}
-                    </button>
+                    </div>
+                    <div>
+                      <button
+                        type="button"
+                        className="add-customer-button w-full flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        onClick={() =>
+                          setAddCustomerClicked(!addCustomerClicked)
+                        }
+                      >
+                        {!addCustomerClicked ? (
+                          <>
+                            <FaPlus className="mr-2" />
+                            Add Customer
+                          </>
+                        ) : (
+                          "Select Customer"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label
+                      htmlFor="service"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Services
+                    </label>
+                    <Select
+                      id="service"
+                      name="service"
+                      className="input-field"
+                      options={services.map((service) => ({
+                        value: service._id,
+                        label: service.name,
+                      }))}
+                      isMulti
+                      value={values.service.map((serviceId) => ({
+                        value: serviceId,
+                        label: services.find(
+                          (service) => service._id === serviceId
+                        )?.name,
+                      }))}
+                      onChange={(selectedOptions) =>
+                        handleServicesChange(selectedOptions)
+                      }
+                      placeholder="Select services"
+                      isClearable
+                    />
+                    <ErrorMessage
+                      name="service"
+                      component="p"
+                      className="text-red-500 text-xs italic"
+                    />
                   </div>
                 </div>
 
-                <div className="mb-4">
-                  <label
-                    htmlFor="service"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Services
-                  </label>
-                  <Select
-                    id="service"
-                    name="service"
-                    className="input-field"
-                    options={services.map((service) => ({
-                      value: service._id,
-                      label: service.name,
-                    }))}
-                    isMulti
-                    value={values.service.map((serviceId) => ({
-                      value: serviceId,
-                      label: services.find(
-                        (service) => service._id === serviceId
-                      )?.name,
-                    }))}
-                    onChange={(selectedOptions) =>
-                      handleChange({
-                        target: {
-                          name: "service",
-                          value: selectedOptions
-                            ? selectedOptions.map((option) => option.value)
-                            : [],
-                        },
-                      })
-                    }
-                    placeholder="Select services"
-                    isClearable
+                <div>
+                  <CustomSelect
+                    label="Professional"
+                    id="professional"
+                    name="professional"
+                    options={professionals}
                   />
-                  <ErrorMessage
-                    name="service"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
+                  <div className="flex justify-start items-center">
+                    <label
+                      htmlFor="manualDuration"
+                      className={`block text-sm font-semibold text-gray-700 mb-2`}
+                    >
+                      Set Duration Manually
+                    </label>
+                    <Switch
+                      id="manualDuration"
+                      name="manualDuration"
+                      checked={allowManualDuration}
+                      onChange={() =>
+                        setAllowManualDuration(!allowManualDuration)
+                      }
+                      onColor="#86d3ff"
+                      onHandleColor="#2693e6"
+                      handleDiameter={20}
+                      uncheckedIcon={false}
+                      checkedIcon={false}
+                      boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                      activeBoxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                      height={14}
+                      width={30}
+                      className="ml-2"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="appointmentDuration"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Appointment Duration
+                    </label>
+                    <div className="flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden">
+                      <div className="flex items-center w-full">
+                        <input
+                          type="number"
+                          id="hours"
+                          name="hours"
+                          value={values.appointmentDuration.split(":")[0]}
+                          className="input-field w-1/2 sm:w-14 py-2 px-2 text-center text-gray-700 focus:outline-none"
+                          onChange={handleDurationChange}
+                          disabled={!allowManualDuration}
+                        />
+                        <span className="text-gray-600 px-2">:</span>
+                        <input
+                          type="number"
+                          id="minutes"
+                          name="minutes"
+                          value={values.appointmentDuration.split(":")[1]}
+                          className="input-field w-1/2 sm:w-14 py-2 px-2 text-center text-gray-700 focus:outline-none"
+                          onChange={handleDurationChange}
+                          step="5"
+                          disabled={!allowManualDuration}
+                        />
+                      </div>
+                      <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
+                        <span className="text-xs">HOURS</span>
+                      </div>
+                      <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
+                        <span className="text-xs">MINUTES</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <label
+                      htmlFor="date"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Date
+                    </label>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      value={values.date}
+                      className="input-field"
+                      {...getFieldProps("date")}
+                    />
+                    <ErrorMessage
+                      name="date"
+                      component="p"
+                      className="text-red-500 text-xs italic"
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label
+                      htmlFor="time"
+                      className="block text-sm font-semibold text-gray-700 mb-2"
+                    >
+                      Time
+                    </label>
+                    <input
+                      type="time"
+                      id="time"
+                      name="time"
+                      value={values.time}
+                      className="input-field"
+                      {...getFieldProps("time")}
+                    />
+                    <ErrorMessage
+                      name="time"
+                      component="p"
+                      className="text-red-500 text-xs italic"
+                    />
+                  </div>
                 </div>
               </div>
-              <div>
-                <CustomSelect
-                  label="Professional"
-                  id="professional"
-                  name="professional"
-                  options={professionals}
-                />
-                {/* <div className="mb-4 mt-4">
-                  <label
-                    htmlFor="callTime"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Call time
-                  </label>
 
-                  <Field
-                    name="callTime"
-                    as="select"
-                    className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-                  >
-                    <option value="">Select time</option>
-                    {timeOptions.map((time, index) => {
-                      const hours = Math.floor(time.value / 60);
-                      const minutes = time.value % 60;
-
-                      let formattedTime = "";
-                      if (hours > 0) {
-                        formattedTime += `${hours} hour `;
-                      }
-                      if (minutes > 0 || formattedTime === "") {
-                        formattedTime += `${minutes} min`;
-                      }
-
-                      return (
-                        <option key={index} value={time.value}>
-                          {formattedTime}
-                        </option>
-                      );
-                    })}
-                  </Field>
-                  <ErrorMessage
-                    name="callTime"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div> */}
-                <div className="mb-4">
-                  <label
-                    htmlFor="appointmentDuration.hours"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Appointment Duration (Hours)
-                  </label>
-                  <input
-                    type="number"
-                    id="appointmentDuration.hours"
-                    name="appointmentDuration.hours"
-                    value={values.appointmentDuration.hours}
-                    className="input-field"
-                    {...getFieldProps("appointmentDuration.hours")}
-                  />
-                  <ErrorMessage
-                    name="appointmentDuration.hours"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="appointmentDuration.minutes"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Appointment Duration (Minutes)
-                  </label>
-                  <input
-                    type="number"
-                    id="appointmentDuration.minutes"
-                    name="appointmentDuration.minutes"
-                    value={values.appointmentDuration.minutes}
-                    className="input-field"
-                    {...getFieldProps("appointmentDuration.minutes")}
-                  />
-                  <ErrorMessage
-                    name="appointmentDuration.minutes"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label
-                    htmlFor="date"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Date
-                  </label>
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={values.date}
-                    className="input-field"
-                    {...getFieldProps("date")}
-                  />
-                  <ErrorMessage
-                    name="date"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="time"
-                    className="block text-sm font-semibold text-gray-700 mb-2"
-                  >
-                    Time
-                  </label>
-                  <input
-                    type="time"
-                    id="time"
-                    name="time"
-                    value={values.time}
-                    className="input-field"
-                    {...getFieldProps("time")}
-                  />
-                  <ErrorMessage
-                    name="time"
-                    component="p"
-                    className="text-red-500 text-xs italic"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              {isSubmitting ? (
-                <FaSpinner className="animate-spin mr-2" />
-              ) : (
-                <FaCheck className="mr-2" />
-              )}
-              Book Now
-            </button>
-          </Form>
-        )}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                {isSubmitting ? (
+                  <FaSpinner className="animate-spin mr-2" />
+                ) : (
+                  <FaCheck className="mr-2" />
+                )}
+                Book Now
+              </button>
+            </Form>
+          );
+        }}
       </Formik>
     </>
   );
