@@ -8,22 +8,25 @@ import { FaCheck, FaPlus, FaSpinner } from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
+import { Link, useNavigate } from "react-router-dom";
 
 const RegisterAppointment = ({
   amount,
   clients,
+  bookingInfo,
   setClients,
   setBookingInfo,
   setAmount,
   addCustomerClicked,
   setAddCustomerClicked,
 }) => {
+  const navigate = useNavigate(this);
   const { shopName } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
-  const [loading, setLoading] = React.useState(true);
-  const { professionalId } = useContext(ProfessionalIdContext);
   const [duration, setDuration] = useState(0);
+  const { professionalId } = useContext(ProfessionalIdContext);
+  const [loading, setLoading] = React.useState(true);
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
   const [allowManualDuration, setAllowManualDuration] = useState(false);
@@ -131,8 +134,24 @@ const RegisterAppointment = ({
         service: values.service,
         duration: totalDuration,
         dateTime: new Date(dateTime),
+        amount: totalPrice,
         shopName: shopName,
+        addCustomerClicked: addCustomerClicked,
       });
+      localStorage.setItem(
+        "ag_app_booking_info",
+        JSON.stringify({
+          name: values.name,
+          phone: values.phone,
+          professional: values.professional,
+          service: values.service,
+          duration: totalDuration,
+          dateTime: new Date(dateTime),
+          amount: totalPrice,
+          shopName: shopName,
+          addCustomerClicked: addCustomerClicked,
+        })
+      );
     } else {
       setBookingInfo({
         customer: values.customer,
@@ -140,12 +159,27 @@ const RegisterAppointment = ({
         service: values.service,
         duration: totalDuration,
         dateTime: new Date(dateTime),
+        amount: totalPrice,
         shopName: shopName,
       });
+      localStorage.setItem(
+        "ag_app_booking_info",
+        JSON.stringify({
+          customer: values.customer,
+          professional: values.professional,
+          service: values.service,
+          duration: totalDuration,
+          dateTime: new Date(dateTime),
+          amount: totalPrice,
+          shopName: shopName,
+        })
+      );
     }
 
-    setAmount(totalPrice);
-    setDuration(totalDuration);
+    navigate("/checkout");
+
+    // setAmount(totalPrice);
+    // setDuration(totalDuration);
     setSubmitting(false);
     resetForm();
   };
@@ -557,6 +591,19 @@ const RegisterAppointment = ({
                 )}
                 Proceed to Checkout
               </button>
+              {/* <Link
+                // type="submit"
+                // disabled={isSubmitting}
+                to="./checkout"
+                className="checkout-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                {isSubmitting ? (
+                  <FaSpinner className="animate-spin mr-2" />
+                ) : (
+                  <FaCheck className="mr-2" />
+                )}
+                Proceed to Checkout
+              </Link> */}
             </Form>
           );
         }}

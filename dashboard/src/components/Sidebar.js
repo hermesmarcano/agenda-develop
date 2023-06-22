@@ -19,6 +19,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("Agenda");
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   const tabs = [
     {
@@ -95,6 +96,26 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     if (activeTab) setActiveTab(activeTab);
   }, [location.pathname, tabs]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const isSmall = window.innerWidth < 640;
+      setIsSmallScreen(isSmall);
+
+      if (!isSmall && !isSidebarOpen) {
+        toggleSidebar(true);
+      } else if (isSmall && isSidebarOpen) {
+        toggleSidebar(false);
+      }
+    };
+
+    handleResize(); // Check on initial render
+    window.addEventListener("resize", handleResize); // Listen for resize events
+
+    return () => {
+      window.removeEventListener("resize", handleResize); // Clean up the event listener
+    };
+  }, [isSidebarOpen, toggleSidebar]);
+
   const handleClick = (tabName, url) => {
     setActiveTab(tabName);
     navigate(url);
@@ -144,19 +165,21 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           </button>
         ))}
       </nav>
-      <div className="absolute bottom-0 right-0 mb-8">
-        <button
-          className="flex items-center mx-auto px-3 py-2 bg-gray-700 rounded-lg"
-          onClick={() => toggleSidebar(!isSidebarOpen)}
-        >
-          {isSidebarOpen ? (
-            <FaChevronLeft className="text-white h-6 w-6" />
-          ) : (
-            <FaChevronRight className="text-white h-6 w-6" />
-          )}
-          {isSidebarOpen && <span className="mx-3 text-white">Collapse</span>}
-        </button>
-      </div>
+      {!isSmallScreen && (
+        <div className="absolute bottom-0 right-0 mb-8">
+          <button
+            className="flex items-center mx-auto px-3 py-2 bg-gray-700 rounded-lg"
+            onClick={() => toggleSidebar(!isSidebarOpen)}
+          >
+            {isSidebarOpen ? (
+              <FaChevronLeft className="text-white h-6 w-6" />
+            ) : (
+              <FaChevronRight className="text-white h-6 w-6" />
+            )}
+            {isSidebarOpen && <span className="mx-3 text-white">Collapse</span>}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

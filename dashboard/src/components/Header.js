@@ -96,15 +96,15 @@ function Header() {
         <div className="flex items-center ml-2">
           <button
             className={`flex items-center justify-center w-10 h-10 rounded-full ${
-              isDarkMode ? "bg-gray-700" : "bg-yellow-400"
+              !isDarkMode ? "bg-gray-700" : "bg-yellow-400"
             }`}
             onClick={toggleDarkMode}
             style={{ transition: "background-color 0.3s" }}
           >
             {isDarkMode ? (
-              <FiMoon className="text-white text-xl" />
-            ) : (
               <FiSun className="text-yellow-500 text-xl" />
+            ) : (
+              <FiMoon className="text-white text-xl" />
             )}
           </button>
 

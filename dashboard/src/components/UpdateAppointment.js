@@ -257,7 +257,7 @@ const UpdateAppointment = ({
           }
 
           return (
-            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto max-w-[950px] mx-auto">
+            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
               {loading ? (
                 <div className="grid grid-cols-2 gap-5">
                   <div>

@@ -81,7 +81,7 @@ const RegisterService = ({ setModelState }) => {
         onSubmit={handleFormSubmit}
       >
         {(formikProps) => (
-          <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto max-w-[950px] mx-auto">
+          <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
             <div className="mb-4">
               <label
                 htmlFor="name"

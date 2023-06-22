@@ -4,13 +4,13 @@ const Popup = ({ isOpen, onClose, children }) => {
   return (
     <>
       {isOpen && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
+        <div className="fixed z-10 inset-0 w-fit mx-auto">
           <div className="flex items-center justify-center min-h-screen">
             <div
               className="fixed inset-0 bg-gray-500 opacity-75"
               onClick={onClose}
             ></div>
-            <div className="bg-white rounded-lg overflow-hidden shadow-xl relative w-5/6 md:w-1/2 lg:w-2/3">
+            <div className="bg-white rounded-lg overflow-hidden shadow-xl relative">
               <button
                 className="absolute top-0 right-0 m-3 text-gray-600 hover:text-gray-800 focus:outline-none"
                 onClick={onClose}

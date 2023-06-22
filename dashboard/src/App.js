@@ -27,6 +27,8 @@ import PasswordReset from "./pages/PasswordReset";
 import CheckEmail from "./pages/CheckEmail";
 import ViewModeContext from "./context/ViewModeContext";
 import ProfessionalIdContext from "./context/ProfessionalIdContext";
+import Checkout from "./pages/Checkout";
+import CreditCheckout from "./utils/CreditCheckout";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
@@ -100,6 +102,9 @@ function App() {
                       <Route path="/services" element={<Services />} />
                       <Route path="/finance" element={<Finance />} />
                       <Route path="/settings" element={<Settings />} />
+                      <Route element={<CreditCheckout />}>
+                        <Route path="/checkout" exact element={<Checkout />} />
+                      </Route>
                     </Route>
                     <Route path="/register" exact element={<Register />} />
                     <Route path="/login" exact element={<Login />} />

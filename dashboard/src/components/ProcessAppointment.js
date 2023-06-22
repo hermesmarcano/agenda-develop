@@ -94,6 +94,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                             <RegisterAppointment
                               amount={amount}
                               clients={clients}
+                              bookingInfo={bookingInfo}
                               setClients={setClients}
                               setAmount={setAmount}
                               setBookingInfo={setBookingInfo}

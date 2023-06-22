@@ -31,7 +31,7 @@ const ViewAppointment = ({ setModelState, appointmentId }) => {
     <>
       <h2 className="text-2xl font-semibold mb-4">Appointment Details</h2>
       {appointmentData ? (
-        <div className="bg-white rounded-lg p-6 mb-4 overflow-y-auto max-w-[950px] mx-auto">
+        <div className="bg-white rounded-lg p-6 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
           <div className="mb-4">
             <label className="block text-sm font-semibold text-gray-700 mb-1">
               Customer:
