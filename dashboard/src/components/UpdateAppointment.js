@@ -8,8 +8,9 @@ import { FaCheck, FaPlus, FaSpinner } from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
+import Skeleton from "react-loading-skeleton";
 
-const RegisterAppointment = ({
+const UpdateAppointment = ({
   amount,
   clients,
   setClients,
@@ -256,7 +257,7 @@ const RegisterAppointment = ({
           }
 
           return (
-            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto">
+            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto max-w-[950px] mx-auto">
               {loading ? (
                 <div className="grid grid-cols-2 gap-5">
                   <div>
@@ -548,14 +549,14 @@ const RegisterAppointment = ({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="checkout-button flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
                 {isSubmitting ? (
                   <FaSpinner className="animate-spin mr-2" />
                 ) : (
                   <FaCheck className="mr-2" />
                 )}
-                Proceed to Checkout
+                Book Now
               </button>
             </Form>
           );
@@ -565,7 +566,7 @@ const RegisterAppointment = ({
   );
 };
 
-export default RegisterAppointment;
+export default UpdateAppointment;
 
 const CustomSelect = ({ label, options, ...props }) => {
   const [field, meta, helpers] = useField(props);
