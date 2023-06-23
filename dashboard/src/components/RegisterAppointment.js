@@ -21,7 +21,7 @@ const RegisterAppointment = ({
   setAddCustomerClicked,
 }) => {
   const navigate = useNavigate(this);
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [duration, setDuration] = useState(0);
@@ -33,7 +33,7 @@ const RegisterAppointment = ({
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -45,11 +45,11 @@ const RegisterAppointment = ({
       .catch((error) => {
         console.error(error);
       });
-  }, [shopName]);
+  }, [shopId]);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/services/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -79,14 +79,11 @@ const RegisterAppointment = ({
 
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
+      .get(`http://localhost:4040/professionals/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => {
         setProfessionals(response.data.data);
         setLoading(false);
@@ -135,7 +132,7 @@ const RegisterAppointment = ({
         duration: totalDuration,
         dateTime: new Date(dateTime),
         amount: totalPrice,
-        shopName: shopName,
+        managerId: shopId,
         addCustomerClicked: addCustomerClicked,
       });
       localStorage.setItem(
@@ -148,7 +145,7 @@ const RegisterAppointment = ({
           duration: totalDuration,
           dateTime: new Date(dateTime),
           amount: totalPrice,
-          shopName: shopName,
+          managerId: shopId,
           addCustomerClicked: addCustomerClicked,
         })
       );
@@ -160,7 +157,7 @@ const RegisterAppointment = ({
         duration: totalDuration,
         dateTime: new Date(dateTime),
         amount: totalPrice,
-        shopName: shopName,
+        managerId: shopId,
       });
       localStorage.setItem(
         "ag_app_booking_info",
@@ -171,7 +168,7 @@ const RegisterAppointment = ({
           duration: totalDuration,
           dateTime: new Date(dateTime),
           amount: totalPrice,
-          shopName: shopName,
+          managerId: shopId,
         })
       );
     }

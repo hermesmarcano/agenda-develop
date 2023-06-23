@@ -35,10 +35,10 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-const getAllProductsByShopName = async (req, res) => {
+const getAllProductsByShopId = async (req, res) => {
   try {
     const products = await Product.find({
-      shopName: req.query.shopName,
+      managerId: req.query.shopId,
     });
     res.status(200).json({ products });
   } catch (err) {
@@ -134,7 +134,7 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   createProduct,
   uploadProductImg,
-  getAllProductsByShopName,
+  getAllProductsByShopId,
   getAllProducts,
   getProductById,
   updateProduct,

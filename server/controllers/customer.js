@@ -5,8 +5,7 @@ const jwt = require("jsonwebtoken");
 // Function to create a new customer
 const createCustomer = async (req, res) => {
   try {
-    const { name, phone, shopName } = req.body;
-    const customer = new Customer({ name, phone, shopName });
+    const customer = new Customer(req.body);
     await customer.save();
     res
       .status(201)
@@ -55,9 +54,9 @@ const getAllCustomers = async (req, res) => {
   }
 };
 
-const getAllCustomersByShopName = async (req, res) => {
+const getAllCustomersByShopId = async (req, res) => {
   try {
-    const customers = await Customer.find({ shopName: req.query.shopName });
+    const customers = await Customer.find({ managerId: req.query.shopId });
     res.status(200).json(customers);
   } catch (err) {
     console.error(err);
@@ -119,10 +118,15 @@ const updateCustomerById = async (req, res) => {
 };
 
 const updateCustomer = async (req, res) => {
+  console.log("Hello from patch request");
   try {
-    const customer = await Customer.findByIdAndUpdate(req.cutomerId, req.body, {
-      new: true,
-    });
+    const customer = await Customer.findByIdAndUpdate(
+      req.customerId,
+      req.body,
+      {
+        new: true,
+      }
+    );
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
     }
@@ -153,7 +157,7 @@ module.exports = {
   createCustomer,
   loginCustomer,
   getAllCustomers,
-  getAllCustomersByShopName,
+  getAllCustomersByShopId,
   getCustomer,
   getCustomerById,
   updateCustomerById,

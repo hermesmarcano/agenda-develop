@@ -19,7 +19,7 @@ const UpdateAppointment = ({
   addCustomerClicked,
   setAddCustomerClicked,
 }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [loading, setLoading] = React.useState(true);
@@ -31,7 +31,7 @@ const UpdateAppointment = ({
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -43,11 +43,11 @@ const UpdateAppointment = ({
       .catch((error) => {
         console.error(error);
       });
-  }, [shopName]);
+  }, [shopId]);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/services/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -77,14 +77,11 @@ const UpdateAppointment = ({
 
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
+      .get(`http://localhost:4040/professionals/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => {
         setProfessionals(response.data.data);
         setLoading(false);
@@ -132,7 +129,7 @@ const UpdateAppointment = ({
         service: values.service,
         duration: totalDuration,
         dateTime: new Date(dateTime),
-        shopName: shopName,
+        managerId: shopId,
       });
     } else {
       setBookingInfo({
@@ -141,7 +138,7 @@ const UpdateAppointment = ({
         service: values.service,
         duration: totalDuration,
         dateTime: new Date(dateTime),
-        shopName: shopName,
+        managerId: shopId,
       });
     }
 

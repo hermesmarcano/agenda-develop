@@ -14,13 +14,13 @@ const Register = () => {
     console.log("Name:", name);
     console.log("Phone:", phone);
     instance
-      .get(`/managers/shopname?urlSlug=${params.id}`)
+      .get(`/managers/shop?urlSlug=${params.id}`)
       .then((response) => {
         instance
           .post("/customers", {
             name: name,
             phone: phone,
-            shopName: response.data.shopName,
+            managerId: response.data._d,
           })
           .then((response) => {
             console.log(response);

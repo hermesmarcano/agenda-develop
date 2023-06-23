@@ -14,10 +14,10 @@ const BookingProfessional = () => {
   ]);
 
   useEffect(() => {
-    instance.get(`/managers/shopname?urlSlug=${params.id}`).then((response) => {
+    instance.get(`/managers/shop?urlSlug=${params.id}`).then((response) => {
       console.log(response.data);
       instance
-        .get(`/professionals/shopname?shopName=${response.data.shopName}`)
+        .get(`/professionals/shop?shopId=${response.data._id}`)
         .then((response) => {
           console.log(response.data.data);
           setProfessionals(response.data.data);

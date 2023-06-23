@@ -13,7 +13,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   const [amount, setAmount] = useState(0);
   const [clients, setClients] = useState([]);
   const [addCustomerClicked, setAddCustomerClicked] = useState(false);
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
 
   const handleTabChange = (tab) => {
@@ -22,7 +22,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -34,7 +34,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
       .catch((error) => {
         console.error(error);
       });
-  }, [shopName]);
+  }, [shopId]);
 
   return (
     <>

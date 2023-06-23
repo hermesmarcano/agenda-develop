@@ -24,7 +24,7 @@ import axios from "axios";
 import Popup from "../components/Popup";
 
 const AppointmentsList = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [appointmentsPerPage, setAppointmentsPerPage] = useState(10);
@@ -38,7 +38,7 @@ const AppointmentsList = () => {
 
   const fetchAppointmentData = () =>
     axios
-      .get(`http://localhost:4040/appointments?shopName=${shopName}`, {
+      .get(`http://localhost:4040/appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },

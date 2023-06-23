@@ -15,6 +15,16 @@ const customerSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    email: {
+      type: String,
+      unique: true,
+    },
+    birthday: {
+      type: Date,
+    },
+    address: {
+      type: String,
+    },
     shopName: {
       type: String,
     },

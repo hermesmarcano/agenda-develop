@@ -2,9 +2,17 @@ const mongoose = require("mongoose");
 
 const paymentSchema = new mongoose.Schema(
   {
+    managerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Manager",
+    },
     shopName: {
       type: String,
-      required: true,
+    },
+    appointment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Appointment",
+      // required: true,
     },
     customer: {
       type: mongoose.Schema.Types.ObjectId,
@@ -21,6 +29,10 @@ const paymentSchema = new mongoose.Schema(
     amount: {
       type: Number,
       required: true,
+    },
+    method: {
+      type: String,
+      enum: ["cash", "credit"],
     },
     dateTime: {
       type: Date,

@@ -27,7 +27,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
       });
   }, []);
 
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const validationSchema = Yup.object({
     name: Yup.string(),
     price: Yup.number(),

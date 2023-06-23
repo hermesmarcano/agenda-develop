@@ -18,10 +18,10 @@ const BookingHour = () => {
 
   useEffect(() => {
     instance
-      .get(`/managers/shopname?urlSlug=${params.id}`)
+      .get(`/managers/shop?urlSlug=${params.id}`)
       .then((response) => {
         instance
-          .get(`/appointments?shopName=${response.data.shopName}`)
+          .get(`/appointments?shop=${response.data._id}`)
           .then((response) => {
             const professionalId = JSON.parse(
               localStorage.getItem("professional")

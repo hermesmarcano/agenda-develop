@@ -9,7 +9,7 @@ import UpdateProfessional from "../components/UpdateProfessional";
 import Switch from "react-switch";
 
 const Professionals = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [professionalsPerPage, setProfessionalsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,14 +22,11 @@ const Professionals = () => {
 
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
+      .get(`http://localhost:4040/professionals/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => setProfessionals([...response.data.data].reverse()))
       .catch((error) => console.error(error.message));
   }, [registerModelState, updateModelState, isDeleting]);

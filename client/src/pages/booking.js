@@ -7,7 +7,7 @@ const Booking = () => {
 
   const [currentShop, setCurrentShop] = useState({});
   useEffect(() => {
-    instance.get(`/managers/shopname?urlSlug=${params.id}`).then((response) => {
+    instance.get(`/managers/shop?urlSlug=${params.id}`).then((response) => {
       console.log(response.data);
       setCurrentShop(response.data);
     });

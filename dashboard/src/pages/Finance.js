@@ -20,7 +20,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import axios from "axios";
 
 const Finance = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   let [totalEarnings, setTotalEarnings] = useState(0);
   let [totalEarningsLast30Days, setTotalEarningsLast30Days] = useState(0);
   let [totalSoldProducts, setTotalSoldProducts] = useState(0);
@@ -33,7 +33,7 @@ const Finance = () => {
   const token = localStorage.getItem("ag_app_shop_token");
 
   useEffect(() => {
-    fetch(`http://localhost:4040/payments?shopName=${shopName}`, {
+    fetch(`http://localhost:4040/payments?shopId=${shopId}`, {
       method: "GET",
       headers: {
         Authorization: token,
@@ -95,7 +95,6 @@ const Finance = () => {
           // Convert the time difference to days
           const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
-          console.log(daysDiff);
           if (daysDiff <= 30) {
             totalEarnLast30Days += payment.amount;
           }
@@ -187,7 +186,7 @@ const Finance = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/appointments?shopName=${shopName}`, {
+      .get(`http://localhost:4040/appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -221,7 +220,7 @@ const Finance = () => {
   const [customers, setCustomers] = useState([]);
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -238,7 +237,7 @@ const Finance = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/products/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/products/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -351,6 +350,7 @@ const Finance = () => {
                   <th className="px-4 py-2">Professional</th>
                   <th className="px-4 py-2">Service</th>
                   <th className="px-4 py-2">Product</th>
+                  <th>Method</th>
                   <th>Date</th>
                   <th className="px-4 py-2">Amount Paid</th>
                 </tr>
@@ -366,19 +366,55 @@ const Finance = () => {
                       {transaction.professional.name}
                     </td>
                     <td className="px-4 py-2">
-                      {transaction.service?.map((ser) => ser.name).join(", ") ||
-                        ""}
+                      {transaction.service
+                        ?.reduce((uniqueServices, service) => {
+                          const existingService = uniqueServices.find(
+                            (s) => s._id === service._id
+                          );
+
+                          if (existingService) {
+                            existingService.count += 1;
+                          } else {
+                            uniqueServices.push({ ...service, count: 1 });
+                          }
+
+                          return uniqueServices;
+                        }, [])
+                        .map((service, index) => (
+                          <span key={index}>
+                            {service.name}{" "}
+                            {service.count > 1 ? `x${service.count}` : ""}
+                          </span>
+                        ))}
                     </td>
 
                     {transaction.product.length > 0 ? (
                       <td className="px-4 py-2">
                         {transaction.product
-                          ?.map((prod) => prod.name)
-                          .join(", ") || ""}
+                          ?.reduce((uniqueProducts, product) => {
+                            const existingProduct = uniqueProducts.find(
+                              (p) => p._id === product._id
+                            );
+
+                            if (existingProduct) {
+                              existingProduct.count += 1;
+                            } else {
+                              uniqueProducts.push({ ...product, count: 1 });
+                            }
+
+                            return uniqueProducts;
+                          }, [])
+                          .map((product, index) => (
+                            <span key={index}>
+                              {product.name}{" "}
+                              {product.count > 1 ? `x${product.count}` : ""}
+                            </span>
+                          ))}
                       </td>
                     ) : (
                       <td className="px-4 py-2">-</td>
                     )}
+                    <td>{transaction.method && transaction?.method}</td>
                     <td>
                       {new Intl.DateTimeFormat(["ban", "id"]).format(
                         new Date(transaction.dateTime)

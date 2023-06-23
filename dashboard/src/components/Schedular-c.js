@@ -21,7 +21,7 @@ const SchedulerC = ({
   selectedProfessional,
   selectedProfessionals,
 }) => {
-  const { shopName } = React.useContext(SidebarContext);
+  const { shopId } = React.useContext(SidebarContext);
   const { setDateTime } = React.useContext(DateTimeContext);
   const { setProfessionalId } = React.useContext(ProfessionalIdContext);
   const [selectedDate, setSelectedDate] = React.useState(date);
@@ -40,7 +40,7 @@ const SchedulerC = ({
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:4040/appointments?shopName=${shopName}`,
+        `http://localhost:4040/appointments?shopId=${shopId}`,
         {
           method: "GET",
           headers: {
@@ -74,7 +74,7 @@ const SchedulerC = ({
 
   React.useEffect(() => {
     fetchAppointments();
-  }, [shopName, modelState]);
+  }, [shopId, modelState]);
 
   React.useEffect(() => {
     setSelectedDate(date);

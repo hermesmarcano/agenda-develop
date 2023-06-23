@@ -10,10 +10,10 @@ const BuyProduct = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    instance.get(`/managers/shopname?urlSlug=${params.id}`).then((response) => {
+    instance.get(`/managers/shop?urlSlug=${params.id}`).then((response) => {
       console.log(response.data);
       instance
-        .get(`/products/shopname?shopName=${response.data.shopName}`)
+        .get(`/products/shop?shopId=${response.data._id}`)
         .then((response) => {
           console.log(response.data.products);
           setProducts(response.data.products);

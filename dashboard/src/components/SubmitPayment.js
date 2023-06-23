@@ -15,12 +15,12 @@ const SubmitPayment = ({
 }) => {
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
 
   const handleSubmitPayment = (values, actions) => {
     console.log(values);
     let data = {
-      shopName: shopName,
+      managerId: shopId,
       customer: bookingInfo.customer,
       professional: bookingInfo.professional,
       service: bookingInfo.service,
@@ -37,7 +37,7 @@ const SubmitPayment = ({
           {
             name: bookingInfo.name,
             phone: bookingInfo.phone,
-            shopName: shopName,
+            managerId: shopId,
           },
           {
             headers: {
@@ -87,7 +87,7 @@ const SubmitPayment = ({
                         service: bookingInfo.service,
                         duration: bookingInfo.duration,
                         dateTime: new Date(dateTime),
-                        shopName: shopName,
+                        managerId: shopId,
                       },
                       {
                         headers: {
@@ -160,7 +160,7 @@ const SubmitPayment = ({
                     service: bookingInfo.service,
                     duration: bookingInfo.duration,
                     dateTime: new Date(dateTime),
-                    shopName: shopName,
+                    managerId: shopId,
                   },
                   {
                     headers: {

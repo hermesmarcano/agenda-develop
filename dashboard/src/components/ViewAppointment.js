@@ -5,7 +5,7 @@ import SidebarContext from "../context/SidebarContext";
 import { FaSpinner, FaCheck } from "react-icons/fa";
 
 const ViewAppointment = ({ setModelState, appointmentId }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [appointmentData, setAppointmentData] = useState(null);
   const [dateTime, setDateTime] = useState(new Date());

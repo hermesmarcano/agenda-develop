@@ -13,12 +13,26 @@ const createPayment = async (req, res) => {
 
 const getAllPayments = async (req, res) => {
   try {
-    const payments = await Payment.find({ shopName: req.query.shopName })
-      .populate("customer", "name")
-      .populate("service", "name price")
-      .populate("professional", "name")
-      .populate("product", "name price");
-    res.status(200).json({ payments });
+    if (req.query.appt) {
+      // If 'appt' query parameter is present, retrieve payment by appointment ID
+      const payment = await Payment.findOne({ appointment: req.query.appt })
+        .populate("customer", "name")
+        .populate("service", "name price")
+        .populate("professional", "name")
+        .populate("product", "name price");
+      if (!payment) {
+        return res.status(404).json({ message: "Payment not found" });
+      }
+      res.status(200).json({ payment });
+    } else {
+      // If 'appt' query parameter is not present, retrieve all payments
+      const payments = await Payment.find({ managerId: req.query.shopId })
+        .populate("customer", "name")
+        .populate("service", "name price")
+        .populate("professional", "name")
+        .populate("product", "name price");
+      res.status(200).json({ payments });
+    }
   } catch (err) {
     res.status(400).json({ error: err.message });
   }

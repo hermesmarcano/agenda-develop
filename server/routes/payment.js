@@ -60,7 +60,7 @@ router.post("/webhook", (req, res) => {
 
 router.get("/", auth, getAllPayments);
 router.get("/:id", auth, getPaymentById);
-router.patch("/:id", auth, updatePayment);
+router.patch("/:id", updatePayment);
 router.delete("/:id", auth, deletePayment);
 
 module.exports = router;

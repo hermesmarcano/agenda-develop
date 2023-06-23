@@ -36,9 +36,9 @@ const getAllServices = async (req, res) => {
   }
 };
 
-const getAllServicesByShopName = async (req, res) => {
+const getAllServicesByShopId = async (req, res) => {
   try {
-    const services = await Service.find({ shopName: req.query.shopName });
+    const services = await Service.find({ managerId: req.query.shopId });
     res.status(200).json({ services });
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -134,7 +134,7 @@ module.exports = {
   createService,
   uploadServiceImg,
   getAllServices,
-  getAllServicesByShopName,
+  getAllServicesByShopId,
   getServiceById,
   updateService,
   deleteServiceImg,

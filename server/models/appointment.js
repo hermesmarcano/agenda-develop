@@ -2,9 +2,12 @@ const mongoose = require("mongoose");
 
 const appointmentSchema = new mongoose.Schema(
   {
+    managerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Manager",
+    },
     shopName: {
       type: String,
-      required: true,
     },
     customer: {
       type: mongoose.Schema.Types.ObjectId,

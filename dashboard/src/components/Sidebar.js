@@ -66,7 +66,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
     },
   ];
 
-  const { shopName, setShopName } = useContext(SidebarContext);
+  const { shopId, setShopId } = useContext(SidebarContext);
+  const [shopName, setShopName] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:4040/managers/", {
@@ -86,10 +87,11 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       .then((data) => {
         console.log(data.shopName);
         setShopName(data.shopName);
+        setShopId(data._id);
       })
 
       .catch((errors) => console.log(errors));
-  }, [shopName]);
+  }, [shopId]);
 
   useEffect(() => {
     const activeTab = tabs.find((tab) => tab.link === location.pathname)?.name;

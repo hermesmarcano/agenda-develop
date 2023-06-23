@@ -17,8 +17,7 @@ const Calculator = ({
   dateTime,
 }) => {
   const [amountReceived, setAmountReceived] = useState("");
-  const [amountReturned, setAmountReturned] = useState("");
-  const [calculatorInput, setCalculatorInput] = useState("");
+
   const [unSfficientAmountMsg, setUnSufficientAmountMsg] = useState(false);
   const token = localStorage.getItem("ag_app_shop_token");
 
@@ -27,114 +26,54 @@ const Calculator = ({
     setAmountReceived(numericValue);
   };
 
-  const calculateChange = () => {
-    const amountToReturn =
-      parseFloat(amountReceived) - parseFloat(calculatorInput);
-    setAmountReturned(amountToReturn.toFixed(2));
-  };
-
   const handleConfirm = () => {
     console.log(amountReceived);
     console.log(totalPrice);
     if (amountReceived >= totalPrice) {
       let data = {
-        shopName: bookingInfo.shopName,
+        managerId: bookingInfo.managerId,
         customer: bookingInfo.customer,
         professional: bookingInfo.professional,
         service: bookingInfo.service,
         dateTime: new Date(),
         amount: bookingInfo.amount,
+        method: "cash",
       };
+
+      if (bookingInfo.product) {
+        data.product = bookingInfo.product;
+      }
+
       console.log(data);
-      if (bookingInfo.addCustomerClicked) {
+      let paymentId = "";
+
+      const makePaymentWithCustomer = () => {
         axios
           .post(
             "http://localhost:4040/customers/",
             {
               name: bookingInfo.name,
               phone: bookingInfo.phone,
-              shopName: bookingInfo.shopName,
+              managerId: bookingInfo.managerId,
             },
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: localStorage.getItem("ag_app_shop_token"),
+                Authorization: token,
               },
             }
           )
           .then((response) => {
             const { customer } = response.data;
             data.customer = customer._id;
-            axios
-              .post("http://localhost:4040/payments", data, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: token,
-                },
-              })
-              .then((response) => {
-                console.log(response.data);
-                const cuurentClient = clients.find(
-                  (client) => client._id === bookingInfo.customer
-                );
-                const updatedClientPayments =
-                  Number(cuurentClient.payments) + Number(bookingInfo.amount);
-                console.log("updatedClientPayments: ", updatedClientPayments);
-                console.log("customer id: ", bookingInfo.customer);
-                axios
-                  .patch(
-                    `http://localhost:4040/customers/${bookingInfo.customer}`,
-                    JSON.stringify({ payments: updatedClientPayments }),
-                    {
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization:
-                          localStorage.getItem("ag_app_shop_token"),
-                      },
-                    }
-                  )
-                  .then((response) => {
-                    console.log(response.data);
-                    axios
-                      .post(
-                        "http://localhost:4040/appointments",
-                        {
-                          customer: bookingInfo.customer,
-                          professional: bookingInfo.professional,
-                          service: bookingInfo.service,
-                          duration: bookingInfo.duration,
-                          dateTime: new Date(dateTime),
-                          shopName: bookingInfo.shopName,
-                        },
-                        {
-                          headers: {
-                            "Content-Type": "application/json",
-                            Authorization: token,
-                          },
-                        }
-                      )
-                      .then((response) => {
-                        console.log(response.data);
-                        setAmountPaid(amountReceived);
-                        setChange(amountReceived - totalPrice);
-                        setUnSufficientAmountMsg(false);
-
-                        handlePopupClose();
-                        handleConfirmPayment();
-                      })
-                      .catch((error) => {
-                        console.error(error.message);
-                      });
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              })
-              .catch((error) => {
-                console.error(error.message);
-              });
+            makePayment();
+          })
+          .catch((error) => {
+            console.error(error.message);
           });
-      } else {
+      };
+
+      const makePayment = () => {
         axios
           .post("http://localhost:4040/payments", data, {
             headers: {
@@ -144,6 +83,7 @@ const Calculator = ({
           })
           .then((response) => {
             console.log(response.data);
+            paymentId = response.data.payment._id;
             const cuurentClient = clients.find(
               (client) => client._id === bookingInfo.customer
             );
@@ -158,43 +98,13 @@ const Calculator = ({
                 {
                   headers: {
                     "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("ag_app_shop_token"),
+                    Authorization: token,
                   },
                 }
               )
               .then((response) => {
                 console.log(response.data);
-                axios
-                  .post(
-                    "http://localhost:4040/appointments",
-                    {
-                      customer: bookingInfo.customer,
-                      professional: bookingInfo.professional,
-                      service: bookingInfo.service,
-                      duration: bookingInfo.duration,
-                      dateTime: new Date(dateTime),
-                      shopName: bookingInfo.shopName,
-                    },
-                    {
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: token,
-                      },
-                    }
-                  )
-                  .then((response) => {
-                    console.log(response.data);
-                    setAmountPaid(amountReceived);
-                    setChange(amountReceived - totalPrice);
-                    setUnSufficientAmountMsg(false);
-
-                    handlePopupClose();
-                    handleConfirmPayment();
-                  })
-                  .catch((error) => {
-                    console.error(error.message);
-                    // Handle errors
-                  });
+                createAppointment();
               })
               .catch((error) => {
                 console.log(error);
@@ -203,6 +113,67 @@ const Calculator = ({
           .catch((error) => {
             console.error(error.message);
           });
+      };
+
+      const createAppointment = () => {
+        let apptData = {
+          customer: bookingInfo.customer,
+          professional: bookingInfo.professional,
+          service: bookingInfo.service,
+          duration: bookingInfo.duration,
+          dateTime: new Date(dateTime),
+          managerId: bookingInfo.managerId,
+        };
+
+        if (bookingInfo.product) {
+          apptData.product = bookingInfo.product;
+        }
+        axios
+          .post("http://localhost:4040/appointments", apptData, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          })
+          .then((response) => {
+            console.log(response.data);
+            linkPaymentToAppointment(response.data.appointment._id);
+          })
+          .catch((error) => {
+            console.error(error.message);
+            // Handle errors
+          });
+      };
+
+      const linkPaymentToAppointment = (appointmentId) => {
+        axios
+          .patch(
+            `http://localhost:4040/payments/${paymentId}`,
+            { appointment: appointmentId },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+            }
+          )
+          .then((response) => {
+            setAmountPaid(amountReceived);
+            setChange(amountReceived - totalPrice);
+            setUnSufficientAmountMsg(false);
+
+            handlePopupClose();
+            handleConfirmPayment();
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      };
+
+      if (bookingInfo.addCustomerClicked) {
+        makePaymentWithCustomer();
+      } else {
+        makePayment();
       }
     } else {
       setUnSufficientAmountMsg(true);

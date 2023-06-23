@@ -6,7 +6,7 @@ import axios from "axios";
 import ImageUpload from "./ImageUpload";
 
 const RegisterService = ({ setModelState }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     price: Yup.number().required("Required"),
@@ -46,7 +46,7 @@ const RegisterService = ({ setModelState }) => {
         price: values.price,
         duration: d,
         serviceImg: filename,
-        shopName: shopName,
+        managerId: shopId,
       };
 
       const updateResponse = await axios.post(

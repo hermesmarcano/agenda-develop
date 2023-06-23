@@ -8,10 +8,10 @@ const BookingService = () => {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    instance.get(`/managers/shopname?urlSlug=${params.id}`).then((response) => {
+    instance.get(`/managers/shop?urlSlug=${params.id}`).then((response) => {
       console.log(response.data);
       instance
-        .get(`/services/shopname?shopName=${response.data.shopName}`)
+        .get(`/services/shop?shopId=${response.data._id}`)
         .then((response) => {
           console.log(response.data.services);
           setServices(response.data.services);

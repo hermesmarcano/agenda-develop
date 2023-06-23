@@ -16,7 +16,7 @@ const createAppointment = async (req, res) => {
 const getAllAppointments = async (req, res) => {
   try {
     const appointments = await Appointment.find({
-      shopName: req.query.shopName,
+      managerId: req.query.shopId,
     })
       .populate("customer", "name")
       .populate("professional", "name")

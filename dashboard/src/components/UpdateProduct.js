@@ -27,7 +27,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
       });
   }, []);
 
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const validationSchema = Yup.object().shape({
     name: Yup.string(),
     speciality: Yup.string(),

@@ -41,7 +41,7 @@ const limits = {
 // Initialize multer with the storage engine and file size limit
 const upload = multer({ storage, limits });
 
-router.get("/shopname", getShop);
+router.get("/shop", getShop);
 router.get("/shops", getShops);
 router.get("/shopImg", getShopImg);
 router.get("/", auth, getAllManagers);

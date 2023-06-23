@@ -8,7 +8,6 @@ const serviceSchema = new mongoose.Schema(
     },
     shopName: {
       type: String,
-      required: true,
     },
     name: {
       type: String,

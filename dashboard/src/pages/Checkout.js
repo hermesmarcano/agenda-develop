@@ -45,7 +45,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const { professionalId } = useContext(ProfessionalIdContext);
   const [loading, setLoading] = React.useState(true);
   const [servicesData, setServicesData] = useState([]);
@@ -55,7 +55,6 @@ const Checkout = () => {
   const [bookingInfo, setBookingInfo] = useState(
     JSON.parse(localStorage.getItem("ag_app_booking_info"))
   );
-  console.log(bookingInfo);
   const [currentStep, setCurrentStep] = useState(1);
   const [customerDetails, setCustomerDetails] = useState({
     name: "",
@@ -73,23 +72,22 @@ const Checkout = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
       })
       .then((response) => {
         setClientsData(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, [shopName]);
+  }, [shopId]);
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/services/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -113,7 +111,7 @@ const Checkout = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/products/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/products/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -149,34 +147,53 @@ const Checkout = () => {
   };
 
   const handleAddExtraService = (service) => {
-    const serviceAlreadyExists = extraServices.some(
-      (item) => item._id === service._id
-    );
+    // const serviceAlreadyExists = extraServices.some(
+    //   (item) => item._id === service._id
+    // );
 
-    if (!serviceAlreadyExists) {
-      setExtraServices([...extraServices, service]);
-      setTotalPrice(totalPrice + service.price);
-    }
+    // if (!serviceAlreadyExists) {
+    //   setExtraServices([...extraServices, service]);
+    //   setTotalPrice(totalPrice + service.price);
+    // }
+    setExtraServices([...extraServices, service]);
+    setTotalPrice(totalPrice + service.price);
   };
 
   const handleAddProduct = (product) => {
-    const productAlreadyExists = products.some(
-      (item) => item._id === product._id
-    );
+    // const productAlreadyExists = products.some(
+    //   (item) => item._id === product._id
+    // );
 
-    if (!productAlreadyExists) {
-      setProducts([...products, product]);
-      setTotalPrice(totalPrice + product.price);
-    }
+    // if (!productAlreadyExists) {
+    //   setProducts([...products, product]);
+    //   setTotalPrice(totalPrice + product.price);
+    // }
+    setProducts([...products, product]);
+    setTotalPrice(totalPrice + product.price);
   };
 
   const handleChoosePaymentMethod = (method) => {
-    setBookingInfo({
-      ...bookingInfo,
-      amount: totalPrice,
-      service: extraServices.map((extraService) => extraService._id),
-      product: products.map((pro) => pro._id),
-    });
+    let updatedBookingInfo = {};
+    if (products.length !== 0) {
+      updatedBookingInfo = {
+        ...bookingInfo,
+        amount: totalPrice,
+        service: extraServices.map((extraService) => extraService._id),
+        product: products.map((pro) => pro._id),
+      };
+    } else {
+      updatedBookingInfo = {
+        ...bookingInfo,
+        amount: totalPrice,
+        service: extraServices.map((extraService) => extraService._id),
+      };
+    }
+    localStorage.setItem(
+      "ag_app_booking_info",
+      JSON.stringify(updatedBookingInfo)
+    );
+    setBookingInfo(updatedBookingInfo);
+    console.log(updatedBookingInfo);
     setPaymentMethod(method);
     setCurrentStep(4);
   };
@@ -265,8 +282,12 @@ const Checkout = () => {
                     </button>
                   ))}
                   <button
-                    className="flex flex-col min-h-[104px] items-center justify-center bg-gray-200 text-gray-800 p-4 rounded hover:bg-gray-800 hover:text-white transition-all duration-300"
+                    className={`flex flex-col min-h-[104px] items-center justify-center bg-gray-200 text-gray-800 p-4 rounded ${
+                      extraServices.length > 0 &&
+                      "hover:bg-gray-800 hover:text-white"
+                    } transition-all duration-300`}
                     onClick={() => setCurrentStep(2)}
+                    disabled={extraServices.length === 0}
                   >
                     <BsArrowRight size={24} />
                     <span>Proceed</span>
@@ -277,24 +298,41 @@ const Checkout = () => {
                     <h3 className="text-lg font-semibold mb-2">
                       Selected Services
                     </h3>
-                    {extraServices.map((service, index) => (
-                      <div
-                        key={service._id}
-                        className="flex items-center justify-between bg-gray-200 p-4 rounded mb-4"
-                      >
-                        <div>
-                          <p>{service.name}</p>
-                        </div>
-                        <button
-                          className="text-red-500 hover:text-red-700"
-                          onClick={() =>
-                            handleRemoveService(index, service._id)
-                          }
+                    {extraServices
+                      .reduce((uniqueServices, service) => {
+                        const existingService = uniqueServices.find(
+                          (s) => s._id === service._id
+                        );
+
+                        if (existingService) {
+                          existingService.count += 1;
+                        } else {
+                          uniqueServices.push({ ...service, count: 1 });
+                        }
+
+                        return uniqueServices;
+                      }, [])
+                      .map((service, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-gray-200 p-4 rounded mb-4"
                         >
-                          <CgTrashEmpty />
-                        </button>
-                      </div>
-                    ))}
+                          <div>
+                            <p>
+                              {service.name}{" "}
+                              {service.count > 1 ? `x${service.count}` : ""}
+                            </p>
+                          </div>
+                          <button
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() =>
+                              handleRemoveService(index, service._id)
+                            }
+                          >
+                            <CgTrashEmpty />
+                          </button>
+                        </div>
+                      ))}
                   </div>
                 )}
               </>
@@ -334,29 +372,47 @@ const Checkout = () => {
                     <span>Proceed</span>
                   </button>
                 </div>
+
                 {products.length > 0 && (
                   <div className="mb-4">
                     <h3 className="text-lg font-semibold mb-2">
                       Selected Products
                     </h3>
-                    {products.map((product, index) => (
-                      <div
-                        key={product._id}
-                        className="flex items-center justify-between bg-gray-200 p-4 rounded mb-4"
-                      >
-                        <div>
-                          <p>{product.name}</p>
-                        </div>
-                        <button
-                          className="text-red-500 hover:text-red-700"
-                          onClick={() =>
-                            handleRemoveProduct(index, product._id)
-                          }
+                    {products
+                      .reduce((uniqueProducts, product) => {
+                        const existingProduct = uniqueProducts.find(
+                          (p) => p._id === product._id
+                        );
+
+                        if (existingProduct) {
+                          existingProduct.count += 1;
+                        } else {
+                          uniqueProducts.push({ ...product, count: 1 });
+                        }
+
+                        return uniqueProducts;
+                      }, [])
+                      .map((product, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between bg-gray-200 p-4 rounded mb-4"
                         >
-                          <CgTrashEmpty />
-                        </button>
-                      </div>
-                    ))}
+                          <div>
+                            <p>
+                              {product.name}{" "}
+                              {product.count > 1 ? `x${product.count}` : ""}
+                            </p>
+                          </div>
+                          <button
+                            className="text-red-500 hover:text-red-700"
+                            onClick={() =>
+                              handleRemoveProduct(index, product._id)
+                            }
+                          >
+                            <CgTrashEmpty />
+                          </button>
+                        </div>
+                      ))}
                   </div>
                 )}
               </>
@@ -496,27 +552,61 @@ const Checkout = () => {
             </div>
             <div className="mb-4">
               <h3 className="font-semibold mb-2">Current Services</h3>
-              {extraServices.map((service, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <RiServiceFill className="text-gray-800 mr-2" size={16} />
-                  <p>{service.name}</p>
-                </div>
-              ))}
+              {extraServices
+                .reduce((uniqueServices, service) => {
+                  const existingService = uniqueServices.find(
+                    (s) => s._id === service._id
+                  );
+
+                  if (existingService) {
+                    existingService.count += 1;
+                  } else {
+                    uniqueServices.push({ ...service, count: 1 });
+                  }
+
+                  return uniqueServices;
+                }, [])
+                .map((service, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <RiServiceFill className="text-gray-800 mr-2" size={16} />
+                    <p>
+                      {service.name}{" "}
+                      {service.count > 1 ? `x${service.count}` : ""}
+                    </p>
+                  </div>
+                ))}
             </div>
             <div className="mb-4">
               <h3 className="font-semibold mb-2">Products</h3>
-              {products.map((product, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <BiBasket className="text-gray-800 mr-2" size={16} />
-                  <p>{product.name}</p>
-                </div>
-              ))}
+              {products
+                .reduce((uniqueProducts, product) => {
+                  const existingProduct = uniqueProducts.find(
+                    (p) => p._id === product._id
+                  );
+
+                  if (existingProduct) {
+                    existingProduct.count += 1;
+                  } else {
+                    uniqueProducts.push({ ...product, count: 1 });
+                  }
+
+                  return uniqueProducts;
+                }, [])
+                .map((product, index) => (
+                  <div key={index} className="flex items-center mb-2">
+                    <BiBasket className="text-gray-800 mr-2" size={16} />
+                    <p>
+                      {product.name}{" "}
+                      {product.count > 1 ? `x${product.count}` : ""}
+                    </p>
+                  </div>
+                ))}
             </div>
             <div className="mb-4">
               <hr className="border-gray-300 my-2" />
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Total Price:</h3>
-                <p className="text-sm">${totalPrice}</p>
+                <p className="text-sm">${Number(totalPrice).toFixed(2)}</p>
               </div>
               <hr className="border-gray-300 my-2" />
               <div className="flex items-center justify-between mb-2">

@@ -6,7 +6,7 @@ import axios from "axios";
 import ImageUpload from "./ImageUpload";
 
 const RegisterProduct = ({ setModelState }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const initialValues = {
     name: "",
     speciality: "",
@@ -65,7 +65,7 @@ const RegisterProduct = ({ setModelState }) => {
         costBRL: values.costBRL,
         price: values.costBRL,
         stock: values.stock,
-        shopName: shopName,
+        managerId: shopId,
         productImg: filename,
       };
 

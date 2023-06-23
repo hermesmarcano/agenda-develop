@@ -13,14 +13,6 @@ const Settings = () => {
   const { theme } = useContext(ThemeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [shopData, setShopData] = useState({});
-  const initialValues = {
-    shopName: "",
-    name: "",
-  };
-
-  const initialValues2 = {
-    profileImg: "",
-  };
 
   useEffect(() => {
     axios
@@ -113,7 +105,15 @@ const Settings = () => {
     <div className="p-6 pb-9">
       <h1 className="text-3xl font-bold mb-6">Dashboard Settings</h1>
       <div>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik
+          initialValues={{
+            shopName: "",
+            name: "",
+            discountType: shopData?.discount?.type || "",
+            discountValue: shopData?.discount?.value || "",
+          }}
+          onSubmit={handleSubmit}
+        >
           {({ isSubmitting }) => (
             <Form className="bg-white rounded-lg shadow-md px-8 py-6 mb-4">
               <div className="mb-6">
@@ -142,6 +142,38 @@ const Settings = () => {
                   id="manager-name"
                   name="name"
                   className="py-2 px-4 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:border-blue-500 w-full"
+                />
+              </div>
+              <div className="mb-6">
+                <label
+                  htmlFor="discount-type"
+                  className="block text-lg text-gray-800 font-semibold mb-2"
+                >
+                  Discount Type:
+                </label>
+                <Field
+                  as="select"
+                  id="discount-type"
+                  name="discountType"
+                  className="py-2 px-4 border border-gray-300 rounded-md text-gray focus:outline-none focus:border-blue-500 w-full"
+                >
+                  <option value="">Select Type</option>
+                  <option value="percent">Percentage</option>
+                  <option value="num">Numeric</option>
+                </Field>
+              </div>
+              <div className="mb-6">
+                <label
+                  htmlFor="discount-value"
+                  className="block text-lg text-gray-800 font-semibold mb-2"
+                >
+                  Discount Value:
+                </label>
+                <Field
+                  type="number"
+                  id="discount-value"
+                  name="discountValue"
+                  className="py-2 px-4 border border-gray-300 rounded-md text-gray focus:outline-none focus:border-blue-500 w-full"
                 />
               </div>
               <div className="flex items-center justify-end">
@@ -177,7 +209,12 @@ const Settings = () => {
       )}
 
       {!shopData.profileImg && (
-        <Formik initialValues={initialValues2} onSubmit={uploadProfileImg}>
+        <Formik
+          initialValues={{
+            profileImg: "",
+          }}
+          onSubmit={uploadProfileImg}
+        >
           {({ isSubmitting }) => (
             <Form>
               <Field name="profileImg" component={ImageUpload} />

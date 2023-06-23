@@ -26,10 +26,10 @@ const getProfessionals = async (req, res) => {
   }
 };
 
-const getProfessionalsByShopName = async (req, res) => {
+const getProfessionalsByShopId = async (req, res) => {
   try {
     const professionals = await Professional.find({
-      shopName: req.query.shopName,
+      managerId: req.query.shopId,
     });
     res.status(200).json({ success: true, data: professionals });
   } catch (error) {
@@ -91,7 +91,7 @@ const deleteProfessional = async (req, res) => {
 
 module.exports = {
   createProfessional,
-  getProfessionalsByShopName,
+  getProfessionalsByShopId,
   getProfessionals,
   getProfessionalById,
   updateProfessional,

@@ -32,6 +32,7 @@ import CreditCheckout from "./utils/CreditCheckout";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
+  const [shopId, setShopId] = useState("");
   const [shopName, setShopName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
   const currentTheme = localStorage.getItem("currentTheme");
@@ -80,6 +81,8 @@ function App() {
                 value={{
                   isSidebarOpen: isSidebarOpen,
                   toggleSidebar: toggleSidebar,
+                  shopId: shopId,
+                  setShopId: setShopId,
                   shopName: shopName,
                   setShopName: setShopName,
                 }}

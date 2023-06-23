@@ -8,7 +8,7 @@ import axios from "axios";
 import UpdateService from "../components/UpdateService";
 
 const Services = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [servicesPerPage, setServicesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +21,7 @@ const Services = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/services/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/services/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },

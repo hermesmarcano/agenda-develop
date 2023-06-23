@@ -24,7 +24,7 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
       });
   }, []);
 
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   // const initialValues = {
   //   name: customerData.name,
   //   phone: customerData.phone,
@@ -40,7 +40,7 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
     const data = {
       name: values.name,
       phone: values.phone,
-      shopName: shopName,
+      managerId: shopId,
     };
 
     const fetchRequest = async () => {

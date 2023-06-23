@@ -54,7 +54,7 @@ const DashboardHome = () => {
 
         const customersPShop = shopsResponse.data.map((shop) => {
           const matchingCustomers = customersResponse.data.customers.filter(
-            (customer) => customer.shopName === shop.shopName
+            (customer) => customer.managerId === shop._id
           );
           return {
             shopName: shop.shopName,
@@ -71,7 +71,7 @@ const DashboardHome = () => {
 
         const paymentsPShop = shopsResponse.data.map((shop) => {
           const matchingPayments = paymentsResponse.data.payments.filter(
-            (payment) => payment.shopName === shop.shopName
+            (payment) => payment.managerId === shop._id
           );
           const paymentCount = matchingPayments.reduce(
             (acc, item) => acc + item.amount,

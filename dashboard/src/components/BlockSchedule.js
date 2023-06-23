@@ -16,20 +16,17 @@ const BlockSchedule = ({ setModelState }) => {
   const { dateTime } = useContext(DateTimeContext);
   const { professionalId } = useContext(ProfessionalIdContext);
   const token = localStorage.getItem("ag_app_shop_token");
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const [loading, setLoading] = React.useState(true);
 
   const [professionals, setProfessionals] = useState([]);
   useEffect(() => {
     axios
-      .get(
-        `http://localhost:4040/professionals/shopname?shopName=${shopName}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
+      .get(`http://localhost:4040/professionals/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => {
         setProfessionals(response.data.data);
         console.log(response.data.data);
@@ -193,7 +190,7 @@ const BlockSchedule = ({ setModelState }) => {
         {
           professional: professionalId,
           dateTime: new Date(dateTime),
-          shopName: shopName,
+          managerId: shopId,
           blocking: true,
           blockingDuration: duration,
           blockingReason: blockingReason,

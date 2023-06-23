@@ -9,7 +9,7 @@ import ThemeContext from "../context/ThemeContext";
 
 const Scheduler = ({ date }) => {
   const { theme } = useContext(ThemeContext);
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const { setDateTime } = useContext(DateTimeContext);
   const [appointmentsList, setAppointmentsList] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const Scheduler = ({ date }) => {
     setLoading(true);
     try {
       const response = await fetch(
-        `http://localhost:4040/appointments?shopName=${shopName}`,
+        `http://localhost:4040/appointments?shop=${shopId}`,
         {
           method: "GET",
           headers: {
@@ -44,7 +44,7 @@ const Scheduler = ({ date }) => {
 
   useEffect(() => {
     fetchAppointments();
-  }, [shopName]);
+  }, [shopId]);
 
   const hoursArr = useMemo(() => {
     const arr = [];

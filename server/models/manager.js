@@ -29,20 +29,13 @@ const ManagerSchema = new Schema(
     profileImg: {
       type: String,
     },
-    theme: {
-      type: String,
-      default: "gray",
-      enum: [
-        "gray",
-        "sky",
-        "orange",
-        "teal",
-        "yellow",
-        "amber",
-        "emerald",
-        "pink",
-        "rose",
-      ],
+    discount: {
+      type: {
+        type: String,
+      },
+      value: {
+        type: Number,
+      },
     },
     resetToken: {
       type: String,

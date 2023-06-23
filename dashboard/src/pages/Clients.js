@@ -8,7 +8,7 @@ import axios from "axios";
 import UpdateCustomer from "../components/UpdateCustomer";
 
 const Clients = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [clientsPerPage, setClientsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +21,7 @@ const Clients = () => {
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/customers/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },

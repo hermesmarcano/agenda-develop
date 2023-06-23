@@ -5,7 +5,7 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 
 const RegisterProfessional = ({ setModelState }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     startHour: Yup.number()
@@ -56,7 +56,7 @@ const RegisterProfessional = ({ setModelState }) => {
             startHour: values.startHour,
             endHour: values.endHour,
             description: values.description,
-            shopName: shopName,
+            managerId: shopId,
           };
 
           const fetchRequest = async () => {

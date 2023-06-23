@@ -3,7 +3,7 @@ const router = express.Router();
 const {
   createProfessional,
   getProfessionals,
-  getProfessionalsByShopName,
+  getProfessionalsByShopId,
   getProfessionalById,
   updateProfessional,
   deleteProfessional,
@@ -12,7 +12,7 @@ const { isManager, isAdmin } = require("../middlewares/roles");
 const auth = require("../auth/auth");
 
 router.post("/", auth, createProfessional);
-router.get("/shopname", getProfessionalsByShopName);
+router.get("/shop", getProfessionalsByShopId);
 router.get("/", getProfessionals);
 router.get("/:id", auth, getProfessionalById);
 router.patch("/:id", auth, updateProfessional);

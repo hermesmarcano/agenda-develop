@@ -6,7 +6,7 @@ import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 
 const UpdateProfessional = ({ setModelState, professionalId }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const [professionalData, setProfessionalData] = useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
@@ -85,7 +85,7 @@ const UpdateProfessional = ({ setModelState, professionalId }) => {
             startHour: values.startHour,
             endHour: values.endHour,
             description: values.description,
-            shopName: shopName,
+            managerId: shopId,
           };
 
           const fetchRequest = async () => {

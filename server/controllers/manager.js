@@ -188,7 +188,11 @@ const getShop = async (req, res) => {
     if (!manager) {
       return res.status(404).json({ message: "Shop doesn't exist" });
     }
-    res.json({ shopName: manager.shopName, profileImg: manager.profileImg });
+    res.json({
+      _id: manager._id,
+      shopName: manager.shopName,
+      profileImg: manager.profileImg,
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -196,9 +200,9 @@ const getShop = async (req, res) => {
 
 const getShopImg = async (req, res) => {
   const query = req.query;
-  console.log(query.shopName);
+  console.log(query.shopId);
   try {
-    const manager = await Manager.findOne({ shopName: query.shopName });
+    const manager = await Manager.findOne({ _id: query.shopId });
     console.log(manager);
     if (!manager) {
       return res.status(404).json({ message: "Shop doesn't exist" });

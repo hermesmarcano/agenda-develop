@@ -13,7 +13,7 @@ import { AiOutlineInbox } from "react-icons/ai";
 import { HiEmojiSad } from "react-icons/hi";
 
 const Agenda = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopName, shopId } = useContext(SidebarContext);
 
   const [date, setDate] = useState(new Date());
   const getStartOfWeek = (date) => {
@@ -38,7 +38,7 @@ const Agenda = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/appointments?shopName=${shopName}`, {
+      .get(`http://localhost:4040/appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
@@ -49,7 +49,7 @@ const Agenda = () => {
         console.log(response.data.appointments);
         // setIsLoading(false);
       });
-  }, [shopName]);
+  }, [shopId]);
 
   useEffect(() => {
     axios
@@ -62,7 +62,7 @@ const Agenda = () => {
         setMyShopImg(response.data.profileImg);
         axios
           .get(
-            `http://localhost:4040/professionals/shopname?shopName=${response.data.shopName}`,
+            `http://localhost:4040/professionals/shop?shopId=${response.data._id}`,
             {
               headers: {
                 Authorization: token,
@@ -180,7 +180,6 @@ const Agenda = () => {
               src={`http://localhost:4040/uploads/profile/${myShopImg}`}
               alt="Shop logo"
             />
-            {/* <h1 className="text-base font-bold">{`Welcome to ${shopName}`}</h1> */}
           </div>
           <div className="flex flex-col items-start border border-gray-400 p-4 mt-3">
             {viewMode === "daily" ? (

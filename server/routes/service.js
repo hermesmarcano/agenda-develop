@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require("uuid");
 const {
   createService,
   uploadServiceImg,
-  getAllServicesByShopName,
+  getAllServicesByShopId,
   getAllServices,
   getServiceById,
   updateService,
@@ -46,7 +46,7 @@ router.post(
   uploadServiceImg
 );
 router.post("/", auth, createService);
-router.get("/shopname", getAllServicesByShopName);
+router.get("/shop", getAllServicesByShopId);
 router.get("/", getAllServices);
 router.get("/:id", auth, getServiceById);
 router.patch("/:id", auth, updateService);

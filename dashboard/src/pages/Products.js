@@ -9,7 +9,7 @@ import { FaSearch } from "react-icons/fa";
 import UpdateProduct from "../components/UpdateProduct";
 
 const Products = () => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [productsPerPage, setProductsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,7 +22,7 @@ const Products = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:4040/products/shopname?shopName=${shopName}`, {
+      .get(`http://localhost:4040/products/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },

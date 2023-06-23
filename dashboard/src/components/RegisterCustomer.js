@@ -5,7 +5,7 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 
 const RegisterCustomer = ({ setModelState }) => {
-  const { shopName } = useContext(SidebarContext);
+  const { shopId } = useContext(SidebarContext);
   const initialValues = {
     name: "",
     phone: "",
@@ -21,7 +21,7 @@ const RegisterCustomer = ({ setModelState }) => {
     const data = {
       name: values.name,
       phone: values.phone,
-      shopName: shopName,
+      managerId: shopId,
     };
 
     const fetchRequest = async () => {
