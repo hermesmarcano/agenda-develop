@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
-import { FaTrash } from "react-icons/fa";
+import { FaSpinner, FaTrash } from "react-icons/fa";
 import ImageUpload from "../components/ImageUpload";
 import ThemeContext from "../context/ThemeContext";
 
@@ -12,6 +12,7 @@ const Settings = () => {
   const { shopName, setShopName } = useContext(SidebarContext);
   const { theme } = useContext(ThemeContext);
   const token = localStorage.getItem("ag_app_shop_token");
+  const [loading, setLoading] = useState(true);
   const [shopData, setShopData] = useState({});
 
   useEffect(() => {
@@ -24,16 +25,25 @@ const Settings = () => {
       .then((response) => {
         console.log(response.data);
         setShopData(response.data);
+        setLoading(false);
       })
       .catch((error) => console.log(error));
   }, []);
 
   const handleSubmit = (values, { resetForm }) => {
     // Code to save the changes made to the settings
-    console.log(JSON.stringify(values));
+    let data = {
+      shopName: values.shopName,
+      name: values.name,
+      discount: {
+        type: values.discountType,
+        value: values.discountValue,
+      },
+    };
+    console.log(JSON.stringify(data));
 
     axios
-      .patch("http://localhost:4040/managers", JSON.stringify(values), {
+      .patch("http://localhost:4040/managers", JSON.stringify(data), {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -101,14 +111,25 @@ const Settings = () => {
       .catch((error) => console.log(error));
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col justify-center items-center space-x-2">
+          <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          <span className="mt-2">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 pb-9">
       <h1 className="text-3xl font-bold mb-6">Dashboard Settings</h1>
       <div>
         <Formik
           initialValues={{
-            shopName: "",
-            name: "",
+            shopName: shopData.shopName,
+            name: shopData.name,
             discountType: shopData?.discount?.type || "",
             discountValue: shopData?.discount?.value || "",
           }}

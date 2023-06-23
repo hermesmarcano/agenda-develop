@@ -66,9 +66,26 @@ const Checkout = () => {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [calculatorMode, setCalculatorMode] = useState(false);
   const [creditMode, setCreditMode] = useState(false);
-  const [totalPrice, setTotalPrice] = useState(bookingInfo.amount);
+  const [subTotalPrice, setSubTotalPrice] = useState(bookingInfo.amount);
+  const [totalPrice, setTotalPrice] = useState(0);
   const [amountPaid, setAmountPaid] = useState(0);
   const [change, setChange] = useState(0);
+  const [discount, setDiscount] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4040/managers/id", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        console.log(response.data.discount);
+        setDiscount(response.data.discount);
+        setLoading(false);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   useEffect(() => {
     axios
@@ -108,6 +125,23 @@ const Checkout = () => {
         console.error(error);
       });
   }, []);
+
+  useEffect(() => {
+    if (discount) {
+      let updatedTotalPrice = subTotalPrice;
+
+      if (discount.type === "percent") {
+        const discountAmount =
+          (parseFloat(discount.value) / 100) * subTotalPrice;
+        updatedTotalPrice -= discountAmount;
+      } else if (discount.type === "num") {
+        const discountAmount = parseFloat(discount.value);
+        updatedTotalPrice -= discountAmount;
+      }
+
+      setTotalPrice(updatedTotalPrice);
+    }
+  }, [discount, bookingInfo.amount]);
 
   useEffect(() => {
     axios
@@ -156,7 +190,7 @@ const Checkout = () => {
     //   setTotalPrice(totalPrice + service.price);
     // }
     setExtraServices([...extraServices, service]);
-    setTotalPrice(totalPrice + service.price);
+    setSubTotalPrice(totalPrice + service.price);
   };
 
   const handleAddProduct = (product) => {
@@ -169,7 +203,7 @@ const Checkout = () => {
     //   setTotalPrice(totalPrice + product.price);
     // }
     setProducts([...products, product]);
-    setTotalPrice(totalPrice + product.price);
+    setSubTotalPrice(totalPrice + product.price);
   };
 
   const handleChoosePaymentMethod = (method) => {
@@ -211,13 +245,13 @@ const Checkout = () => {
   const handleRemoveService = (index, id) => {
     setExtraServices(extraServices.filter((_, i) => i !== index));
     const removedService = servicesData.find((service) => service._id === id);
-    setTotalPrice(totalPrice - removedService.price);
+    setSubTotalPrice(totalPrice - removedService.price);
   };
 
   const handleRemoveProduct = (index, id) => {
     setProducts(products.filter((_, i) => i !== index));
     const removedProduct = productsData.find((product) => product._id === id);
-    setTotalPrice(totalPrice - removedProduct.price);
+    setSubTotalPrice(totalPrice - removedProduct.price);
   };
 
   if (loading) {
@@ -232,7 +266,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 pb-8">
       <div className="flex flex-wrap">
         <div className="w-full lg:w-3/4 lg:pr-4">
           <div className="bg-white rounded shadow-lg p-8 mb-4">
@@ -604,6 +638,21 @@ const Checkout = () => {
             </div>
             <div className="mb-4">
               <hr className="border-gray-300 my-2" />
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-base font-semibold">Subtotal:</h3>
+                <p className="text-sm">${Number(subTotalPrice).toFixed(2)}</p>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-base font-semibold">Discount:</h3>
+                {discount ? (
+                  <p className="text-sm text-red-500">
+                    - {discount.value}
+                    {discount.type === "percent" ? "%" : ""}
+                  </p>
+                ) : (
+                  <p className="text-sm">No discount</p>
+                )}
+              </div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Total Price:</h3>
                 <p className="text-sm">${Number(totalPrice).toFixed(2)}</p>
