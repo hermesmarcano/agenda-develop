@@ -103,9 +103,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       const isSmall = window.innerWidth < 640;
       setIsSmallScreen(isSmall);
 
-      if (!isSmall && !isSidebarOpen) {
-        toggleSidebar(true);
-      } else if (isSmall && isSidebarOpen) {
+      // if (!isSmall && !isSidebarOpen) {
+      //   toggleSidebar(true);
+      // } else if (isSmall && isSidebarOpen) {
+      //   toggleSidebar(false);
+      // }
+
+      if (isSmall && isSidebarOpen) {
         toggleSidebar(false);
       }
     };
