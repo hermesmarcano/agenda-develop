@@ -227,15 +227,11 @@ const Checkout = () => {
   };
 
   const handleRemoveService = (index, id) => {
-    setExtraServices(extraServices.filter((_, i) => i !== index));
-    const removedService = servicesData.find((service) => service._id === id);
-    setSubTotalPrice(totalPrice - removedService.price);
+    setExtraServices(extraServices.filter((serv, i) => serv._id !== id));
   };
 
   const handleRemoveProduct = (index, id) => {
-    setProducts(products.filter((_, i) => i !== index));
-    const removedProduct = productsData.find((product) => product._id === id);
-    setSubTotalPrice(totalPrice - removedProduct.price);
+    setProducts(products.filter((prod, i) => prod._id !== id));
   };
 
   const handleDiscountChange = (e) => {
@@ -256,8 +252,10 @@ const Checkout = () => {
     setSubTotalPrice(servicesPrice + productsPrice);
     setTotalPrice(
       discountType === "$"
-        ? subTotalPrice - discount
-        : subTotalPrice - (subTotalPrice * discount) / 100
+        ? servicesPrice + productsPrice - discount
+        : servicesPrice +
+            productsPrice -
+            (servicesPrice + productsPrice * discount) / 100
     );
   }, [discount, discountType, extraServices, products]);
 
