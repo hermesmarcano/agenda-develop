@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { BiBasket } from "react-icons/bi";
-import { FiCalendar, FiClock } from "react-icons/fi";
+import { FiCalendar, FiClock, FiPercent } from "react-icons/fi";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { HiOutlineClipboardCheck } from "react-icons/hi";
 import { CgTrashEmpty } from "react-icons/cg";
@@ -165,29 +165,23 @@ const Checkout = () => {
   };
 
   const handleAddExtraService = (service) => {
-    // const serviceAlreadyExists = extraServices.some(
-    //   (item) => item._id === service._id
-    // );
-
-    // if (!serviceAlreadyExists) {
-    //   setExtraServices([...extraServices, service]);
-    //   setTotalPrice(totalPrice + service.price);
-    // }
     setExtraServices([...extraServices, service]);
-    // setSubTotalPrice(totalPrice + service.price);
+    const servicesPrice = extraServices.reduce(
+      (total, s) => total + s.price,
+      0
+    );
+    const productsPrice = products.reduce((total, s) => total + s.price, 0);
+    setSubTotalPrice(servicesPrice + productsPrice);
   };
 
   const handleAddProduct = (product) => {
-    // const productAlreadyExists = products.some(
-    //   (item) => item._id === product._id
-    // );
-
-    // if (!productAlreadyExists) {
-    //   setProducts([...products, product]);
-    //   setTotalPrice(totalPrice + product.price);
-    // }
     setProducts([...products, product]);
-    // setSubTotalPrice(totalPrice + product.price);
+    const servicesPrice = extraServices.reduce(
+      (total, s) => total + s.price,
+      0
+    );
+    const productsPrice = products.reduce((total, s) => total + s.price, 0);
+    setSubTotalPrice(servicesPrice + productsPrice);
   };
 
   const handleChoosePaymentMethod = (method) => {
@@ -228,10 +222,22 @@ const Checkout = () => {
 
   const handleRemoveService = (index, id) => {
     setExtraServices(extraServices.filter((serv, i) => serv._id !== id));
+    const servicesPrice = extraServices.reduce(
+      (total, s) => total + s.price,
+      0
+    );
+    const productsPrice = products.reduce((total, s) => total + s.price, 0);
+    setSubTotalPrice(servicesPrice + productsPrice);
   };
 
   const handleRemoveProduct = (index, id) => {
     setProducts(products.filter((prod, i) => prod._id !== id));
+    const servicesPrice = extraServices.reduce(
+      (total, s) => total + s.price,
+      0
+    );
+    const productsPrice = products.reduce((total, s) => total + s.price, 0);
+    setSubTotalPrice(servicesPrice + productsPrice);
   };
 
   const handleDiscountChange = (e) => {
@@ -244,20 +250,12 @@ const Checkout = () => {
   };
 
   useEffect(() => {
-    const servicesPrice = extraServices.reduce(
-      (total, s) => total + s.price,
-      0
-    );
-    const productsPrice = products.reduce((total, s) => total + s.price, 0);
-    setSubTotalPrice(servicesPrice + productsPrice);
     setTotalPrice(
       discountType === "$"
-        ? servicesPrice + productsPrice - discount
-        : servicesPrice +
-            productsPrice -
-            (servicesPrice + productsPrice * discount) / 100
+        ? subTotalPrice - discount
+        : subTotalPrice - (subTotalPrice * discount) / 100
     );
-  }, [discount, discountType, extraServices, products]);
+  }, [discount, discountType, subTotalPrice]);
 
   const handleDiscountTypeChange = () => {
     setDiscountType((prevDiscountType) =>
@@ -655,21 +653,18 @@ const Checkout = () => {
                 <p className="text-sm">${Number(subTotalPrice).toFixed(2)}</p>
               </div>
               <div className="flex flex-wrap items-center justify-between mb-2">
-                {/* <h3 className="font-semibold mb-2">Discount:</h3> */}
-                <div className="flex justify-center items-center ">
-                  <div>
-                    <input
-                      type="number"
-                      className="mr-2 w-14 my-1 px-2 py-1 border border-gray-300 rounded text-sm text-center"
-                      value={discount}
-                      onChange={handleDiscountChange}
-                      min={0}
-                    />
-                  </div>
+                <div className="flex justify-center items-center">
+                  <input
+                    type="number"
+                    className="appearance-none w-16 mr-1 py-2 px-3 border border-gray-300 rounded-md text-sm text-center text-gray-700 leading-tight focus:outline-none "
+                    value={discount}
+                    onChange={handleDiscountChange}
+                    min={0}
+                  />
                   <div className=" flex items-center w-28 h-8 rounded-md bg-gray-300">
                     <button
                       className={`w-14 ${
-                        discountType === "$"
+                        discountType === "%"
                           ? "text-gray-700 shadow-md bg-white"
                           : "text-gray-500 shadow-inner"
                       } flex justify-center items-center h-full rounded-md transition-transform`}
@@ -679,7 +674,7 @@ const Checkout = () => {
                     </button>
                     <button
                       className={`w-14 ${
-                        discountType === "%"
+                        discountType === "$"
                           ? "text-gray-700 shadow-md bg-white"
                           : "text-gray-500 shadow-inner"
                       } flex justify-center items-center h-full rounded-md transition-transform`}
@@ -689,7 +684,9 @@ const Checkout = () => {
                     </button>
                   </div>
                 </div>
-                <div className="text-xs text-gray-500 mb-2">Discount</div>
+                <div className="text-xs text-gray-500 italic mb-2">
+                  Discount
+                </div>
               </div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Total Price:</h3>
