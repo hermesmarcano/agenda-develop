@@ -11,6 +11,7 @@ import {
   FaUserTie,
   FaShoppingCart,
 } from "react-icons/fa";
+import { GiPayMoney } from "react-icons/gi";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SidebarContext from "../context/SidebarContext";
 // import logo from "./logo.png";
@@ -27,6 +28,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       icon1: <FaCalendar className="text-gray-400 h-7 w-7" />,
       icon2: <FaCalendar className="text-gray-400 h-6 w-6" />,
       link: "/",
+    },
+    {
+      name: "Checkout",
+      icon1: <GiPayMoney className="text-gray-400 h-7 w-7" />,
+      icon2: <GiPayMoney className="text-gray-400 h-6 w-6" />,
+      link: "/checkout-appointments",
     },
     {
       name: "Appointments List",

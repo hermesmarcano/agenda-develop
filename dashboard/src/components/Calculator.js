@@ -9,6 +9,7 @@ const Calculator = ({
   isOpen,
   handlePopupClose,
   totalPrice,
+  change = { change },
   setAmountPaid,
   setChange,
   handleConfirmPayment,
@@ -47,32 +48,6 @@ const Calculator = ({
       console.log(data);
       let paymentId = "";
 
-      const makePaymentWithCustomer = () => {
-        axios
-          .post(
-            "http://localhost:4040/customers/",
-            {
-              name: bookingInfo.name,
-              phone: bookingInfo.phone,
-              managerId: bookingInfo.managerId,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: token,
-              },
-            }
-          )
-          .then((response) => {
-            const { customer } = response.data;
-            data.customer = customer._id;
-            makePayment();
-          })
-          .catch((error) => {
-            console.error(error.message);
-          });
-      };
-
       const makePayment = () => {
         axios
           .post("http://localhost:4040/payments", data, {
@@ -104,7 +79,7 @@ const Calculator = ({
               )
               .then((response) => {
                 console.log(response.data);
-                createAppointment();
+                linkPaymentToAppointment();
               })
               .catch((error) => {
                 console.log(error);
@@ -115,41 +90,11 @@ const Calculator = ({
           });
       };
 
-      const createAppointment = () => {
-        let apptData = {
-          customer: bookingInfo.customer,
-          professional: bookingInfo.professional,
-          service: bookingInfo.service,
-          duration: bookingInfo.duration,
-          dateTime: new Date(dateTime),
-          managerId: bookingInfo.managerId,
-        };
-
-        if (bookingInfo.product) {
-          apptData.product = bookingInfo.product;
-        }
-        axios
-          .post("http://localhost:4040/appointments", apptData, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-          })
-          .then((response) => {
-            console.log(response.data);
-            linkPaymentToAppointment(response.data.appointment._id);
-          })
-          .catch((error) => {
-            console.error(error.message);
-            // Handle errors
-          });
-      };
-
-      const linkPaymentToAppointment = (appointmentId) => {
+      const linkPaymentToAppointment = () => {
         axios
           .patch(
             `http://localhost:4040/payments/${paymentId}`,
-            { appointment: appointmentId },
+            { appointment: bookingInfo.appointmentId },
             {
               headers: {
                 "Content-Type": "application/json",
@@ -158,6 +103,27 @@ const Calculator = ({
             }
           )
           .then((response) => {
+            confirmAppointmentPayment();
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      };
+
+      const confirmAppointmentPayment = () => {
+        axios
+          .patch(
+            `http://localhost:4040/appointments/${bookingInfo.appointmentId}`,
+            { status: "confirmed" },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+            }
+          )
+          .then((response) => {
+            console.log(response.data);
             setAmountPaid(amountReceived);
             setChange(amountReceived - totalPrice);
             setUnSufficientAmountMsg(false);
@@ -167,14 +133,11 @@ const Calculator = ({
           })
           .catch((error) => {
             console.error(error.message);
+            // Handle errors
           });
       };
 
-      if (bookingInfo.addCustomerClicked) {
-        makePaymentWithCustomer();
-      } else {
-        makePayment();
-      }
+      makePayment();
     } else {
       setUnSufficientAmountMsg(true);
     }
@@ -197,10 +160,21 @@ const Calculator = ({
     handlePopupClose();
   };
 
+  const handleCalculateChange = () => {
+    const received = parseFloat(amountReceived);
+    const total = parseFloat(totalPrice);
+    if (received >= total) {
+      const changeAmount = received - total;
+      setChange(changeAmount.toFixed(2));
+    } else {
+      setChange(0);
+    }
+  };
+
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 z-10 flex justify-center items-center overflow-y-auto">
+        <div className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-black bg-opacity-25">
           <div className="bg-white rounded-lg p-4 w-full sm:max-w-sm">
             <div className="flex items-center mb-4">
               <span className="inline-flex h-10 items-center px-3 rounded-l-md border-2 border-r-0 border-gray-300 bg-gray-50 text-gray-500">
@@ -227,6 +201,21 @@ const Calculator = ({
               />
             </div>
 
+            <div className="flex justify-end">
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white mr-2 mb-2 py-2 px-4 rounded-md flex items-center font-semibold text-sm"
+                onClick={handleCalculateChange}
+              >
+                Calculate Change
+              </button>
+            </div>
+
+            {change > 0 && (
+              <div className="mb-4">
+                <p className="text-gray-700 font-semibold">Change: ${change}</p>
+              </div>
+            )}
+
             {/* Calculator UI */}
             <div className="grid grid-cols-3 gap-2 mb-4">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "."].map((value) => (
@@ -245,14 +234,6 @@ const Calculator = ({
                 <BsBackspace />
               </button>
             </div>
-
-            {unSfficientAmountMsg && (
-              <div>
-                <p className="text-red-500 text-xs italic">
-                  Unsufficient Amount
-                </p>
-              </div>
-            )}
 
             <div className="flex justify-end mt-4">
               <button

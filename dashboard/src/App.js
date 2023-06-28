@@ -29,6 +29,7 @@ import ViewModeContext from "./context/ViewModeContext";
 import ProfessionalIdContext from "./context/ProfessionalIdContext";
 import Checkout from "./pages/Checkout";
 import CreditCheckout from "./utils/CreditCheckout";
+import PendingAppointments from "./pages/PendingAppointments";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
@@ -37,6 +38,7 @@ function App() {
   const [dateTime, setDateTime] = useState(new Date());
   const currentTheme = localStorage.getItem("currentTheme");
   const [theme, setTheme] = useState(currentTheme ? currentTheme : "light");
+
   // themes [
   //   "gray",
   //   "sky",
@@ -105,6 +107,10 @@ function App() {
                       <Route path="/services" element={<Services />} />
                       <Route path="/finance" element={<Finance />} />
                       <Route path="/settings" element={<Settings />} />
+                      <Route
+                        path="/checkout-appointments"
+                        element={<PendingAppointments />}
+                      />
                       <Route element={<CreditCheckout />}>
                         <Route path="/checkout" exact element={<Checkout />} />
                       </Route>

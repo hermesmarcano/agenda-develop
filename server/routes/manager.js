@@ -46,8 +46,8 @@ router.get("/shops", getShops);
 router.get("/shopImg", getShopImg);
 router.get("/", auth, getAllManagers);
 router.get("/id", auth, getManager);
-router.post("/", upload.single("profileImg"), createManager);
-router.post("/profileImg", auth, upload.single("profileImg"), uploadProfileImg);
+router.post("/", createManager);
+router.post("/profileImg", upload.single("profileImg"), uploadProfileImg);
 router.patch("/", auth, updateManager);
 router.delete("/profile/:filename", auth, deleteProfileImg);
 

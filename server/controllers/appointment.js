@@ -20,7 +20,7 @@ const getAllAppointments = async (req, res) => {
     })
       .populate("customer", "name")
       .populate("professional", "name")
-      .populate("service", "name duration");
+      .populate("service", "name duration price");
     res.json({ success: true, appointments });
   } catch (error) {
     console.error(error);

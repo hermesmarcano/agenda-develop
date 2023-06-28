@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
+const workingHoursSchema = new mongoose.Schema({
+  startHour: Number,
+  endHour: Number,
+});
+
 const ManagerSchema = new Schema(
   {
     name: {
@@ -37,6 +42,7 @@ const ManagerSchema = new Schema(
         type: Number,
       },
     },
+    workingHours: [workingHoursSchema],
     resetToken: {
       type: String,
       default: null,

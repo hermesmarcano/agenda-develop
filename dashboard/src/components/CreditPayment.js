@@ -44,32 +44,6 @@ const CreditPayment = ({
     console.log(data);
     let paymentId = "";
 
-    const makePaymentWithCustomer = () => {
-      axios
-        .post(
-          "http://localhost:4040/customers/",
-          {
-            name: bookingInfo.name,
-            phone: bookingInfo.phone,
-            managerId: bookingInfo.managerId,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-          }
-        )
-        .then((response) => {
-          const { customer } = response.data;
-          data.customer = customer._id;
-          makePayment();
-        })
-        .catch((error) => {
-          console.error(error.message);
-        });
-    };
-
     const makePayment = () => {
       axios
         .post("http://localhost:4040/payments", data, {
@@ -101,7 +75,7 @@ const CreditPayment = ({
             )
             .then((response) => {
               console.log(response.data);
-              createAppointment();
+              linkPaymentToAppointment();
             })
             .catch((error) => {
               console.log(error);
@@ -112,40 +86,11 @@ const CreditPayment = ({
         });
     };
 
-    const createAppointment = () => {
-      let apptData = {
-        customer: bookingInfo.customer,
-        professional: bookingInfo.professional,
-        service: bookingInfo.service,
-        duration: bookingInfo.duration,
-        dateTime: new Date(dateTime),
-        managerId: bookingInfo.managerId,
-      };
-      if (bookingInfo.product) {
-        apptData.product = bookingInfo.product;
-      }
-      axios
-        .post("http://localhost:4040/appointments", apptData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        })
-        .then((response) => {
-          console.log(response.data);
-          linkPaymentToAppointment(response.data.appointment._id);
-        })
-        .catch((error) => {
-          console.error(error.message);
-          // Handle errors
-        });
-    };
-
-    const linkPaymentToAppointment = (appointmentId) => {
+    const linkPaymentToAppointment = () => {
       axios
         .patch(
           `http://localhost:4040/payments/${paymentId}`,
-          { appointment: appointmentId },
+          { appointment: bookingInfo.appointmentId },
           {
             headers: {
               "Content-Type": "application/json",
@@ -154,21 +99,40 @@ const CreditPayment = ({
           }
         )
         .then((response) => {
-          setAmountPaid(totalPrice);
-          setChange(0);
-          handlePopupClose();
-          handleConfirmPayment();
+          confirmAppointmentPayment();
         })
         .catch((error) => {
           console.error(error.message);
         });
     };
 
-    if (bookingInfo.addCustomerClicked) {
-      makePaymentWithCustomer();
-    } else {
-      makePayment();
-    }
+    const confirmAppointmentPayment = () => {
+      axios
+        .patch(
+          `http://localhost:4040/appointments/${bookingInfo.appointmentId}`,
+          { status: "confirmed" },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          setAmountPaid(totalPrice);
+          setChange(0);
+
+          handlePopupClose();
+          handleConfirmPayment();
+        })
+        .catch((error) => {
+          console.error(error.message);
+          // Handle errors
+        });
+    };
+
+    makePayment();
   };
 
   // const handleSubmit = async (event) => {

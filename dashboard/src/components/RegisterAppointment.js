@@ -9,6 +9,7 @@ import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
 import { Link, useNavigate } from "react-router-dom";
+import Alert from "./Alert";
 
 const RegisterAppointment = ({
   amount,
@@ -19,6 +20,10 @@ const RegisterAppointment = ({
   setAmount,
   addCustomerClicked,
   setAddCustomerClicked,
+  setModelState,
+  setBooked,
+  setAlertMsg,
+  setAlertMsgType,
 }) => {
   const navigate = useNavigate(this);
   const { shopId } = useContext(SidebarContext);
@@ -123,74 +128,74 @@ const RegisterAppointment = ({
       totalDuration = parseInt(hours) * 60 + parseInt(minutes);
     }
 
+    const createAppointment = (customer) => {
+      let apptData = {
+        customer: customer,
+        professional: values.professional,
+        service: values.service,
+        duration: totalDuration,
+        dateTime: new Date(dateTime),
+        managerId: shopId,
+      };
+
+      if (bookingInfo.product) {
+        apptData.product = bookingInfo.product;
+      }
+      axios
+        .post("http://localhost:4040/appointments", apptData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setSubmitting(false);
+          resetForm();
+          setModelState(false);
+          setAlertMsg(
+            "Reservation has been scheduled, go to checkout to process payment"
+          );
+          setAlertMsgType("success");
+          setBooked(true);
+        })
+        .catch((error) => {
+          console.error(error.message);
+          // Handle errors
+        });
+    };
+
+    const registerCustomerWithAppointment = () => {
+      axios
+        .post(
+          "http://localhost:4040/customers/",
+          {
+            name: values.name,
+            phone: values.phone,
+            managerId: shopId,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        )
+        .then((response) => {
+          const { customer } = response.data;
+          createAppointment(customer);
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
+    };
+
     if (addCustomerClicked) {
-      setBookingInfo({
-        name: values.name,
-        phone: values.phone,
-        professional: values.professional,
-        service: values.service,
-        duration: totalDuration,
-        dateTime: new Date(dateTime),
-        amount: totalPrice,
-        managerId: shopId,
-        addCustomerClicked: addCustomerClicked,
-      });
-      localStorage.setItem(
-        "ag_app_booking_info",
-        JSON.stringify({
-          name: values.name,
-          phone: values.phone,
-          professional: values.professional,
-          service: values.service,
-          duration: totalDuration,
-          dateTime: new Date(dateTime),
-          amount: totalPrice,
-          managerId: shopId,
-          addCustomerClicked: addCustomerClicked,
-        })
-      );
+      registerCustomerWithAppointment();
     } else {
-      setBookingInfo({
-        customer: values.customer,
-        professional: values.professional,
-        service: values.service,
-        duration: totalDuration,
-        dateTime: new Date(dateTime),
-        amount: totalPrice,
-        managerId: shopId,
-      });
-      localStorage.setItem(
-        "ag_app_booking_info",
-        JSON.stringify({
-          customer: values.customer,
-          professional: values.professional,
-          service: values.service,
-          duration: totalDuration,
-          dateTime: new Date(dateTime),
-          amount: totalPrice,
-          managerId: shopId,
-        })
-      );
+      createAppointment(values.customer);
     }
-
-    navigate("/checkout");
-
-    // setAmount(totalPrice);
-    // setDuration(totalDuration);
-    setSubmitting(false);
-    resetForm();
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <div className="flex flex-col justify-center items-center space-x-2">
-  //         <FaSpinner className="animate-spin text-4xl text-blue-500" />
-  //         <span className="mt-2">Loading...</span>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
@@ -576,7 +581,7 @@ const RegisterAppointment = ({
                   </div>
                 </div>
               )}
-              <button
+              {/* <button
                 type="submit"
                 disabled={isSubmitting}
                 className="checkout-button flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -587,6 +592,18 @@ const RegisterAppointment = ({
                   <FaCheck className="mr-2" />
                 )}
                 Proceed to Checkout
+              </button> */}
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                {isSubmitting ? (
+                  <FaSpinner className="animate-spin mr-2" />
+                ) : (
+                  <FaCheck className="mr-2" />
+                )}
+                Book Now
               </button>
               {/* <Link
                 // type="submit"

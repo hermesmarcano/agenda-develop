@@ -6,6 +6,7 @@ import {
   FaUser,
   FaTimes,
   FaSpinner,
+  FaPercent,
 } from "react-icons/fa";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { BiBasket } from "react-icons/bi";
@@ -70,7 +71,8 @@ const Checkout = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [amountPaid, setAmountPaid] = useState(0);
   const [change, setChange] = useState(0);
-  const [discount, setDiscount] = useState(null);
+  const [discount, setDiscount] = useState(0);
+  const [discountType, setDiscountType] = useState("$");
 
   useEffect(() => {
     axios
@@ -81,7 +83,6 @@ const Checkout = () => {
       })
       .then((response) => {
         console.log(response.data.discount);
-        setDiscount(response.data.discount);
         setLoading(false);
       })
       .catch((error) => console.log(error));
@@ -127,23 +128,6 @@ const Checkout = () => {
   }, []);
 
   useEffect(() => {
-    if (discount) {
-      let updatedTotalPrice = subTotalPrice;
-
-      if (discount.type === "percent") {
-        const discountAmount =
-          (parseFloat(discount.value) / 100) * subTotalPrice;
-        updatedTotalPrice -= discountAmount;
-      } else if (discount.type === "num") {
-        const discountAmount = parseFloat(discount.value);
-        updatedTotalPrice -= discountAmount;
-      }
-
-      setTotalPrice(updatedTotalPrice);
-    }
-  }, [discount, bookingInfo.amount]);
-
-  useEffect(() => {
     axios
       .get(`http://localhost:4040/products/shop?shopId=${shopId}`, {
         headers: {
@@ -172,7 +156,7 @@ const Checkout = () => {
     // Handle cancel checkout logic here
     console.log("Checkout canceled");
     localStorage.removeItem("ag_app_booking_info");
-    navigate("/");
+    navigate("/checkout-appointments");
   };
 
   const handleAddCustomerDetails = (details) => {
@@ -252,6 +236,29 @@ const Checkout = () => {
     setProducts(products.filter((_, i) => i !== index));
     const removedProduct = productsData.find((product) => product._id === id);
     setSubTotalPrice(totalPrice - removedProduct.price);
+  };
+
+  const handleDiscountChange = (e) => {
+    const value = parseFloat(e.target.value);
+    if (!isNaN(value)) {
+      setDiscount(value);
+    } else {
+      setDiscount(0);
+    }
+  };
+
+  useEffect(() => {
+    setTotalPrice(
+      discountType === "$"
+        ? subTotalPrice - discount
+        : subTotalPrice - (subTotalPrice * discount) / 100
+    );
+  }, [discount, discountType]);
+
+  const handleDiscountTypeChange = () => {
+    setDiscountType((prevDiscountType) =>
+      prevDiscountType === "$" ? "%" : "$"
+    );
   };
 
   if (loading) {
@@ -516,6 +523,7 @@ const Checkout = () => {
               isOpen={calculatorMode}
               handlePopupClose={() => setCalculatorMode(false)}
               totalPrice={totalPrice}
+              change={change}
               setAmountPaid={setAmountPaid}
               setChange={setChange}
               handleConfirmPayment={handleConfirmPayment}
@@ -642,21 +650,44 @@ const Checkout = () => {
                 <h3 className="text-base font-semibold">Subtotal:</h3>
                 <p className="text-sm">${Number(subTotalPrice).toFixed(2)}</p>
               </div>
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-base font-semibold">Discount:</h3>
-                {discount ? (
-                  <p className="text-sm text-red-500">
-                    - {discount.value}
-                    {discount.type === "percent" ? "%" : ""}
-                  </p>
-                ) : (
-                  <p className="text-sm">No discount</p>
-                )}
+              <div className="flex flex-wrap items-center justify-between mb-2">
+                <h3 className="font-semibold mb-2">Discount:</h3>
+                <div className="flex justify-center items-center mb-2">
+                  <input
+                    type="number"
+                    className="mr-2 w-14 my-1 px-2 py-1 border border-gray-300 rounded text-sm text-center"
+                    value={discount}
+                    onChange={handleDiscountChange}
+                  />
+                  <div className=" flex items-center w-28 h-8 rounded-md bg-gray-300">
+                    <button
+                      className={`w-14 ${
+                        discountType === "$"
+                          ? "text-gray-700 shadow-md bg-white"
+                          : "text-gray-500 shadow-inner"
+                      } flex justify-center items-center h-full rounded-md transition-transform`}
+                      onClick={handleDiscountTypeChange}
+                    >
+                      <FaPercent />
+                    </button>
+                    <button
+                      className={`w-14 ${
+                        discountType === "%"
+                          ? "text-gray-700 shadow-md bg-white"
+                          : "text-gray-500 shadow-inner"
+                      } flex justify-center items-center h-full rounded-md transition-transform`}
+                      onClick={handleDiscountTypeChange}
+                    >
+                      <FaDollarSign />
+                    </button>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Total Price:</h3>
                 <p className="text-sm">${Number(totalPrice).toFixed(2)}</p>
               </div>
+
               <hr className="border-gray-300 my-2" />
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Amount Paid:</h3>

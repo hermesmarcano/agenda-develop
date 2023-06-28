@@ -10,6 +10,7 @@ import ProcessAppointment from "./ProcessAppointment";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import stripeBackground from "../images/stripe.svg";
 import stripeBackground2 from "../images/stripe2.svg";
+import UpdateAppointment from "./UpdateAppointment";
 
 const schedulerData = [];
 
@@ -20,6 +21,9 @@ const SchedulerC = ({
   onSelectedWeekDateChange,
   selectedProfessional,
   selectedProfessionals,
+  setBooked,
+  setAlertMsg,
+  setAlertMsgType,
 }) => {
   const { shopId } = React.useContext(SidebarContext);
   const { setDateTime } = React.useContext(DateTimeContext);
@@ -32,6 +36,7 @@ const SchedulerC = ({
   const [modelState, setModelState] = React.useState(false);
   const [registerModelState, setRegisterModelState] = React.useState(false);
   const [updateModelState, setUpdateModelState] = React.useState(false);
+  const [viewModelState, setViewModelState] = React.useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
   const [appointmentsObject, setAppointmentsObject] = React.useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -162,6 +167,15 @@ const SchedulerC = ({
     const date = new Date(startDate);
     date.setDate(date.getDate() + offset);
     return date;
+  };
+
+  const handleExistingAppointment = (appt) => {
+    setSelectedAppointmentId(appt._id);
+    if (new Date(appt.dateTime) > new Date()) {
+      setUpdateModelState(true);
+    } else {
+      setViewModelState(true);
+    }
   };
 
   const renderTabs = () => {
@@ -406,10 +420,9 @@ const SchedulerC = ({
                             className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
-                            onClick={() => {
-                              setSelectedAppointmentId(appointment._id);
-                              setUpdateModelState(true);
-                            }}
+                            onClick={() =>
+                              handleExistingAppointment(appointment)
+                            }
                             disabled={isDisabled}
                           >
                             <span className="font-bold text-white mr-1 whitespace-nowrap">
@@ -687,10 +700,9 @@ const SchedulerC = ({
                             } z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
-                            onClick={() => {
-                              setSelectedAppointmentId(appointment._id);
-                              setUpdateModelState(true);
-                            }}
+                            onClick={() =>
+                              handleExistingAppointment(appointment)
+                            }
                             disabled={isDisabled}
                           >
                             <span className="font-bold text-white mr-1 whitespace-nowrap">
@@ -850,15 +862,31 @@ const SchedulerC = ({
           isOpen={modelState}
           onClose={() => setModelState(!modelState)}
           setModelState={setModelState}
+          setBooked={setBooked}
+          setAlertMsg={setAlertMsg}
+          setAlertMsgType={setAlertMsgType}
         />
 
+        <Popup
+          isOpen={viewModelState}
+          onClose={() => setViewModelState(!viewModelState)}
+          children={
+            <ViewAppointment
+              setModelState={setViewModelState}
+              appointmentId={selectedAppointmentId}
+            />
+          }
+        />
         <Popup
           isOpen={updateModelState}
           onClose={() => setUpdateModelState(!updateModelState)}
           children={
-            <ViewAppointment
+            <UpdateAppointment
               setModelState={setUpdateModelState}
               appointmentId={selectedAppointmentId}
+              setBooked={setBooked}
+              setAlertMsg={setAlertMsg}
+              setAlertMsgType={setAlertMsgType}
             />
           }
         />

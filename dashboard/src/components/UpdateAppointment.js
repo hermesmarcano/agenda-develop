@@ -4,61 +4,99 @@ import * as Yup from "yup";
 import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
-import { FaCheck, FaPlus, FaSpinner } from "react-icons/fa";
+import { FaCheck, FaPlus, FaRedo, FaSpinner } from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
-import Skeleton from "react-loading-skeleton";
+import { Link, useNavigate } from "react-router-dom";
+import Alert from "./Alert";
 
 const UpdateAppointment = ({
   amount,
-  clients,
-  setClients,
+  bookingInfo,
   setBookingInfo,
   setAmount,
-  addCustomerClicked,
-  setAddCustomerClicked,
+  setModelState,
+  setBooked,
+  setAlertMsg,
+  setAlertMsgType,
+  appointmentId,
 }) => {
+  const navigate = useNavigate(this);
   const { shopId } = useContext(SidebarContext);
-  const { dateTime } = useContext(DateTimeContext);
+  const [dateTime, setDateTime] = useState(new Date());
   const token = localStorage.getItem("ag_app_shop_token");
-  const [loading, setLoading] = React.useState(true);
-  const { professionalId } = useContext(ProfessionalIdContext);
   const [duration, setDuration] = useState(0);
+  const { professionalId } = useContext(ProfessionalIdContext);
+  const [loading, setLoading] = React.useState(true);
+  const [clients, setClients] = useState([]);
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
-  const [allowManualDuration, setAllowManualDuration] = useState(false);
+  const [addCustomerClicked, setAddCustomerClicked] = useState(false);
+  const [allowManualDuration, setAllowManualDuration] = useState(true);
+  const [appointmentData, setAppointmentData] = useState(null);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
+    const fetchClients = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:4040/customers/shop?shopId=${shopId}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
         setClients(response.data);
         console.log(response.data);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
-      });
-  }, [shopId]);
+      }
+    };
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:4040/services/shop?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
+    const fetchServices = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:4040/services/shop?shopId=${shopId}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
         setServices(response.data.services);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    const fetchAppointment = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:4040/appointments/${appointmentId}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        setAppointmentData(response.data.appointment);
+        console.log(response.data.appointment);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    Promise.all([fetchClients(), fetchServices(), fetchAppointment()])
+      .then(() => {
+        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [shopId, appointmentId]);
+
+  // Rest of your component code
 
   const validationSchema = Yup.object().shape({
     // customer: Yup.string().required("Customer is required"),
@@ -121,193 +159,194 @@ const UpdateAppointment = ({
       totalDuration = parseInt(hours) * 60 + parseInt(minutes);
     }
 
+    const updateAppointment = (customer) => {
+      const dateParts = values.date.split("-");
+      const timeParts = values.time.split(":");
+
+      var year = parseInt(dateParts[0]);
+      var month = parseInt(dateParts[1]) - 1;
+      var day = parseInt(dateParts[2]);
+      var hour = parseInt(timeParts[0]);
+      var minute = parseInt(timeParts[1]);
+
+      const dateObject = new Date(year, month, day, hour, minute);
+
+      let patchData = {
+        customer: customer,
+        professional: values.professional,
+        service: values.service,
+        duration: totalDuration,
+        dateTime: dateObject,
+        managerId: shopId,
+        status: "updated",
+      };
+
+      axios
+        .patch(
+          `http://localhost:4040/appointments/${appointmentId}`,
+          patchData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log(response.data);
+          setSubmitting(false);
+          resetForm();
+          setModelState(false);
+          setAlertMsg(
+            "Appointment has been rescheduled, go to checkout to process payment"
+          );
+          setAlertMsgType("success");
+          setBooked(true);
+        })
+        .catch((error) => {
+          console.error(error.message);
+          // Handle errors
+        });
+    };
+
+    const registerCustomerWithAppointment = () => {
+      axios
+        .post(
+          "http://localhost:4040/customers/",
+          {
+            name: values.name,
+            phone: values.phone,
+            managerId: shopId,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        )
+        .then((response) => {
+          const { customer } = response.data;
+          updateAppointment(customer);
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
+    };
+
     if (addCustomerClicked) {
-      setBookingInfo({
-        name: values.name,
-        phone: values.phone,
-        professional: values.professional,
-        service: values.service,
-        duration: totalDuration,
-        dateTime: new Date(dateTime),
-        managerId: shopId,
-      });
+      registerCustomerWithAppointment();
     } else {
-      setBookingInfo({
-        customer: values.customer,
-        professional: values.professional,
-        service: values.service,
-        duration: totalDuration,
-        dateTime: new Date(dateTime),
-        managerId: shopId,
-      });
+      updateAppointment(values.customer);
     }
-
-    setAmount(totalPrice);
-    setDuration(totalDuration);
-    setSubmitting(false);
-    resetForm();
   };
-
-  // if (loading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       <div className="flex flex-col justify-center items-center space-x-2">
-  //         <FaSpinner className="animate-spin text-4xl text-blue-500" />
-  //         <span className="mt-2">Loading...</span>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
-      <Formik
-        initialValues={{
-          customer: "",
-          name: "",
-          phone: "",
-          professional: professionalId,
-          service: [],
-          dateTime: "",
-          date: dateTime.toISOString().split("T")[0], // Set initial date value
-          time: dateTime.toTimeString().slice(0, 5), // Set initial time value
-          // callTime: "",
-          appointmentDuration: "00:00",
-        }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({
-          isSubmitting,
-          values,
-          getFieldProps,
-          handleChange,
-          handleBlur,
-          setFieldValue,
-        }) => {
-          function calculateTotalDuration(valueService, services) {
-            let totalDuration = 0;
+      {appointmentData ? (
+        <Formik
+          initialValues={{
+            customer: appointmentData?.customer?._id || "",
+            name: "",
+            phone: "",
+            professional: appointmentData?.professional?._id || "",
+            service: appointmentData?.service.map((s) => s?._id) || [],
+            dateTime: new Date(appointmentData?.dateTime) || "",
+            date: new Date(appointmentData?.dateTime)
+              .toISOString()
+              .split("T")[0], // Set initial date value
+            time: new Date(appointmentData?.dateTime)
+              .toTimeString()
+              .slice(0, 5), // Set initial time value
+            // callTime: "",
+            appointmentDuration:
+              `${Math.floor(appointmentData?.duration / 60)
+                .toString()
+                .padStart(2, "0")}:${(appointmentData?.duration % 60)
+                .toString()
+                .padStart(2, "0")}` || "00:00",
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({
+            isSubmitting,
+            values,
+            getFieldProps,
+            handleChange,
+            handleBlur,
+            setFieldValue,
+          }) => {
+            function calculateTotalDuration(valueService, services) {
+              let totalDuration = 0;
 
-            // Iterate over each service ID in `value.service`
-            valueService.forEach((serviceId) => {
-              // Find the service in `services` array with matching ID
-              const service = services.find(
-                (service) => service._id === serviceId
-              );
+              // Iterate over each service ID in `value.service`
+              valueService.forEach((serviceId) => {
+                // Find the service in `services` array with matching ID
+                const service = services.find(
+                  (service) => service._id === serviceId
+                );
 
-              // If the service is found, add its duration to the total duration
-              if (service) {
-                totalDuration += service.duration;
-              }
-            });
+                // If the service is found, add its duration to the total duration
+                if (service) {
+                  totalDuration += service.duration;
+                }
+              });
 
-            return totalDuration;
-          }
-
-          const handleDurationChange = (e) => {
-            const { name, value } = e.target;
-            let hours = parseInt(values.appointmentDuration.split(":")[0]);
-            let minutes = parseInt(values.appointmentDuration.split(":")[1]);
-
-            if (name === "hours") {
-              hours = parseInt(value) || 0;
-            } else if (name === "minutes") {
-              minutes = parseInt(value) || 0;
+              return totalDuration;
             }
 
-            hours = Math.max(0, Math.min(hours, 23));
-            minutes = Math.max(0, Math.min(minutes, 55));
+            const handleDurationChange = (e) => {
+              const { name, value } = e.target;
+              let hours = parseInt(values.appointmentDuration.split(":")[0]);
+              let minutes = parseInt(values.appointmentDuration.split(":")[1]);
 
-            const updatedDuration = `${hours
-              .toString()
-              .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+              if (name === "hours") {
+                hours = parseInt(value) || 0;
+              } else if (name === "minutes") {
+                minutes = parseInt(value) || 0;
+              }
 
-            handleChange({
-              target: {
-                name: "appointmentDuration",
-                value: updatedDuration,
-              },
-            });
-          };
+              hours = Math.max(0, Math.min(hours, 23));
+              minutes = Math.max(0, Math.min(minutes, 55));
 
-          function handleServicesChange(selectedOptions) {
-            handleChange({
-              target: {
-                name: "service",
-                value: selectedOptions
-                  ? selectedOptions.map((option) => option.value)
-                  : [],
-              },
-            });
+              const updatedDuration = `${hours
+                .toString()
+                .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
-            // const totalDuration = calculateTotalDuration(
-            //   values.service,
-            //   services
-            // );
-            // const hours = Math.floor(totalDuration / 60);
-            // const minutes = totalDuration % 60;
-            // const updatedDuration = `${hours
-            //   .toString()
-            //   .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+              handleChange({
+                target: {
+                  name: "appointmentDuration",
+                  value: updatedDuration,
+                },
+              });
+            };
 
-            // setFieldValue("appointmentDuration", updatedDuration);
-          }
+            function handleServicesChange(selectedOptions) {
+              handleChange({
+                target: {
+                  name: "service",
+                  value: selectedOptions
+                    ? selectedOptions.map((option) => option.value)
+                    : [],
+                },
+              });
 
-          return (
-            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
-              {loading ? (
-                <div className="grid grid-cols-2 gap-5">
-                  <div>
-                    <div className="flex flex-col mb-4">
-                      <div>
-                        <div
-                          className="bg-gray-300 rounded-md animate-pulse"
-                          style={{ height: "66px" }}
-                        ></div>
-                      </div>
-                      <div>
-                        <div className="bg-gray-300 h-9 rounded-md animate-pulse my-1"></div>
-                      </div>
-                    </div>
+              // const totalDuration = calculateTotalDuration(
+              //   values.service,
+              //   services
+              // );
+              // const hours = Math.floor(totalDuration / 60);
+              // const minutes = totalDuration % 60;
+              // const updatedDuration = `${hours
+              //   .toString()
+              //   .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
 
-                    <div className="mb-4">
-                      <div
-                        className="bg-gray-300 rounded-md animate-pulse"
-                        style={{ height: "66px" }}
-                      ></div>
-                    </div>
-                  </div>
+              // setFieldValue("appointmentDuration", updatedDuration);
+            }
 
-                  <div>
-                    <div
-                      className="bg-gray-300 rounded-md animate-pulse"
-                      style={{ height: "66px" }}
-                    ></div>
-                    <div className="flex justify-start items-center">
-                      <div className="bg-gray-300 h-7 rounded-md animate-pulse"></div>
-                    </div>
-                    <div className="mb-4">
-                      <div
-                        className="bg-gray-300 rounded-md animate-pulse"
-                        style={{ height: "70px" }}
-                      ></div>
-                    </div>
-
-                    <div className="mb-4">
-                      <div
-                        className="bg-gray-300 rounded-md animate-pulse"
-                        style={{ height: "54px" }}
-                      ></div>
-                    </div>
-                    <div className="mb-4">
-                      <div
-                        className="bg-gray-300 h- rounded-md animate-pulse"
-                        style={{ height: "54px" }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
+            return (
+              <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto">
                 <div className="grid grid-cols-2 gap-5">
                   <div>
                     <div className="flex flex-col mb-4">
@@ -542,23 +581,102 @@ const UpdateAppointment = ({
                     </div>
                   </div>
                 </div>
-              )}
-              <button
+                {/* <button
                 type="submit"
                 disabled={isSubmitting}
-                className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="checkout-button flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
                 {isSubmitting ? (
                   <FaSpinner className="animate-spin mr-2" />
                 ) : (
                   <FaCheck className="mr-2" />
                 )}
-                Book Now
-              </button>
-            </Form>
-          );
-        }}
-      </Formik>
+                Proceed to Checkout
+              </button> */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  {isSubmitting ? (
+                    <FaSpinner className="animate-spin mr-2" />
+                  ) : (
+                    <FaRedo className="mr-2" />
+                  )}
+                  Update
+                </button>
+                {/* <Link
+                // type="submit"
+                // disabled={isSubmitting}
+                to="./checkout"
+                className="checkout-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              >
+                {isSubmitting ? (
+                  <FaSpinner className="animate-spin mr-2" />
+                ) : (
+                  <FaCheck className="mr-2" />
+                )}
+                Proceed to Checkout
+              </Link> */}
+              </Form>
+            );
+          }}
+        </Formik>
+      ) : (
+        <div className="bg-white rounded-lg px-8 py-6 mb-4  w-[500px] sm:w-[700px] mx-auto overflow-y-auto">
+          <div className="grid grid-cols-2 gap-5">
+            <div>
+              <div className="flex flex-col mb-4">
+                <div>
+                  <div
+                    className="bg-gray-300 rounded-md animate-pulse"
+                    style={{ height: "66px" }}
+                  ></div>
+                </div>
+                <div>
+                  <div className="bg-gray-300 h-9 rounded-md animate-pulse my-1"></div>
+                </div>
+              </div>
+
+              <div className="mb-4">
+                <div
+                  className="bg-gray-300 rounded-md animate-pulse"
+                  style={{ height: "66px" }}
+                ></div>
+              </div>
+            </div>
+
+            <div>
+              <div
+                className="bg-gray-300 rounded-md animate-pulse"
+                style={{ height: "66px" }}
+              ></div>
+              <div className="flex justify-start items-center">
+                <div className="bg-gray-300 h-7 rounded-md animate-pulse"></div>
+              </div>
+              <div className="mb-4">
+                <div
+                  className="bg-gray-300 rounded-md animate-pulse"
+                  style={{ height: "70px" }}
+                ></div>
+              </div>
+
+              <div className="mb-4">
+                <div
+                  className="bg-gray-300 rounded-md animate-pulse"
+                  style={{ height: "54px" }}
+                ></div>
+              </div>
+              <div className="mb-4">
+                <div
+                  className="bg-gray-300 h- rounded-md animate-pulse"
+                  style={{ height: "54px" }}
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

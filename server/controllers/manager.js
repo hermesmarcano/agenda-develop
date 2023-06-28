@@ -46,16 +46,9 @@ const getManager = async (req, res) => {
 // Create a new manager
 const createManager = async (req, res) => {
   try {
-    const { name, email, password, shopName, urlSlug } = req.body;
-    const imageName = req.file.filename;
-    const manager = new Manager({
-      name,
-      email,
-      password,
-      shopName,
-      urlSlug,
-      profileImg: imageName,
-    });
+    // const { name, email, password, shopName, urlSlug } = req.body;
+    // const imageName = req.file.filename;
+    const manager = new Manager(req.body);
     console.log(manager);
     const newManager = await manager.save();
     res.status(201).json(newManager);
