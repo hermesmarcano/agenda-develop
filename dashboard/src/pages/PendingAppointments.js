@@ -132,7 +132,7 @@ const PendingAppointments = () => {
                     {appointment.status === "pending" ? (
                       <RiCheckboxBlankCircleLine className="text-red-500 text-2xl" />
                     ) : (
-                      <RiCheckboxCircleLine className="text-yellow-500 text-2xl" />
+                      <RiCheckboxBlankCircleLine className="text-yellow-500 text-2xl" />
                     )}
                   </div>
                   <div>
