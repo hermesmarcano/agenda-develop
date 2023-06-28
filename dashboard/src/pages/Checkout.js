@@ -174,7 +174,7 @@ const Checkout = () => {
     //   setTotalPrice(totalPrice + service.price);
     // }
     setExtraServices([...extraServices, service]);
-    setSubTotalPrice(totalPrice + service.price);
+    // setSubTotalPrice(totalPrice + service.price);
   };
 
   const handleAddProduct = (product) => {
@@ -187,7 +187,7 @@ const Checkout = () => {
     //   setTotalPrice(totalPrice + product.price);
     // }
     setProducts([...products, product]);
-    setSubTotalPrice(totalPrice + product.price);
+    // setSubTotalPrice(totalPrice + product.price);
   };
 
   const handleChoosePaymentMethod = (method) => {
@@ -248,12 +248,18 @@ const Checkout = () => {
   };
 
   useEffect(() => {
+    const servicesPrice = extraServices.reduce(
+      (total, s) => total + s.price,
+      0
+    );
+    const productsPrice = products.reduce((total, s) => total + s.price, 0);
+    setSubTotalPrice(servicesPrice + productsPrice);
     setTotalPrice(
       discountType === "$"
         ? subTotalPrice - discount
         : subTotalPrice - (subTotalPrice * discount) / 100
     );
-  }, [discount, discountType]);
+  }, [discount, discountType, extraServices, products]);
 
   const handleDiscountTypeChange = () => {
     setDiscountType((prevDiscountType) =>
@@ -651,14 +657,17 @@ const Checkout = () => {
                 <p className="text-sm">${Number(subTotalPrice).toFixed(2)}</p>
               </div>
               <div className="flex flex-wrap items-center justify-between mb-2">
-                <h3 className="font-semibold mb-2">Discount:</h3>
-                <div className="flex justify-center items-center mb-2">
-                  <input
-                    type="number"
-                    className="mr-2 w-14 my-1 px-2 py-1 border border-gray-300 rounded text-sm text-center"
-                    value={discount}
-                    onChange={handleDiscountChange}
-                  />
+                {/* <h3 className="font-semibold mb-2">Discount:</h3> */}
+                <div className="flex justify-center items-center ">
+                  <div>
+                    <input
+                      type="number"
+                      className="mr-2 w-14 my-1 px-2 py-1 border border-gray-300 rounded text-sm text-center"
+                      value={discount}
+                      onChange={handleDiscountChange}
+                      min={0}
+                    />
+                  </div>
                   <div className=" flex items-center w-28 h-8 rounded-md bg-gray-300">
                     <button
                       className={`w-14 ${
@@ -682,6 +691,7 @@ const Checkout = () => {
                     </button>
                   </div>
                 </div>
+                <div className="text-xs text-gray-500 mb-2">Discount</div>
               </div>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Total Price:</h3>
