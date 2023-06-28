@@ -79,7 +79,7 @@ const SchedulerC = ({
 
   React.useEffect(() => {
     fetchAppointments();
-  }, [shopId, modelState]);
+  }, [shopId, modelState, updateModelState]);
 
   React.useEffect(() => {
     setSelectedDate(date);
