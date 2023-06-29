@@ -36,11 +36,26 @@ function Header() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    setShowMenu(false);
   };
 
   const logout = () => {
     localStorage.removeItem("ag_app_shop_token");
     navigate("/login");
+  };
+
+  const [unreadCount, setUnreadCount] = useState(3); // Set initial unread count here
+  const [showMenu, setShowMenu] = useState(false);
+  const notifications = [
+    // { id: 1, message: "Notification 1" },
+    // { id: 2, message: "Notification 2" },
+    // { id: 3, message: "Notification 3" },
+  ];
+
+  const handleMenuToggle = () => {
+    setShowMenu(!showMenu);
+    setIsMenuOpen(false);
+    setUnreadCount(0); // Mark all notifications as read when menu is opened
   };
 
   return (
@@ -51,9 +66,46 @@ function Header() {
         <h1 className={`text-xl font-bold text-gray-900`}>Dashboard</h1>
       </div>
       <div className="flex items-center">
-        <button className={`mr-4 focus:outline-none`}>
-          <FaBell className={`w-6 h-6 text-gray-400`} />
-        </button>
+        <div className="relative">
+          <button
+            className="mr-4 focus:outline-none flex items-center"
+            onClick={handleMenuToggle}
+          >
+            <FaBell className="w-6 h-6 text-gray-400" />
+            {unreadCount > 0 && (
+              <span className="absolute top-0 right-5 transform translate-x-1/2 -translate-y-1/2 text-xs font-semibold bg-red-500 rounded-full w-4 h-4 flex items-center justify-center text-white">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {showMenu && (
+            <>
+              <div
+                className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-opacity-25"
+                onClick={() => setShowMenu(false)}
+              ></div>
+              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-10">
+                <div className="max-h-64 overflow-y-auto">
+                  {notifications.length > 0 ? (
+                    notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className="p-4 hover:bg-gray-100 cursor-pointer"
+                      >
+                        {notification.message}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 text-center text-gray-400">
+                      No notifications
+                    </div>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
         <div className="relative">
           <button
             className={`relative z-10 flex justify-center items-center border h-8 w-8 rounded-full overflow-hidden shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500`}
