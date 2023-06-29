@@ -179,11 +179,7 @@ const Register = () => {
                 confirmPassword: "",
                 shopName: "",
                 urlSlug: "",
-                workingHours: [
-                  { startHour: 0, endHour: 0 },
-                  { startHour: 0, endHour: 0 },
-                  { startHour: 0, endHour: 0 },
-                ],
+                workingHours: [{ startHour: 0, endHour: 0 }],
                 profileImg: "",
               }}
               validationSchema={RegisterSchema}
@@ -197,47 +193,7 @@ const Register = () => {
                       endHour: Number(wH.endHour),
                     });
                   });
-                  // console.log(workingHoursNumbers);
-                  // const workingHoursString = JSON.stringify(workingHoursNumbers);
-                  // formData.append("name", values.name);
-                  // formData.append("email", values.email);
-                  // formData.append("password", values.password);
-                  // formData.append("confirmPassword", values.confirmPassword);
-                  // formData.append("shopName", values.shopName);
-                  // formData.append("urlSlug", values.urlSlug);
-                  // formData.append("workingHours", workingHoursString);
-                  // formData.append("profileImg", values.profileImg);
-                  // const formData = new FormData();
-                  // formData.append("profileImg", values.profileImg);
 
-                  // let profileImgName = "";
-                  // Upload the image
-                  // axios
-                  //   .post("http://localhost:4040/managers/profileImg", formData, {
-                  //     headers: {
-                  //       "Content-Type": "multipart/form-data",
-                  //     },
-                  //   })
-                  //   .then((response) => (profileImgName = response.data));
-                  // console.log(profileImgName);
-                  // Get the uploaded image name from the response
-                  // let postData = {
-                  //   name: values.name,
-                  //   email: values.email,
-                  //   password: values.password,
-                  //   confirmPassword: values.confirmPassword,
-                  //   shopName: values.shopName,
-                  //   urlSlug: values.urlSlug,
-                  //   workingHours: workingHoursNumbers,
-                  //   profileImg: values.profileImg,
-                  // };
-                  // console.log(postData);
-
-                  // const token = localStorage.getItem("ag_app_shop_token");
-                  // if (!token) {
-                  //   console.error("Token not found");
-                  //   return;
-                  // }
                   const formData = new FormData();
                   formData.append("profileImg", values.profileImg);
 

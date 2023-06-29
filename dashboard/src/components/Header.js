@@ -65,32 +65,41 @@ function Header() {
             <FaUser className={`w-6 h-6 text-gray-400`} />
           </button>
           {isMenuOpen && (
-            <div
-              className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 text-gray-800 bg-white ring-1 ring-black ring-opacity-5`}
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="user-menu"
-            >
-              <Link
-                to="/settings"
-                className={`block px-4 py-2 text-sm items-center`}
-                role="menuitem"
+            <>
+              <div
+                className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-opacity-25"
+                onClick={() => setIsMenuOpen(false)}
+              ></div>
+              <div
+                className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 text-gray-800 bg-white ring-1 ring-black ring-opacity-5`}
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="user-menu"
               >
-                <FaCog
-                  className={`inline-block w-4 h-4 mr-2 text-gray-700 hover:bg-gray-100`}
-                />
-                <span className={`text-gray-700 hover:bg-gray-100`}>
-                  Settings
-                </span>
-              </Link>
-              <button
-                onClick={logout}
-                className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left`}
-                role="menuitem"
-              >
-                Sign out
-              </button>
-            </div>
+                <button
+                  onClick={() => {
+                    navigate("/settings");
+                    setIsMenuOpen(false);
+                  }}
+                  className={`block px-4 py-2 text-sm items-center`}
+                  role="menuitem"
+                >
+                  <FaCog
+                    className={`inline-block w-4 h-4 mr-2 text-gray-700 hover:bg-gray-100`}
+                  />
+                  <span className={`text-gray-700 hover:bg-gray-100`}>
+                    Settings
+                  </span>
+                </button>
+                <button
+                  onClick={logout}
+                  className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left`}
+                  role="menuitem"
+                >
+                  Sign out
+                </button>
+              </div>
+            </>
           )}
         </div>
         <div className="flex items-center ml-2">
