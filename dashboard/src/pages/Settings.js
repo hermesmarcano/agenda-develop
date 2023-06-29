@@ -52,6 +52,7 @@ const Settings = () => {
         type: values.discountType,
         value: values.discountValue,
       },
+      workingHours: values.workingHours,
     };
     console.log(JSON.stringify(data));
 
