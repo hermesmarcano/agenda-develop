@@ -4,7 +4,13 @@ import * as Yup from "yup";
 import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
-import { FaCheck, FaPlus, FaSpinner } from "react-icons/fa";
+import {
+  FaBuyNLarge,
+  FaCheck,
+  FaCreditCard,
+  FaPlus,
+  FaSpinner,
+} from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
@@ -158,6 +164,102 @@ const RegisterAppointment = ({
           );
           setAlertMsgType("success");
           setBooked(true);
+        })
+        .catch((error) => {
+          console.error(error.message);
+          // Handle errors
+        });
+    };
+
+    const registerCustomerWithAppointment = () => {
+      axios
+        .post(
+          "http://localhost:4040/customers/",
+          {
+            name: values.name,
+            phone: values.phone,
+            managerId: shopId,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        )
+        .then((response) => {
+          const { customer } = response.data;
+          createAppointment(customer);
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
+    };
+
+    if (addCustomerClicked) {
+      registerCustomerWithAppointment();
+    } else {
+      createAppointment(values.customer);
+    }
+  };
+
+  const handleCheckout = (values) => {
+    values.dateTime = dateTime;
+    let totalPrice = 0;
+    let totalDuration = 0;
+
+    services.forEach((serv) => {
+      values.service.forEach((s) => {
+        if (s === serv._id) {
+          totalDuration += serv.duration;
+          totalPrice += serv.price;
+        }
+      });
+    });
+
+    if (allowManualDuration) {
+      const [hours, minutes] = values.appointmentDuration.split(":");
+      totalDuration = parseInt(hours) * 60 + parseInt(minutes);
+    }
+
+    const createAppointment = (customer) => {
+      let apptData = {
+        customer: customer,
+        professional: values.professional,
+        service: values.service,
+        duration: totalDuration,
+        dateTime: new Date(dateTime),
+        managerId: shopId,
+      };
+
+      if (bookingInfo.product) {
+        apptData.product = bookingInfo.product;
+      }
+      axios
+        .post("http://localhost:4040/appointments", apptData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          setModelState(false);
+          localStorage.setItem(
+            "ag_app_booking_info",
+            JSON.stringify({
+              customer: apptData.customer,
+              professional: apptData.professional,
+              service: apptData.service,
+              duration: apptData.duration,
+              dateTime: apptData.dateTime,
+              amount: totalPrice,
+              appointmentId: response.data.appointment._id,
+              managerId: shopId,
+              checkoutType: "registering",
+            })
+          );
+          navigate("/checkout");
         })
         .catch((error) => {
           console.error(error.message);
@@ -581,7 +683,8 @@ const RegisterAppointment = ({
                   </div>
                 </div>
               )}
-              {/* <button
+              <div className="flex items-center">
+                {/* <button
                 type="submit"
                 disabled={isSubmitting}
                 className="checkout-button flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -593,31 +696,32 @@ const RegisterAppointment = ({
                 )}
                 Proceed to Checkout
               </button> */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {isSubmitting ? (
-                  <FaSpinner className="animate-spin mr-2" />
-                ) : (
-                  <FaCheck className="mr-2" />
-                )}
-                Book Now
-              </button>
-              {/* <Link
-                // type="submit"
-                // disabled={isSubmitting}
-                to="./checkout"
-                className="checkout-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {isSubmitting ? (
-                  <FaSpinner className="animate-spin mr-2" />
-                ) : (
-                  <FaCheck className="mr-2" />
-                )}
-                Proceed to Checkout
-              </Link> */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  {isSubmitting ? (
+                    <FaSpinner className="animate-spin mr-2" />
+                  ) : (
+                    <FaCheck className="mr-2" />
+                  )}
+                  Book Now
+                </button>
+                <button
+                  type="button"
+                  // disabled={isSubmitting}
+                  onClick={() => handleCheckout(values)}
+                  className="checkout-button w-fit ml-1 flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  {isSubmitting ? (
+                    <FaSpinner className="animate-spin mr-2" />
+                  ) : (
+                    <FaCreditCard className="mr-2" />
+                  )}
+                  Checkout
+                </button>
+              </div>
             </Form>
           );
         }}

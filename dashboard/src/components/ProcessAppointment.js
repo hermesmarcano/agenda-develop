@@ -36,7 +36,7 @@ const ProcessAppointment = ({
       })
       .then((response) => {
         setClients(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       })
       .catch((error) => {
         console.error(error);

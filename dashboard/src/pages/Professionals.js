@@ -19,6 +19,7 @@ const Professionals = () => {
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectiedProfessionalId, setSelectiedProfessionalId] = useState("");
   const [isDeleting, setDeleting] = useState(false);
+  const [workingHours, setWorkingHours] = useState([]);
 
   useEffect(() => {
     axios
@@ -30,6 +31,18 @@ const Professionals = () => {
       .then((response) => setProfessionals([...response.data.data].reverse()))
       .catch((error) => console.error(error.message));
   }, [registerModelState, updateModelState, isDeleting]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:4040/managers/id", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        setWorkingHours(response.data.workingHours);
+      });
+  }, []);
 
   const filteredProfessionals = professionals.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -136,7 +149,10 @@ const Professionals = () => {
           isOpen={registerModelState}
           onClose={() => setRegisterModelState(!registerModelState)}
           children={
-            <RegisterProfessional setModelState={setRegisterModelState} />
+            <RegisterProfessional
+              setModelState={setRegisterModelState}
+              workingHours={workingHours}
+            />
           }
         />
         <button
@@ -210,7 +226,7 @@ const Professionals = () => {
               </th>
               <th className="py-3 px-4 text-center">Id</th>
               <th className="py-3 pl-2 text-left">Name</th>
-              <th className="py-3 pl-2 text-center">Office Hours</th>
+              <th className="py-3 px-4 text-center">Office Hours</th>
               <th className="py-3 pl-2 pr-6 text-left">Description</th>
               <th className="py-3 pr-6 text-right">Activated?</th>
               <th className="py-3 pr-6 text-right">Actions</th>
@@ -232,14 +248,25 @@ const Professionals = () => {
                 <td className="py-2 px-3 text-center">{index + 1}</td>
                 <td className="py-2 pl-2">{professional.name}</td>
                 <td className="py-2 pl-2 text-center">
-                  {professional.officeHours ||
-                    new Intl.DateTimeFormat("en", {
-                      timeStyle: "short",
-                    }).format(new Date().setHours(professional.startHour, 0)) +
-                      " to " +
-                      new Intl.DateTimeFormat("en", {
-                        timeStyle: "short",
-                      }).format(new Date().setHours(professional.endHour, 0))}
+                  {professional.officeHours &&
+                    professional.officeHours?.length > 0 &&
+                    professional.officeHours?.map((officeHour) => {
+                      return (
+                        <span className="block" key={officeHour._id}>
+                          {new Intl.DateTimeFormat("en", {
+                            timeStyle: "short",
+                          }).format(
+                            new Date().setHours(officeHour?.startHour, 0)
+                          ) +
+                            " - " +
+                            new Intl.DateTimeFormat("en", {
+                              timeStyle: "short",
+                            }).format(
+                              new Date().setHours(officeHour?.endHour, 0)
+                            )}
+                        </span>
+                      );
+                    })}
                 </td>
                 <td className="py-2 pl-2">{professional.description}</td>
                 <td className="py-2 pr-6 text-center">
@@ -301,6 +328,7 @@ const Professionals = () => {
                       <UpdateProfessional
                         setModelState={setUpdateModelState}
                         professionalId={selectiedProfessionalId}
+                        workingHours={workingHours}
                       />
                     }
                   />

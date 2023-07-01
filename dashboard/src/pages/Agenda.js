@@ -32,6 +32,7 @@ const Agenda = () => {
   const [appointments, setAppointments] = useState([]);
   const [professionals, setProfessionals] = useState([]);
   const [myShopImg, setMyShopImg] = useState("");
+  const [workingHours, setWorkingHours] = useState([]);
   const [selectedProfessional, setSelectedProfessional] = useState(null);
   const [selectedProfessionals, setSelectedProfessionals] = useState([]);
   const { viewMode } = useContext(ViewModeContext);
@@ -50,7 +51,7 @@ const Agenda = () => {
 
       .then((response) => {
         setAppointments(response.data.appointments);
-        console.log(response.data.appointments);
+        // console.log(response.data.appointments);
         // setIsLoading(false);
       });
   }, [shopId]);
@@ -64,6 +65,8 @@ const Agenda = () => {
       })
       .then((response) => {
         setMyShopImg(response.data.profileImg);
+        response.data?.workingHours &&
+          setWorkingHours(response.data?.workingHours);
         axios
           .get(
             `http://localhost:4040/professionals/shop?shopId=${response.data._id}`,
@@ -75,7 +78,7 @@ const Agenda = () => {
           )
           .then((response) => {
             setProfessionals([...response.data.data].reverse());
-            console.log([...response.data.data].reverse());
+            // console.log([...response.data.data].reverse());
             setSelectedProfessionals([...response.data.data].reverse());
             setSelectedProfessional([...response.data.data].reverse()[0]);
             setIsLoading(false);
@@ -269,7 +272,7 @@ const Agenda = () => {
                       >
                         <span className="mr-2">
                           {selectedProfessional?._id === professional._id ? (
-                            <FaCheckCircle className="text-gray-800" />
+                            <FaCheckCircle className="text-green-700" />
                           ) : (
                             <FaCircle className="text-gray-400" />
                           )}
@@ -301,6 +304,7 @@ const Agenda = () => {
                 selectedProfessionals={selectedProfessionals}
                 startWeekDate={startWeekDate}
                 date={date}
+                workingHours={workingHours}
                 onSelectedDateChange={handleSelectedDateChange}
                 onSelectedWeekDateChange={handleSelectedWeekDateChange}
                 setBooked={setBooked}
@@ -313,6 +317,7 @@ const Agenda = () => {
               selectedProfessional={selectedProfessional}
               startWeekDate={startWeekDate}
               date={date}
+              workingHours={workingHours}
               onSelectedDateChange={handleSelectedDateChange}
               onSelectedWeekDateChange={handleSelectedWeekDateChange}
               setBooked={setBooked}

@@ -19,7 +19,7 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [colorDiv, setColorDiv] = useState(false);
   const { theme, setTheme } = useContext(ThemeContext);
-  console.log("theme: " + theme);
+  // console.log("theme: " + theme);
 
   const handleThemeChange = (color) => {
     setTheme(color);

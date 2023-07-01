@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+const officeHoursSchema = new mongoose.Schema({
+  startHour: Number,
+  endHour: Number,
+});
+
 const professionalSchema = new mongoose.Schema(
   {
     managerId: {
@@ -13,14 +18,7 @@ const professionalSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    startHour: {
-      type: Number,
-      required: true,
-    },
-    endHour: {
-      type: Number,
-      required: true,
-    },
+    officeHours: [officeHoursSchema],
     description: {
       type: String,
       required: true,

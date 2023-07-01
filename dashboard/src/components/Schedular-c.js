@@ -17,6 +17,7 @@ const schedulerData = [];
 const SchedulerC = ({
   date,
   startWeekDate,
+  workingHours,
   onSelectedDateChange,
   onSelectedWeekDateChange,
   selectedProfessional,
@@ -102,33 +103,75 @@ const SchedulerC = ({
     }
   }
 
-  const hoursArr = useMemo(() => {
-    const arr = [];
-    for (let i = 1; i <= 10; i++) {
-      let d = i + 7;
-      let d1 = new Date(date);
-      d1.setHours(d);
-      d1.setMinutes(0);
-      d1.setSeconds(0);
+  console.log(workingHours);
 
-      arr.push(d1);
+  const hoursArrs = useMemo(() => {
+    const arr = [];
+    if (workingHours && workingHours.length > 0) {
+      for (let i = 0; i < workingHours.length; i++) {
+        const range = [];
+        const { startHour, endHour } = workingHours[i];
+        for (let hour = startHour; hour <= endHour; hour++) {
+          let d = hour;
+          let d1 = new Date(date);
+          d1.setHours(d);
+          d1.setMinutes(0);
+          d1.setSeconds(0);
+
+          range.push(d1);
+        }
+        arr.push(range);
+      }
+    } else {
+      const range = [];
+      for (let i = 1; i <= 10; i++) {
+        let d = i + 7;
+        let d1 = new Date(date);
+        d1.setHours(d);
+        d1.setMinutes(0);
+        d1.setSeconds(0);
+
+        range.push(d1);
+      }
+      arr.push(range);
     }
     return arr;
-  }, [date]);
+  }, [date, workingHours]);
 
-  const hoursArrWeek = useMemo(() => {
+  const hoursArrsWeek = useMemo(() => {
     const arr = [];
-    for (let i = 1; i <= 10; i++) {
-      let d = i + 7;
-      let d1 = new Date(startWeekDate);
-      d1.setHours(d);
-      d1.setMinutes(0);
-      d1.setSeconds(0);
+    if (workingHours && workingHours.length > 0) {
+      for (let i = 0; i < workingHours.length; i++) {
+        const range = [];
+        const { startHour, endHour } = workingHours[i];
+        for (let hour = startHour; hour <= endHour; hour++) {
+          let d = hour;
+          let d1 = new Date(startWeekDate);
+          d1.setHours(d);
+          d1.setMinutes(0);
+          d1.setSeconds(0);
 
-      arr.push(d1);
+          range.push(d1);
+        }
+        arr.push(range);
+      }
+    } else {
+      const range = [];
+      for (let i = 1; i <= 10; i++) {
+        let d = i + 7;
+        let d1 = new Date(startWeekDate);
+        d1.setHours(d);
+        d1.setMinutes(0);
+        d1.setSeconds(0);
+
+        range.push(d1);
+      }
+      arr.push(range);
     }
     return arr;
-  }, [startWeekDate]);
+  }, [startWeekDate, workingHours]);
+
+  console.log(hoursArrsWeek);
 
   const formatDate = (date) => {
     const options = {
@@ -246,7 +289,7 @@ const SchedulerC = ({
     return startOfWeek;
   };
 
-  const renderWeeklyView = () => {
+  const renderWeeklyView = (hoursArrWeekPeriod, ind) => {
     const weekdays = [];
     const currentDate = new Date(startWeekDate);
     const startOfWeek = getStartOfWeek(currentDate);
@@ -263,22 +306,27 @@ const SchedulerC = ({
     timeSlots.push(
       <div
         key="title"
-        className="flex items-center relative border-b border-gray-400 ps-10 min-w-[989px]"
+        className={`flex items-center relative ${
+          ind === 0 ? "border-b" : "border-b-4"
+        } border-gray-400 ps-10 min-w-[989px]`}
       >
-        {weekdays.map((weekday, index) => (
-          <div className={`${slotWidth} py-4`} key={index}>
-            <h5 className="text-center">{formatDateWithWeekShort(weekday)}</h5>
-            <h5 className="text-center">
-              {formatDateWithDayMonthShort(weekday)}
-            </h5>
-          </div>
-        ))}
+        {ind === 0 &&
+          weekdays.map((weekday, index) => (
+            <div className={`${slotWidth} py-4`} key={index}>
+              <h5 className="text-center">
+                {formatDateWithWeekShort(weekday)}
+              </h5>
+              <h5 className="text-center">
+                {formatDateWithDayMonthShort(weekday)}
+              </h5>
+            </div>
+          ))}
       </div>
     );
 
     let prevEndDateTime = Array(weekdays.length).fill(null);
     let prevBlocking = Array(weekdays.length).fill(null);
-    hoursArrWeek.map((hour, hourIndex) => {
+    hoursArrWeekPeriod.map((hour, hourIndex) => {
       timeSlots.push(
         <div key={hour} className="flex items-center">
           <div className="w-11 text-center">
@@ -321,23 +369,21 @@ const SchedulerC = ({
                         return isDateTimeMatch && isProfessionalIdMatch;
                       });
 
-                      // const isDisabled =
-                      //   startDateTime < new Date() ||
-                      //   (appointment !== undefined &&
-                      //     appointment.dateTime - startDateTime.getTime() <
-                      //       1800000);
-
                       const isDisabled =
                         startDateTime < new Date() ||
                         (appointment !== undefined &&
                           appointment.dateTime - startDateTime.getTime() <
                             1800000) ||
-                        (selectedProfessional.startHour !== undefined &&
-                          startDateTime.getHours() <
-                            selectedProfessional.startHour) ||
-                        (selectedProfessional.endHour !== undefined &&
-                          startDateTime.getHours() >
-                            selectedProfessional.endHour);
+                        (selectedProfessional?.officeHours !== undefined &&
+                          selectedProfessional.officeHours.every(
+                            (officeHour) => {
+                              return (
+                                startDateTime.getHours() <
+                                  officeHour.startHour ||
+                                startDateTime.getHours() > officeHour.endHour
+                              );
+                            }
+                          ));
 
                       const customerName = appointment?.customer?.name;
                       const professionalName = appointment?.professional?.name;
@@ -490,7 +536,7 @@ const SchedulerC = ({
     return timeSlots;
   };
 
-  const renderDailyView = () => {
+  const renderDailyView = (hoursArr, ind) => {
     const timeSlots = [];
     const numProfessionals = selectedProfessionals.length;
     const slotWidth = `min-w-[135px] md:w-[100%]`;
@@ -501,15 +547,16 @@ const SchedulerC = ({
           numProfessionals * 135 + 44
         }px]`}
       >
-        {selectedProfessionals.map((pro, index) => (
-          <div
-            className={`${slotWidth} flex justify-center items-center py-4`}
-            key={index}
-          >
-            <FaUserCircle size={30} className="text-gray-400 mr-1" />
-            <h1>{pro.name}</h1>
-          </div>
-        ))}
+        {ind === 0 &&
+          selectedProfessionals.map((pro, index) => (
+            <div
+              className={`${slotWidth} flex justify-center items-center py-4`}
+              key={index}
+            >
+              <FaUserCircle size={30} className="text-gray-400 mr-1" />
+              <h1>{pro.name}</h1>
+            </div>
+          ))}
       </div>
     );
 
@@ -574,20 +621,18 @@ const SchedulerC = ({
                         );
                       }
 
-                      // const isDisabled =
-                      //   startDateTime < new Date() ||
-                      //   (appointment !== undefined &&
-                      //     appointment.dateTime - startDateTime.getTime() <
-                      //       1800000);
                       const isDisabled =
                         startDateTime < new Date() ||
                         (appointment !== undefined &&
                           appointment.dateTime - startDateTime.getTime() <
                             1800000) ||
-                        (pro.startHour !== undefined &&
-                          startDateTime.getHours() < pro.startHour) ||
-                        (pro.endHour !== undefined &&
-                          startDateTime.getHours() > pro.endHour);
+                        (pro?.officeHours !== undefined &&
+                          pro.officeHours.every((officeHour) => {
+                            return (
+                              startDateTime.getHours() < officeHour.startHour ||
+                              startDateTime.getHours() > officeHour.endHour
+                            );
+                          }));
 
                       const customerName = appointment?.customer?.name;
                       const professionalName = appointment?.professional?.name;
@@ -856,7 +901,24 @@ const SchedulerC = ({
           }`}
         ></div>
 
-        {viewMode === "daily" ? renderDailyView() : renderWeeklyView()}
+        {viewMode === "daily"
+          ? hoursArrs.map((hoursArrPeriod, ind) => {
+              return (
+                <>
+                  {renderDailyView(hoursArrPeriod, ind)}
+                  {ind !== hoursArrs.length - 1 && (
+                    <div
+                      className={`h-1 bg-gray-500 ${`min-w-[${
+                        selectedProfessionals.length * 135 + 44
+                      }px]`}`}
+                    ></div>
+                  )}
+                </>
+              );
+            })
+          : hoursArrsWeek.map((hoursArrWeekPeriod, ind) => {
+              return renderWeeklyView(hoursArrWeekPeriod, ind);
+            })}
 
         <ProcessAppointment
           isOpen={modelState}
