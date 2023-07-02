@@ -37,15 +37,17 @@ const PendingAppointments = () => {
         },
       })
       .then((response) => {
-        const registeredAppointments = response.data.appointments.filter(
-          (appt) =>
-            !appt.blocking &&
-            (appt.status === "pending" || appt.status === "updated")
-        );
+        const registeredAppointments = response.data.appointments
+          .filter(
+            (appt) =>
+              !appt.blocking &&
+              (appt.status === "pending" || appt.status === "updating")
+          )
+          .reverse();
         console.log(registeredAppointments);
-        setPendingAppointments([...registeredAppointments].reverse());
+        setPendingAppointments(registeredAppointments);
         setCurrentAppointments(
-          [...registeredAppointments].reverse().slice(firstIndex, lastIndex)
+          registeredAppointments.slice(firstIndex, lastIndex)
         );
       })
       .catch((error) => {
@@ -61,9 +63,7 @@ const PendingAppointments = () => {
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
 
-    setCurrentAppointments(
-      [...pendingAppointments].reverse().slice(startIndex, endIndex)
-    );
+    setCurrentAppointments(pendingAppointments.slice(startIndex, endIndex));
   };
 
   const handleAppointmentSelect = (appointment) => {
@@ -72,40 +72,96 @@ const PendingAppointments = () => {
 
   const handleCheckout = () => {
     // Perform checkout logic here
-    localStorage.setItem(
-      "ag_app_booking_info",
-      JSON.stringify({
-        customer: selectedAppointment.customer._id,
-        professional: selectedAppointment.professional._id,
-        service: selectedAppointment.service.map((s) => s._id),
-        duration: selectedAppointment.service.reduce(
-          (totalDuration, s) => totalDuration + s.duration,
-          0
-        ),
-        dateTime: new Date(selectedAppointment.dateTime),
-        amount: selectedAppointment.service.reduce(
-          (totalPrice, s) => totalPrice + s.price,
-          0
-        ),
-        appointmentId: selectedAppointment._id,
-        managerId: shopId,
-      })
-    );
-    // console.log({
-    //   customer: selectedAppointment.customer._id,
-    //   professional: selectedAppointment.professional._id,
-    //   service: selectedAppointment.service.map((s) => s._id),
-    //   duration: selectedAppointment.service.reduce(
-    //     (totalDuration, s) => totalDuration + s.duration,
-    //     0
-    //   ),
-    //   dateTime: new Date(selectedAppointment.dateTime),
-    //   amount: selectedAppointment.service.reduce(
-    //     (totalPrice, s) => totalPrice + s.price,
-    //     0
-    //   ),
-    //   managerId: shopId,
-    // });
+    console.log(selectedAppointment);
+    selectedAppointment.status === "pending"
+      ? localStorage.setItem(
+          "ag_app_booking_info",
+          JSON.stringify({
+            customer: selectedAppointment.customer._id,
+            professional: selectedAppointment.professional._id,
+            service: selectedAppointment.service.map((s) => s._id),
+            duration: selectedAppointment.service.reduce(
+              (totalDuration, s) => totalDuration + s.duration,
+              0
+            ),
+            dateTime: new Date(selectedAppointment.dateTime),
+            amount: selectedAppointment.service.reduce(
+              (totalPrice, s) => totalPrice + s.price,
+              0
+            ),
+            appointmentId: selectedAppointment._id,
+            managerId: shopId,
+            checkoutType: "registering",
+          })
+        )
+      : localStorage.setItem(
+          "ag_app_booking_info",
+          JSON.stringify({
+            customer: selectedAppointment.customer._id,
+            professional: selectedAppointment.professional._id,
+            service: selectedAppointment.service.map((s) => s._id),
+            product: selectedAppointment.product.map((p) => p._id),
+            duration: selectedAppointment.service.reduce(
+              (totalDuration, s) => totalDuration + s.duration,
+              0
+            ),
+            dateTime: new Date(selectedAppointment.dateTime),
+            amount:
+              selectedAppointment.service.reduce(
+                (totalPrice, s) => totalPrice + s.price,
+                0
+              ) +
+              selectedAppointment.product.reduce(
+                (totalPrice, p) => totalPrice + p.price,
+                0
+              ),
+            appointmentId: selectedAppointment._id,
+            managerId: shopId,
+            checkoutType: "updating",
+          })
+        );
+
+    // selectedAppointment.status === "pending"
+    //   ? console.log({
+    //       customer: selectedAppointment.customer._id,
+    //       professional: selectedAppointment.professional._id,
+    //       service: selectedAppointment.service.map((s) => s._id),
+    //       duration: selectedAppointment.service.reduce(
+    //         (totalDuration, s) => totalDuration + s.duration,
+    //         0
+    //       ),
+    //       dateTime: new Date(selectedAppointment.dateTime),
+    //       amount: selectedAppointment.service.reduce(
+    //         (totalPrice, s) => totalPrice + s.price,
+    //         0
+    //       ),
+    //       appointmentId: selectedAppointment._id,
+    //       managerId: shopId,
+    //       checkoutType: "registering",
+    //     })
+    //   : console.log({
+    //       customer: selectedAppointment.customer._id,
+    //       professional: selectedAppointment.professional._id,
+    //       service: selectedAppointment.service.map((s) => s._id),
+    //       product: selectedAppointment.product.map((p) => p._id),
+    //       duration: selectedAppointment.service.reduce(
+    //         (totalDuration, s) => totalDuration + s.duration,
+    //         0
+    //       ),
+    //       dateTime: new Date(selectedAppointment.dateTime),
+    //       amount:
+    //         selectedAppointment.service.reduce(
+    //           (totalPrice, s) => totalPrice + s.price,
+    //           0
+    //         ) +
+    //         selectedAppointment.product.reduce(
+    //           (totalPrice, p) => totalPrice + p.price,
+    //           0
+    //         ),
+    //       appointmentId: selectedAppointment._id,
+    //       managerId: shopId,
+    //       checkoutType: "updating",
+    //     });
     navigate("/checkout");
   };
 
@@ -159,10 +215,24 @@ const PendingAppointments = () => {
                 </div>
                 <p className="text-lg font-semibold">
                   $
-                  {appointment.service.reduce(
+                  {/* {appointment.service.reduce(
                     (totalPrice, s) => totalPrice + s.price,
                     0
-                  )}
+                  )} */}
+                  {appointment?.product?.length > 0
+                    ? (
+                        appointment.service.reduce(
+                          (totalPrice, s) => totalPrice + s.price,
+                          0
+                        ) +
+                        appointment.product.reduce(
+                          (totalPrice, p) => totalPrice + p.price,
+                          0
+                        )
+                      ).toFixed(2)
+                    : appointment.service
+                        .reduce((totalPrice, s) => totalPrice + s.price, 0)
+                        .toFixed(2)}
                 </p>
               </div>
             </div>
@@ -239,25 +309,49 @@ const PendingAppointments = () => {
                     <RiCheckboxCircleLine className="text-gray-800 mr-1" />
                     {service.name} (
                     <span className="flex items-center">
-                      {service.duration} <FiClock className="ml-1" />
+                      {service.duration} min <FiClock className="ml-1" />
                     </span>
                     )
                   </p>
                 ))}
               </div>
+              {selectedAppointment?.product?.length > 0 && (
+                <div className="flex flex-col mb-4">
+                  <p className="text-sm text-gray-600 mb-1">products:</p>
+                  {selectedAppointment.product.map((product, index) => (
+                    <p
+                      key={index}
+                      className="text-gray-800 flex items-center flex-wrap text-sm"
+                    >
+                      <RiCheckboxCircleLine className="text-gray-800 mr-1" />
+                      {product.name}
+                    </p>
+                  ))}
+                </div>
+              )}
               <p className="text-gray-800 mb-4">
                 <RiMoneyDollarCircleLine className="text-green-500 mr-1" />
                 Price: $
-                {selectedAppointment.service.reduce(
-                  (totalPrice, s) => totalPrice + s.price,
-                  0
-                )}
+                {selectedAppointment?.product?.length > 0
+                  ? (
+                      selectedAppointment.service.reduce(
+                        (totalPrice, s) => totalPrice + s.price,
+                        0
+                      ) +
+                      selectedAppointment.product.reduce(
+                        (totalPrice, p) => totalPrice + p.price,
+                        0
+                      )
+                    ).toFixed(2)
+                  : selectedAppointment.service
+                      .reduce((totalPrice, s) => totalPrice + s.price, 0)
+                      .toFixed(2)}
               </p>
               <button
-                className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-md mt-auto"
+                className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md mt-auto"
                 onClick={handleCheckout}
               >
-                Checkout
+                Proceed to Checkout
               </button>
             </div>
           </div>

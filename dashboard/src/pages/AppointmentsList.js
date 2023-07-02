@@ -10,15 +10,19 @@ import SidebarContext from "../context/SidebarContext";
 import Header from "../components/Header";
 import {
   FaCheck,
+  FaCheckCircle,
   FaDashcube,
   FaDollarSign,
+  FaExclamationTriangle,
   FaHandHolding,
   FaHandHoldingUsd,
   FaMoneyCheckAlt,
   FaPowerOff,
   FaSearch,
+  FaSpinner,
   FaStop,
   FaStopCircle,
+  FaTimesCircle,
 } from "react-icons/fa";
 import axios from "axios";
 import Popup from "../components/Popup";
@@ -169,6 +173,36 @@ const AppointmentsList = () => {
     setDeleting(false);
   };
 
+  function getStatusStyle(status) {
+    switch (status) {
+      case "pending":
+        return "text-yellow-500";
+      case "updating":
+        return "text-blue-500";
+      case "confirmed":
+        return "text-green-500";
+      case "cancelled":
+        return "text-red-500";
+      default:
+        return "";
+    }
+  }
+
+  function renderStatusIcon(status) {
+    switch (status) {
+      case "pending":
+        return <FaSpinner className="inline-block mr-1" />;
+      case "updating":
+        return <FaExclamationTriangle className="inline-block mr-1" />;
+      case "confirmed":
+        return <FaCheckCircle className="inline-block mr-1" />;
+      case "cancelled":
+        return <FaTimesCircle className="inline-block mr-1" />;
+      default:
+        return null;
+    }
+  }
+
   return (
     <div className="p-6">
       <h1 className="text-2xl text-gray-800 font-bold mb-5">Appointments</h1>
@@ -260,7 +294,6 @@ const AppointmentsList = () => {
               <th className="py-3 pr-6 text-left">Time</th>
               <th className="py-3 pr-6 text-left">Date</th>
               <th className="py-3 pr-6 text-left">Payment status</th>
-              <th className="py-3 pr-6 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -293,8 +326,14 @@ const AppointmentsList = () => {
                     new Date(appointment.dateTime)
                   )}
                 </td>
-                <th className="py-2 pr-6 text-left">{appointment.status}</th>
-                <td className="py-2 pr-6 text-right">
+                <th
+                  className={`py-2 pr-6 text-left ${getStatusStyle(
+                    appointment.status
+                  )}`}
+                >
+                  {renderStatusIcon(appointment.status)} {appointment.status}
+                </th>
+                {/* <td className="py-2 pr-6 text-right">
                   <button
                     className={`flex items-center ml-auto rounded-md px-4 py-2 text-white font-bold  ${
                       appointment.status !== "pending"
@@ -317,7 +356,7 @@ const AppointmentsList = () => {
                       <span>Confirm</span>
                     )}
                   </button>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

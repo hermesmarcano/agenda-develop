@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
 import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
 import {
+  FaArrowDown,
   FaCheck,
   FaCreditCard,
   FaPlus,
@@ -16,6 +17,9 @@ import Select from "react-select";
 import Switch from "react-switch";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
+import { FiArrowDown, FiCheckCircle, FiSearch } from "react-icons/fi";
+import { HiArrowDown, HiCheck, HiSearch, HiX } from "react-icons/hi";
+import { BiChevronDown } from "react-icons/bi";
 
 const UpdateAppointment = ({
   amount,
@@ -38,6 +42,7 @@ const UpdateAppointment = ({
   const [clients, setClients] = useState([]);
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
+  const [products, setProducts] = useState([]);
   const [addCustomerClicked, setAddCustomerClicked] = useState(false);
   const [allowManualDuration, setAllowManualDuration] = useState(true);
   const [appointmentData, setAppointmentData] = useState(null);
@@ -54,7 +59,7 @@ const UpdateAppointment = ({
           }
         );
         setClients(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -76,6 +81,23 @@ const UpdateAppointment = ({
       }
     };
 
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:4040/products/shop?shopId=${shopId}`,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
+        setProducts(response.data.products);
+        console.log("products", response.data.product);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const fetchAppointment = async () => {
       try {
         const response = await axios.get(
@@ -87,13 +109,18 @@ const UpdateAppointment = ({
           }
         );
         setAppointmentData(response.data.appointment);
-        console.log(response.data.appointment);
+        // console.log(response.data.appointment);
       } catch (error) {
         console.error(error);
       }
     };
 
-    Promise.all([fetchClients(), fetchServices(), fetchAppointment()])
+    Promise.all([
+      fetchClients(),
+      fetchServices(),
+      fetchProducts(),
+      fetchAppointment(),
+    ])
       .then(() => {
         setLoading(false);
       })
@@ -160,6 +187,14 @@ const UpdateAppointment = ({
       });
     });
 
+    products.forEach((prod) => {
+      values.product.forEach((p) => {
+        if (p === prod._id) {
+          totalPrice += p.price;
+        }
+      });
+    });
+
     if (allowManualDuration) {
       const [hours, minutes] = values.appointmentDuration.split(":");
       totalDuration = parseInt(hours) * 60 + parseInt(minutes);
@@ -181,10 +216,11 @@ const UpdateAppointment = ({
         customer: customer,
         professional: values.professional,
         service: values.service,
+        product: values.product,
         duration: totalDuration,
         dateTime: dateObject,
         managerId: shopId,
-        status: "updated",
+        status: "updating",
       };
 
       axios
@@ -199,7 +235,7 @@ const UpdateAppointment = ({
           }
         )
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           setSubmitting(false);
           resetForm();
           setModelState(false);
@@ -261,6 +297,14 @@ const UpdateAppointment = ({
       });
     });
 
+    products.forEach((prod) => {
+      values.product.forEach((p) => {
+        if (p === prod._id) {
+          totalPrice += p.price;
+        }
+      });
+    });
+
     if (allowManualDuration) {
       const [hours, minutes] = values.appointmentDuration.split(":");
       totalDuration = parseInt(hours) * 60 + parseInt(minutes);
@@ -282,10 +326,11 @@ const UpdateAppointment = ({
         customer: customer,
         professional: values.professional,
         service: values.service,
+        product: values.product,
         duration: totalDuration,
         dateTime: dateObject,
         managerId: shopId,
-        status: "updated",
+        status: "updating",
       };
 
       axios
@@ -300,14 +345,16 @@ const UpdateAppointment = ({
           }
         )
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           setModelState(false);
+
           localStorage.setItem(
             "ag_app_booking_info",
             JSON.stringify({
               customer: patchData.customer,
               professional: patchData.professional,
               service: patchData.service,
+              product: patchData.product,
               duration: patchData.duration,
               dateTime: patchData.dateTime,
               amount: totalPrice,
@@ -366,6 +413,7 @@ const UpdateAppointment = ({
             phone: "",
             professional: appointmentData?.professional?._id || "",
             service: appointmentData?.service.map((s) => s?._id) || [],
+            product: appointmentData?.product.map((p) => p?._id) || [],
             dateTime: new Date(appointmentData?.dateTime) || "",
             date: new Date(appointmentData?.dateTime)
               .toISOString()
@@ -446,18 +494,6 @@ const UpdateAppointment = ({
                     : [],
                 },
               });
-
-              // const totalDuration = calculateTotalDuration(
-              //   values.service,
-              //   services
-              // );
-              // const hours = Math.floor(totalDuration / 60);
-              // const minutes = totalDuration % 60;
-              // const updatedDuration = `${hours
-              //   .toString()
-              //   .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-
-              // setFieldValue("appointmentDuration", updatedDuration);
             }
 
             return (
@@ -545,37 +581,20 @@ const UpdateAppointment = ({
                     </div>
 
                     <div className="mb-4">
-                      <label
-                        htmlFor="service"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
-                      >
-                        Services
-                      </label>
-                      <Select
-                        id="service"
+                      <Field
                         name="service"
-                        className="input-field"
-                        options={services.map((service) => ({
-                          value: service._id,
-                          label: service.name,
-                        }))}
-                        isMulti
-                        value={values.service.map((serviceId) => ({
-                          value: serviceId,
-                          label: services.find(
-                            (service) => service._id === serviceId
-                          )?.name,
-                        }))}
-                        onChange={(selectedOptions) =>
-                          handleServicesChange(selectedOptions)
-                        }
-                        placeholder="Select services"
-                        isClearable
+                        label="Service"
+                        component={CustomSelectList}
+                        options={services}
                       />
-                      <ErrorMessage
-                        name="service"
-                        component="p"
-                        className="text-red-500 text-xs italic"
+                    </div>
+
+                    <div className="mb-4">
+                      <Field
+                        name="product"
+                        label="Product"
+                        component={CustomSelectList}
+                        options={products}
                       />
                     </div>
                   </div>
@@ -837,5 +856,122 @@ const CustomSelect = ({ label, options, ...props }) => {
         className="text-red-500 text-xs italic"
       />
     </div>
+  );
+};
+
+const CustomSelectList = ({ options, label, field, form }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedOptions, setSelectedOptions] = useState(field.value || []);
+
+  const selectRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const toggleOption = (optionId) => {
+    setSelectedOptions([...selectedOptions, optionId]);
+    console.log(selectedOptions);
+  };
+
+  const removeOption = (optionId, index) => {
+    setSelectedOptions(selectedOptions.filter((_, i) => i !== index));
+    console.log(selectedOptions);
+  };
+
+  const handleBlur = () => {
+    setIsOpen(false);
+    form.setFieldValue(field.name, selectedOptions);
+    form.setFieldTouched(field.name, true);
+  };
+
+  return (
+    <>
+      <label
+        htmlFor={field.name}
+        className="block text-sm font-semibold text-gray-700 mb-2"
+      >
+        {label}
+      </label>
+      <div
+        className="relative border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-800 pr-2 "
+        ref={selectRef}
+      >
+        <BiChevronDown
+          className="absolute text-3xl top-1 right-2 border-l  border-gray-300 text-gray-300 hover:text-gray-500 transition-colors cursor-pointer"
+          onClick={() => setIsOpen(!isOpen)}
+        />
+
+        <div className="max-w-[280px] px-1 flex items-center">
+          {selectedOptions.length > 0 && (
+            <div className="flex flex-wrap">
+              {selectedOptions.map((optionId, index) => {
+                const selectedOption = options.find(
+                  (option) => option._id === optionId
+                );
+
+                return (
+                  <span
+                    key={index}
+                    className="flex items-center bg-gray-100 text-gray-800 text-sm px-2 py-1 mx-1 my-1 rounded"
+                  >
+                    <span className="mr-1">{selectedOption.name}</span>
+                    <HiX
+                      className="cursor-pointer"
+                      onClick={() => removeOption(optionId, index)}
+                    />
+                  </span>
+                );
+              })}
+            </div>
+          )}
+          <input
+            type="text"
+            className="flex-grow p-1 m-1 focus:outline-none"
+            style={{ minWidth: "0" }}
+            placeholder={selectedOptions.length === 0 ? `Select ${label}` : ""}
+            value={searchQuery}
+            onChange={handleSearch}
+            onFocus={() => setIsOpen(!isOpen)}
+          />
+        </div>
+
+        {isOpen && (
+          <div className="absolute z-10 mt-1 bg-white border border-gray-300 rounded w-full shadow-lg">
+            {options
+              .filter((option) =>
+                option.name.toLowerCase().includes(searchQuery.toLowerCase())
+              )
+              .map((option, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-200"
+                  onClick={() => toggleOption(option._id)}
+                >
+                  <span>{option.name}</span>
+                  {selectedOptions.includes(option._id) && (
+                    <HiCheck className="text-gray-500" />
+                  )}
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
+    </>
   );
 };

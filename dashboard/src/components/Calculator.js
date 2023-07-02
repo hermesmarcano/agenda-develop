@@ -28,25 +28,79 @@ const Calculator = ({
   };
 
   const handleConfirm = () => {
-    console.log(amountReceived);
-    console.log(totalPrice);
     if (amountReceived >= totalPrice) {
       let data = {
         managerId: bookingInfo.managerId,
         customer: bookingInfo.customer,
         professional: bookingInfo.professional,
         service: bookingInfo.service,
+        product: bookingInfo.product,
         dateTime: new Date(),
         amount: bookingInfo.amount,
         method: "cash",
       };
 
-      if (bookingInfo.product) {
-        data.product = bookingInfo.product;
-      }
+      let patchData = {
+        managerId: bookingInfo.managerId,
+        customer: bookingInfo.customer,
+        professional: bookingInfo.professional,
+        service: bookingInfo.service,
+        product: bookingInfo.product,
+        dateTime: new Date(),
+        amount: bookingInfo.amount + bookingInfo.prevPaid,
+        method: "cash",
+        updatedAt: new Date(),
+      };
 
       console.log(data);
       let paymentId = "";
+
+      const updatePayment = () => {
+        axios
+          .patch(
+            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
+            patchData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+            }
+          )
+          .then((response) => {
+            console.log(response.data);
+            const cuurentClient = clients.find(
+              (client) => client._id === bookingInfo.customer
+            );
+            const updatedClientPayments =
+              Number(cuurentClient.payments) +
+              Number(bookingInfo.amount) +
+              Number(bookingInfo.prevPaid);
+            console.log("updatedClientPayments: ", updatedClientPayments);
+            console.log("customer id: ", bookingInfo.customer);
+            axios
+              .patch(
+                `http://localhost:4040/customers/${bookingInfo.customer}`,
+                JSON.stringify({ payments: updatedClientPayments }),
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                  },
+                }
+              )
+              .then((response) => {
+                console.log(response.data);
+                confirmAppointmentPayment();
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      };
 
       const makePayment = () => {
         axios
@@ -114,7 +168,11 @@ const Calculator = ({
         axios
           .patch(
             `http://localhost:4040/appointments/${bookingInfo.appointmentId}`,
-            { status: "confirmed" },
+            {
+              service: bookingInfo.service,
+              product: bookingInfo.product,
+              status: "confirmed",
+            },
             {
               headers: {
                 "Content-Type": "application/json",
@@ -137,7 +195,11 @@ const Calculator = ({
           });
       };
 
-      makePayment();
+      if (bookingInfo.checkoutType === "updating") {
+        updatePayment();
+      } else {
+        makePayment();
+      }
     } else {
       setUnSufficientAmountMsg(true);
     }
@@ -174,7 +236,7 @@ const Calculator = ({
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-black bg-opacity-25">
+        <div className="fixed inset-0 flex z-20 justify-center items-center overflow-y-auto bg-black bg-opacity-25">
           <div className="bg-white rounded-lg p-4 w-full sm:max-w-sm">
             <div className="flex items-center mb-4">
               <span className="inline-flex h-10 items-center px-3 rounded-l-md border-2 border-r-0 border-gray-300 bg-gray-50 text-gray-500">
@@ -244,8 +306,13 @@ const Calculator = ({
                 Cancel
               </button>
               <button
-                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md flex items-center font-semibold text-sm"
+                className={`${
+                  amountReceived - totalPrice < 0
+                    ? "bg-green-300"
+                    : "bg-green-500 hover:bg-green-600"
+                } text-white py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
                 onClick={handleConfirm}
+                disabled={amountReceived - totalPrice < 0}
               >
                 <FiCheck className="mr-2" />
                 Confirm Payment

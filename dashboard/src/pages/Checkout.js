@@ -7,10 +7,11 @@ import {
   FaTimes,
   FaSpinner,
   FaPercent,
+  FaBullseye,
 } from "react-icons/fa";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { BiBasket } from "react-icons/bi";
-import { FiCalendar, FiClock, FiPercent } from "react-icons/fi";
+import { FiArrowLeft, FiCalendar, FiClock, FiPercent } from "react-icons/fi";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { HiOutlineClipboardCheck } from "react-icons/hi";
 import { CgTrashEmpty } from "react-icons/cg";
@@ -22,6 +23,7 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import CreditPayment from "../components/CreditPayment";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 const StepIndicator = ({ currentStep, totalSteps }) => {
   return (
@@ -50,7 +52,6 @@ const Checkout = () => {
   const { professionalId } = useContext(ProfessionalIdContext);
   const [loading, setLoading] = React.useState(true);
   const [servicesData, setServicesData] = useState([]);
-  const [products, setProducts] = useState([]);
   const [productsData, setProductsData] = useState([]);
   const [clientsData, setClientsData] = useState([]);
   const [bookingInfo, setBookingInfo] = useState(
@@ -62,99 +63,178 @@ const Checkout = () => {
     phone: "",
     birthday: "",
   });
-  const [extraServices, setExtraServices] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [calculatorMode, setCalculatorMode] = useState(false);
   const [creditMode, setCreditMode] = useState(false);
-  const [subTotalPrice, setSubTotalPrice] = useState(bookingInfo.amount);
+  const [extraServices, setExtraServices] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [subTotalPrice, setSubTotalPrice] = useState(
+    bookingInfo?.amount ? bookingInfo?.amount : 0
+  );
   const [totalPrice, setTotalPrice] = useState(0);
   const [amountPaid, setAmountPaid] = useState(0);
   const [change, setChange] = useState(0);
+  const [prevPaidAmount, setPrevPaidAmount] = useState(0);
   const [discount, setDiscount] = useState(0);
   const [discountType, setDiscountType] = useState("$");
+  const [paymentId, setPaymentId] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:4040/managers/id", {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        console.log(response.data.discount);
-        setLoading(false);
-      })
-      .catch((error) => console.log(error));
-  }, []);
+    if (localStorage.getItem("ag_app_booking_info")) {
+      setLoading(true);
 
-  useEffect(() => {
-    axios
-      .get(`http://localhost:4040/customers/shop?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        setClientsData(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, [shopId]);
-
-  useEffect(() => {
-    axios
-      .get(`http://localhost:4040/services/shop?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        setServicesData([...response.data.services].reverse());
-        if (extraServices.length === 0) {
-          bookingInfo?.service?.map((ser) => {
-            response.data.services.map((service) => {
-              if (ser === service._id) {
-                setExtraServices([...extraServices, service]);
+      const fetchPayments =
+        JSON.parse(localStorage.getItem("ag_app_booking_info")).checkoutType ===
+        "updating"
+          ? axios.get(
+              `http://localhost:4040/payments?appt=${
+                JSON.parse(localStorage.getItem("ag_app_booking_info"))
+                  .appointmentId
+              }`,
+              {
+                headers: {
+                  Authorization: token,
+                },
               }
-            });
-          });
+            )
+          : Promise.resolve(null);
+
+      const fetchCustomers = axios.get(
+        `http://localhost:4040/customers/shop?shopId=${shopId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
         }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      );
+
+      const fetchServices = axios.get(
+        `http://localhost:4040/services/shop?shopId=${shopId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      const fetchProducts = axios.get(
+        `http://localhost:4040/products/shop?shopId=${shopId}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      Promise.all([fetchPayments, fetchCustomers, fetchServices, fetchProducts])
+        .then(
+          ([
+            paymentsResponse,
+            customersResponse,
+            servicesResponse,
+            productsResponse,
+          ]) => {
+            if (paymentsResponse) {
+              setPrevPaidAmount(paymentsResponse.data.payment.amount);
+              setPaymentId(paymentsResponse.data.payment._id);
+              // setLoading(false);
+            }
+
+            if (customersResponse) {
+              setClientsData(customersResponse.data);
+            }
+
+            if (servicesResponse) {
+              setServicesData([...servicesResponse.data.services].reverse());
+              if (extraServices.length === 0) {
+                let servicesArr = servicesResponse.data.services.filter(
+                  (serv) => bookingInfo?.service.includes(serv._id)
+                );
+                console.log(servicesArr);
+                setExtraServices(servicesArr);
+              }
+            }
+
+            if (productsResponse) {
+              setProductsData([...productsResponse.data.products].reverse());
+              if (products.length === 0) {
+                let productsArr = productsResponse.data.products.filter(
+                  (prod) => bookingInfo?.product.includes(prod._id)
+                );
+                console.log(productsArr);
+                setProducts(productsArr);
+              }
+            }
+          }
+        )
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
   }, []);
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:4040/products/shop?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        setProductsData([...response.data.products].reverse());
-        if (products.length === 0) {
-          bookingInfo?.product?.map((pro) => {
-            response.data.products.map((product) => {
-              if (pro === product._id) {
-                setExtraServices([...products, product]);
-              }
-            });
-          });
+    if (localStorage.getItem("ag_app_booking_info")) {
+      const servicesPrice = extraServices.reduce(
+        (total, s) => total + s.price,
+        0
+      );
+      const productsPrice = products.reduce((total, p) => total + p.price, 0);
+      setSubTotalPrice(servicesPrice + productsPrice);
+    }
+  }, [extraServices, products]);
+
+  useEffect(() => {
+    if (localStorage.getItem("ag_app_booking_info")) {
+      if (prevPaidAmount > 0) {
+        if (discountType === "$") {
+          setTotalPrice(subTotalPrice - discount - prevPaidAmount);
+        } else {
+          setTotalPrice(
+            subTotalPrice -
+              prevPaidAmount -
+              ((subTotalPrice - prevPaidAmount) * discount) / 100
+          );
         }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+      } else {
+        if (discountType === "$") {
+          setTotalPrice(subTotalPrice - discount);
+        } else {
+          setTotalPrice(subTotalPrice - (subTotalPrice * discount) / 100);
+        }
+      }
+    }
+  }, [discount, discountType, subTotalPrice, prevPaidAmount]);
+
+  if (!localStorage.getItem("ag_app_booking_info")) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="p-8 border border-gray-300 rounded-md shadow-lg">
+          <div className="flex items-center mb-4">
+            <AiOutlineExclamationCircle className="mr-2 text-red-500 text-2xl" />
+            <h1 className="text-lg font-medium">No selected appointment</h1>
+          </div>
+          <p className="mb-4">
+            Please go back and choose an appointment to checkout.
+          </p>
+          <button
+            className="flex items-center px-4 py-2 text-white bg-gray-800 rounded-md hover:bg-gray-700"
+            onClick={() => navigate("/checkout-appointments")}
+          >
+            <FiArrowLeft className="mr-2" />
+            Go back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleCancelCheckout = () => {
     // Handle cancel checkout logic here
-    console.log("Checkout canceled");
     localStorage.removeItem("ag_app_booking_info");
     navigate("/checkout-appointments");
   };
@@ -165,23 +245,11 @@ const Checkout = () => {
   };
 
   const handleAddExtraService = (service) => {
-    setExtraServices([...extraServices, service]);
-    const servicesPrice = extraServices.reduce(
-      (total, s) => total + s.price,
-      0
-    );
-    const productsPrice = products.reduce((total, s) => total + s.price, 0);
-    setSubTotalPrice(servicesPrice + productsPrice);
+    setExtraServices((prevExtraServices) => [...prevExtraServices, service]);
   };
 
   const handleAddProduct = (product) => {
-    setProducts([...products, product]);
-    const servicesPrice = extraServices.reduce(
-      (total, s) => total + s.price,
-      0
-    );
-    const productsPrice = products.reduce((total, s) => total + s.price, 0);
-    setSubTotalPrice(servicesPrice + productsPrice);
+    setProducts((prevProducts) => [...prevProducts, product]);
   };
 
   const handleChoosePaymentMethod = (method) => {
@@ -192,12 +260,17 @@ const Checkout = () => {
         amount: totalPrice,
         service: extraServices.map((extraService) => extraService._id),
         product: products.map((pro) => pro._id),
+        prevPaid: prevPaidAmount,
+        paymentId: paymentId,
       };
     } else {
       updatedBookingInfo = {
         ...bookingInfo,
         amount: totalPrice,
         service: extraServices.map((extraService) => extraService._id),
+        product: [],
+        prevPaid: prevPaidAmount,
+        paymentId: paymentId,
       };
     }
     localStorage.setItem(
@@ -220,24 +293,14 @@ const Checkout = () => {
     setCurrentStep(currentStep - 1);
   };
 
-  const handleRemoveService = (index, id) => {
-    setExtraServices(extraServices.filter((serv, i) => serv._id !== id));
-    const servicesPrice = extraServices.reduce(
-      (total, s) => total + s.price,
-      0
+  const handleRemoveService = (index) => {
+    setExtraServices((prevExtraServices) =>
+      prevExtraServices.filter((_, i) => i !== index)
     );
-    const productsPrice = products.reduce((total, s) => total + s.price, 0);
-    setSubTotalPrice(servicesPrice + productsPrice);
   };
 
-  const handleRemoveProduct = (index, id) => {
-    setProducts(products.filter((prod, i) => prod._id !== id));
-    const servicesPrice = extraServices.reduce(
-      (total, s) => total + s.price,
-      0
-    );
-    const productsPrice = products.reduce((total, s) => total + s.price, 0);
-    setSubTotalPrice(servicesPrice + productsPrice);
+  const handleRemoveProduct = (index) => {
+    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
   };
 
   const handleDiscountChange = (e) => {
@@ -249,18 +312,15 @@ const Checkout = () => {
     }
   };
 
-  useEffect(() => {
-    setTotalPrice(
-      discountType === "$"
-        ? subTotalPrice - discount
-        : subTotalPrice - (subTotalPrice * discount) / 100
-    );
-  }, [discount, discountType, subTotalPrice]);
-
   const handleDiscountTypeChange = () => {
     setDiscountType((prevDiscountType) =>
       prevDiscountType === "$" ? "%" : "$"
     );
+  };
+
+  const handleCheckoutComplete = () => {
+    localStorage.removeItem("ag_app_booking_info");
+    navigate("/checkout-appointments");
   };
 
   if (loading) {
@@ -561,7 +621,7 @@ const Checkout = () => {
                   <p>Appointment has been scheduled successfully.</p>
                   <button
                     className="mt-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
-                    onClick={() => navigate("/")}
+                    onClick={handleCheckoutComplete}
                   >
                     Return to Home
                   </button>
@@ -652,16 +712,22 @@ const Checkout = () => {
                 <h3 className="text-base font-semibold">Subtotal:</h3>
                 <p className="text-sm">${Number(subTotalPrice).toFixed(2)}</p>
               </div>
+
+              {prevPaidAmount > 0 && (
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-base font-semibold">Previous Payment:</h3>
+                  <p className="text-sm">
+                    - ${Number(prevPaidAmount).toFixed(2)}
+                  </p>
+                </div>
+              )}
+
               <div className="flex flex-wrap items-center justify-between mb-2">
+                <div className="text-xs text-gray-500 italic mb-2">
+                  Discount
+                </div>
                 <div className="flex justify-center items-center">
-                  <input
-                    type="number"
-                    className="appearance-none w-16 mr-1 py-2 px-3 border border-gray-300 rounded-md text-sm text-center text-gray-700 leading-tight focus:outline-none "
-                    value={discount}
-                    onChange={handleDiscountChange}
-                    min={0}
-                  />
-                  <div className=" flex items-center w-28 h-8 rounded-md bg-gray-300">
+                  <div className="flex items-center w-28 h-8 rounded-md bg-gray-300">
                     <button
                       className={`w-14 ${
                         discountType === "%"
@@ -670,7 +736,7 @@ const Checkout = () => {
                       } flex justify-center items-center h-full rounded-md transition-transform`}
                       onClick={handleDiscountTypeChange}
                     >
-                      <FaPercent />
+                      <FaPercent className="text-gray-600" />
                     </button>
                     <button
                       className={`w-14 ${
@@ -680,14 +746,19 @@ const Checkout = () => {
                       } flex justify-center items-center h-full rounded-md transition-transform`}
                       onClick={handleDiscountTypeChange}
                     >
-                      <FaDollarSign />
+                      <FaDollarSign className="text-gray-600" />
                     </button>
                   </div>
-                </div>
-                <div className="text-xs text-gray-500 italic mb-2">
-                  Discount
+                  <input
+                    type="number"
+                    className="appearance-none w-14 ml-2 py-2 pl-4 border border-gray-300 rounded-md text-sm text-gray-700 leading-tight focus:outline-none"
+                    value={discount}
+                    onChange={handleDiscountChange}
+                    min={0}
+                  />
                 </div>
               </div>
+
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-base font-semibold">Total Price:</h3>
                 <p className="text-sm">${Number(totalPrice).toFixed(2)}</p>

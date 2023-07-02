@@ -1,4 +1,3 @@
-// import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { FaCreditCard } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
@@ -14,17 +13,7 @@ const CreditPayment = ({
   clients,
   dateTime,
 }) => {
-  // const stripe = useStripe();
-  // const elements = useElements();
   const token = localStorage.getItem("ag_app_shop_token");
-
-  //   const handleConfirm = () => {
-  //     console.log(totalPrice);
-  //     setAmountPaid(totalPrice);
-  //     setChange(0);
-  //     handlePopupClose();
-  //     handleConfirmPayment();
-  //   };
 
   const handleConfirm = () => {
     let data = {
@@ -32,17 +21,69 @@ const CreditPayment = ({
       customer: bookingInfo.customer,
       professional: bookingInfo.professional,
       service: bookingInfo.service,
+      product: bookingInfo.product,
       dateTime: new Date(),
       amount: bookingInfo.amount,
       method: "credit",
     };
 
-    if (bookingInfo.product) {
-      data.product = bookingInfo.product;
-    }
+    let patchData = {
+      managerId: bookingInfo.managerId,
+      customer: bookingInfo.customer,
+      professional: bookingInfo.professional,
+      service: bookingInfo.service,
+      product: bookingInfo.product,
+      dateTime: new Date(),
+      amount: bookingInfo.amount + bookingInfo.prevPaid,
+      method: "credit",
+      updatedAt: new Date(),
+    };
 
     console.log(data);
     let paymentId = "";
+
+    const updatePayment = () => {
+      axios
+        .post("http://localhost:4040/payments", patchData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          console.log(response.data);
+          const cuurentClient = clients.find(
+            (client) => client._id === bookingInfo.customer
+          );
+          const updatedClientPayments =
+            Number(cuurentClient.payments) +
+            Number(bookingInfo.amount) +
+            Number(bookingInfo.prevPaid);
+          console.log("updatedClientPayments: ", updatedClientPayments);
+          console.log("customer id: ", bookingInfo.customer);
+          axios
+            .patch(
+              `http://localhost:4040/customers/${bookingInfo.customer}`,
+              JSON.stringify({ payments: updatedClientPayments }),
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: token,
+                },
+              }
+            )
+            .then((response) => {
+              console.log(response.data);
+              confirmAppointmentPayment();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
+    };
 
     const makePayment = () => {
       axios
@@ -110,7 +151,11 @@ const CreditPayment = ({
       axios
         .patch(
           `http://localhost:4040/appointments/${bookingInfo.appointmentId}`,
-          { status: "confirmed" },
+          {
+            service: bookingInfo.service,
+            product: bookingInfo.product,
+            status: "confirmed",
+          },
           {
             headers: {
               "Content-Type": "application/json",
@@ -132,35 +177,12 @@ const CreditPayment = ({
         });
     };
 
-    makePayment();
+    if (bookingInfo.checkoutType === "updating") {
+      updatePayment();
+    } else {
+      makePayment();
+    }
   };
-
-  // const handleSubmit = async (event) => {
-  //   event.preventDefault();
-
-  //   if (!stripe || !elements) {
-  //     // Stripe.js has not yet loaded.
-  //     // Make sure to disable form submission or show a loading indicator.
-  //     return;
-  //   }
-
-  //   const cardElement = elements.getElement(CardElement);
-
-  //   const { error, paymentMethod } = await stripe.createPaymentMethod({
-  //     type: "card",
-  //     card: cardElement,
-  //   });
-
-  //   if (error) {
-  //     console.log(error);
-  //     // Handle error
-  //   } else {
-  //     console.log(paymentMethod);
-  //     // Payment method created successfully
-  //     // Send the payment method ID to your server for further processing
-  //     handleConfirm();
-  //   }
-  // };
 
   const handleCancel = () => {
     handlePopupClose();
@@ -169,14 +191,10 @@ const CreditPayment = ({
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-black bg-opacity-25">
+        <div className="fixed z-20 inset-0 flex justify-center items-center overflow-y-auto bg-black bg-opacity-25">
           <div className="w-96 my-auto mx-auto bg-white rounded-md">
             <form onSubmit={handleConfirm}>
               <div className="bg-white rounded-md shadow-md p-6">
-                {/* <label className="block text-gray-700 font-semibold">
-                  Card details
-                </label> */}
-                {/* <CardElement className="mt-2 p-2 border border-gray-300 rounded-md" /> */}
                 <PaymentWaiting />
                 <div className="flex justify-between items-center mt-4">
                   <span className="text-gray-700 font-semibold">

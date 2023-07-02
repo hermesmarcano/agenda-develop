@@ -28,7 +28,6 @@ import CheckEmail from "./pages/CheckEmail";
 import ViewModeContext from "./context/ViewModeContext";
 import ProfessionalIdContext from "./context/ProfessionalIdContext";
 import Checkout from "./pages/Checkout";
-import CreditCheckout from "./utils/CreditCheckout";
 import PendingAppointments from "./pages/PendingAppointments";
 
 function App() {
@@ -111,9 +110,7 @@ function App() {
                         path="/checkout-appointments"
                         element={<PendingAppointments />}
                       />
-                      <Route element={<CreditCheckout />}>
-                        <Route path="/checkout" exact element={<Checkout />} />
-                      </Route>
+                      <Route path="/checkout" exact element={<Checkout />} />
                     </Route>
                     <Route path="/register" exact element={<Register />} />
                     <Route path="/login" exact element={<Login />} />

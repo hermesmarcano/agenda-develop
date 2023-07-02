@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   FaBell,
   FaCog,
@@ -44,13 +44,24 @@ function Header() {
     navigate("/login");
   };
 
-  const [unreadCount, setUnreadCount] = useState(3); // Set initial unread count here
+  const [unreadCount, setUnreadCount] = useState(0);
+  // const notifications = Array.from({ length: 10 }, (_, index) => ({
+  //   id: index + 1,
+  //   message: `Notification ${index + 1}`,
+  //   read: index < 5 ? false : true,
+  // }));
+
+  const notifications = [];
+
+  // useEffect(() => {
+  //   const count = notifications.reduce((total, notification) => {
+  //     return notification.read === false ? total + 1 : total;
+  //   }, 0);
+
+  //   setUnreadCount(count);
+  // }, [notifications]);
+
   const [showMenu, setShowMenu] = useState(false);
-  const notifications = [
-    // { id: 1, message: "Notification 1" },
-    // { id: 2, message: "Notification 2" },
-    // { id: 3, message: "Notification 3" },
-  ];
 
   const handleMenuToggle = () => {
     setShowMenu(!showMenu);
