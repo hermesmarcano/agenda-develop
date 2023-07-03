@@ -184,18 +184,7 @@ const Register = () => {
               }}
               validationSchema={RegisterSchema}
               onSubmit={async (values, { setSubmitting }) => {
-                // const formData = new FormData();
                 try {
-                  // let workingHoursNumbers = [];
-                  // values.workingHours.map((wH) => {
-                  //   workingHoursNumbers.push({
-                  //     startHour: Number(wH.startHour),
-                  //     endHour: Number(wH.endHour),
-                  //   });
-                  // });
-
-                  console.log(values);
-
                   const formData = new FormData();
                   formData.append("profileImg", values.profileImg);
 

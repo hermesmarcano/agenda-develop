@@ -42,18 +42,20 @@ const Agenda = () => {
   const [alertMsgType, setAlertMsgType] = useState("");
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:4040/appointments?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
+    if (shopId !== "") {
+      axios
+        .get(`http://localhost:4040/appointments?shopId=${shopId}`, {
+          headers: {
+            Authorization: token,
+          },
+        })
 
-      .then((response) => {
-        setAppointments(response.data.appointments);
-        // console.log(response.data.appointments);
-        // setIsLoading(false);
-      });
+        .then((response) => {
+          setAppointments(response.data.appointments);
+          // console.log(response.data.appointments);
+          // setIsLoading(false);
+        });
+    }
   }, [shopId]);
 
   useEffect(() => {
