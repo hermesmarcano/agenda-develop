@@ -186,13 +186,15 @@ const Register = () => {
               onSubmit={async (values, { setSubmitting }) => {
                 // const formData = new FormData();
                 try {
-                  let workingHoursNumbers = [];
-                  values.workingHours.map((wH) => {
-                    workingHoursNumbers.push({
-                      startHour: Number(wH.startHour),
-                      endHour: Number(wH.endHour),
-                    });
-                  });
+                  // let workingHoursNumbers = [];
+                  // values.workingHours.map((wH) => {
+                  //   workingHoursNumbers.push({
+                  //     startHour: Number(wH.startHour),
+                  //     endHour: Number(wH.endHour),
+                  //   });
+                  // });
+
+                  console.log(values);
 
                   const formData = new FormData();
                   formData.append("profileImg", values.profileImg);
@@ -218,7 +220,7 @@ const Register = () => {
                     password: values.password,
                     shopName: values.shopName,
                     urlSlug: values.urlSlug,
-                    workingHours: workingHoursNumbers,
+                    workingHours: values.workingHours,
                     profileImg: profileImg,
                   };
 
@@ -562,7 +564,7 @@ const Register = () => {
                   {/* <Field name="profileImg" component={ImageUpload} /> */}
                   <ImageUpload
                     field={{
-                      name: `serviceImg`,
+                      name: `profileImg`,
                       value: formikProps.values.profileImg,
                       onChange: (file) =>
                         formikProps.setFieldValue(`profileImg`, file),

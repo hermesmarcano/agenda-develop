@@ -20,7 +20,8 @@ const getAllAppointments = async (req, res) => {
     })
       .populate("customer", "name")
       .populate("professional", "name")
-      .populate("service", "name duration price");
+      .populate("service", "name duration price")
+      .populate("product", "name price");
     res.json({ success: true, appointments });
   } catch (error) {
     console.error(error);
@@ -35,7 +36,8 @@ const getAppointmentById = async (req, res) => {
     const appointment = await Appointment.findById(req.params.id)
       .populate("customer", "name")
       .populate("professional", "name")
-      .populate("service", "name duration");
+      .populate("service", "name price duration")
+      .populate("product", "name price");
     if (!appointment) {
       return res
         .status(404)
