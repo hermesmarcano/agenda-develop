@@ -7,7 +7,9 @@
     "server": "cd server && npm run dev",
     "client": "cd client && npm run start",
     "dashboard": "cd dashboard && npm run start",
-    "all": "concurrently \"npm run server\" \"npm run client\" \"npm run dashboard\""
+    "all": "concurrently \"npm run server\" \"npm run client\" \"npm run dashboard\"",
+    "d": "concurrently \"npm run server\" \"npm run dashboard\"",
+    "c": "concurrently \"npm run server\" \"npm run client\" \"npm run dashboard\""
   },
   "author": "",
   "license": "ISC",
