@@ -185,6 +185,8 @@ const getShop = async (req, res) => {
       _id: manager._id,
       shopName: manager.shopName,
       profileImg: manager.profileImg,
+      discount: manager.discount,
+      workingHours: manager.workingHours,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

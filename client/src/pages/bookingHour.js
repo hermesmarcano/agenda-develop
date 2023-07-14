@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../axiosConfig/axiosConfig";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaMinus } from "react-icons/fa";
 
 const BookingHour = () => {
   const [selectedHour, setSelectedHour] = useState(null);
   const [isHourSelected, setIsHourSelected] = useState(false);
   const [reservedAppts, setReservedAppts] = useState([]);
+  const [workingHours, setWorkingHours] = useState([]);
   const [loading, setLoading] = React.useState(true);
   const params = useParams();
   const navigate = useNavigate();
@@ -20,6 +21,8 @@ const BookingHour = () => {
     instance
       .get(`/managers/shop?urlSlug=${params.id}`)
       .then((response) => {
+        console.log(response.data.workingHours);
+        setWorkingHours(response.data.workingHours);
         instance
           .get(`/appointments?shop=${response.data._id}`)
           .then((response) => {
@@ -40,7 +43,7 @@ const BookingHour = () => {
               (appt) =>
                 new Date(appt.dateTime).toISOString().slice(0, 10) === today
             );
-            console.log(filteredAppts);
+            // console.log(filteredAppts);
             setReservedAppts(filteredAppts);
             setLoading(false);
           })
@@ -54,28 +57,44 @@ const BookingHour = () => {
   }, []);
 
   const date = localStorage.getItem("selectedDate");
-  const hours = useMemo(() => {
+
+  const hoursArrs = useMemo(() => {
     const arr = [];
-    let startHour = 8; // Starting hour
-    let startMinute = 0; // Starting minute
+    if (workingHours && workingHours.length > 0) {
+      for (let i = 0; i < workingHours.length; i++) {
+        const range = [];
+        const { startHour, endHour } = workingHours[i];
+        for (let hour = startHour; hour <= endHour; hour++) {
+          const maxMinute = hour === endHour ? 0 : 45; // Maximum minutes allowed for the last hour
+          for (let minute = 0; minute <= maxMinute; minute += 15) {
+            let d = hour;
+            let d1 = new Date(date);
+            d1.setHours(d);
+            d1.setMinutes(minute);
+            d1.setSeconds(0);
 
-    while (startHour < 17 || (startHour === 17 && startMinute === 0)) {
-      let d1 = new Date(date);
-      d1.setHours(startHour);
-      d1.setMinutes(startMinute);
-      arr.push(d1);
-
-      startMinute += 15; // Increase the minute by 15
-
-      if (startMinute === 60) {
-        // If the minute reaches 60, reset it to 0 and increase the hour
-        startMinute = 0;
-        startHour++;
+            range.push(d1);
+          }
+        }
+        arr.push(range);
       }
-    }
+    } else {
+      const range = [];
+      for (let i = 1; i <= 10; i++) {
+        for (let minute = 0; minute < 60; minute += 15) {
+          let d = i + 7;
+          let d1 = new Date(date);
+          d1.setHours(d);
+          d1.setMinutes(minute);
+          d1.setSeconds(0);
 
+          range.push(d1);
+        }
+      }
+      arr.push(range);
+    }
     return arr;
-  }, [date]);
+  }, [date, workingHours]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -115,6 +134,41 @@ const BookingHour = () => {
     return false;
   };
 
+  const renderHoursBlocks = (hoursRange) => {
+    return hoursRange.map((hour, index) => {
+      return (
+        <button
+          key={index}
+          type="button"
+          className={`${
+            selectedHour === hour ? "ring-2 ring-indigo-500" : ""
+          } bg-white hover:bg-gray-100 text-gray-900 font-semibold py-4 px-6 border rounded-lg text-center text-xl ${
+            isHourDisabled(hour) || hour < new Date() ? "line-through" : ""
+          }`}
+          onClick={() => {
+            handleHourChange({ target: { value: hour } });
+          }}
+          disabled={isHourDisabled(hour) || hour < new Date()}
+        >
+          {hour.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
+        </button>
+      );
+    });
+  };
+
+  const renderDivider = () => {
+    return (
+      <div className="flex items-center justify-center my-4">
+        <hr className="border-gray-300 flex-grow" />
+        {/* <span className="mx-4 text-gray-300">OR</span>
+        <hr className="border-gray-300 flex-grow" /> */}
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -135,34 +189,16 @@ const BookingHour = () => {
         onSubmit={handleSubmit}
         className="bg-white rounded-lg shadow-lg p-8"
       >
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
-          {hours.map((hour, index) => {
-            const today = new Date();
-
-            return (
-              <button
-                key={index}
-                type="button"
-                className={`${
-                  selectedHour === hour ? "ring-2 ring-indigo-500" : ""
-                } bg-white hover:bg-gray-100 text-gray-900 font-semibold py-4 px-6 border rounded-lg text-center text-xl ${
-                  isHourDisabled(hour) || hour < new Date()
-                    ? "line-through"
-                    : ""
-                }`}
-                onClick={() => {
-                  handleHourChange({ target: { value: hour } });
-                }}
-                disabled={isHourDisabled(hour) || hour < new Date()}
-              >
-                {hour.toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </button>
-            );
-          })}
-        </div>
+        {hoursArrs.map((hoursRange, i) => (
+          <>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+              <React.Fragment key={i}>
+                {renderHoursBlocks(hoursRange)}
+              </React.Fragment>
+            </div>
+            {i !== hoursArrs.length - 1 && renderDivider()}
+          </>
+        ))}
         {isHourSelected && (
           <div className="flex flex-col items-center justify-center mt-4">
             <button
