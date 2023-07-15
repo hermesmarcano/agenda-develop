@@ -7,6 +7,7 @@ import {
   RiTimeFill,
   RiMoneyDollarCircleLine,
 } from "react-icons/ri";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SidebarContext from "../context/SidebarContext";
 import { FiClock } from "react-icons/fi";
@@ -239,57 +240,62 @@ const PendingAppointments = () => {
           ))}
         </div>
         {pendingAppointments.length > itemsPerPage && (
-          <div className="mt-6">
-            <nav className="flex items-center justify-center">
-              <button
-                className={`mr-2 px-4 py-2 rounded-md ${
-                  currentPage === 1
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-gray-800 hover:bg-gray-700 text-white"
-                }`}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-              >
-                Prev
-              </button>
-              {Array.from(
-                {
-                  length: Math.ceil(pendingAppointments.length / itemsPerPage),
-                },
-                (_, i) => i + 1
-              ).map((page) => (
-                <button
-                  key={page}
-                  className={`mx-2 px-4 py-2 rounded-md ${
-                    currentPage === page
-                      ? "bg-gray-800 text-white"
-                      : "bg-gray-300 hover:bg-gray-800 hover:text-white"
-                  }`}
-                  onClick={() => handlePageChange(page)}
-                >
-                  {page}
-                </button>
-              ))}
-              <button
-                className={`ml-2 px-4 py-2 rounded-md ${
-                  currentPage ===
-                  Math.ceil(pendingAppointments.length / itemsPerPage)
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-gray-800 hover:bg-gray-700 text-white"
-                }`}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={
-                  currentPage ===
-                  Math.ceil(pendingAppointments.length / itemsPerPage)
-                }
-              >
-                Next
-              </button>
-            </nav>
-          </div>
+          // <div className="mt-6">
+          //   <nav className="flex items-center justify-center">
+          //     <button
+          //       className={`mr-2 px-4 py-2 rounded-md ${
+          //         currentPage === 1
+          //           ? "bg-gray-300 cursor-not-allowed"
+          //           : "bg-gray-800 hover:bg-gray-700 text-white"
+          //       }`}
+          //       onClick={() => handlePageChange(currentPage - 1)}
+          //       disabled={currentPage === 1}
+          //     >
+          //       Prev
+          //     </button>
+          //     {Array.from(
+          //       {
+          //         length: Math.ceil(pendingAppointments.length / itemsPerPage),
+          //       },
+          //       (_, i) => i + 1
+          //     ).map((page) => (
+          //       <button
+          //         key={page}
+          //         className={`mx-2 px-4 py-2 rounded-md ${
+          //           currentPage === page
+          //             ? "bg-gray-800 text-white"
+          //             : "bg-gray-300 hover:bg-gray-800 hover:text-white"
+          //         }`}
+          //         onClick={() => handlePageChange(page)}
+          //       >
+          //         {page}
+          //       </button>
+          //     ))}
+          //     <button
+          //       className={`ml-2 px-4 py-2 rounded-md ${
+          //         currentPage ===
+          //         Math.ceil(pendingAppointments.length / itemsPerPage)
+          //           ? "bg-gray-300 cursor-not-allowed"
+          //           : "bg-gray-800 hover:bg-gray-700 text-white"
+          //       }`}
+          //       onClick={() => handlePageChange(currentPage + 1)}
+          //       disabled={
+          //         currentPage ===
+          //         Math.ceil(pendingAppointments.length / itemsPerPage)
+          //       }
+          //     >
+          //       Next
+          //     </button>
+          //   </nav>
+          // </div>
+          <Pagination
+            itemsPerPage={itemsPerPage}
+            totalItems={pendingAppointments.length}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
-      <div className="lg:w-1/4">
+      <div className="lg:w-1/4 pb-3">
         {selectedAppointment ? (
           <div className="mt-4 h-full">
             <div className="bg-white h-full p-4 rounded-lg shadow-md flex flex-col">
@@ -356,7 +362,7 @@ const PendingAppointments = () => {
             </div>
           </div>
         ) : (
-          <div className="mt-4 flex items-center justify-center h-full">
+          <div className="mt-4 items-center justify-center h-full">
             <div className="bg-white p-4 rounded-lg shadow-md h-full flex flex-col justify-center text-center items-center">
               <RiCheckboxBlankCircleLine className="text-gray-800 text-5xl mb-4" />
               <h2 className="text-gray-800 text-3xl font-semibold mb-2">
@@ -380,3 +386,117 @@ const PendingAppointments = () => {
 };
 
 export default PendingAppointments;
+
+function Pagination({ itemsPerPage, totalItems, onPageChange }) {
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const handlePageChange = (page) => {
+    if (page < 1 || page > totalPages) {
+      return;
+    }
+    setCurrentPage(page);
+    onPageChange(page);
+  };
+
+  const renderPageButtons = () => {
+    const visiblePageButtons = [];
+    const maxVisibleButtons = 4; // Maximum number of visible buttons
+
+    let start = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
+    let end = Math.min(start + maxVisibleButtons - 1, totalPages);
+
+    if (end - start < maxVisibleButtons - 1) {
+      start = Math.max(1, end - maxVisibleButtons + 1);
+    }
+
+    for (let page = start; page <= end; page++) {
+      visiblePageButtons.push(
+        <button
+          key={page}
+          className={`mx-2 h-[40px] px-4 py-2 rounded-md ${
+            currentPage === page
+              ? "bg-gray-800 text-white"
+              : "bg-gray-300 hover:bg-gray-800 hover:text-white"
+          }`}
+          onClick={() => handlePageChange(page)}
+        >
+          {page}
+        </button>
+      );
+    }
+
+    return visiblePageButtons;
+  };
+
+  return (
+    <div className="mt-6">
+      {totalPages > 1 && (
+        <nav className="flex flex-wrap items-center justify-center">
+          <button
+            className={`mr-2 h-[40px] my-1 px-4 py-2 rounded-md ${
+              currentPage === 1
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gray-800 hover:bg-gray-700 text-white"
+            }`}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            <FaChevronLeft />
+          </button>
+
+          {currentPage > 3 && (
+            <button
+              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-800 hover:text-white"
+              onClick={() => handlePageChange(1)}
+            >
+              1
+            </button>
+          )}
+
+          {currentPage > 4 && (
+            <button
+              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300"
+              disabled={true}
+            >
+              ...
+            </button>
+          )}
+
+          {renderPageButtons()}
+
+          {currentPage < totalPages - 3 && (
+            <button
+              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300"
+              disabled={true}
+            >
+              ...
+            </button>
+          )}
+
+          {currentPage < totalPages - 2 && (
+            <button
+              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-800 hover:text-white"
+              onClick={() => handlePageChange(totalPages)}
+            >
+              {totalPages}
+            </button>
+          )}
+
+          <button
+            className={`ml-2 h-[40px] my-1 px-4 py-2 rounded-md ${
+              currentPage === totalPages
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-gray-800 hover:bg-gray-700 text-white"
+            }`}
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <FaChevronRight />
+          </button>
+        </nav>
+      )}
+    </div>
+  );
+}

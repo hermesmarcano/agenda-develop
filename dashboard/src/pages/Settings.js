@@ -145,8 +145,6 @@ const Settings = () => {
             initialValues={{
               shopName: shopData.shopName,
               name: shopData.name,
-              discountType: shopData?.discount?.type || "",
-              discountValue: shopData?.discount?.value || "",
               workingHours:
                 shopData?.workingHours?.length === 0
                   ? [{ startHour: 0, endHour: 0 }]
@@ -239,38 +237,7 @@ const Settings = () => {
                     className="py-2 px-4 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:border-blue-500 w-full"
                   />
                 </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="discount-type"
-                    className="block text-lg text-gray-800 font-semibold mb-2"
-                  >
-                    Discount Type:
-                  </label>
-                  <Field
-                    as="select"
-                    id="discount-type"
-                    name="discountType"
-                    className="py-2 px-4 border border-gray-300 rounded-md text-gray focus:outline-none focus:border-blue-500 w-full"
-                  >
-                    <option value="">Select Type</option>
-                    <option value="percent">Percentage</option>
-                    <option value="num">Numeric</option>
-                  </Field>
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="discount-value"
-                    className="block text-lg text-gray-800 font-semibold mb-2"
-                  >
-                    Discount Value:
-                  </label>
-                  <Field
-                    type="number"
-                    id="discount-value"
-                    name="discountValue"
-                    className="py-2 px-4 border border-gray-300 rounded-md text-gray focus:outline-none focus:border-blue-500 w-full"
-                  />
-                </div>
+
                 <label
                   htmlFor="discount-value"
                   className="block text-lg text-gray-800 font-semibold mb-2"
