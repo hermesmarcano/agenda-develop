@@ -84,21 +84,24 @@ const Checkout = () => {
     if (localStorage.getItem("ag_app_booking_info")) {
       setLoading(true);
 
-      const fetchPayments =
-        JSON.parse(localStorage.getItem("ag_app_booking_info")).checkoutType ===
-        "updating"
-          ? axios.get(
-              `http://localhost:4040/payments?appt=${
-                JSON.parse(localStorage.getItem("ag_app_booking_info"))
-                  .appointmentId
-              }`,
-              {
-                headers: {
-                  Authorization: token,
-                },
-              }
-            )
-          : Promise.resolve(null);
+      const appointmentId = JSON.parse(
+        localStorage.getItem("ag_app_booking_info")
+      ).appointmentId;
+
+      const fetchPayments = axios
+        .get(`http://localhost:4040/payments?appt=${appointmentId}`, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          const payment = response.data.payment;
+          return payment ? payment : null; // Resolve with null if payment is not found
+        })
+        .catch((error) => {
+          console.error(error);
+          return null; // Resolve with null if there was an error
+        });
 
       const fetchCustomers = axios.get(
         `http://localhost:4040/customers/shop?shopId=${shopId}`,
@@ -135,10 +138,11 @@ const Checkout = () => {
             servicesResponse,
             productsResponse,
           ]) => {
-            if (paymentsResponse) {
-              setPrevPaidAmount(paymentsResponse.data.payment.amount);
-              setPaymentId(paymentsResponse.data.payment._id);
-              // setLoading(false);
+            const payment = paymentsResponse !== null ? paymentsResponse : null;
+
+            if (payment) {
+              setPrevPaidAmount(payment.amount);
+              setPaymentId(payment._id);
             }
 
             if (customersResponse) {

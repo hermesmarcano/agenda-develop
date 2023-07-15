@@ -16,6 +16,9 @@ import Select from "react-select";
 import Switch from "react-switch";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
+import makeAnimated from "react-select/animated";
+
+const animatedComponents = makeAnimated();
 
 const RegisterAppointment = ({
   amount,
@@ -555,6 +558,7 @@ const RegisterAppointment = ({
                         onChange={(selectedOptions) =>
                           handleServicesChange(selectedOptions)
                         }
+                        components={animatedComponents}
                         placeholder="Select services"
                         isClearable
                       />

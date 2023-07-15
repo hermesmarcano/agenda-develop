@@ -1,25 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
-import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
-import {
-  FaArrowDown,
-  FaCheck,
-  FaCreditCard,
-  FaPlus,
-  FaRedo,
-  FaSpinner,
-} from "react-icons/fa";
+import { FaCreditCard, FaPlus, FaRedo, FaSpinner } from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
-import { FiArrowDown, FiCheckCircle, FiSearch } from "react-icons/fi";
 import { HiArrowDown, HiCheck, HiSearch, HiX } from "react-icons/hi";
 import { BiChevronDown } from "react-icons/bi";
+import makeAnimated from "react-select/animated";
+
+const animatedComponents = makeAnimated();
 
 const UpdateAppointment = ({
   amount,
@@ -92,7 +86,7 @@ const UpdateAppointment = ({
           }
         );
         setProducts(response.data.products);
-        console.log("products", response.data.product);
+        console.log("products", response.data.products);
       } catch (error) {
         console.error(error);
       }
@@ -173,8 +167,7 @@ const UpdateAppointment = ({
     timeOptions.push({ value: timeInMinutes, label: timeLabel });
   }
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    values.dateTime = dateTime;
+  const calculateTotalPriceAndDuration = (values, services, products) => {
     let totalPrice = 0;
     let totalDuration = 0;
 
@@ -194,6 +187,18 @@ const UpdateAppointment = ({
         }
       });
     });
+
+    return { totalPrice, totalDuration };
+  };
+
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    values.dateTime = dateTime;
+
+    let { totalPrice, totalDuration } = calculateTotalPriceAndDuration(
+      values,
+      services,
+      products
+    );
 
     if (allowManualDuration) {
       const [hours, minutes] = values.appointmentDuration.split(":");
@@ -285,25 +290,11 @@ const UpdateAppointment = ({
 
   const handleCheckout = (values) => {
     values.dateTime = dateTime;
-    let totalPrice = 0;
-    let totalDuration = 0;
-
-    services.forEach((serv) => {
-      values.service.forEach((s) => {
-        if (s === serv._id) {
-          totalDuration += serv.duration;
-          totalPrice += serv.price;
-        }
-      });
-    });
-
-    products.forEach((prod) => {
-      values.product.forEach((p) => {
-        if (p === prod._id) {
-          totalPrice += p.price;
-        }
-      });
-    });
+    let { totalPrice, totalDuration } = calculateTotalPriceAndDuration(
+      values,
+      services,
+      products
+    );
 
     if (allowManualDuration) {
       const [hours, minutes] = values.appointmentDuration.split(":");
@@ -496,6 +487,17 @@ const UpdateAppointment = ({
               });
             }
 
+            function handleProductsChange(selectedOptions) {
+              handleChange({
+                target: {
+                  name: "product",
+                  value: selectedOptions
+                    ? selectedOptions.map((option) => option.value)
+                    : [],
+                },
+              });
+            }
+
             return (
               <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto">
                 <div className="grid grid-cols-2 gap-5">
@@ -586,7 +588,39 @@ const UpdateAppointment = ({
                         label="Service"
                         component={CustomSelectList}
                         options={services}
+                        selectedOptions={values.service}
+                        setSelectedOptions={(selectedOptions) =>
+                          setFieldValue("service", selectedOptions)
+                        }
                       />
+                      {/* <label
+                        htmlFor="service"
+                        className="block text-sm font-semibold text-gray-700 mb-2"
+                      >
+                        Services
+                      </label>
+                      <Select
+                        id="service"
+                        name="service"
+                        className="input-field"
+                        options={services.map((service) => ({
+                          value: service._id,
+                          label: service.name,
+                        }))}
+                        isMulti
+                        value={values.service.map((serviceId) => ({
+                          value: serviceId,
+                          label: services.find(
+                            (service) => service._id === serviceId
+                          )?.name,
+                        }))}
+                        onChange={(selectedOptions) =>
+                          handleServicesChange(selectedOptions)
+                        }
+                        components={animatedComponents}
+                        placeholder="Select services"
+                        isClearable
+                      /> */}
                     </div>
 
                     <div className="mb-4">
@@ -595,7 +629,39 @@ const UpdateAppointment = ({
                         label="Product"
                         component={CustomSelectList}
                         options={products}
+                        selectedOptions={values.product}
+                        setSelectedOptions={(selectedOptions) =>
+                          setFieldValue("product", selectedOptions)
+                        }
                       />
+                      {/* <label
+                        htmlFor="product"
+                        className="block text-sm font-semibold text-gray-700 mb-2"
+                      >
+                        Products
+                      </label> */}
+                      {/* <Select
+                        id="product"
+                        name="product"
+                        className="input-field"
+                        options={products.map((product) => ({
+                          value: product._id,
+                          label: product.name,
+                        }))}
+                        isMulti
+                        value={values.product.map((productId) => ({
+                          value: productId,
+                          label: products.find(
+                            (product) => product._id === productId
+                          )?.name,
+                        }))}
+                        onChange={(selectedOptions) =>
+                          handleProductsChange(selectedOptions)
+                        }
+                        components={animatedComponents}
+                        placeholder="Select products"
+                        isClearable
+                      />*/}
                     </div>
                   </div>
 
@@ -865,6 +931,8 @@ const CustomSelectList = ({ options, label, field, form }) => {
   const [selectedOptions, setSelectedOptions] = useState(field.value || []);
 
   const selectRef = useRef(null);
+  const spanRef = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -880,25 +948,43 @@ const CustomSelectList = ({ options, label, field, form }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (spanRef.current && inputRef.current) {
+      const spanHeight = spanRef.current.offsetHeight;
+      inputRef.current.style.height = `${spanHeight}px`;
+    }
+  }, [selectedOptions]);
+
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
 
   const toggleOption = (optionId) => {
     setSelectedOptions([...selectedOptions, optionId]);
-    console.log(selectedOptions);
+    const updatedValues = [...form.values[field.name], optionId];
+    form.setFieldValue(field.name, updatedValues);
+    form.setFieldTouched(field.name, true);
   };
 
   const removeOption = (optionId, index) => {
-    setSelectedOptions(selectedOptions.filter((_, i) => i !== index));
-    console.log(selectedOptions);
-  };
-
-  const handleBlur = () => {
-    setIsOpen(false);
-    form.setFieldValue(field.name, selectedOptions);
+    setSelectedOptions((prevOptions) =>
+      prevOptions.filter((_, i) => i !== index)
+    );
+    // setSelectedOptions(selectedOptions.filter((_, i) => i !== index));
+    // console.log(selectedOptions);
+    const updatedValues = selectedOptions.filter((_, i) => i !== index);
+    console.log(updatedValues);
+    form.setFieldValue(field.name, updatedValues);
     form.setFieldTouched(field.name, true);
   };
+
+  // const handleBlur = () => {
+  //   // setIsOpen(false);
+  //   console.log(form.values);
+  //   const updatedValues = [...form.values[field.name], ...selectedOptions];
+  //   form.setFieldValue(field.name, updatedValues);
+  //   form.setFieldTouched(field.name, true);
+  // };
 
   return (
     <>
@@ -917,7 +1003,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
           onClick={() => setIsOpen(!isOpen)}
         />
 
-        <div className="max-w-[280px] px-1 flex items-center">
+        <div className="max-w-[280px] px-1 flex flex-wrap items-center ">
           {selectedOptions.length > 0 && (
             <div className="flex flex-wrap">
               {selectedOptions.map((optionId, index) => {
@@ -928,9 +1014,10 @@ const CustomSelectList = ({ options, label, field, form }) => {
                 return (
                   <span
                     key={index}
+                    ref={index === selectedOptions?.length - 1 ? spanRef : null}
                     className="flex items-center bg-gray-100 text-gray-800 text-sm px-2 py-1 mx-1 my-1 rounded"
                   >
-                    <span className="mr-1">{selectedOption.name}</span>
+                    <span className="mr-1">{selectedOption?.name}</span>
                     <HiX
                       className="cursor-pointer"
                       onClick={() => removeOption(optionId, index)}
@@ -941,13 +1028,15 @@ const CustomSelectList = ({ options, label, field, form }) => {
             </div>
           )}
           <input
+            ref={inputRef}
             type="text"
             className="flex-grow p-1 m-1 focus:outline-none"
             style={{ minWidth: "0" }}
-            placeholder={selectedOptions.length === 0 ? `Select ${label}` : ""}
+            placeholder={selectedOptions?.length === 0 ? `Select ${label}` : ""}
             value={searchQuery}
             onChange={handleSearch}
             onFocus={() => setIsOpen(!isOpen)}
+            // onBlur={handleBlur}
           />
         </div>
 
