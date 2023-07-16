@@ -45,6 +45,7 @@ const CashFlowSection = () => {
         let earningsByDay = {};
         let earningsByService = {};
         let earningsByProduct = {};
+        let earningsByProfessional = {};
         let totalEarn = 0;
         let totalSoldProducts = 0;
         let totalEarnLast30Days = 0;
@@ -86,6 +87,16 @@ const CashFlowSection = () => {
               earningsByProduct[productName] = payment.product.price;
             }
             totalSoldProducts++;
+          }
+
+          // Earnings by professional
+          if (payment.professional) {
+            const professionalName = payment.professional.name;
+            if (earningsByProfessional[professionalName]) {
+              earningsByProfessional[professionalName] += payment.amount;
+            } else {
+              earningsByProfessional[professionalName] = payment.amount;
+            }
           }
 
           const timeDiff = Math.abs(new Date().getTime() - date.getTime());
@@ -135,6 +146,13 @@ const CashFlowSection = () => {
           })
         );
 
+        const dataByProfessional = Object.entries(earningsByProfessional).map(
+          ([professional, earnings]) => ({
+            professional,
+            earnings,
+          })
+        );
+
         // Calculate total earnings for the last 30 days
         currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day
         console.log(lastSevenDays);
@@ -142,6 +160,7 @@ const CashFlowSection = () => {
         setDataByDay(lastSevenDays);
         setDataByService(dataByService);
         setDataByProduct(dataByProduct);
+        setDataByProfessional(dataByProfessional);
         setTotalEarnings(totalEarn);
         setTotalEarningsLast30Days(totalEarnLast30Days);
         setTotalSoldProducts(totalSoldProducts);
