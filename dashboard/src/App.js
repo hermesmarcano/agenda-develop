@@ -16,6 +16,7 @@ import AppointmentsList from "./pages/AppointmentsList";
 import Products from "./pages/Products";
 import Services from "./pages/Services";
 import Finance from "./pages/Finance";
+import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import PrivateRoutes from "./utils/PrivateRoutes";
@@ -104,7 +105,7 @@ function App() {
                       />
                       <Route path="/products" element={<Products />} />
                       <Route path="/services" element={<Services />} />
-                      <Route path="/finance" element={<Finance />} />
+                      <Route path="/analytics" element={<Analytics />} />
                       <Route path="/settings" element={<Settings />} />
                       <Route
                         path="/checkout-appointments"

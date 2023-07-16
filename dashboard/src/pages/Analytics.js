@@ -1,0 +1,496 @@
+import React, { useContext, useEffect, useState } from "react";
+import SidebarContext from "../context/SidebarContext";
+
+import { MdShoppingCart, MdAttachMoney } from "react-icons/md";
+import { TiTicket } from "react-icons/ti";
+import { AiOutlineDollarCircle } from "react-icons/ai";
+import { MdMonetizationOn } from "react-icons/md";
+import { IoMdCash } from "react-icons/io";
+import { BsCreditCard } from "react-icons/bs";
+import axios from "axios";
+import AppointmentsList from "../components/AppointmentsList";
+import CashFlowSection from "../components/CashFlowSection";
+import { Link } from "react-router-dom";
+
+const Analytics = () => {
+  const { shopId } = useContext(SidebarContext);
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalEarningsLast30Days, setTotalEarningsLast30Days] = useState(0);
+  const [totalSoldProducts, setTotalSoldProducts] = useState(0);
+  const [transactionsPerPage, setTransactionsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [transactions, setTransactions] = useState([]);
+  const [dataByDay, setDataByDay] = useState([]);
+  const [dataByService, setDataByService] = useState([]);
+  const [dataByProduct, setDataByProduct] = useState([]);
+  const [currentSection, setCurrentSection] = useState(1);
+  const token = localStorage.getItem("ag_app_shop_token");
+
+  useEffect(() => {
+    fetch(`http://localhost:4040/payments?shopId=${shopId}`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setTransactions([...data.payments].reverse());
+        console.log(data);
+
+        let earningsByDay = {};
+        let earningsByService = {};
+        let earningsByProduct = {};
+        let totalEarn = 0;
+        let totalSoldProducts = 0;
+        let totalEarnLast30Days = 0;
+
+        data.payments.forEach((payment) => {
+          // Earnings by day
+          const date = new Date(payment.dateTime);
+
+          // Get the date without the time component
+          const day = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+          );
+
+          if (earningsByDay[day]) {
+            earningsByDay[day] += payment.amount;
+          } else {
+            earningsByDay[day] = payment.amount;
+          }
+
+          // Earnings by service
+          if (payment.service.length > 0) {
+            payment.service.forEach((service) => {
+              if (earningsByService[service.name]) {
+                earningsByService[service.name] += service.price;
+              } else {
+                earningsByService[service.name] = service.price;
+              }
+            });
+          }
+
+          // Earnings by product
+          if (payment.product.length > 0) {
+            const productName = payment.product.name;
+            if (earningsByProduct[productName]) {
+              earningsByProduct[productName] += payment.product.price;
+            } else {
+              earningsByProduct[productName] = payment.product.price;
+            }
+            totalSoldProducts++;
+          }
+
+          const timeDiff = Math.abs(new Date().getTime() - date.getTime());
+
+          // Convert the time difference to days
+          const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+          if (daysDiff <= 30) {
+            totalEarnLast30Days += payment.amount;
+          }
+          totalEarn += payment.amount;
+        });
+
+        // Filter earnings by day to include only the last 7 days and calculate total earnings per day
+        const currentDate = new Date();
+        const lastSevenDays = [];
+        for (let i = 6; i >= 0; i--) {
+          const day = new Date(currentDate);
+          day.setDate(currentDate.getDate() - i);
+          const dayWithoutTime = new Date(
+            day.getFullYear(),
+            day.getMonth(),
+            day.getDate()
+          );
+          const earnings = earningsByDay[dayWithoutTime] || 0;
+          lastSevenDays.push({
+            date: new Intl.DateTimeFormat("en", { weekday: "short" }).format(
+              day
+            ),
+            earnings,
+          });
+        }
+
+        // Convert earnings by service to an array of objects
+        const dataByService = Object.entries(earningsByService).map(
+          ([service, earnings]) => ({
+            service,
+            earnings,
+          })
+        );
+
+        // Convert earnings by product to an array of objects
+        const dataByProduct = Object.entries(earningsByProduct).map(
+          ([product, earnings]) => ({
+            product,
+            earnings,
+          })
+        );
+
+        // Calculate total earnings for the last 30 days
+        currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day
+        console.log(lastSevenDays);
+
+        setDataByDay(lastSevenDays);
+        setDataByService(dataByService);
+        setDataByProduct(dataByProduct);
+        setTotalEarnings(totalEarn);
+        setTotalEarningsLast30Days(totalEarnLast30Days);
+        setTotalSoldProducts(totalSoldProducts);
+      });
+  }, []);
+
+  const totalPages = Math.ceil(transactions.length / transactionsPerPage);
+  const lastTransactionIndex = currentPage * transactionsPerPage;
+  const firstTransactionIndex = lastTransactionIndex - transactionsPerPage;
+  const currentTransactions = transactions.slice(
+    firstTransactionIndex,
+    lastTransactionIndex
+  );
+
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:4040/products/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        console.log(response.data.products);
+        setProducts(response.data.products);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  return (
+    <div className="flex w-full flex-col h-full p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl text-gray-800 font-bold mb-5">Analytics</h1>
+      </div>
+      <div className="flex w-full flex-col gap-2 lg:flex-row h-full overflow-y-auto p-6">
+        <div className="flex justify-between lg:block mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-1 mx-auto">
+            <button
+              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
+                currentSection === 1
+                  ? "bg-gray-300"
+                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
+              } focus:outline-none focus:text-blue-500 hover:text-blue-500 px-2`}
+              onClick={() => setCurrentSection(1)}
+            >
+              <span className="flex items-center">
+                <span className="mr-2">
+                  <TiTicket className="w-5 h-5" />
+                </span>
+                <span>Tickets</span>
+              </span>
+            </button>
+            <button
+              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
+                currentSection === 2
+                  ? "bg-gray-300"
+                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
+              } focus:outline-none focus:text-green-500 hover:text-green-500 px-2`}
+              onClick={() => setCurrentSection(2)}
+            >
+              <span className="flex items-center">
+                <span className="mr-2">
+                  <IoMdCash className="w-5 h-5" />
+                </span>
+                <span>Cash Flow</span>
+              </span>
+            </button>
+            <button
+              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
+                currentSection === 3
+                  ? "bg-gray-300"
+                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
+              } focus:outline-none focus:text-yellow-500 hover:text-yellow-500 px-2`}
+              onClick={() => setCurrentSection(3)}
+            >
+              <span className="flex items-center">
+                <span className="mr-2">
+                  <BsCreditCard className="w-5 h-5" />
+                </span>
+                <span>Commissions</span>
+              </span>
+            </button>
+            <button
+              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
+                currentSection === 4
+                  ? "bg-gray-300"
+                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
+              } focus:outline-none focus:text-red-500 hover:text-red-500 px-2`}
+              onClick={() => setCurrentSection(4)}
+            >
+              <span className="flex items-center">
+                <span className="mr-2">
+                  <AiOutlineDollarCircle className="w-5 h-5" />
+                </span>
+                <span>Bills</span>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Render the appropriate section based on the currentSection state */}
+        {currentSection === 1 && (
+          // Section 1: Tickets
+          <div className="w-10/12 mx-auto">
+            <TicketsSection />
+          </div>
+        )}
+        {currentSection === 2 && (
+          // Section 2: Cash Flow
+          <div className="w-10/12 mx-auto">
+            <CashFlowSection
+              totalEarningsLast30Days={totalEarningsLast30Days}
+              totalEarnings={totalEarnings}
+              totalSoldProducts={totalSoldProducts}
+              dataByDay={dataByDay}
+              dataByService={dataByService}
+            />
+          </div>
+        )}
+        {currentSection === 3 && (
+          // Section 3: Commissions
+          <div className="w-10/12 mx-auto">
+            <CommissionsSection />
+          </div>
+        )}
+        {currentSection === 4 && (
+          // Section 4: Bills to Pay/Receive
+          <div className="w-10/12 mx-auto">
+            <BillsSection />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Separate components for each section can be defined here
+
+// Tickets Section component
+const TicketsSection = () => {
+  // Implement the logic and UI for managing tickets
+  return <AppointmentsList />;
+};
+
+// Commissions Section component
+const CommissionsSection = () => {
+  const [professionals, setProfessionals] = useState([]);
+  const [totalSoldProducts, setTotalSoldProducts] = useState(0);
+  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalCommission, setTotalCommission] = useState(0);
+  const { shopId } = useContext(SidebarContext);
+  const token = localStorage.getItem("ag_app_shop_token");
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:4040/professionals/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => setProfessionals([...response.data.data].reverse()))
+      .catch((error) => console.error(error.message));
+  }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:4040/payments?shopId=${shopId}`, {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let totalSoldProducts = 0;
+        let earningsByProduct = {};
+        let earningsByService = {};
+        let totalEarn = 0;
+
+        data.payments.forEach((payment) => {
+          // Earnings by service
+          if (payment.service.length > 0) {
+            payment.service.forEach((service) => {
+              if (earningsByService[service.name]) {
+                earningsByService[service.name] += service.price;
+              } else {
+                earningsByService[service.name] = service.price;
+              }
+            });
+          }
+
+          // Earnings by product
+          if (payment.product.length > 0) {
+            const productName = payment.product.name;
+            if (earningsByProduct[productName]) {
+              earningsByProduct[productName] += payment.product.price;
+            } else {
+              earningsByProduct[productName] = payment.product.price;
+            }
+            totalSoldProducts++;
+          }
+          totalEarn += payment.amount;
+        });
+        setTotalSoldProducts(totalSoldProducts);
+        setTotalEarnings(totalEarn);
+      });
+  }, []);
+
+  useEffect(() => {
+    const calculateTotalCommission = () => {
+      let total = 0;
+      professionals.forEach((professional) => {
+        const serviceCommission = totalEarnings * 0.5; // 50% commission on services
+        const productCommission = totalSoldProducts * 0.1; // 10% commission on products
+        total += serviceCommission + productCommission;
+      });
+      setTotalCommission(total);
+    };
+
+    calculateTotalCommission();
+  }, [professionals]);
+
+  return (
+    <div className="bg-white shadow-md rounded-md p-6">
+      <h2 className="text-lg font-bold mb-4">Commissions</h2>
+      <div className="flex flex-wrap items-center justify-between bg-gray-100 rounded-lg p-4">
+        <div className="flex items-center">
+          <MdMonetizationOn size={24} className="mr-2 text-blue-500" />
+          <div className="flex flex-wrap">
+            <div className="text-xl font-bold text-blue-500">
+              ${totalCommission.toFixed(2)}
+            </div>
+            <div className="text-sm font-semibold text-gray-500">
+              Total Commissions
+            </div>
+          </div>
+        </div>
+        <div className="text-sm font-semibold text-gray-500">
+          All professionals
+        </div>
+      </div>
+      <div className="mt-8">
+        {professionals.length === 0 ? (
+          <p className="text-gray-500">No professionals available.</p>
+        ) : (
+          <ul className="space-y-4">
+            {professionals.map((professional) => (
+              <li
+                key={professional.id}
+                className="flex flex-wrap items-center justify-between bg-gray-100 rounded-lg p-4"
+              >
+                <div className="flex flex-wrap items-center">
+                  <div className="mr-2 font-bold">{professional.name}</div>
+                  <div className="text-sm font-medium text-gray-500">
+                    (${(totalEarnings * 0.5).toFixed(2)}) commissions on
+                    services
+                  </div>
+                  <div className="text-sm font-medium text-gray-500">
+                    (${(totalSoldProducts * 0.1).toFixed(2)}) commissions on
+                    products
+                  </div>
+                </div>
+                <div className="text-sm font-semibold text-gray-500">
+                  Total: $
+                  {(totalEarnings * 0.5 + totalSoldProducts * 0.1).toFixed(2)}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Bills to Pay/Receive Section component
+const BillsSection = () => {
+  const dummyPendingCheckouts = [
+    {
+      id: 1,
+      customer: "John Doe",
+      total: 50.99,
+    },
+    {
+      id: 2,
+      customer: "Jane Smith",
+      total: 75.5,
+    },
+    {
+      id: 3,
+      customer: "Bob Johnson",
+      total: 30.0,
+    },
+  ];
+  const [pendingCheckouts, setPendingCheckouts] = useState(
+    dummyPendingCheckouts
+  );
+
+  useEffect(() => {
+    // Fetch pending checkouts data from the API
+    const fetchPendingCheckouts = async () => {
+      try {
+        // Replace the URL with the appropriate API endpoint for fetching pending checkouts
+        const response = await fetch("http://localhost:4040/pending-checkouts");
+        const data = await response.json();
+        setPendingCheckouts(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchPendingCheckouts();
+  }, []);
+
+  return (
+    <div className="bg-white shadow-md rounded-md p-6">
+      <h2 className="text-lg font-bold mb-4">Pending Checkouts</h2>
+      <div className="grid grid-cols-1 gap-2">
+        {pendingCheckouts.length === 0 ? (
+          <p className="text-gray-500">No pending checkouts.</p>
+        ) : (
+          pendingCheckouts.map((checkout) => (
+            <div
+              key={checkout.id}
+              className="bg-gray-100 rounded-lg p-4 flex items-center justify-between"
+            >
+              <div className="flex items-center">
+                <MdShoppingCart size={24} className="mr-2 text-blue-500" />
+                <div>
+                  <div className="font-bold">{checkout.customer}</div>
+                  <div className="text-sm text-gray-500">
+                    Total: ${checkout.total.toFixed(2)}
+                  </div>
+                </div>
+              </div>
+              <Link
+                to={`/checkout/${checkout.id}`}
+                className="flex items-center text-blue-500"
+              >
+                <MdAttachMoney size={24} className="mr-2" />
+                Checkout
+              </Link>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Analytics;
