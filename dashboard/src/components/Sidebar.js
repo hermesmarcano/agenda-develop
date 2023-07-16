@@ -35,12 +35,12 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       icon2: <GiPayMoney className="text-gray-400 h-6 w-6" />,
       link: "/checkout-appointments",
     },
-    {
-      name: "Appointments List",
-      icon1: <FaList className="text-gray-400 h-7 w-7" />,
-      icon2: <FaList className="text-gray-400 h-6 w-6" />,
-      link: "/appointments",
-    },
+    // {
+    //   name: "Appointments List",
+    //   icon1: <FaList className="text-gray-400 h-7 w-7" />,
+    //   icon2: <FaList className="text-gray-400 h-6 w-6" />,
+    //   link: "/appointments",
+    // },
     {
       name: "Clients",
       icon1: <FaUsers className="text-gray-400 h-7 w-7" />,
