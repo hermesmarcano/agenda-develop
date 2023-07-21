@@ -19,6 +19,7 @@ import {
   FaMoneyCheckAlt,
   FaPowerOff,
   FaSearch,
+  FaShoppingCart,
   FaSpinner,
   FaStop,
   FaStopCircle,
@@ -293,6 +294,7 @@ const AppointmentsList = () => {
               <th className="py-3 pr-6 text-left">Time</th>
               <th className="py-3 pr-6 text-left">Date</th>
               <th className="py-3 pr-6 text-left">Payment status</th>
+              <th className="py-3 pr-6 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -325,37 +327,21 @@ const AppointmentsList = () => {
                     new Date(appointment.dateTime)
                   )}
                 </td>
-                <th
+                <td
                   className={`py-2 pr-6 text-left ${getStatusStyle(
                     appointment.status
                   )}`}
                 >
                   {renderStatusIcon(appointment.status)} {appointment.status}
-                </th>
-                {/* <td className="py-2 pr-6 text-right">
-                  <button
-                    className={`flex items-center ml-auto rounded-md px-4 py-2 text-white font-bold  ${
-                      appointment.status !== "pending"
-                        ? "opacity-50 cursor-not-allowed"
-                        : "bg-green-500 hover:bg-green-700"
-                    }`}
-                    onClick={() =>
-                      handlePayment(
-                        appointment["_id"],
-                        appointment.status === "pending"
-                          ? "confirmed"
-                          : "pending"
-                      )
-                    }
-                    disabled={appointment.status !== "pending"}
-                  >
-                    {appointment.status !== "pending" ? (
-                      <FiCheckCircle className="text-green-600 text-lg" />
-                    ) : (
-                      <span>Confirm</span>
-                    )}
-                  </button>
-                </td> */}
+                </td>
+                <td className="py-2 text-right">
+                  {(appointment.status === "pending" ||
+                    appointment.status === "updating") && (
+                    <button className="flex items-end px-2 py-1 bg-blue-500 text-white rounded">
+                      <FaShoppingCart className="mr-1" /> Checkout
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

@@ -7,6 +7,13 @@ const workingHoursSchema = new mongoose.Schema({
   endHour: Number,
 });
 
+const expensesSchema = new mongoose.Schema({
+  name: String,
+  description: String,
+  value: Number,
+  date: Date,
+});
+
 const ManagerSchema = new Schema(
   {
     name: {
@@ -43,6 +50,7 @@ const ManagerSchema = new Schema(
       },
     },
     workingHours: [workingHoursSchema],
+    expenses: [expensesSchema],
     resetToken: {
       type: String,
       default: null,
