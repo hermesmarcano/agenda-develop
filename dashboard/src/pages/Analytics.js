@@ -181,66 +181,103 @@ const Analytics = () => {
       <div className="flex w-full flex-col gap-2 lg:flex-row h-full overflow-y-auto p-6">
         <div className="flex justify-between lg:block mb-4">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-1 mx-auto">
-            <button
-              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
-                currentSection === 1
-                  ? "bg-gray-300"
-                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
-              } focus:outline-none focus:text-blue-500 hover:text-blue-500 px-2`}
-              onClick={() => setCurrentSection(1)}
-            >
-              <span className="flex items-center">
-                <span className="mr-2">
-                  <TiTicket className="w-5 h-5" />
+            <div>
+              <button
+                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                  currentSection === 1
+                    ? "bg-gray-300 text-blue-500 animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center"
+                    : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300 lg:w-auto"
+                } focus:outline-none focus:text-blue-500 hover:text-blue-500 hover:rounded-md px-2
+                `}
+                onClick={() => setCurrentSection(1)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-2">
+                    <TiTicket className="w-5 h-5" />
+                  </span>
+                  <span
+                    className={`lg:hidden ${
+                      currentSection === 1 ? "animate-drop" : "opacity-100"
+                    }`}
+                  >
+                    Tickets
+                  </span>
                 </span>
-                <span>Tickets</span>
-              </span>
-            </button>
-            <button
-              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
-                currentSection === 2
-                  ? "bg-gray-300"
-                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
-              } focus:outline-none focus:text-green-500 hover:text-green-500 px-2`}
-              onClick={() => setCurrentSection(2)}
-            >
-              <span className="flex items-center">
-                <span className="mr-2">
-                  <IoMdCash className="w-5 h-5" />
+              </button>
+              {currentSection === 1 && (
+                <span className="hidden lg:flex justify-center shadow-inner bg-gray-300 lg:rounded-b-md text-sm text-gray-500">
+                  Tickets
                 </span>
-                <span>Cash Flow</span>
-              </span>
-            </button>
-            <button
-              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
-                currentSection === 3
-                  ? "bg-gray-300"
-                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
-              } focus:outline-none focus:text-yellow-500 hover:text-yellow-500 px-2`}
-              onClick={() => setCurrentSection(3)}
-            >
-              <span className="flex items-center">
-                <span className="mr-2">
-                  <BsCreditCard className="w-5 h-5" />
+              )}
+            </div>
+
+            <div>
+              <button
+                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                  currentSection === 2
+                    ? "bg-gray-300 text-green-500 animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center" /* Background and text color for selected item */
+                    : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300 lg:w-auto"
+                } focus:outline-none focus:text-green-500 hover:text-green-500 hover:rounded-md px-2`}
+                onClick={() => setCurrentSection(2)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-2">
+                    <IoMdCash className="w-5 h-5" />
+                  </span>
+                  <span className="lg:hidden">Cash Flow</span>
                 </span>
-                <span>Commissions</span>
-              </span>
-            </button>
-            <button
-              className={`flex justify-center lg:justify-start items-center py-2 rounded-md ${
-                currentSection === 4
-                  ? "bg-gray-300"
-                  : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300"
-              } focus:outline-none focus:text-red-500 hover:text-red-500 px-2`}
-              onClick={() => setCurrentSection(4)}
-            >
-              <span className="flex items-center">
-                <span className="mr-2">
-                  <AiOutlineDollarCircle className="w-5 h-5" />
+              </button>
+              {currentSection === 2 && (
+                <span className="hidden lg:flex justify-center shadow-inner bg-gray-300 lg:rounded-b-md text-sm text-gray-500">
+                  Cash Flow
                 </span>
-                <span>Bills</span>
-              </span>
-            </button>
+              )}
+            </div>
+            <div>
+              <button
+                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                  currentSection === 3
+                    ? "bg-gray-300 text-yellow-500  animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center" /* Background and text color for selected item */
+                    : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300 lg:w-auto"
+                } focus:outline-none focus:text-yellow-500 hover:text-yellow-500 hover:rounded-md px-2`}
+                onClick={() => setCurrentSection(3)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-2">
+                    <BsCreditCard className="w-5 h-5" />
+                  </span>
+                  <span className="lg:hidden">Commissions</span>
+                </span>
+              </button>
+              {currentSection === 3 && (
+                <span className="hidden lg:flex justify-center shadow-inner bg-gray-300 lg:rounded-b-md text-sm text-gray-500">
+                  Commissions
+                </span>
+              )}
+            </div>
+
+            <div>
+              <button
+                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                  currentSection === 4
+                    ? "bg-gray-300 text-red-500  animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center" /* Background and text color for selected item */
+                    : "text-gray-700 hover:bg-gray-300 focus:bg-gray-300 lg:w-auto"
+                } focus:outline-none focus:text-red-500 hover:text-red-500 hover:rounded-md px-2`}
+                onClick={() => setCurrentSection(4)}
+              >
+                <span className="flex items-center">
+                  <span className="mr-2">
+                    <AiOutlineDollarCircle className="w-5 h-5" />
+                  </span>
+                  <span className="lg:hidden">Bills</span>
+                </span>
+              </button>
+              {currentSection === 4 && (
+                <span className="hidden lg:flex justify-center shadow-inner bg-gray-300 lg:rounded-b-md text-sm text-gray-500">
+                  Bills
+                </span>
+              )}
+            </div>
           </div>
         </div>
 

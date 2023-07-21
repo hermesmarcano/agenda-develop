@@ -27,6 +27,14 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 import Popup from "../components/Popup";
+import UpdateAppointment from "./UpdateAppointment";
+import { AlertContext } from "../context/AlertContext";
+import {
+  RiCheckLine,
+  RiCloseLine,
+  RiDeleteBinLine,
+  RiEdit2Line,
+} from "react-icons/ri";
 
 const AppointmentsList = () => {
   const { shopId } = useContext(SidebarContext);
@@ -36,6 +44,9 @@ const AppointmentsList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [appointments, setAppointments] = useState([]);
   const [isDeleting, setDeleting] = useState(false);
+  const [updateModelState, setUpdateModelState] = React.useState(false);
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
     fetchAppointmentData();
@@ -204,6 +215,27 @@ const AppointmentsList = () => {
     }
   }
 
+  const renderActionIcon = (status) => {
+    switch (status) {
+      case "pending":
+        return <RiEdit2Line className="w-5 h-5 text-blue-500 cursor-pointer" />;
+      case "updating":
+        return (
+          <RiEdit2Line className="w-5 h-5 text-yellow-500 cursor-pointer" />
+        );
+      case "confirmed":
+        return (
+          <RiCheckLine className="w-5 h-5 text-green-500 cursor-pointer" />
+        );
+      case "cancelled":
+        return <RiCloseLine className="w-5 h-5 text-red-500 cursor-pointer" />;
+      default:
+        return (
+          <RiDeleteBinLine className="w-5 h-5 text-red-500 cursor-pointer" />
+        );
+    }
+  };
+
   return (
     <>
       <div className="flex items-center relative">
@@ -293,7 +325,7 @@ const AppointmentsList = () => {
               <th className="py-3 text-left">Services</th>
               <th className="py-3 pr-6 text-left">Time</th>
               <th className="py-3 pr-6 text-left">Date</th>
-              <th className="py-3 pr-6 text-left">Payment status</th>
+              <th className="py-3 px-6 text-left">Payment status</th>
               <th className="py-3 pr-6 text-right">Action</th>
             </tr>
           </thead>
@@ -328,24 +360,42 @@ const AppointmentsList = () => {
                   )}
                 </td>
                 <td
-                  className={`py-2 pr-6 text-left ${getStatusStyle(
+                  className={`py-2 px-6 text-left ${getStatusStyle(
                     appointment.status
                   )}`}
                 >
                   {renderStatusIcon(appointment.status)} {appointment.status}
                 </td>
-                <td className="py-2 text-right">
-                  {(appointment.status === "pending" ||
-                    appointment.status === "updating") && (
-                    <button className="flex items-end px-2 py-1 bg-blue-500 text-white rounded">
-                      <FaShoppingCart className="mr-1" /> Checkout
-                    </button>
+                <td className="py-2 pr-2 flex items-center justify-end">
+                  {new Date(appointment.dateTime) > new Date() && (
+                    <div className="flex items-center space-x-2">
+                      <button
+                        className="px-2 py-1 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring focus:ring-blue-300  flex items-center"
+                        onClick={() => setUpdateModelState(true)}
+                      >
+                        Update {renderActionIcon(appointment.status)}
+                      </button>
+                    </div>
                   )}
                 </td>
+                <Popup
+                  isOpen={updateModelState}
+                  onClose={() => setUpdateModelState(!updateModelState)}
+                  children={
+                    <UpdateAppointment
+                      setModelState={setUpdateModelState}
+                      appointmentId={appointment._id}
+                      setBooked={setAlertOn}
+                      setAlertMsg={setAlertMsg}
+                      setAlertMsgType={setAlertMsgType}
+                    />
+                  }
+                />
               </tr>
             ))}
           </tbody>
         </table>
+
         {appointments.length === 0 && (
           <div className="flex flex-col items-center justify-center w-full mt-4">
             <div className="text-center">

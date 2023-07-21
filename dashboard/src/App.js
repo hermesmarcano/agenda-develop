@@ -30,6 +30,7 @@ import ViewModeContext from "./context/ViewModeContext";
 import ProfessionalIdContext from "./context/ProfessionalIdContext";
 import Checkout from "./pages/Checkout";
 import PendingAppointments from "./pages/PendingAppointments";
+import { AlertContextWrapper } from "./context/AlertContext";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
@@ -55,90 +56,96 @@ function App() {
 
   return (
     <div className="h-screen overflow-hidden">
-      <ThemeContext.Provider
-        value={{
-          theme: theme,
-          setTheme: setTheme,
-        }}
-      >
-        <ViewModeContext.Provider
+      <AlertContextWrapper>
+        <ThemeContext.Provider
           value={{
-            viewMode: viewMode,
-            setViewMode: setViewMode,
+            theme: theme,
+            setTheme: setTheme,
           }}
         >
-          <ProfessionalIdContext.Provider
+          <ViewModeContext.Provider
             value={{
-              professionalId: professionalId,
-              setProfessionalId: setProfessionalId,
+              viewMode: viewMode,
+              setViewMode: setViewMode,
             }}
           >
-            <DateTimeContext.Provider
+            <ProfessionalIdContext.Provider
               value={{
-                dateTime: dateTime,
-                setDateTime: setDateTime,
+                professionalId: professionalId,
+                setProfessionalId: setProfessionalId,
               }}
             >
-              <SidebarContext.Provider
+              <DateTimeContext.Provider
                 value={{
-                  isSidebarOpen: isSidebarOpen,
-                  toggleSidebar: toggleSidebar,
-                  shopId: shopId,
-                  setShopId: setShopId,
-                  shopName: shopName,
-                  setShopName: setShopName,
+                  dateTime: dateTime,
+                  setDateTime: setDateTime,
                 }}
               >
-                <HashRouter>
-                  <Routes>
-                    <Route element={<PrivateRoutes />}>
-                      <Route path="/" exact element={<Agenda />} />
-                      <Route path="/agenda" exact element={<Agenda />} />
-                      <Route path="/clients" element={<Clients />} />
+                <SidebarContext.Provider
+                  value={{
+                    isSidebarOpen: isSidebarOpen,
+                    toggleSidebar: toggleSidebar,
+                    shopId: shopId,
+                    setShopId: setShopId,
+                    shopName: shopName,
+                    setShopName: setShopName,
+                  }}
+                >
+                  <HashRouter>
+                    <Routes>
+                      <Route element={<PrivateRoutes />}>
+                        <Route path="/" exact element={<Agenda />} />
+                        <Route path="/agenda" exact element={<Agenda />} />
+                        <Route path="/clients" element={<Clients />} />
+                        <Route
+                          path="/appointments"
+                          element={<AppointmentsList />}
+                        />
+                        <Route
+                          path="/professionals"
+                          element={<Professionals />}
+                        />
+                        <Route path="/products" element={<Products />} />
+                        <Route path="/services" element={<Services />} />
+                        <Route path="/analytics" element={<Analytics />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route
+                          path="/checkout-appointments"
+                          element={<PendingAppointments />}
+                        />
+                        <Route path="/checkout" exact element={<Checkout />} />
+                      </Route>
+                      <Route path="/register" exact element={<Register />} />
+                      <Route path="/login" exact element={<Login />} />
                       <Route
-                        path="/appointments"
-                        element={<AppointmentsList />}
+                        path="/forgot-password"
+                        exact
+                        element={<ForgotPassword />}
                       />
                       <Route
-                        path="/professionals"
-                        element={<Professionals />}
+                        path="/check-email"
+                        exact
+                        element={<CheckEmail />}
                       />
-                      <Route path="/products" element={<Products />} />
-                      <Route path="/services" element={<Services />} />
-                      <Route path="/analytics" element={<Analytics />} />
-                      <Route path="/settings" element={<Settings />} />
                       <Route
-                        path="/checkout-appointments"
-                        element={<PendingAppointments />}
+                        path="/reset-password"
+                        exact
+                        element={<PasswordReset />}
                       />
-                      <Route path="/checkout" exact element={<Checkout />} />
-                    </Route>
-                    <Route path="/register" exact element={<Register />} />
-                    <Route path="/login" exact element={<Login />} />
-                    <Route
-                      path="/forgot-password"
-                      exact
-                      element={<ForgotPassword />}
-                    />
-                    <Route path="/check-email" exact element={<CheckEmail />} />
-                    <Route
-                      path="/reset-password"
-                      exact
-                      element={<PasswordReset />}
-                    />
-                    <Route
-                      path="/reset-password/:token"
-                      exact
-                      element={<PasswordReset />}
-                    />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </HashRouter>
-              </SidebarContext.Provider>
-            </DateTimeContext.Provider>
-          </ProfessionalIdContext.Provider>
-        </ViewModeContext.Provider>
-      </ThemeContext.Provider>
+                      <Route
+                        path="/reset-password/:token"
+                        exact
+                        element={<PasswordReset />}
+                      />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </HashRouter>
+                </SidebarContext.Provider>
+              </DateTimeContext.Provider>
+            </ProfessionalIdContext.Provider>
+          </ViewModeContext.Provider>
+        </ThemeContext.Provider>
+      </AlertContextWrapper>
     </div>
   );
 }
