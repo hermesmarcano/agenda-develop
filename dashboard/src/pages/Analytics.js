@@ -10,8 +10,9 @@ import { BsCreditCard } from "react-icons/bs";
 import axios from "axios";
 import AppointmentsList from "../components/AppointmentsList";
 import CashFlowSection from "../components/CashFlowSection";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSpinner, FaSyncAlt } from "react-icons/fa";
+import Pagination from "../components/Pagination";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);
@@ -654,6 +655,45 @@ const BillsSection = () => {
   const [pendingCheckouts, setPendingCheckouts] = useState(
     dummyPendingCheckouts
   );
+  const { shopId } = useContext(SidebarContext);
+  const [pendingAppointments, setPendingAppointments] = useState([]);
+  const token = localStorage.getItem("ag_app_shop_token");
+  const [currentAppointments, setCurrentAppointments] = useState([]);
+  const navigate = useNavigate();
+  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const lastIndex = currentPage * itemsPerPage;
+  const firstIndex = lastIndex - itemsPerPage;
+
+  useEffect(() => {
+    fetchAppointmentData();
+  }, []);
+
+  const fetchAppointmentData = () =>
+    axios
+      .get(`http://localhost:4040/appointments?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        const registeredAppointments = response.data.appointments
+          .filter(
+            (appt) =>
+              !appt.blocking &&
+              (appt.status === "pending" || appt.status === "updating")
+          )
+          .reverse();
+        console.log(registeredAppointments);
+        setPendingAppointments(registeredAppointments);
+        setCurrentAppointments(
+          registeredAppointments.slice(firstIndex, lastIndex)
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
   useEffect(() => {
     // Fetch pending checkouts data from the API
@@ -671,39 +711,123 @@ const BillsSection = () => {
     fetchPendingCheckouts();
   }, []);
 
+  const handleCheckout = (selectedAppointment) => {
+    // Perform checkout logic here
+    console.log(selectedAppointment);
+    selectedAppointment.status === "pending"
+      ? localStorage.setItem(
+          "ag_app_booking_info",
+          JSON.stringify({
+            customer: selectedAppointment.customer._id,
+            professional: selectedAppointment.professional._id,
+            service: selectedAppointment.service.map((s) => s._id),
+            duration: selectedAppointment.service.reduce(
+              (totalDuration, s) => totalDuration + s.duration,
+              0
+            ),
+            dateTime: new Date(selectedAppointment.dateTime),
+            amount: selectedAppointment.service.reduce(
+              (totalPrice, s) => totalPrice + s.price,
+              0
+            ),
+            appointmentId: selectedAppointment._id,
+            managerId: shopId,
+            checkoutType: "registering",
+          })
+        )
+      : localStorage.setItem(
+          "ag_app_booking_info",
+          JSON.stringify({
+            customer: selectedAppointment.customer._id,
+            professional: selectedAppointment.professional._id,
+            service: selectedAppointment.service.map((s) => s._id),
+            product: selectedAppointment.product.map((p) => p._id),
+            duration: selectedAppointment.service.reduce(
+              (totalDuration, s) => totalDuration + s.duration,
+              0
+            ),
+            dateTime: new Date(selectedAppointment.dateTime),
+            amount:
+              selectedAppointment.service.reduce(
+                (totalPrice, s) => totalPrice + s.price,
+                0
+              ) +
+              selectedAppointment.product.reduce(
+                (totalPrice, p) => totalPrice + p.price,
+                0
+              ),
+            appointmentId: selectedAppointment._id,
+            managerId: shopId,
+            checkoutType: "updating",
+          })
+        );
+
+    navigate("/checkout");
+  };
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    setCurrentAppointments(pendingAppointments.slice(startIndex, endIndex));
+  };
+
   return (
-    <div className="bg-white shadow-md rounded-md p-6">
-      <h2 className="text-lg font-bold mb-4">Pending Checkouts</h2>
-      <div className="grid grid-cols-1 gap-2">
-        {pendingCheckouts.length === 0 ? (
-          <p className="text-gray-500">No pending checkouts.</p>
-        ) : (
-          pendingCheckouts.map((checkout) => (
-            <div
-              key={checkout.id}
-              className="bg-gray-100 rounded-lg p-4 flex items-center justify-between"
-            >
-              <div className="flex items-center">
-                <MdShoppingCart size={24} className="mr-2 text-blue-500" />
-                <div>
-                  <div className="font-bold">{checkout.customer}</div>
-                  <div className="text-sm text-gray-500">
-                    Total: ${checkout.total.toFixed(2)}
+    <>
+      <div className="bg-white shadow-md rounded-md p-6">
+        <h2 className="text-lg font-bold mb-4">Pending Checkouts</h2>
+        <div className="grid grid-cols-1 gap-2">
+          {currentAppointments.length === 0 ? (
+            <p className="text-gray-500">No pending checkouts.</p>
+          ) : (
+            currentAppointments.map((checkout) => (
+              <div
+                key={checkout._id}
+                className="bg-gray-100 rounded-lg p-4 flex items-center justify-between"
+              >
+                <div className="flex items-center">
+                  <MdShoppingCart size={24} className="mr-2 text-blue-500" />
+                  <div>
+                    <div className="font-bold">{checkout.customer.name}</div>
+                    <div className="text-sm text-gray-500">
+                      Total: $
+                      {checkout?.product?.length > 0
+                        ? (
+                            checkout.service.reduce(
+                              (totalPrice, s) => totalPrice + s.price,
+                              0
+                            ) +
+                            checkout.product.reduce(
+                              (totalPrice, p) => totalPrice + p.price,
+                              0
+                            )
+                          ).toFixed(2)
+                        : checkout.service
+                            .reduce((totalPrice, s) => totalPrice + s.price, 0)
+                            .toFixed(2)}
+                    </div>
                   </div>
                 </div>
+                <button
+                  onClick={() => handleCheckout(checkout)}
+                  className="flex items-center text-blue-500"
+                >
+                  <MdAttachMoney size={24} className="mr-2" />
+                  Checkout
+                </button>
               </div>
-              <Link
-                to={`/checkout/${checkout.id}`}
-                className="flex items-center text-blue-500"
-              >
-                <MdAttachMoney size={24} className="mr-2" />
-                Checkout
-              </Link>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
-    </div>
+      <Pagination
+        itemsPerPage={itemsPerPage}
+        totalItems={pendingAppointments.length}
+        onPageChange={handlePageChange}
+      />
+    </>
   );
 };
 
