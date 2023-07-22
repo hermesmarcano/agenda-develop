@@ -17,6 +17,8 @@ import Switch from "react-switch";
 import { Link, useNavigate } from "react-router-dom";
 import Alert from "./Alert";
 import makeAnimated from "react-select/animated";
+import { AlertContext } from "../context/AlertContext";
+import { NotificationContext } from "../context/NotificationContext";
 
 const animatedComponents = makeAnimated();
 
@@ -30,9 +32,6 @@ const RegisterAppointment = ({
   addCustomerClicked,
   setAddCustomerClicked,
   setModelState,
-  setBooked,
-  setAlertMsg,
-  setAlertMsgType,
 }) => {
   const navigate = useNavigate(this);
   const { shopId } = useContext(SidebarContext);
@@ -44,6 +43,9 @@ const RegisterAppointment = ({
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
   const [allowManualDuration, setAllowManualDuration] = useState(false);
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     axios
@@ -166,7 +168,17 @@ const RegisterAppointment = ({
             "Reservation has been scheduled, go to checkout to process payment"
           );
           setAlertMsgType("success");
-          setBooked(true);
+          setAlertOn(true);
+          sendNotification(
+            "New Reservation - " +
+              new Intl.DateTimeFormat("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }).format(new Date())
+          );
         })
         .catch((error) => {
           console.error(error.message);

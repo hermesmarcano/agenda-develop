@@ -8,6 +8,7 @@ import {
   FaSpinner,
   FaPercent,
   FaBullseye,
+  FaClock,
 } from "react-icons/fa";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { BiBasket } from "react-icons/bi";
@@ -257,6 +258,10 @@ const Checkout = () => {
   };
 
   const handleChoosePaymentMethod = (method) => {
+    if (method === "payLater") {
+      console.log("Paying Later...");
+      return;
+    }
     let updatedBookingInfo = {};
     if (products.length !== 0) {
       updatedBookingInfo = {
@@ -553,6 +558,18 @@ const Checkout = () => {
                   >
                     <FaCreditCard size={24} />
                     <span>Credit</span>
+                  </button>
+                  {/* New "Pay later" button */}
+                  <button
+                    className={`flex flex-col items-center justify-center bg-gray-200 text-gray-800 p-4 rounded hover:bg-gray-800 hover:text-white transition-all duration-300 ${
+                      paymentMethod === "payLater"
+                        ? "bg-gray-800 text-white"
+                        : ""
+                    }`}
+                    onClick={() => handleChoosePaymentMethod("payLater")}
+                  >
+                    <FaClock size={24} />
+                    <span>Pay later</span>
                   </button>
                 </div>
               </>

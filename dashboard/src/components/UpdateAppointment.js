@@ -18,6 +18,8 @@ import Alert from "./Alert";
 import { HiArrowDown, HiCheck, HiSearch, HiX } from "react-icons/hi";
 import { BiChevronDown } from "react-icons/bi";
 import makeAnimated from "react-select/animated";
+import { AlertContext } from "../context/AlertContext";
+import { NotificationContext } from "../context/NotificationContext";
 
 const animatedComponents = makeAnimated();
 
@@ -27,9 +29,6 @@ const UpdateAppointment = ({
   setBookingInfo,
   setAmount,
   setModelState,
-  setBooked,
-  setAlertMsg,
-  setAlertMsgType,
   appointmentId,
 }) => {
   const navigate = useNavigate(this);
@@ -46,6 +45,9 @@ const UpdateAppointment = ({
   const [addCustomerClicked, setAddCustomerClicked] = useState(false);
   const [allowManualDuration, setAllowManualDuration] = useState(true);
   const [appointmentData, setAppointmentData] = useState(null);
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -254,7 +256,17 @@ const UpdateAppointment = ({
             "Appointment has been rescheduled, go to checkout to process payment"
           );
           setAlertMsgType("success");
-          setBooked(true);
+          setAlertOn(true);
+          sendNotification(
+            "Reservation Updated - " +
+              new Intl.DateTimeFormat("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }).format(new Date())
+          );
         })
         .catch((error) => {
           console.error(error.message);

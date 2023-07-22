@@ -7,14 +7,7 @@ import RegisterAppointment from "./RegisterAppointment";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
 
-const ProcessAppointment = ({
-  isOpen,
-  onClose,
-  setModelState,
-  setBooked,
-  setAlertMsg,
-  setAlertMsgType,
-}) => {
+const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   const [activeTab, setActiveTab] = useState("appointment");
   const [bookingInfo, setBookingInfo] = useState({});
   const [amount, setAmount] = useState(0);
@@ -108,9 +101,6 @@ const ProcessAppointment = ({
                               addCustomerClicked={addCustomerClicked}
                               setAddCustomerClicked={setAddCustomerClicked}
                               setModelState={setModelState}
-                              setBooked={setBooked}
-                              setAlertMsg={setAlertMsg}
-                              setAlertMsgType={setAlertMsgType}
                             />
                           </>
                         ) : (

@@ -3,7 +3,7 @@ import React, { createContext, useState } from "react";
 const AlertContext = createContext();
 
 const AlertContextWrapper = ({ children }) => {
-  const [alertOn, setAlertOn] = useState(true);
+  const [alertOn, setAlertOn] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertMsgType, setAlertMsgType] = useState("");
 

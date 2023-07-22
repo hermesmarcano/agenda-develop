@@ -13,12 +13,16 @@ import { FiX, FiSun, FiMoon } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import ThemeContext from "../context/ThemeContext";
 import axios from "axios";
+import { NotificationContext } from "../context/NotificationContext";
 
 function Header() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [colorDiv, setColorDiv] = useState(false);
   const { theme, setTheme } = useContext(ThemeContext);
+  const { notifications, unreadCount, updateNotificationsSeen } =
+    useContext(NotificationContext);
+
   // console.log("theme: " + theme);
 
   const handleThemeChange = (color) => {
@@ -44,29 +48,12 @@ function Header() {
     navigate("/login");
   };
 
-  const [unreadCount, setUnreadCount] = useState(0);
-  // const notifications = Array.from({ length: 10 }, (_, index) => ({
-  //   id: index + 1,
-  //   message: `Notification ${index + 1}`,
-  //   read: index < 5 ? false : true,
-  // }));
-
-  const notifications = [];
-
-  // useEffect(() => {
-  //   const count = notifications.reduce((total, notification) => {
-  //     return notification.read === false ? total + 1 : total;
-  //   }, 0);
-
-  //   setUnreadCount(count);
-  // }, [notifications]);
-
   const [showMenu, setShowMenu] = useState(false);
 
   const handleMenuToggle = () => {
     setShowMenu(!showMenu);
     setIsMenuOpen(false);
-    setUnreadCount(0); // Mark all notifications as read when menu is opened
+    updateNotificationsSeen(); // Mark all notifications as read when menu is opened
   };
 
   return (
@@ -99,12 +86,12 @@ function Header() {
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-10">
                 <div className="max-h-64 overflow-y-auto">
                   {notifications.length > 0 ? (
-                    notifications.map((notification) => (
+                    notifications.map((notification, index) => (
                       <div
-                        key={notification.id}
-                        className="p-4 hover:bg-gray-100 cursor-pointer"
+                        key={index}
+                        className="p-4 hover:bg-gray-100 rounded-lg cursor-pointer"
                       >
-                        {notification.message}
+                        {notification.content}
                       </div>
                     ))
                   ) : (

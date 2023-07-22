@@ -14,6 +14,11 @@ const expensesSchema = new mongoose.Schema({
   date: Date,
 });
 
+const notificationSchema = new mongoose.Schema({
+  content: String,
+  isRead: Boolean,
+});
+
 const ManagerSchema = new Schema(
   {
     name: {
@@ -60,6 +65,7 @@ const ManagerSchema = new Schema(
       default: true,
       enum: [true],
     },
+    notifications: [notificationSchema],
   },
   { timestamps: true }
 );

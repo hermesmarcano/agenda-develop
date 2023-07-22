@@ -241,8 +241,8 @@ const Professionals = () => {
                 <td className="py-2 pl-4 text-start">
                   <input
                     type="checkbox"
-                    checked={selectedIds.includes(professional.id)}
-                    onChange={() => handleCheckboxChange(professional.id)}
+                    checked={selectedIds.includes(professional._id)}
+                    onChange={() => handleCheckboxChange(professional._id)}
                   />
                 </td>
                 <td className="py-2 px-3 text-center">{index + 1}</td>

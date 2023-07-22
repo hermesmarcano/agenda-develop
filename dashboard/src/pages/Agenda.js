@@ -37,9 +37,6 @@ const Agenda = () => {
   const [selectedProfessionals, setSelectedProfessionals] = useState([]);
   const { viewMode } = useContext(ViewModeContext);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
-  const [booked, setBooked] = useState(false);
-  const [alertMsg, setAlertMsg] = useState("");
-  const [alertMsgType, setAlertMsgType] = useState("");
 
   useEffect(() => {
     if (shopId !== "") {
@@ -161,9 +158,6 @@ const Agenda = () => {
 
   return (
     <>
-      {booked && (
-        <Alert type={alertMsgType} message={alertMsg} setBooked={setBooked} />
-      )}
       <div className="grid grid-cols-1 gap-1 md:flex md: mx-auto px-2 mt-2 pb-2">
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
           <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
@@ -309,9 +303,6 @@ const Agenda = () => {
                 workingHours={workingHours}
                 onSelectedDateChange={handleSelectedDateChange}
                 onSelectedWeekDateChange={handleSelectedWeekDateChange}
-                setBooked={setBooked}
-                setAlertMsg={setAlertMsg}
-                setAlertMsgType={setAlertMsgType}
               />
             )
           ) : (
@@ -322,9 +313,6 @@ const Agenda = () => {
               workingHours={workingHours}
               onSelectedDateChange={handleSelectedDateChange}
               onSelectedWeekDateChange={handleSelectedWeekDateChange}
-              setBooked={setBooked}
-              setAlertMsg={setAlertMsg}
-              setAlertMsgType={setAlertMsgType}
             />
           )}
         </div>

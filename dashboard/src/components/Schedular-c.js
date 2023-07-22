@@ -925,9 +925,6 @@ const SchedulerC = ({
           isOpen={modelState}
           onClose={() => setModelState(!modelState)}
           setModelState={setModelState}
-          setBooked={setAlertOn}
-          setAlertMsg={setAlertMsg}
-          setAlertMsgType={setAlertMsgType}
         />
 
         <Popup
@@ -947,9 +944,6 @@ const SchedulerC = ({
             <UpdateAppointment
               setModelState={setUpdateModelState}
               appointmentId={selectedAppointmentId}
-              setBooked={setAlertOn}
-              setAlertMsg={setAlertMsg}
-              setAlertMsgType={setAlertMsgType}
             />
           }
         />
