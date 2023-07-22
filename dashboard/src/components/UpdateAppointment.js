@@ -3,7 +3,13 @@ import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import SidebarContext from "../context/SidebarContext";
-import { FaCreditCard, FaPlus, FaRedo, FaSpinner } from "react-icons/fa";
+import {
+  FaCreditCard,
+  FaPlus,
+  FaRedo,
+  FaSpinner,
+  FaWhatsapp,
+} from "react-icons/fa";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
@@ -391,6 +397,17 @@ const UpdateAppointment = ({
       registerCustomerWithAppointment();
     } else {
       updateAppointment(values.customer);
+    }
+  };
+
+  const [clientPhoneNumber, setClientPhoneNumber] = useState("123-456-789");
+
+  const openWhatsApp = () => {
+    if (clientPhoneNumber) {
+      const whatsappUrl = `https://web.whatsapp.com/send?phone=${encodeURIComponent(
+        clientPhoneNumber
+      )}`;
+      window.open(whatsappUrl, "_blank");
     }
   };
 
@@ -810,7 +827,7 @@ const UpdateAppointment = ({
                     type="button"
                     // disabled={isSubmitting}
                     onClick={() => handleCheckout(values)}
-                    className="checkout-button w-fit ml-1 flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="checkout-button w-fit mx-1 flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
                     {isSubmitting ? (
                       <FaSpinner className="animate-spin mr-2" />
@@ -818,6 +835,15 @@ const UpdateAppointment = ({
                       <FaCreditCard className="mr-2" />
                     )}
                     Checkout
+                  </button>
+                  {/* WhatsApp Button */}
+                  <button
+                    type="button"
+                    className="whatsapp-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
+                    onClick={openWhatsApp}
+                  >
+                    <FaWhatsapp className="mr-1" />
+                    WA
                   </button>
                 </div>
               </Form>
