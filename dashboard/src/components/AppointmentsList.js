@@ -45,6 +45,7 @@ const AppointmentsList = () => {
   const [appointments, setAppointments] = useState([]);
   const [isDeleting, setDeleting] = useState(false);
   const [updateModelState, setUpdateModelState] = React.useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
     React.useContext(AlertContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -217,22 +218,16 @@ const AppointmentsList = () => {
 
   const renderActionIcon = (status) => {
     switch (status) {
-      case "pending":
-        return <RiEdit2Line className="w-5 h-5 text-blue-500 cursor-pointer" />;
       case "updating":
-        return (
-          <RiEdit2Line className="w-5 h-5 text-yellow-500 cursor-pointer" />
-        );
+        return <RiEdit2Line className="w-5 h-5 text-blue-500" />;
+      case "pending":
+        return <RiEdit2Line className="w-5 h-5 text-yellow-500" />;
       case "confirmed":
-        return (
-          <RiCheckLine className="w-5 h-5 text-green-500 cursor-pointer" />
-        );
+        return <RiCheckLine className="w-5 h-5 text-green-500" />;
       case "cancelled":
-        return <RiCloseLine className="w-5 h-5 text-red-500 cursor-pointer" />;
+        return <RiCloseLine className="w-5 h-5 text-red-500" />;
       default:
-        return (
-          <RiDeleteBinLine className="w-5 h-5 text-red-500 cursor-pointer" />
-        );
+        return <RiDeleteBinLine className="w-5 h-5 text-red-500" />;
     }
   };
 
@@ -366,18 +361,33 @@ const AppointmentsList = () => {
                 >
                   {renderStatusIcon(appointment.status)} {appointment.status}
                 </td>
-                <td className="py-2 pr-2 flex items-center justify-end">
-                  {new Date(appointment.dateTime) > new Date() && (
-                    <div className="flex items-center space-x-2">
-                      <button
-                        className="px-2 py-1 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring focus:ring-blue-300  flex items-center"
-                        onClick={() => setUpdateModelState(true)}
-                      >
-                        Update {renderActionIcon(appointment.status)}
-                      </button>
-                    </div>
-                  )}
-                </td>
+                {/* <td className="py-2 pr-2 flex items-center justify-end">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      className={`px-2 py-1 ${
+                        new Date(appointment.dateTime) > new Date()
+                          ? "text-gray-800 bg-gray-200 hover:bg-gray-300"
+                          : "text-gray-500 bg-gray-100 cursor-default"
+                      } rounded-md focus:outline-none focus:ring focus:ring-blue-300  flex items-center`}
+                      onClick={() => setUpdateModelState(true)}
+                      disabled={new Date(appointment.dateTime) <= new Date()}
+                      ariaLabel={
+                        new Date(appointment.dateTime) <= new Date()
+                          ? "Can't modify past appointments"
+                          : ""
+                      }
+                    >
+                      Update {renderActionIcon(appointment.status)}
+                    </button>
+                  </div>
+                </td> */}
+
+                <AppointmentButton
+                  key={appointment.id}
+                  appointment={appointment}
+                  setUpdateModelState={() => setUpdateModelState(true)}
+                  renderActionIcon={renderActionIcon}
+                />
                 <Popup
                   isOpen={updateModelState}
                   onClose={() => setUpdateModelState(!updateModelState)}
@@ -442,3 +452,57 @@ const AppointmentsList = () => {
 };
 
 export default AppointmentsList;
+
+const AppointmentButton = ({
+  appointment,
+  setUpdateModelState,
+  renderActionIcon,
+}) => {
+  const isDisabled = new Date(appointment.dateTime) <= new Date();
+  // const [showTooltip, setShowTooltip] = useState(false);
+  // let tooltipTimer;
+
+  // const handleMouseEnter = () => {
+  //   if (isDisabled) {
+  //     tooltipTimer = setTimeout(() => {
+  //       setShowTooltip(true);
+  //     }, 300); // Adjust the delay here as needed (in milliseconds)
+  //   }
+  // };
+
+  // const handleMouseLeave = () => {
+  //   if (tooltipTimer) {
+  //     clearTimeout(tooltipTimer);
+  //   }
+  //   setShowTooltip(false);
+  // };
+
+  return (
+    <td className="py-2 pr-2 flex items-center justify-end">
+      <div
+        className={`flex items-center space-x-2 ${
+          isDisabled ? "cursor-default" : "cursor-pointer"
+        } relative`}
+        // onMouseEnter={handleMouseEnter}
+        // onMouseLeave={handleMouseLeave}
+      >
+        <button
+          className={`px-2 py-1 ${
+            !isDisabled
+              ? "text-gray-800 bg-gray-200 hover:bg-gray-300"
+              : "text-gray-500 bg-gray-100"
+          } rounded-md focus:outline-none focus:ring focus:ring-blue-300 flex items-center`}
+          onClick={() => setUpdateModelState(true)}
+          disabled={isDisabled}
+        >
+          Update {renderActionIcon(appointment.status)}
+        </button>
+        {/* {showTooltip && isDisabled && (
+          <span className="tooltip absolute top-[-30px] left-0 bg-black text-white px-2 py-1 rounded-md">
+            Can't modify past appointments
+          </span>
+        )} */}
+      </div>
+    </td>
+  );
+};

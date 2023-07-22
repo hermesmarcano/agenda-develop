@@ -11,7 +11,7 @@ import axios from "axios";
 import AppointmentsList from "../components/AppointmentsList";
 import CashFlowSection from "../components/CashFlowSection";
 import { Link } from "react-router-dom";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaSyncAlt } from "react-icons/fa";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);
@@ -334,19 +334,11 @@ const CommissionsSection = () => {
   const [totalServicesEarnings, setTotalServicesEarnings] = useState(0);
   const [totalProductsEarnings, setTotalProductsEarnings] = useState(0);
   const [totalCommission, setTotalCommission] = useState(0);
-  const [commissionPercent, setCommissionPercent] = useState(10); // Default commission percent
-  const [commissionPercentServices, setCommissionPercentServices] =
-    useState(10); // Default commission percent for services
-  const [commissionPercentProducts, setCommissionPercentProducts] = useState(5); // Default commission percent for products
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [initialDataLoaded, setInitialDataLoaded] = useState(false);
 
   const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
-
-  // Watch for changes in relevant state values and calculate total commission
-  useEffect(() => {
-    calculateTotalCommission();
-  }, [professionals, totalEarnings, commissionPercent, dataLoaded]);
 
   useEffect(() => {
     axios
@@ -356,12 +348,7 @@ const CommissionsSection = () => {
         },
       })
       .then((response) => {
-        const updatedProfessionals = response.data.data.map((professional) => ({
-          ...professional,
-          commissionPercentServices: 10,
-          commissionPercentProducts: 5,
-        }));
-        setProfessionals(updatedProfessionals.reverse());
+        setProfessionals(response.data.data.reverse());
 
         // Set dataLoaded to true when professionals data is loaded
         setDataLoaded(true);
@@ -369,103 +356,128 @@ const CommissionsSection = () => {
       .catch((error) => console.error(error.message));
   }, []);
 
+  const setDefaultCommissions = () => {
+    const updatedProfessionals = professionals.map((professional) => {
+      if (!professional.commissionPercentServices) {
+        professional.commissionPercentServices = 10; // Set default commission for services (10%)
+      }
+      if (!professional.commissionPercentProducts) {
+        professional.commissionPercentProducts = 5; // Set default commission for products (5%)
+      }
+      return professional;
+    });
+    setProfessionals(updatedProfessionals);
+  };
+
   useEffect(() => {
-    axios
-      .get(`http://localhost:4040/payments?shopId=${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        let earningsByProfessional = {};
-        let totalSoldProducts = 0;
-        let totalEarn = 0;
+    if (dataLoaded && professionals.length !== 0) {
+      // Check if professionals data contains commissionPercentServices and commissionPercentProducts
+      const isCommissionDataAvailable = professionals.every(
+        (professional) =>
+          typeof professional.commissionPercentServices === "number" &&
+          typeof professional.commissionPercentProducts === "number"
+      );
 
-        if (professionals.length !== 0) {
-          response.data.payments.forEach((payment) => {
-            // Check if the payment is associated with any professional
-            const professionalId = payment.professional._id;
+      // If commission data is not available, set default commission values
+      if (!isCommissionDataAvailable) {
+        setDefaultCommissions();
+      }
 
-            const matchingProfessional = professionals.find(
-              (professional) => professional._id === professionalId
+      axios
+        .get(`http://localhost:4040/payments?shopId=${shopId}`, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          let earningsByProfessional = {};
+          let totalSoldProducts = 0;
+          let totalEarn = 0;
+
+          if (professionals.length !== 0) {
+            response.data.payments.forEach((payment) => {
+              // Check if the payment is associated with any professional
+              const professionalId = payment.professional._id;
+
+              const matchingProfessional = professionals.find(
+                (professional) => professional._id === professionalId
+              );
+
+              // Initialize earnings for the professional if not already present
+              if (!earningsByProfessional[professionalId]) {
+                earningsByProfessional[professionalId] = {
+                  ...matchingProfessional,
+                  servicesEarnings: 0,
+                  productsEarnings: 0,
+                };
+              }
+
+              // Earnings by service
+              if (payment.service?.length > 0) {
+                payment.service.forEach((service) => {
+                  earningsByProfessional[professionalId].servicesEarnings +=
+                    service.price;
+                });
+              }
+
+              // Earnings by product
+              if (payment.product?.length > 0) {
+                payment.product.forEach((product) => {
+                  earningsByProfessional[professionalId].productsEarnings +=
+                    product.price;
+                });
+              }
+              totalEarn += payment.amount;
+            });
+
+            // Calculate and update total earnings from services
+            const totalServicesEarnings = Object.values(
+              earningsByProfessional
+            ).reduce(
+              (acc, professional) => acc + professional.servicesEarnings,
+              0
             );
 
-            // Initialize earnings for the professional if not already present
-            if (!earningsByProfessional[professionalId]) {
-              earningsByProfessional[professionalId] = {
-                ...matchingProfessional,
-                name: payment.professional.name,
-                servicesEarnings: 0,
-                productsEarnings: 0,
-              };
-            }
+            const totalProductsEarnings = Object.values(
+              earningsByProfessional
+            ).reduce(
+              (acc, professional) => acc + professional.productsEarnings,
+              0
+            );
 
-            // Earnings by service
-            if (payment.service?.length > 0) {
-              payment.service.forEach((service) => {
-                earningsByProfessional[professionalId].servicesEarnings +=
-                  service.price;
-              });
-            }
-
-            // Earnings by product
-            if (payment.product?.length > 0) {
-              payment.product.forEach((product) => {
-                earningsByProfessional[professionalId].productsEarnings +=
-                  product.price;
-              });
-            }
-            totalEarn += payment.amount;
-          });
-
-          // Calculate and update total earnings from services
-          const totalServicesEarnings = Object.values(
-            earningsByProfessional
-          ).reduce(
-            (acc, professional) => acc + professional.servicesEarnings,
-            0
-          );
-
-          const totalProductsEarnings = Object.values(
-            earningsByProfessional
-          ).reduce(
-            (acc, professional) => acc + professional.productsEarnings,
-            0
-          );
-
-          setTotalSoldProducts(totalSoldProducts);
-          setTotalEarnings(totalEarn);
-          setTotalServicesEarnings(totalServicesEarnings);
-          setTotalProductsEarnings(totalProductsEarnings); // New state for products earnings
-          setProfessionals(Object.values(earningsByProfessional));
-        }
-      });
-  }, []);
+            setTotalSoldProducts(totalSoldProducts);
+            setTotalEarnings(totalEarn);
+            setTotalServicesEarnings(totalServicesEarnings);
+            setTotalProductsEarnings(totalProductsEarnings); // New state for products earnings
+            setProfessionals(Object.values(earningsByProfessional));
+            setInitialDataLoaded(true);
+          }
+        });
+    }
+  }, [dataLoaded]);
 
   // Function to calculate total commission
   const calculateTotalCommission = () => {
     // Ensure professionals data is loaded before calculating
-    if (dataLoaded) {
-      const total = professionals.reduce((acc, professional) => {
-        const professionalEarnings =
-          professional.servicesEarnings *
-            (professional.commissionPercentServices / 100) +
-          professional.productsEarnings *
-            (professional.commissionPercentProducts / 100);
+    const total = professionals.reduce((acc, professional) => {
+      const professionalEarnings =
+        professional.servicesEarnings *
+          (professional.commissionPercentServices / 100) +
+        professional.productsEarnings *
+          (professional.commissionPercentProducts / 100);
 
-        return acc + professionalEarnings;
-      }, 0);
-      console.log(professionals);
-      setTotalCommission(total);
-    }
+      return acc + professionalEarnings;
+    }, 0);
+    console.log(professionals);
+    setTotalCommission(total);
   };
 
   // Watch for changes in relevant state values and calculate total commission
   useEffect(() => {
-    if (professionals.length !== 0) {
+    if (initialDataLoaded && professionals.length !== 0) {
       calculateTotalCommission();
     }
-  }, [professionals, totalEarnings, commissionPercent]);
+  }, [totalEarnings, initialDataLoaded, professionals]);
 
   // Update professionals' commission percentage
   const handleCommissionChange = (e, professionalId, commissionType) => {
@@ -496,6 +508,38 @@ const CommissionsSection = () => {
       </div>
     );
   }
+
+  const handleUpdateCommission = (professionalId) => {
+    const professional = professionals.find(
+      (professional) => professional._id === professionalId
+    );
+
+    let patchData = {
+      commissionPercentServices: professional.commissionPercentServices,
+      commissionPercentProducts: professional.commissionPercentProducts,
+    };
+
+    axios
+      .patch(
+        `http://localhost:4040/professionals/${professionalId}`,
+        patchData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("ag_app_shop_token"),
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        console.log(
+          `Updated commission for ${professional.name}:`,
+          professional.commissionPercentServices,
+          professional.commissionPercentProducts
+        );
+      })
+      .catch((error) => console.error(error));
+  };
 
   return (
     <div className="bg-white shadow-md rounded-md p-6">
@@ -572,6 +616,13 @@ const CommissionsSection = () => {
                     professional.productsEarnings
                   ).toFixed(2)}
                 </div>
+                <button
+                  className="flex items-center justify-center text-sm bg-blue-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-blue-600"
+                  onClick={() => handleUpdateCommission(professional._id)}
+                >
+                  <FaSyncAlt className="mr-2" />
+                  Update
+                </button>
               </li>
             ))}
           </ul>

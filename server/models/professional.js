@@ -32,6 +32,14 @@ const professionalSchema = new mongoose.Schema(
       default: false,
       enum: [false],
     },
+    commissionPercentServices: {
+      type: Number,
+      default: 10, // Default commission for services (10%)
+    },
+    commissionPercentProducts: {
+      type: Number,
+      default: 5, // Default commission for products (5%)
+    },
   },
   { timestamps: true }
 );
