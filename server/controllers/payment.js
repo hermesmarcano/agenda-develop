@@ -29,7 +29,7 @@ const getAllPayments = async (req, res) => {
       const payments = await Payment.find({ managerId: req.query.shopId })
         .populate("customer", "name")
         .populate("service", "name price")
-        .populate("professional", "name")
+        .populate("professional", "_id name")
         .populate("product", "name price");
       res.status(200).json({ payments });
     }

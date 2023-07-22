@@ -11,6 +11,7 @@ import axios from "axios";
 import AppointmentsList from "../components/AppointmentsList";
 import CashFlowSection from "../components/CashFlowSection";
 import { Link } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);
@@ -330,9 +331,22 @@ const CommissionsSection = () => {
   const [professionals, setProfessionals] = useState([]);
   const [totalSoldProducts, setTotalSoldProducts] = useState(0);
   const [totalEarnings, setTotalEarnings] = useState(0);
+  const [totalServicesEarnings, setTotalServicesEarnings] = useState(0);
+  const [totalProductsEarnings, setTotalProductsEarnings] = useState(0);
   const [totalCommission, setTotalCommission] = useState(0);
+  const [commissionPercent, setCommissionPercent] = useState(10); // Default commission percent
+  const [commissionPercentServices, setCommissionPercentServices] =
+    useState(10); // Default commission percent for services
+  const [commissionPercentProducts, setCommissionPercentProducts] = useState(5); // Default commission percent for products
+  const [dataLoaded, setDataLoaded] = useState(false);
+
   const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
+
+  // Watch for changes in relevant state values and calculate total commission
+  useEffect(() => {
+    calculateTotalCommission();
+  }, [professionals, totalEarnings, commissionPercent, dataLoaded]);
 
   useEffect(() => {
     axios
@@ -341,66 +355,147 @@ const CommissionsSection = () => {
           Authorization: token,
         },
       })
-      .then((response) => setProfessionals([...response.data.data].reverse()))
+      .then((response) => {
+        const updatedProfessionals = response.data.data.map((professional) => ({
+          ...professional,
+          commissionPercentServices: 10,
+          commissionPercentProducts: 5,
+        }));
+        setProfessionals(updatedProfessionals.reverse());
+
+        // Set dataLoaded to true when professionals data is loaded
+        setDataLoaded(true);
+      })
       .catch((error) => console.error(error.message));
   }, []);
 
   useEffect(() => {
-    fetch(`http://localhost:4040/payments?shopId=${shopId}`, {
-      method: "GET",
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    axios
+      .get(`http://localhost:4040/payments?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        let earningsByProfessional = {};
         let totalSoldProducts = 0;
-        let earningsByProduct = {};
-        let earningsByService = {};
         let totalEarn = 0;
 
-        data.payments.forEach((payment) => {
-          // Earnings by service
-          if (payment.service.length > 0) {
-            payment.service.forEach((service) => {
-              if (earningsByService[service.name]) {
-                earningsByService[service.name] += service.price;
-              } else {
-                earningsByService[service.name] = service.price;
-              }
-            });
-          }
+        if (professionals.length !== 0) {
+          response.data.payments.forEach((payment) => {
+            // Check if the payment is associated with any professional
+            const professionalId = payment.professional._id;
 
-          // Earnings by product
-          if (payment.product.length > 0) {
-            const productName = payment.product.name;
-            if (earningsByProduct[productName]) {
-              earningsByProduct[productName] += payment.product.price;
-            } else {
-              earningsByProduct[productName] = payment.product.price;
+            const matchingProfessional = professionals.find(
+              (professional) => professional._id === professionalId
+            );
+
+            // Initialize earnings for the professional if not already present
+            if (!earningsByProfessional[professionalId]) {
+              earningsByProfessional[professionalId] = {
+                ...matchingProfessional,
+                name: payment.professional.name,
+                servicesEarnings: 0,
+                productsEarnings: 0,
+              };
             }
-            totalSoldProducts++;
-          }
-          totalEarn += payment.amount;
-        });
-        setTotalSoldProducts(totalSoldProducts);
-        setTotalEarnings(totalEarn);
+
+            // Earnings by service
+            if (payment.service?.length > 0) {
+              payment.service.forEach((service) => {
+                earningsByProfessional[professionalId].servicesEarnings +=
+                  service.price;
+              });
+            }
+
+            // Earnings by product
+            if (payment.product?.length > 0) {
+              payment.product.forEach((product) => {
+                earningsByProfessional[professionalId].productsEarnings +=
+                  product.price;
+              });
+            }
+            totalEarn += payment.amount;
+          });
+
+          // Calculate and update total earnings from services
+          const totalServicesEarnings = Object.values(
+            earningsByProfessional
+          ).reduce(
+            (acc, professional) => acc + professional.servicesEarnings,
+            0
+          );
+
+          const totalProductsEarnings = Object.values(
+            earningsByProfessional
+          ).reduce(
+            (acc, professional) => acc + professional.productsEarnings,
+            0
+          );
+
+          setTotalSoldProducts(totalSoldProducts);
+          setTotalEarnings(totalEarn);
+          setTotalServicesEarnings(totalServicesEarnings);
+          setTotalProductsEarnings(totalProductsEarnings); // New state for products earnings
+          setProfessionals(Object.values(earningsByProfessional));
+        }
       });
   }, []);
 
-  useEffect(() => {
-    const calculateTotalCommission = () => {
-      let total = 0;
-      professionals.forEach((professional) => {
-        const serviceCommission = totalEarnings * 0.5; // 50% commission on services
-        const productCommission = totalSoldProducts * 0.1; // 10% commission on products
-        total += serviceCommission + productCommission;
-      });
-      setTotalCommission(total);
-    };
+  // Function to calculate total commission
+  const calculateTotalCommission = () => {
+    // Ensure professionals data is loaded before calculating
+    if (dataLoaded) {
+      const total = professionals.reduce((acc, professional) => {
+        const professionalEarnings =
+          professional.servicesEarnings *
+            (professional.commissionPercentServices / 100) +
+          professional.productsEarnings *
+            (professional.commissionPercentProducts / 100);
 
-    calculateTotalCommission();
-  }, [professionals]);
+        return acc + professionalEarnings;
+      }, 0);
+      console.log(professionals);
+      setTotalCommission(total);
+    }
+  };
+
+  // Watch for changes in relevant state values and calculate total commission
+  useEffect(() => {
+    if (professionals.length !== 0) {
+      calculateTotalCommission();
+    }
+  }, [professionals, totalEarnings, commissionPercent]);
+
+  // Update professionals' commission percentage
+  const handleCommissionChange = (e, professionalId, commissionType) => {
+    const updatedProfessionals = professionals.map((professional) => {
+      if (professional._id === professionalId) {
+        const value = parseFloat(e.target.value);
+        // Ensure the commission input cannot be less than 0
+        const commission = Math.max(value, 0);
+
+        if (commissionType === "services") {
+          return { ...professional, commissionPercentServices: commission };
+        } else if (commissionType === "products") {
+          return { ...professional, commissionPercentProducts: commission };
+        }
+      }
+      return professional;
+    });
+    setProfessionals(updatedProfessionals);
+  };
+
+  if (!dataLoaded) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col justify-center items-center space-x-2">
+          <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          <span className="mt-2">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white shadow-md rounded-md p-6">
@@ -428,23 +523,54 @@ const CommissionsSection = () => {
           <ul className="space-y-4">
             {professionals.map((professional) => (
               <li
-                key={professional.id}
+                key={professional._id}
                 className="flex flex-wrap items-center justify-between bg-gray-100 rounded-lg p-4"
               >
-                <div className="flex flex-wrap items-center">
+                <div>
                   <div className="mr-2 font-bold">{professional.name}</div>
-                  <div className="text-sm font-medium text-gray-500">
-                    (${(totalEarnings * 0.5).toFixed(2)}) commissions on
-                    services
+                  <div className="flex items-center">
+                    <label
+                      htmlFor={`commissionInputServices_${professional._id}`}
+                      className="mr-2"
+                    >
+                      Commission for Services:
+                    </label>
+                    <input
+                      type="number"
+                      id={`commissionInputServices_${professional._id}`} // Use professional's _id to make the ID unique
+                      className="border rounded-md px-2 py-1 w-20"
+                      value={professional.commissionPercentServices}
+                      onChange={(e) =>
+                        handleCommissionChange(e, professional._id, "services")
+                      }
+                    />
+                    <span className="ml-2">%</span>
                   </div>
-                  <div className="text-sm font-medium text-gray-500">
-                    (${(totalSoldProducts * 0.1).toFixed(2)}) commissions on
-                    products
+                  <div className="flex items-center">
+                    <label
+                      htmlFor={`commissionInputProducts_${professional._id}`}
+                      className="mr-2"
+                    >
+                      Commission for Products:
+                    </label>
+                    <input
+                      type="number"
+                      id={`commissionInputProducts_${professional._id}`} // Use professional's _id to make the ID unique
+                      className="border rounded-md px-2 py-1 w-20"
+                      value={professional.commissionPercentProducts}
+                      onChange={(e) =>
+                        handleCommissionChange(e, professional._id, "products")
+                      }
+                    />
+                    <span className="ml-2">%</span>
                   </div>
                 </div>
                 <div className="text-sm font-semibold text-gray-500">
                   Total: $
-                  {(totalEarnings * 0.5 + totalSoldProducts * 0.1).toFixed(2)}
+                  {(
+                    professional.servicesEarnings +
+                    professional.productsEarnings
+                  ).toFixed(2)}
                 </div>
               </li>
             ))}
