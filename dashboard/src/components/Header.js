@@ -32,7 +32,7 @@ function Header() {
 
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const toggleDarkMode = () => {
+  const toggleDarkLightMode = () => {
     theme === "light" ? setTheme("dark") : setTheme("light");
     localStorage.setItem("currentTheme", theme);
     setIsDarkMode(!isDarkMode);
@@ -58,15 +58,23 @@ function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 text-gray-500 shadow-lg py-4 px-6 flex justify-between items-center z-10 bg-gray-100`}
+      className={`fixed top-0 left-0 right-0 shadow-lg py-4 px-6 flex justify-between items-center z-10 ${
+        isDarkMode ? "bg-gray-900 text-gray-200" : "bg-gray-100 text-gray-500"
+      }`}
     >
       <div className="flex items-center">
-        <h1 className={`text-xl font-bold text-gray-900`}>Dashboard</h1>
+        <h1
+          className={`text-xl font-bold ${
+            isDarkMode ? "text-gray-200" : "text-gray-900"
+          }`}
+        >
+          Dashboard
+        </h1>
       </div>
       <div className="flex items-center">
         <div className="relative">
           <button
-            className="mr-4 focus:outline-none flex items-center"
+            className="mr-4 flex justify-center items-center shadow border h-8 w-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             onClick={handleMenuToggle}
           >
             <FaBell className="w-6 h-6 text-gray-400" />
@@ -83,19 +91,25 @@ function Header() {
                 className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-opacity-25"
                 onClick={() => setShowMenu(false)}
               ></div>
-              <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-10">
+              <div
+                className={`absolute right-0 mt-2 w-64 ${
+                  isDarkMode ? "bg-gray-800" : "bg-white"
+                } rounded-lg shadow-lg z-10`}
+              >
                 <div className="max-h-64 overflow-y-auto">
                   {notifications.length > 0 ? (
                     notifications.map((notification, index) => (
                       <div
                         key={index}
-                        className="p-4 hover:bg-gray-100 rounded-lg cursor-pointer"
+                        className={`p-4  ${
+                          isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                        } rounded-lg cursor-pointer`}
                       >
                         {notification.content}
                       </div>
                     ))
                   ) : (
-                    <div className="p-4 text-center text-gray-400">
+                    <div className={`p-4 text-center text-gray-400`}>
                       No notifications
                     </div>
                   )}
@@ -121,7 +135,11 @@ function Header() {
                 onClick={() => setIsMenuOpen(false)}
               ></div>
               <div
-                className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 text-gray-800 bg-white ring-1 ring-black ring-opacity-5`}
+                className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
+                  isDarkMode
+                    ? "bg-gray-800 text-gray-200"
+                    : "bg-white text-gray-800"
+                } ring-1 ring-black ring-opacity-5`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu"
@@ -131,19 +149,31 @@ function Header() {
                     navigate("/settings");
                     setIsMenuOpen(false);
                   }}
-                  className={`block px-4 py-2 text-sm items-center`}
+                  className={`block px-4 py-2 text-sm items-center w-full text-left ${
+                    isDarkMode
+                      ? "text-gray-200 hover:bg-gray-700"
+                      : "text-gray-700 hover:bg-gray-100"
+                  }`}
                   role="menuitem"
                 >
-                  <FaCog
-                    className={`inline-block w-4 h-4 mr-2 text-gray-700 hover:bg-gray-100`}
-                  />
-                  <span className={`text-gray-700 hover:bg-gray-100`}>
+                  <FaCog className={`inline-block w-4 h-4 mr-2`} />
+                  <span
+                    className={`${
+                      isDarkMode
+                        ? "text-gray-200 hover:bg-gray-700"
+                        : "text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
                     Settings
                   </span>
                 </button>
                 <button
                   onClick={logout}
-                  className={`block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left`}
+                  className={`block px-4 py-2 text-sm ${
+                    isDarkMode
+                      ? "text-gray-200 hover:bg-gray-700"
+                      : "text-gray-700 hover:bg-gray-100"
+                  } w-full text-left`}
                   role="menuitem"
                 >
                   Sign out
@@ -157,7 +187,7 @@ function Header() {
             className={`flex items-center justify-center w-10 h-10 rounded-full ${
               !isDarkMode ? "bg-gray-700" : "bg-yellow-400"
             }`}
-            onClick={toggleDarkMode}
+            onClick={toggleDarkLightMode}
             style={{ transition: "background-color 0.3s" }}
           >
             {isDarkMode ? (

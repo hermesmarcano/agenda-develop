@@ -339,7 +339,7 @@ const CashFlowSection = () => {
       </div>
 
       <div className="bg-white shadow-md rounded-md p-6 mt-8 mb-8">
-        <h2 className="text-lg font-bold mb-4">Earnings/Expenses</h2>
+        <h2 className="text-lg font-bold mb-4">Earnings/Expenses Per Day</h2>
         <div className="chart-container">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dataByDay}>
@@ -364,34 +364,36 @@ const CashFlowSection = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div className="bg-white shadow-md rounded-md p-6">
-          <h2 className="text-lg font-bold mb-4">Earnings by Service</h2>
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dataByService}>
-                <XAxis dataKey="service" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="earnings" fill="#3B82F6" />
-              </BarChart>
-            </ResponsiveContainer>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto w-full gap-8">
+        <div className="mb-8">
+          <div className="bg-white shadow-md rounded-md p-6">
+            <h2 className="text-lg font-bold mb-4">Earnings by Service</h2>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataByService}>
+                  <XAxis dataKey="service" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="earnings" fill="#3B82F6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div className="bg-white shadow-md rounded-md p-6">
-          <h2 className="text-lg font-bold mb-4">Earnings by Professional</h2>
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={dataByProfessional}>
-                <XAxis dataKey="professional" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="earnings" fill="#3B82F6" />
-              </BarChart>
-            </ResponsiveContainer>
+        <div className="mb-8">
+          <div className="bg-white shadow-md rounded-md p-6">
+            <h2 className="text-lg font-bold mb-4">Earnings by Professional</h2>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={dataByProfessional}>
+                  <XAxis dataKey="professional" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="earnings" fill="#3B82F6" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>
