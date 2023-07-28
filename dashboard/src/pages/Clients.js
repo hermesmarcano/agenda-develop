@@ -35,58 +35,6 @@ const Clients = () => {
       });
   }, [registerModelState, updateModelState, isDeleting]);
 
-  // const clients = [
-  //   {
-  //     name: "John Doe",
-  //     phone: "555-1234",
-  //     payments: 3,
-  //   },
-  //   {
-  //     name: "Jane Smith",
-  //     phone: "555-5678",
-  //     payments: 5,
-  //   },
-  //   {
-  //     name: "Bob Johnson",
-  //     phone: "555-9012",
-  //     payments: 2,
-  //   },
-  //   {
-  //     name: "Sally Lee",
-  //     phone: "555-3456",
-  //     payments: 4,
-  //   },
-  //   {
-  //     name: "Tom Davis",
-  //     phone: "555-7890",
-  //     payments: 1,
-  //   },
-  //   {
-  //     name: "Karen Brown",
-  //     phone: "555-2345",
-  //     payments: 6,
-  //   },
-  //   {
-  //     name: "Mike Wilson",
-  //     phone: "555-6789",
-  //     payments: 2,
-  //   },
-  //   {
-  //     name: "Emily Taylor",
-  //     phone: "555-0123",
-  //     payments: 5,
-  //   },
-  //   {
-  //     name: "Chris Martin",
-  //     phone: "555-4567",
-  //     payments: 3,
-  //   },
-  //   {
-  //     name: "Lisa Hernandez",
-  //     phone: "555-8901",
-  //     payments: 4,
-  //   },
-  // ];
   const filteredClients = clients.filter((client) =>
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -303,8 +251,8 @@ const Clients = () => {
                 <td className="py-2 ps-4 text-left">
                   <input
                     type="checkbox"
-                    checked={selectedIds.includes(client.id)}
-                    onChange={() => handleCheckboxChange(client.id)}
+                    checked={selectedIds.includes(client._id)}
+                    onChange={() => handleCheckboxChange(client._id)}
                   />
                 </td>
                 <td className="py-2">{client.name}</td>
