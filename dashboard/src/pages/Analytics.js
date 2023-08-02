@@ -13,6 +13,7 @@ import CashFlowSection from "../components/CashFlowSection";
 import { Link, useNavigate } from "react-router-dom";
 import { FaSpinner, FaSyncAlt } from "react-icons/fa";
 import Pagination from "../components/Pagination";
+import { startOfWeek, subWeeks } from "date-fns";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);
@@ -391,6 +392,9 @@ const CommissionsSection = () => {
           },
         })
         .then((response) => {
+          // Get the date of the previous Monday
+          const previousMonday = startOfWeek(new Date(), { weekStartsOn: 1 }); // Assuming Monday is considered the first day of the week
+
           let earningsByProfessional = {};
           let totalSoldProducts = 0;
           let totalEarn = 0;
@@ -404,31 +408,35 @@ const CommissionsSection = () => {
                 (professional) => professional._id === professionalId
               );
 
-              // Initialize earnings for the professional if not already present
-              if (!earningsByProfessional[professionalId]) {
-                earningsByProfessional[professionalId] = {
-                  ...matchingProfessional,
-                  servicesEarnings: 0,
-                  productsEarnings: 0,
-                };
-              }
+              // Check if the payment date is on or after the previous Monday
+              const paymentDate = new Date(payment.dateTime);
+              if (paymentDate >= previousMonday) {
+                // Initialize earnings for the professional if not already present
+                if (!earningsByProfessional[professionalId]) {
+                  earningsByProfessional[professionalId] = {
+                    ...matchingProfessional,
+                    servicesEarnings: 0,
+                    productsEarnings: 0,
+                  };
+                }
 
-              // Earnings by service
-              if (payment.service?.length > 0) {
-                payment.service.forEach((service) => {
-                  earningsByProfessional[professionalId].servicesEarnings +=
-                    service.price;
-                });
-              }
+                // Earnings by service
+                if (payment.service?.length > 0) {
+                  payment.service.forEach((service) => {
+                    earningsByProfessional[professionalId].servicesEarnings +=
+                      service.price;
+                  });
+                }
 
-              // Earnings by product
-              if (payment.product?.length > 0) {
-                payment.product.forEach((product) => {
-                  earningsByProfessional[professionalId].productsEarnings +=
-                    product.price;
-                });
+                // Earnings by product
+                if (payment.product?.length > 0) {
+                  payment.product.forEach((product) => {
+                    earningsByProfessional[professionalId].productsEarnings +=
+                      product.price;
+                  });
+                }
+                totalEarn += payment.amount;
               }
-              totalEarn += payment.amount;
             });
 
             // Calculate and update total earnings from services
@@ -563,7 +571,9 @@ const CommissionsSection = () => {
       </div>
       <div className="mt-8">
         {professionals.length === 0 ? (
-          <p className="text-gray-500">No professionals available.</p>
+          <p className="text-gray-500">
+            No earnings have been generated this week.
+          </p>
         ) : (
           <ul className="space-y-4">
             {professionals.map((professional) => (
