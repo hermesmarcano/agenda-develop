@@ -689,11 +689,7 @@ const BillsSection = () => {
       })
       .then((response) => {
         const registeredAppointments = response.data.appointments
-          .filter(
-            (appt) =>
-              !appt.blocking &&
-              (appt.status === "pending" || appt.status === "updating")
-          )
+          .filter((appt) => !appt.blocking && appt.status === "in-debt")
           .reverse();
         console.log(registeredAppointments);
         setPendingAppointments(registeredAppointments);
@@ -724,53 +720,32 @@ const BillsSection = () => {
   const handleCheckout = (selectedAppointment) => {
     // Perform checkout logic here
     console.log(selectedAppointment);
-    selectedAppointment.status === "pending"
-      ? localStorage.setItem(
-          "ag_app_booking_info",
-          JSON.stringify({
-            customer: selectedAppointment.customer._id,
-            professional: selectedAppointment.professional._id,
-            service: selectedAppointment.service.map((s) => s._id),
-            duration: selectedAppointment.service.reduce(
-              (totalDuration, s) => totalDuration + s.duration,
-              0
-            ),
-            dateTime: new Date(selectedAppointment.dateTime),
-            amount: selectedAppointment.service.reduce(
-              (totalPrice, s) => totalPrice + s.price,
-              0
-            ),
-            appointmentId: selectedAppointment._id,
-            managerId: shopId,
-            checkoutType: "registering",
-          })
-        )
-      : localStorage.setItem(
-          "ag_app_booking_info",
-          JSON.stringify({
-            customer: selectedAppointment.customer._id,
-            professional: selectedAppointment.professional._id,
-            service: selectedAppointment.service.map((s) => s._id),
-            product: selectedAppointment.product.map((p) => p._id),
-            duration: selectedAppointment.service.reduce(
-              (totalDuration, s) => totalDuration + s.duration,
-              0
-            ),
-            dateTime: new Date(selectedAppointment.dateTime),
-            amount:
-              selectedAppointment.service.reduce(
-                (totalPrice, s) => totalPrice + s.price,
-                0
-              ) +
-              selectedAppointment.product.reduce(
-                (totalPrice, p) => totalPrice + p.price,
-                0
-              ),
-            appointmentId: selectedAppointment._id,
-            managerId: shopId,
-            checkoutType: "updating",
-          })
-        );
+    localStorage.setItem(
+      "ag_app_booking_info",
+      JSON.stringify({
+        customer: selectedAppointment.customer._id,
+        professional: selectedAppointment.professional._id,
+        service: selectedAppointment.service.map((s) => s._id),
+        product: selectedAppointment?.product?.map((p) => p._id),
+        duration: selectedAppointment.service.reduce(
+          (totalDuration, s) => totalDuration + s.duration,
+          0
+        ),
+        dateTime: new Date(selectedAppointment.dateTime),
+        amount:
+          selectedAppointment.service.reduce(
+            (totalPrice, s) => totalPrice + s.price,
+            0
+          ) +
+          selectedAppointment?.product?.reduce(
+            (totalPrice, p) => totalPrice + p.price,
+            0
+          ),
+        appointmentId: selectedAppointment._id,
+        managerId: shopId,
+        checkoutType: "in-debt",
+      })
+    );
 
     navigate("/checkout");
   };
@@ -787,10 +762,10 @@ const BillsSection = () => {
   return (
     <>
       <div className="bg-white shadow-md rounded-md p-6">
-        <h2 className="text-lg font-bold mb-4">Pending Checkouts</h2>
+        <h2 className="text-lg font-bold mb-4">Pending In Debt Checkouts</h2>
         <div className="grid grid-cols-1 gap-2">
           {currentAppointments.length === 0 ? (
-            <p className="text-gray-500">No pending checkouts.</p>
+            <p className="text-gray-500">No In Debt checkouts.</p>
           ) : (
             currentAppointments.map((checkout) => (
               <div

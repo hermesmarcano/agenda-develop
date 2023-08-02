@@ -25,6 +25,7 @@ import axios from "axios";
 import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import CreditPayment from "../components/CreditPayment";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
+import PayLater from "../components/PayLater";
 
 const StepIndicator = ({ currentStep, totalSteps }) => {
   return (
@@ -68,6 +69,7 @@ const Checkout = () => {
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [calculatorMode, setCalculatorMode] = useState(false);
   const [creditMode, setCreditMode] = useState(false);
+  const [payLaterMode, setPayLaterMode] = useState(false);
   const [extraServices, setExtraServices] = useState([]);
   const [products, setProducts] = useState([]);
   const [subTotalPrice, setSubTotalPrice] = useState(
@@ -258,10 +260,6 @@ const Checkout = () => {
   };
 
   const handleChoosePaymentMethod = (method) => {
-    if (method === "payLater") {
-      console.log("Paying Later...");
-      return;
-    }
     let updatedBookingInfo = {};
     if (products.length !== 0) {
       updatedBookingInfo = {
@@ -590,9 +588,13 @@ const Checkout = () => {
                     className="bg-gray-800 text-white px-4 py-2 rounded flex items-center justify-center"
                     // onClick={handleConfirmPayment}
                     onClick={() => {
-                      paymentMethod === "cash"
-                        ? setCalculatorMode(true)
-                        : setCreditMode(true);
+                      if (paymentMethod === "cash") {
+                        setCalculatorMode(true);
+                      } else if (paymentMethod === "credit") {
+                        setCreditMode(true);
+                      } else if (paymentMethod === "payLater") {
+                        setPayLaterMode(true);
+                      }
                     }}
                   >
                     <HiOutlineClipboardCheck className="mr-2" />
@@ -625,6 +627,16 @@ const Checkout = () => {
               bookingInfo={bookingInfo}
               clients={clientsData}
               dateTime={dateTime}
+            />
+
+            <PayLater
+              isOpen={payLaterMode}
+              handlePopupClose={() => setPayLaterMode(false)}
+              totalPrice={totalPrice}
+              setAmountPaid={setAmountPaid}
+              setChange={setChange}
+              handleConfirmPayment={handleConfirmPayment}
+              bookingInfo={bookingInfo}
             />
 
             {currentStep === 5 && (

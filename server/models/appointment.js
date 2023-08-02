@@ -31,7 +31,7 @@ const appointmentSchema = new mongoose.Schema(
     product: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     status: {
       type: String,
-      enum: ["pending", "confirmed", "updating", "cancelled"],
+      enum: ["pending", "confirmed", "updating", "cancelled", "in-debt"],
       default: "pending",
     },
     blocking: {
