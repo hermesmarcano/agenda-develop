@@ -52,7 +52,6 @@ const Calculator = ({
         updatedAt: new Date(),
       };
 
-      console.log(data);
       let paymentId = "";
 
       const updatePayment = () => {
@@ -68,7 +67,6 @@ const Calculator = ({
             }
           )
           .then((response) => {
-            console.log(response.data);
             const cuurentClient = clients.find(
               (client) => client._id === bookingInfo.customer
             );
@@ -76,8 +74,6 @@ const Calculator = ({
               Number(cuurentClient.payments) +
               Number(bookingInfo.amount) +
               Number(bookingInfo.prevPaid);
-            console.log("updatedClientPayments: ", updatedClientPayments);
-            console.log("customer id: ", bookingInfo.customer);
             axios
               .patch(
                 `http://localhost:4040/customers/${bookingInfo.customer}`,
@@ -90,7 +86,6 @@ const Calculator = ({
                 }
               )
               .then((response) => {
-                console.log(response.data);
                 confirmAppointmentPayment();
               })
               .catch((error) => {
@@ -111,15 +106,12 @@ const Calculator = ({
             },
           })
           .then((response) => {
-            console.log(response.data);
             paymentId = response.data.payment._id;
             const cuurentClient = clients.find(
               (client) => client._id === bookingInfo.customer
             );
             const updatedClientPayments =
               Number(cuurentClient.payments) + Number(bookingInfo.amount);
-            console.log("updatedClientPayments: ", updatedClientPayments);
-            console.log("customer id: ", bookingInfo.customer);
             axios
               .patch(
                 `http://localhost:4040/customers/${bookingInfo.customer}`,
@@ -132,7 +124,6 @@ const Calculator = ({
                 }
               )
               .then((response) => {
-                console.log(response.data);
                 linkPaymentToAppointment();
               })
               .catch((error) => {
@@ -181,7 +172,6 @@ const Calculator = ({
             }
           )
           .then((response) => {
-            console.log(response.data);
             setAmountPaid(amountReceived);
             setChange(amountReceived - totalPrice);
             setUnSufficientAmountMsg(false);

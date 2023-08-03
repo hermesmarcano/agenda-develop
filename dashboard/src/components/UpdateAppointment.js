@@ -61,7 +61,6 @@ const UpdateAppointment = ({
           }
         );
         setClients(response.data);
-        // console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -94,7 +93,6 @@ const UpdateAppointment = ({
           }
         );
         setProducts(response.data.products);
-        console.log("products", response.data.products);
       } catch (error) {
         console.error(error);
       }
@@ -111,7 +109,6 @@ const UpdateAppointment = ({
           }
         );
         setAppointmentData(response.data.appointment);
-        // console.log(response.data.appointment);
       } catch (error) {
         console.error(error);
       }
@@ -248,7 +245,6 @@ const UpdateAppointment = ({
           }
         )
         .then((response) => {
-          // console.log(response.data);
           setSubmitting(false);
           resetForm();
           setModelState(false);
@@ -354,7 +350,6 @@ const UpdateAppointment = ({
           }
         )
         .then((response) => {
-          // console.log(response.data);
           setModelState(false);
 
           localStorage.setItem(
@@ -1008,21 +1003,10 @@ const CustomSelectList = ({ options, label, field, form }) => {
     setSelectedOptions((prevOptions) =>
       prevOptions.filter((_, i) => i !== index)
     );
-    // setSelectedOptions(selectedOptions.filter((_, i) => i !== index));
-    // console.log(selectedOptions);
     const updatedValues = selectedOptions.filter((_, i) => i !== index);
-    console.log(updatedValues);
     form.setFieldValue(field.name, updatedValues);
     form.setFieldTouched(field.name, true);
   };
-
-  // const handleBlur = () => {
-  //   // setIsOpen(false);
-  //   console.log(form.values);
-  //   const updatedValues = [...form.values[field.name], ...selectedOptions];
-  //   form.setFieldValue(field.name, updatedValues);
-  //   form.setFieldTouched(field.name, true);
-  // };
 
   return (
     <>

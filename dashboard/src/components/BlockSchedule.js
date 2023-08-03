@@ -29,7 +29,6 @@ const BlockSchedule = ({ setModelState }) => {
       })
       .then((response) => {
         setProfessionals(response.data.data);
-        console.log(response.data.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -74,7 +73,6 @@ const BlockSchedule = ({ setModelState }) => {
   });
 
   const handleSubmit = (values) => {
-    console.log(values);
     let blockingDate = new Date(values.startDate);
     blockingDate.setHours(values.startTimeHour);
     blockingDate.setMinutes(values.startTimeMinute);
@@ -102,11 +100,9 @@ const BlockSchedule = ({ setModelState }) => {
     let dayHours = (dayEnd - dayStart) / (1000 * 60);
 
     if (blockAllDay) {
-      console.log("blockAllDay");
       const startingDate = new Date(values.startDate);
       startingDate.setHours(8);
       startingDate.setMinutes(0);
-      console.log(startingDate);
       createAppointment(
         startingDate,
         600,
@@ -203,14 +199,6 @@ const BlockSchedule = ({ setModelState }) => {
         }
       )
       .then((response) => {
-        console.log(response.data);
-        // alert(
-        //   `${
-        //     professionals.find(
-        //       (professional) => (professional._id = professionalId)
-        //     ).name
-        //   } will be unavailable starting from ${dateTime}`
-        // );
         setModelState(false);
       })
       .catch((error) => {

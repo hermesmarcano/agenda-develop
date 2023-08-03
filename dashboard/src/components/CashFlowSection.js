@@ -43,7 +43,6 @@ const CashFlowSection = () => {
       .then((response) => response.json())
       .then((data) => {
         setTransactions([...data.payments].reverse());
-        // console.log(data);
 
         let earningsByDay = {};
         let earningsByService = {};
@@ -140,7 +139,6 @@ const CashFlowSection = () => {
         });
 
         // Convert earnings by day to include only the last 7 days and calculate total earnings and expenses per day
-        console.log(earningsByDay);
 
         const currentDate = new Date();
         const lastSevenDays = [];
@@ -190,7 +188,6 @@ const CashFlowSection = () => {
 
         // Calculate total earnings for the last 30 days
         currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day
-        // console.log(lastSevenDays);
 
         setDataByDay(lastSevenDays);
         setDataByService(dataByService);
@@ -217,7 +214,6 @@ const CashFlowSection = () => {
         },
       })
       .then((response) => {
-        // console.log(response.data);
         setCustomers(response.data);
       })
       .catch((error) => {
@@ -238,7 +234,6 @@ const CashFlowSection = () => {
         },
       })
       .then((response) => {
-        // console.log(response.data.appointments);
         setAppointments(response.data.appointments);
 
         // Get the next 7 days' appointments
@@ -271,7 +266,6 @@ const CashFlowSection = () => {
         },
       })
       .then((response) => {
-        console.log(response.data.expenses);
         setExpenses(response.data.expenses);
       })
       .catch((error) => {
@@ -536,7 +530,6 @@ const CashFlowSection = () => {
               date: new Date(values.date),
             };
             let patchData = { expenses: [...expenses, newBill] };
-            console.log(patchData);
             axios
               .patch(
                 "http://localhost:4040/managers",
@@ -548,9 +541,7 @@ const CashFlowSection = () => {
                   },
                 }
               )
-              .then((response) => {
-                console.log(response.data);
-              })
+              .then((response) => {})
               .catch((error) => console.log(error));
             resetForm();
           }}

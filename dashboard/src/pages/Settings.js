@@ -36,7 +36,6 @@ const Settings = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         setShopData(response.data);
         setLoading(false);
       })
@@ -54,7 +53,6 @@ const Settings = () => {
       },
       workingHours: values.workingHours,
     };
-    console.log(JSON.stringify(data));
 
     axios
       .patch("http://localhost:4040/managers", JSON.stringify(data), {
@@ -64,7 +62,6 @@ const Settings = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         setShopName(response.data.shopName);
       })
       .catch((error) => console.log(error));
@@ -78,7 +75,6 @@ const Settings = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         // Update shopData with the empty profile image
         setShopData({ ...shopData, profileImg: "" });
       })
@@ -91,7 +87,6 @@ const Settings = () => {
     let updatedImg = {
       profileImg: values.profileImg,
     };
-    console.log(updatedImg);
     axios
       .post("http://localhost:4040/managers/profileImg", updatedImg, {
         headers: {
@@ -100,7 +95,6 @@ const Settings = () => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         // Update shopData with the new profile image
         axios
           .patch(
@@ -114,7 +108,6 @@ const Settings = () => {
             }
           )
           .then((response) => {
-            console.log(response.data);
             setShopData({
               ...shopData,
               profileImg: response.data.manager.profileImg,

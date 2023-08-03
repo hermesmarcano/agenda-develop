@@ -17,7 +17,6 @@ const RegisterCustomer = ({ setModelState }) => {
   });
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log(values);
     const data = {
       name: values.name,
       phone: values.phone,

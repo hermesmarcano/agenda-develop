@@ -37,7 +37,6 @@ const Login = () => {
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginSchema}
             onSubmit={(values, { setSubmitting }) => {
-              // console.log(JSON.stringify(values));
               fetch("http://localhost:4040/managers/login", {
                 method: "POST",
                 headers: {
@@ -55,8 +54,6 @@ const Login = () => {
                   return response.json();
                 })
                 .then((data) => {
-                  console.log(data);
-                  console.log(registered);
                   if (data.token) {
                     localStorage.setItem("ag_app_shop_token", data.token);
                     navigate("/");

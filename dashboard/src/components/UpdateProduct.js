@@ -7,7 +7,6 @@ import ImageUpload from "./ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 
 const UpdateProduct = ({ setModelState, productId }) => {
-  console.log("productId: ", productId);
   const token = localStorage.getItem("ag_app_shop_token");
   const [productData, setProductData] = useState(null);
   useEffect(() => {
@@ -18,8 +17,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
         },
       })
       .then((response) => {
-        console.log(response.data.product);
-        console.log(response.data.product.productImg);
         setProductData(response.data.product);
       })
       .catch((error) => {
@@ -39,7 +36,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
   });
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
-    console.log("submitting");
     try {
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
@@ -86,7 +82,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
           },
         }
       );
-      console.log(updateResponse.data);
     } catch (error) {
       console.log(error);
     }
@@ -96,7 +91,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
   };
 
   const deleteProductImg = () => {
-    console.log("deleting ", productData.productImg);
     axios
       .delete(
         `http://localhost:4040/products/image/${productData.productImg}`,
@@ -110,7 +104,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
         }
       )
       .then((response) => {
-        console.log(response.data);
         // Update productData with the empty product image
         setProductData({ ...productData, productImg: "" });
       })
@@ -245,10 +238,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
                 </label>
                 {productData.productImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
-                    {console.log(
-                      "productData.productImg",
-                      productData.productImg
-                    )}
                     <img
                       src={`http://localhost:4040/uploads/products/${productData.productImg}`}
                       alt={productData.productImg}

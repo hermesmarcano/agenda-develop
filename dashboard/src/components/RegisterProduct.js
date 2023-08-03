@@ -78,7 +78,6 @@ const RegisterProduct = ({ setModelState }) => {
           },
         }
       );
-      console.log(updateResponse.data);
     } catch (error) {
       console.log(error);
     }

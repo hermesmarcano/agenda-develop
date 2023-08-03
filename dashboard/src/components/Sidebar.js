@@ -92,7 +92,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data.shopName);
         setShopName(data.shopName);
         setShopId(data._id);
       })

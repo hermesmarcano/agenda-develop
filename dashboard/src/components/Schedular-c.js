@@ -103,8 +103,6 @@ const SchedulerC = ({
     }
   }
 
-  console.log(workingHours);
-
   const hoursArrs = useMemo(() => {
     const arr = [];
     if (workingHours && workingHours.length > 0) {
@@ -170,8 +168,6 @@ const SchedulerC = ({
     }
     return arr;
   }, [startWeekDate, workingHours]);
-
-  console.log(hoursArrsWeek);
 
   const formatDate = (date) => {
     const options = {

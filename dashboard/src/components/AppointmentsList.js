@@ -61,7 +61,6 @@ const AppointmentsList = () => {
         },
       })
       .then((response) => {
-        console.log(response.data.appointments);
         const registeredAppointments = response.data.appointments.filter(
           (appt) => !appt.blocking
         );
@@ -114,25 +113,6 @@ const AppointmentsList = () => {
     );
   }
 
-  function handlePayment(id, value) {
-    console.log("id: " + id + " value: " + value);
-    fetch(`http://localhost:4040/appointments/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token,
-      },
-      body: JSON.stringify({ status: value }),
-    })
-      .then((response) => response.json())
-
-      .then((data) => console.log(data.appointment))
-
-      .catch((error) => console.log(error));
-
-    fetchAppointmentData();
-  }
-
   const [selectedIds, setSelectedIds] = useState([]);
 
   const handleCheckboxChange = (id) => {
@@ -158,10 +138,6 @@ const AppointmentsList = () => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log(selectedIds);
-  // }, [selectedIds]);
-
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
       axios
@@ -172,7 +148,6 @@ const AppointmentsList = () => {
         })
         .then((response) => {
           // Handle successful deletion
-          console.log(`Appointment with ID ${id} has been deleted.`);
           setDeleting(false);
         })
         .catch((error) => {

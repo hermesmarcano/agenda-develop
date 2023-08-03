@@ -39,7 +39,6 @@ const Analytics = () => {
       .then((response) => response.json())
       .then((data) => {
         setTransactions([...data.payments].reverse());
-        console.log(data);
 
         let earningsByDay = {};
         let earningsByService = {};
@@ -136,7 +135,6 @@ const Analytics = () => {
 
         // Calculate total earnings for the last 30 days
         currentDate.setHours(0, 0, 0, 0); // Set current date to the beginning of the day
-        console.log(lastSevenDays);
 
         setDataByDay(lastSevenDays);
         setDataByService(dataByService);
@@ -168,7 +166,6 @@ const Analytics = () => {
         },
       })
       .then((response) => {
-        console.log(response.data.products);
         setProducts(response.data.products);
       })
       .catch((error) => {
@@ -477,7 +474,6 @@ const CommissionsSection = () => {
 
       return acc + professionalEarnings;
     }, 0);
-    console.log(professionals);
     setTotalCommission(total);
   };
 
@@ -539,14 +535,7 @@ const CommissionsSection = () => {
           },
         }
       )
-      .then((response) => {
-        console.log(response.data);
-        console.log(
-          `Updated commission for ${professional.name}:`,
-          professional.commissionPercentServices,
-          professional.commissionPercentProducts
-        );
-      })
+      .then((response) => {})
       .catch((error) => console.error(error));
   };
 
@@ -691,7 +680,6 @@ const BillsSection = () => {
         const registeredAppointments = response.data.appointments
           .filter((appt) => !appt.blocking && appt.status === "in-debt")
           .reverse();
-        console.log(registeredAppointments);
         setPendingAppointments(registeredAppointments);
         setCurrentAppointments(
           registeredAppointments.slice(firstIndex, lastIndex)
@@ -719,7 +707,6 @@ const BillsSection = () => {
 
   const handleCheckout = (selectedAppointment) => {
     // Perform checkout logic here
-    console.log(selectedAppointment);
     localStorage.setItem(
       "ag_app_booking_info",
       JSON.stringify({

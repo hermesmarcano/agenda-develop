@@ -25,7 +25,6 @@ const ForgotPassword = () => {
     axios
       .post(`http://localhost:4040/password/forgot-password`, values)
       .then((res) => {
-        console.log(res);
         setWaiting(false);
         navigate("/check-email");
       })

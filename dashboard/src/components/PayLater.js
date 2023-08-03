@@ -38,8 +38,6 @@ const PayLater = ({
       updatedAt: new Date(),
     };
 
-    console.log(data);
-
     const confirmAppointmentLaterPayment = () => {
       axios
         .patch(
@@ -57,7 +55,6 @@ const PayLater = ({
           }
         )
         .then((response) => {
-          console.log(response.data);
           setAmountPaid(totalPrice);
           setChange(0);
 

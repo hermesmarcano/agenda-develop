@@ -39,7 +39,6 @@ const CreditPayment = ({
       updatedAt: new Date(),
     };
 
-    console.log(data);
     let paymentId = "";
 
     const updatePayment = () => {
@@ -51,7 +50,6 @@ const CreditPayment = ({
           },
         })
         .then((response) => {
-          console.log(response.data);
           const cuurentClient = clients.find(
             (client) => client._id === bookingInfo.customer
           );
@@ -59,8 +57,6 @@ const CreditPayment = ({
             Number(cuurentClient.payments) +
             Number(bookingInfo.amount) +
             Number(bookingInfo.prevPaid);
-          console.log("updatedClientPayments: ", updatedClientPayments);
-          console.log("customer id: ", bookingInfo.customer);
           axios
             .patch(
               `http://localhost:4040/customers/${bookingInfo.customer}`,
@@ -73,7 +69,6 @@ const CreditPayment = ({
               }
             )
             .then((response) => {
-              console.log(response.data);
               confirmAppointmentPayment();
             })
             .catch((error) => {
@@ -94,15 +89,12 @@ const CreditPayment = ({
           },
         })
         .then((response) => {
-          console.log(response.data);
           paymentId = response.data.payment._id;
           const cuurentClient = clients.find(
             (client) => client._id === bookingInfo.customer
           );
           const updatedClientPayments =
             Number(cuurentClient.payments) + Number(bookingInfo.amount);
-          console.log("updatedClientPayments: ", updatedClientPayments);
-          console.log("customer id: ", bookingInfo.customer);
           axios
             .patch(
               `http://localhost:4040/customers/${bookingInfo.customer}`,
@@ -115,12 +107,9 @@ const CreditPayment = ({
               }
             )
             .then((response) => {
-              console.log(response.data);
               linkPaymentToAppointment();
             })
-            .catch((error) => {
-              console.log(error);
-            });
+            .catch((error) => {});
         })
         .catch((error) => {
           console.error(error.message);
@@ -164,7 +153,6 @@ const CreditPayment = ({
           }
         )
         .then((response) => {
-          console.log(response.data);
           setAmountPaid(totalPrice);
           setChange(0);
 

@@ -23,7 +23,6 @@ const UpdateProfessional = ({
         },
       })
       .then((response) => {
-        console.log(response.data.data);
         setProfessionalData(response.data.data);
       })
       .catch((error) => {
@@ -119,7 +118,6 @@ const UpdateProfessional = ({
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          console.log(values);
           const patchData = {
             name: values.name,
             officeHours: values.officeHours,
@@ -139,7 +137,6 @@ const UpdateProfessional = ({
                   },
                 }
               );
-              console.log(response);
             } catch (e) {
               console.error(e.message);
             }
@@ -167,8 +164,6 @@ const UpdateProfessional = ({
             }
             hoursOptions.push(range);
           });
-
-          console.log(hoursOptions);
 
           return (
             <Form className="bg-white text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">

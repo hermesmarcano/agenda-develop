@@ -73,7 +73,6 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          console.log(values);
           const postData = {
             name: values.name,
             officeHours: values.officeHours,
@@ -93,7 +92,6 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   },
                 }
               );
-              console.log(response);
             } catch (e) {
               console.error(e.message);
             }
@@ -121,8 +119,6 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
             }
             hoursOptions.push(range);
           });
-
-          console.log(hoursOptions);
 
           return (
             <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">

@@ -28,7 +28,6 @@ const Clients = () => {
       })
       .then((response) => {
         setClients([...response.data].reverse());
-        console.log(response.data);
       })
       .catch((error) => {
         console.error(error.message);
@@ -100,18 +99,6 @@ const Clients = () => {
     }
   };
 
-  function deleteCustomer(id) {
-    fetch(`http://localhost:4040/customers/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-
-      .then((data) => console.log(data));
-  }
-
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
       axios
@@ -122,7 +109,6 @@ const Clients = () => {
         })
         .then((response) => {
           // Handle successful deletion
-          console.log(`Customer with ID ${id} has been deleted.`);
           setDeleting(false);
         })
         .catch((error) => {

@@ -28,7 +28,6 @@ const Products = () => {
         },
       })
       .then((response) => {
-        console.log(response.data.products);
         setProducts([...response.data.products].reverse());
       })
       .catch((error) => {
@@ -84,19 +83,6 @@ const Products = () => {
         {i}
       </button>
     );
-  }
-
-  async function deleteProduct(id) {
-    console.log(id);
-    await fetch(`http://localhost:4040/products/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-
-      .then((data) => console.log(data));
   }
 
   const [selectedIds, setSelectedIds] = useState([]);

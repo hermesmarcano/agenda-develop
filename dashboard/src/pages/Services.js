@@ -28,7 +28,6 @@ const Services = () => {
       })
       .then((response) => {
         setServices([...response.data.services].reverse());
-        console.log(response.data.services);
       })
       .catch((error) => {
         console.error(error);
@@ -75,19 +74,6 @@ const Services = () => {
     );
   }
 
-  async function deleteService(id) {
-    console.log(id);
-    await fetch(`http://localhost:4040/services/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: token,
-      },
-    })
-      .then((response) => response.json())
-
-      .then((data) => console.log(data));
-  }
-
   const [selectedIds, setSelectedIds] = useState([]);
 
   const handleCheckboxChange = (id) => {
@@ -123,7 +109,6 @@ const Services = () => {
         })
         .then((response) => {
           // Handle successful deletion
-          console.log(`Service with ID ${id} has been deleted.`);
           setDeleting(false);
         })
         .catch((error) => {

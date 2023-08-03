@@ -16,7 +16,6 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
         },
       })
       .then((response) => {
-        console.log(response.data);
         setCustomerData(response.data);
       })
       .catch((error) => {
@@ -36,7 +35,6 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
   });
 
   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-    console.log(values);
     const data = {
       name: values.name,
       phone: values.phone,

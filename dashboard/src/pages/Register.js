@@ -213,12 +213,10 @@ const Register = () => {
                     profileImg: profileImg,
                   };
 
-                  console.log(postData);
                   const updateResponse = await axios.post(
                     "http://localhost:4040/managers",
                     postData
                   );
-                  console.log(updateResponse.data);
                   navigate("/login");
                 } catch (error) {
                   console.log(error);

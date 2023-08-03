@@ -119,7 +119,6 @@ const Professionals = () => {
         })
         .then((response) => {
           // Handle successful deletion
-          console.log(`Professional with ID ${id} has been deleted.`);
           setDeleting(false);
         })
         .catch((error) => {

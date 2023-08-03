@@ -19,7 +19,6 @@ const ViewAppointment = ({ setModelState, appointmentId }) => {
       })
       .then((response) => {
         setAppointmentData(response.data.appointment);
-        console.log(response.data.appointment);
         setDateTime(new Date(response.data.appointment.dateTime));
       })
       .catch((error) => {

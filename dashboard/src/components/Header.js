@@ -23,8 +23,6 @@ function Header() {
   const { notifications, unreadCount, updateNotificationsSeen } =
     useContext(NotificationContext);
 
-  // console.log("theme: " + theme);
-
   const handleThemeChange = (color) => {
     setTheme(color);
     localStorage.setItem("currentTheme", color);

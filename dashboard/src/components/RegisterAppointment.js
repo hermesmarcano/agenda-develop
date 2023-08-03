@@ -56,7 +56,6 @@ const RegisterAppointment = ({
       })
       .then((response) => {
         setClients(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -160,7 +159,6 @@ const RegisterAppointment = ({
           },
         })
         .then((response) => {
-          console.log(response.data);
           setSubmitting(false);
           resetForm();
           setModelState(false);
@@ -258,7 +256,6 @@ const RegisterAppointment = ({
           },
         })
         .then((response) => {
-          console.log(response.data);
           setModelState(false);
           localStorage.setItem(
             "ag_app_booking_info",

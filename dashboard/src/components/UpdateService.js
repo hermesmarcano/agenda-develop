@@ -7,7 +7,6 @@ import ImageUpload from "./ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 
 const UpdateService = ({ setModelState, serviceId }) => {
-  console.log("serviceId: ", serviceId);
   const token = localStorage.getItem("ag_app_shop_token");
   const [serviceData, setServiceData] = useState(null);
   useEffect(() => {
@@ -18,8 +17,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
         },
       })
       .then((response) => {
-        console.log(response.data.service);
-        console.log(response.data.service.serviceImg);
         setServiceData(response.data.service);
       })
       .catch((error) => {
@@ -80,7 +77,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
           },
         }
       );
-      console.log(updateResponse.data);
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +86,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
   };
 
   const deleteServiceImg = () => {
-    console.log("deleting ", serviceData.serviceImg);
     axios
       .delete(
         `http://localhost:4040/services/image/${serviceData.serviceImg}`,
@@ -104,7 +99,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
         }
       )
       .then((response) => {
-        console.log(response.data);
         // Update serviceData with the empty service image
         setServiceData({ ...serviceData, serviceImg: "" });
       })
@@ -209,10 +203,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
                 </label>
                 {serviceData.serviceImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
-                    {console.log(
-                      "serviceData.serviceImg",
-                      serviceData.serviceImg
-                    )}
                     <img
                       src={`http://localhost:4040/uploads/services/${serviceData.serviceImg}`}
                       alt={serviceData.serviceImg}

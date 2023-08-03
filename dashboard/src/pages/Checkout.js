@@ -158,7 +158,6 @@ const Checkout = () => {
                 let servicesArr = servicesResponse.data.services.filter(
                   (serv) => bookingInfo?.service.includes(serv._id)
                 );
-                console.log(servicesArr);
                 setExtraServices(servicesArr);
               }
             }
@@ -166,10 +165,9 @@ const Checkout = () => {
             if (productsResponse) {
               setProductsData([...productsResponse.data.products].reverse());
               if (products.length === 0) {
-                let productsArr = productsResponse.data.products.filter(
-                  (prod) => bookingInfo?.product.includes(prod._id)
+                let productsArr = productsResponse.data?.products?.filter(
+                  (prod) => bookingInfo?.product?.includes(prod._id)
                 );
-                console.log(productsArr);
                 setProducts(productsArr);
               }
             }
@@ -285,7 +283,6 @@ const Checkout = () => {
       JSON.stringify(updatedBookingInfo)
     );
     setBookingInfo(updatedBookingInfo);
-    console.log(updatedBookingInfo);
     setPaymentMethod(method);
     setCurrentStep(4);
   };
@@ -307,7 +304,7 @@ const Checkout = () => {
   };
 
   const handleRemoveProduct = (index) => {
-    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+    setProducts((prevProducts) => prevProducts?.filter((_, i) => i !== index));
   };
 
   const handleDiscountChange = (e) => {
@@ -463,7 +460,7 @@ const Checkout = () => {
                     <button
                       key={index}
                       className={`flex flex-col items-center justify-center bg-gray-200 text-gray-800 p-4 rounded hover:bg-gray-800 hover:text-white transition-all duration-300 ${
-                        products.includes(product.name)
+                        products?.includes(product.name)
                           ? "bg-gray-800 text-white"
                           : ""
                       }`}

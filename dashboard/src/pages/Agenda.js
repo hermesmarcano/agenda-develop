@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import Calendar from "react-calendar";
-import Schedular from "../components/Schedular";
 import SchedularC from "../components/Schedular-c";
 import "react-calendar/dist/Calendar.css";
 import ArrowLeftSrc from "../images/arrow-left.svg";
@@ -49,8 +48,6 @@ const Agenda = () => {
 
         .then((response) => {
           setAppointments(response.data.appointments);
-          // console.log(response.data.appointments);
-          // setIsLoading(false);
         });
     }
   }, [shopId]);
@@ -77,7 +74,6 @@ const Agenda = () => {
           )
           .then((response) => {
             setProfessionals([...response.data.data].reverse());
-            // console.log([...response.data.data].reverse());
             setSelectedProfessionals([...response.data.data].reverse());
             setSelectedProfessional([...response.data.data].reverse()[0]);
             setIsLoading(false);
@@ -144,7 +140,6 @@ const Agenda = () => {
   // }).format(date);
 
   function handleDateClick(date) {
-    // console.log(date);
     setDate(date);
   }
 

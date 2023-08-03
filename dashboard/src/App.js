@@ -15,7 +15,6 @@ import Register from "./pages/Register";
 import AppointmentsList from "./pages/AppointmentsList";
 import Products from "./pages/Products";
 import Services from "./pages/Services";
-import Finance from "./pages/Finance";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
