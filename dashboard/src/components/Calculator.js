@@ -4,6 +4,7 @@ import { FiCheck } from "react-icons/fi";
 import { FiX } from "react-icons/fi";
 import { BsBackspace } from "react-icons/bs";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Calculator = ({
   isOpen,
@@ -18,6 +19,7 @@ const Calculator = ({
   dateTime,
 }) => {
   const [amountReceived, setAmountReceived] = useState("");
+  const navigate = useNavigate();
 
   const [unSfficientAmountMsg, setUnSufficientAmountMsg] = useState(false);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -90,6 +92,7 @@ const Calculator = ({
               })
               .catch((error) => {
                 console.log(error);
+                deletePayment();
               });
           })
           .catch((error) => {
@@ -128,7 +131,27 @@ const Calculator = ({
               })
               .catch((error) => {
                 console.log(error);
+                deletePayment();
               });
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      };
+
+      const deletePayment = () => {
+        axios
+            .delete(
+              `http://localhost:4040/payments/${bookingInfo.paymentId}`,
+              patchData,
+            {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          })
+          .then((response) => {
+            navigate('/checkout-appointments');
           })
           .catch((error) => {
             console.error(error.message);
@@ -152,6 +175,7 @@ const Calculator = ({
           })
           .catch((error) => {
             console.error(error.message);
+            deletePayment();
           });
       };
 
@@ -181,7 +205,7 @@ const Calculator = ({
           })
           .catch((error) => {
             console.error(error.message);
-            // Handle errors
+            deletePayment();
           });
       };
 

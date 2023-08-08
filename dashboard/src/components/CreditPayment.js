@@ -1,6 +1,7 @@
 import { FaCreditCard } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CreditPayment = ({
   isOpen,
@@ -14,6 +15,7 @@ const CreditPayment = ({
   dateTime,
 }) => {
   const token = localStorage.getItem("ag_app_shop_token");
+  const navigate = useNavigate();
 
   const handleConfirm = () => {
     let data = {
@@ -43,7 +45,10 @@ const CreditPayment = ({
 
     const updatePayment = () => {
       axios
-        .post("http://localhost:4040/payments", patchData, {
+          .patch(
+            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
+            patchData,
+          {
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
@@ -73,12 +78,14 @@ const CreditPayment = ({
             })
             .catch((error) => {
               console.log(error);
+              deletePayment();
             });
         })
         .catch((error) => {
           console.error(error.message);
         });
     };
+    
 
     const makePayment = () => {
       axios
@@ -109,7 +116,28 @@ const CreditPayment = ({
             .then((response) => {
               linkPaymentToAppointment();
             })
-            .catch((error) => {});
+            .catch((error) => {
+              deletePayment();
+            });
+        })
+        .catch((error) => {
+          console.error(error.message);
+        });
+    };
+
+    const deletePayment = () => {
+      axios
+          .delete(
+            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
+            patchData,
+          {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
+        .then((response) => {
+          navigate('/checkout-appointments');
         })
         .catch((error) => {
           console.error(error.message);
@@ -133,6 +161,7 @@ const CreditPayment = ({
         })
         .catch((error) => {
           console.error(error.message);
+          deletePayment();
         });
     };
 
@@ -161,7 +190,7 @@ const CreditPayment = ({
         })
         .catch((error) => {
           console.error(error.message);
-          // Handle errors
+          deletePayment();
         });
     };
 

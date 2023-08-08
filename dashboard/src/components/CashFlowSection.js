@@ -413,7 +413,7 @@ const CashFlowSection = () => {
               </thead>
               <tbody className="text-sm font-normal text-left text-gray-700 divide-y divide-gray-300">
                 {currentTransactions.map((transaction, index) => (
-                  <tr key={transaction.id}>
+                  <tr key={transaction._id}>
                     <td className="px-4 py-2">
                       {firstTransactionIndex + index + 1}
                     </td>
