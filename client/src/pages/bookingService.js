@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { BsArrowLeft } from "react-icons/bs";
 import instance from "../axiosConfig/axiosConfig";
 
 const BookingService = () => {
@@ -16,32 +17,29 @@ const BookingService = () => {
           console.log(response.data.services);
           setServices(response.data.services);
         });
-    });
-  }, []);
+    });      
+  }, []);  
 
   useEffect(() => {
-    console.log(selectedServices);
-    localStorage.setItem("services", JSON.stringify(selectedServices));
+    localStorage.setItem(`services_${params.id}`, JSON.stringify(selectedServices));
+  
   }, [selectedServices]);
 
   const handleServiceSelection = (service) => {
-    // Check if the service is already selected
-    if (
-      selectedServices.some(
-        (selectedService) => selectedService._id === service._id
-      )
-    ) {
-      // If yes, remove it from the array
-      setSelectedServices(
-        selectedServices.filter(
+    const updatedServices = selectedServices.some(
+      (selectedService) => selectedService._id === service._id
+    )
+      ? selectedServices.filter(
           (selectedService) => selectedService._id !== service._id
         )
-      );
-    } else {
-      // If no, add it to the array
-      setSelectedServices([...selectedServices, service]);
-    }
+      : [...selectedServices, service];
+  
+    setSelectedServices(updatedServices);
+  
+    // Store selected services along with the shop parameter in localStorage
+    localStorage.setItem(`services_${params.id}`, JSON.stringify(updatedServices));
   };
+  
 
   // const services = [
   //   { id: 1, name: "Service 1", image: "https://via.placeholder.com/150" },
@@ -117,6 +115,7 @@ const BookingService = () => {
           <p className="text-gray-500 mb-2">No available services</p>
         </div>
       )}
+      
       {selectedServices.length > 0 && (
         <Link to={`/shops/${params.id}/booking-professional`}>
           <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-medium py-4 px-8 rounded-full mt-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -124,7 +123,16 @@ const BookingService = () => {
           </button>
         </Link>
       )}
+      <div className="mt-4">
+      <Link to={`/shops/${params.id}/`}> 
+        <button className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg font-medium py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <BsArrowLeft className="inline-block mr-2" />
+          Back to Booking
+        </button>
+      </Link>
+      </div>
     </div>
+    
   );
 };
 

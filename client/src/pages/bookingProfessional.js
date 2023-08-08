@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { BsArrowLeft } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import instance from "../axiosConfig/axiosConfig";
 
@@ -26,7 +27,7 @@ const BookingProfessional = () => {
   }, []);
 
   const handleSelction = (pro) => {
-    localStorage.setItem("professional", JSON.stringify(pro));
+    localStorage.setItem(`professional_${params.id}`, JSON.stringify(pro));
     navigate(`/shops/${params.id}/booking-date`);
   };
 
@@ -113,6 +114,14 @@ const BookingProfessional = () => {
             )}
           </div>
         </div>
+      </div>
+      <div className="mt-4 flex justify-center">
+      <Link to={`/shops/${params.id}/booking-service`}> 
+        <button className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg font-medium py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <BsArrowLeft className="inline-block mr-2" />
+          Back to Services Selection
+        </button>
+      </Link>
       </div>
     </div>
   );
