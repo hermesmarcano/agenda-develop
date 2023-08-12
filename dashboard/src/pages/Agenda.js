@@ -267,7 +267,7 @@ const Agenda = () => {
             )}
           </div>
         </div>
-        <div className="w-full md:flex-1">
+        <div className="w-full flex-1">
           {viewMode === "daily" ? (
             selectedProfessionals.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full">

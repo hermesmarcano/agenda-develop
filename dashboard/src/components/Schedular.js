@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Popup from "./Popup";
@@ -29,12 +29,24 @@ const Scheduler = ({
   const [appointmentsList, setAppointmentsList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [modelState, setModelState] = React.useState(false);
-  const [registerModelState, setRegisterModelState] = React.useState(false);
   const [updateModelState, setUpdateModelState] = React.useState(false);
   const [viewModelState, setViewModelState] = React.useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
   const [appointmentsObject, setAppointmentsObject] = React.useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
+  const containerRef = React.useRef(null);
+  const [containerWidth, setContainerWidth] = React.useState(0);
+
+  useEffect(() => {
+    const containerElement = containerRef.current;
+    if (containerElement) {
+      const parentWidth = containerElement.parentNode.offsetWidth;
+      const desiredWidth = selectedProfessionals?.length * 135 + 44;
+      const widthInPixels = Math.max(parentWidth, desiredWidth);
+
+      setContainerWidth(widthInPixels);
+    }
+  }, [selectedProfessionals]);
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -213,7 +225,7 @@ const Scheduler = ({
 
   const renderTabs = () => {
     return (
-      <div className="flex items-center">
+      <div className={`flex items-center`}>
         <div className="w-16">
           <button
             className={`px-2 py-1 text-sm rounded-md ${
@@ -261,12 +273,6 @@ const Scheduler = ({
     setSelectedWeekDate(nextWeekDate);
     onSelectedWeekDateChange(nextWeekDate); // Call the callback function to update the date in the Agenda component
   };
-
-  // const renderDailyView = () => {
-  //   // Daily view rendering logic
-  //   // You can use the existing renderTimeSlots() function for this
-  //   return renderTimeSlots();
-  // };
 
   const getStartOfWeek = (date) => {
     const startOfWeek = new Date(date);
@@ -533,9 +539,9 @@ const Scheduler = ({
     timeSlots.push(
       <div
         key="title"
-        className={`flex items-center ps-10 border-b border-gray-400 min-w-[${
-          numProfessionals * 135 + 44
-        }px]`}
+        className={`flex items-center ps-10 border-b border-gray-400`}
+        ref={containerRef}
+        style={{ minWidth: `${containerWidth}px` }}
       >
         {ind === 0 &&
           selectedProfessionals.map((pro, index) => (
@@ -795,9 +801,9 @@ const Scheduler = ({
         timeSlots.push(
           <div
             key={`separator-${hour}`}
-            className={`h-px bg-gray-400 min-w-[${
-              numProfessionals * 135 + 44
-            }px]`}
+            className={`h-px bg-gray-400`}
+            ref={containerRef}
+            style={{ minWidth: `${containerWidth}px` }}
           ></div>
         );
       }
@@ -811,10 +817,12 @@ const Scheduler = ({
       <div className="border border-gray-400 p-4 mb-3 overflow-y-auto">
         <div
           className={`flex items-center justify-between ${
-            viewMode === "daily"
-              ? `min-w-[${selectedProfessionals.length * 135 + 44}px]`
-              : `min-w-[989px]`
+            viewMode === "daily" ? `` : `min-w-[989px]`
           }`}
+          ref={containerRef}
+          style={
+            viewMode === "daily" ? { minWidth: `${containerWidth}px` } : null
+          }
         >
           {renderTabs()}
           {viewMode === "daily" && (
@@ -861,18 +869,18 @@ const Scheduler = ({
 
         <div
           className={`h-px bg-gray-500 mt-3 mb-1 ${
-            viewMode === "daily"
-              ? `min-w-[${selectedProfessionals.length * 135 + 44}px]`
-              : `hidden`
+            viewMode === "daily" ? `` : `hidden`
           }`}
+          ref={containerRef}
+          style={{ minWidth: `${containerWidth}px` }}
         ></div>
 
         {viewMode === "daily" && (
           <>
             <div
-              className={`grid grid-cols-4 pt-2 min-w-[${
-                selectedProfessionals.length * 135 + 44
-              }px)`}
+              className={`grid grid-cols-4 pt-2`}
+              ref={containerRef}
+              style={{ minWidth: `${containerWidth}px` }}
             >
               <div>
                 <p className=" text-gray-500">
@@ -882,14 +890,15 @@ const Scheduler = ({
             </div>
           </>
         )}
-
-        <div
-          className={`h-px bg-gray-500 mt-3 ${
-            viewMode === "daily"
-              ? `min-w-[${selectedProfessionals.length * 135 + 44}px]`
-              : `min-w-[989px]`
-          }`}
-        ></div>
+        {viewMode === "daily" ? (
+          <div
+            className={`h-px bg-gray-500 mt-3`}
+            ref={containerRef}
+            style={{ minWidth: `${containerWidth}px` }}
+          ></div>
+        ) : (
+          <div className={`h-px bg-gray-500 mt-3 min-w-[989px]`}></div>
+        )}
 
         {viewMode === "daily"
           ? hoursArrs.map((hoursArrPeriod, ind) => {
@@ -899,9 +908,9 @@ const Scheduler = ({
                   {ind !== hoursArrs.length - 1 && (
                     <div
                       key={ind}
-                      className={`h-1 bg-gray-500 ${`min-w-[${
-                        selectedProfessionals.length * 135 + 44
-                      }px]`}`}
+                      className={`h-1 bg-gray-500`}
+                      ref={containerRef}
+                      style={{ minWidth: `${containerWidth}px` }}
                     ></div>
                   )}
                 </>
