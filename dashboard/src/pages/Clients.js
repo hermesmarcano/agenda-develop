@@ -6,6 +6,7 @@ import { FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
 import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import UpdateCustomer from "../components/UpdateCustomer";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const Clients = () => {
   const { shopId } = useContext(SidebarContext);
@@ -17,6 +18,7 @@ const Clients = () => {
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectedClientId, setSelectedClientId] = useState("");
   const [isDeleting, setDeleting] = useState(false);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
@@ -94,7 +96,7 @@ const Clients = () => {
       setSelectedIds([]);
     } else {
       // Not all IDs are selected, select all IDs
-      const allIds = currentClients.map((client) => client.id);
+      const allIds = currentClients.map((client) => client._id);
       setSelectedIds(allIds);
     }
   };
@@ -124,28 +126,35 @@ const Clients = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl text-gray-800 font-bold mb-5">Customers</h1>
+      <h1 className="text-2xl font-bold mb-5">Customers</h1>
       <div className="flex items-center relative">
         <input
           type="text"
-          className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+          className={`py-2 pl-8 border-b-2  text-gray-800 border-gray-300 focus:outline-none focus:border-blue-500 w-full ${
+            isDarkMode ? "bg-gray-500" : "bg-gray-100"
+          }`}
           placeholder="Search clients..."
           value={searchQuery}
           onChange={handleSearchQueryChange}
         />
-        <button className="absolute right-0 mr-2 focus:outline-none">
-          <FiSearch className="text-gray-500" />
+        <button className={`absolute right-0 mr-2 focus:outline-none`}>
+          <FiSearch />
         </button>
       </div>
 
       <div className="flex items-center my-4">
         <button
-          className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
+          className={` ${
+            isDarkMode
+              ? "bg-gray-500 hover:bg-gray-400 text-gray-800"
+              : "bg-gray-800 hover:bg-gray-600 text-gray-200"
+          } text-sm font-semibold py-2 px-4 rounded flex items-center justify-center`}
           onClick={() => {
             setRegisterModelState(true);
           }}
         >
-          <FaPlus className="mr-2" /> New Client
+          <FaPlus className="mr-2" />
+          Client
         </button>
         <Popup
           isOpen={registerModelState}
@@ -196,7 +205,11 @@ const Clients = () => {
         </label>
         <select
           id="clients-per-page"
-          className="border border-gray-300 rounded px-2 py-1 mr-4 text-sm"
+          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${
+            isDarkMode
+              ? "bg-gray-500 text-gray-800"
+              : "bg-gray-50 text-gray-500"
+          }`}
           value={clientsPerPage}
           onChange={handleClientsPerPageChange}
         >
@@ -212,9 +225,21 @@ const Clients = () => {
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border border-gray-200 divide-y divide-gray-200">
+        <table
+          className={`w-full table-auto border ${
+            isDarkMode
+              ? "border-gray-700 divide-gray-700"
+              : "border-gray-200 divide-gray-200"
+          }`}
+        >
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+            <tr
+              className={`text-xs uppercase tracking-wider ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-800"
+                  : "bg-gray-50 text-gray-500"
+              }`}
+            >
               <th className="py-3 pl-4 text-left">
                 <input
                   type="checkbox"
@@ -222,17 +247,21 @@ const Clients = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 text-left">Name</th>
+              <th className="py-3 px-4 text-left">Name</th>
               <th className="py-3 text-left">Phone</th>
               <th className="py-3 text-left">Payments $</th>
               <th className="py-3 pr-6 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className={`divide-y ${
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+            }`}
+          >
             {currentClients.map((client) => (
               <tr
                 key={client.name}
-                className="border-b border-gray-300 text-gray-800 text-xs"
+                className="border-b border-gray-300  text-xs"
               >
                 <td className="py-2 ps-4 text-left">
                   <input
@@ -241,7 +270,7 @@ const Clients = () => {
                     onChange={() => handleCheckboxChange(client._id)}
                   />
                 </td>
-                <td className="py-2">{client.name}</td>
+                <td className="py-2 px-3 text-left">{client.name}</td>
                 <td className="py-2">{client.phone}</td>
                 <td className="py-2">{client.payments.toFixed(2) || 0}</td>
                 <td className="py-2 pr-6 text-center">
