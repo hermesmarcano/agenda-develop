@@ -6,9 +6,6 @@ const paymentSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Manager",
     },
-    shopName: {
-      type: String,
-    },
     appointment: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Appointment",

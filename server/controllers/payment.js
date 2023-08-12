@@ -4,19 +4,8 @@ const mongoose = require("mongoose");
 
 const createPayment = async (req, res) => {
   try {
-    // Convert string to ObjectId
-    const managerId = mongoose.Types.ObjectId(req.body.managerId);
-    const customer = mongoose.Types.ObjectId(req.body.customer);
-    const professional = mongoose.Types.ObjectId(req.body.professional);
-
-    const paymentData = {
-      ...req.body,
-      managerId: managerId,
-      customer: customer,
-      professional: professional,
-    };
-
-    const payment = await Payment.create(paymentData);
+    const payment = new Payment(req.body);
+    await payment.save();
     res.status(201).json({ message: "Payment created successfully", payment });
   } catch (err) {
     res.status(400).json({ error: err.message });
