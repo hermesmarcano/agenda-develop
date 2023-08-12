@@ -11,6 +11,7 @@ import { FaCheck, FaCircle, FaCheckCircle, FaSpinner } from "react-icons/fa";
 import { AiOutlineInbox } from "react-icons/ai";
 import { HiEmojiSad } from "react-icons/hi";
 import Alert from "../components/Alert";
+import CalendarBox from "../components/CalendarBox";
 
 const Agenda = () => {
   const { shopName, shopId } = useContext(SidebarContext);
@@ -139,9 +140,19 @@ const Agenda = () => {
   //   day: "numeric",
   // }).format(date);
 
-  function handleDateClick(date) {
-    setDate(date);
-  }
+  // function handleDateClick(date) {
+  //   setDate(date);
+  // }
+
+  const handleDateClick = (day) => {
+    const selected = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      day
+    );
+    setDate(selected);
+    console.log(selected);
+  };
 
   const handleSelectedDateChange = (date) => {
     setDate(date);
@@ -164,7 +175,7 @@ const Agenda = () => {
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
           </div>
           <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
-            <Calendar
+            {/*  <Calendar
               value={date}
               onChange={handleDateClick}
               className="border-none text-xs p-2"
@@ -173,6 +184,11 @@ const Agenda = () => {
               prev2Label={null}
               prevLabel={<ArrowLeft />}
               nextLabel={<ArrowRight />}
+            /> */}
+            <CalendarBox
+              selectedDate={date}
+              setSelectedDate={setDate}
+              handleDateClick={handleDateClick}
             />
           </div>
           <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
