@@ -7,6 +7,7 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 import UpdateProduct from "../components/UpdateProduct";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const Products = () => {
   const { shopId } = useContext(SidebarContext);
@@ -19,6 +20,7 @@ const Products = () => {
   const [updateModelState, setUpdateModelState] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [isDeleting, setDeleting] = useState(false);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
     axios
@@ -136,11 +138,13 @@ const Products = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl text-gray-800 font-bold mb-5">Products</h1>
+      <h1 className="text-2xl font-bold mb-5">Products</h1>
       <div className="flex items-center relative">
         <input
           type="text"
-          className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+          className={`py-2 pl-8 border-b-2  text-gray-800 border-gray-300 focus:outline-none focus:border-blue-500 w-full ${
+            isDarkMode ? "bg-gray-500" : "bg-gray-100"
+          }`}
           placeholder="Search by product..."
           value={searchQuery}
           onChange={handleSearchQueryChange}
@@ -153,10 +157,15 @@ const Products = () => {
       <div className="flex items-center my-4">
         <div className="flex items-center my-4">
           <button
-            className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
+            className={` ${
+              isDarkMode
+                ? "bg-gray-500 hover:bg-gray-400 text-gray-800"
+                : "bg-gray-800 hover:bg-gray-600 text-gray-200"
+            } text-sm font-semibold py-2 px-4 rounded flex items-center justify-center`}
             onClick={() => setRegisterModelState(true)}
           >
-            <FaPlus className="mr-2" /> New Product
+            <FaPlus className="mr-2" />
+            Product
           </button>
           <Popup
             isOpen={registerModelState}
@@ -207,7 +216,11 @@ const Products = () => {
         </label>
         <select
           id="clients-per-page"
-          className="border border-gray-300 rounded px-2 py-1 mr-4 text-sm"
+          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${
+            isDarkMode
+              ? "bg-gray-500 text-gray-800"
+              : "bg-gray-50 text-gray-500"
+          }`}
           value={productsPerPage}
           onChange={handleAppointmentsPerPageChange}
         >
@@ -223,13 +236,25 @@ const Products = () => {
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border border-gray-200 divide-y divide-gray-200">
+        <table
+          className={`w-full table-auto border ${
+            isDarkMode
+              ? "border-gray-700 divide-gray-700"
+              : "border-gray-200 divide-gray-200"
+          }`}
+        >
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+            <tr
+              className={`text-xs uppercase tracking-wider ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-800"
+                  : "bg-gray-50 text-gray-500"
+              }`}
+            >
               <th className="py-3 pl-4 text-start">
                 <input type="checkbox" onChange={handleSelectAll} />
               </th>
-              <th className="py-3 px-4 text-left">Id</th>
+              <th className="py-3 px-4 text-left">#</th>
               <th className="py-3 text-left">Name</th>
               <th className="py-3 pr-6 text-left">Speciality</th>
               <th className="py-3 pr-6 text-left">Price R$</th>
@@ -238,11 +263,15 @@ const Products = () => {
               <th className="py-3 pr-6 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className={`divide-y ${
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+            }`}
+          >
             {currentProducts.map((product, index) => (
               <tr
                 key={product.name}
-                className="border-b border-gray-300 text-gray-800 text-xs"
+                className="border-b border-gray-300 text-xs"
               >
                 <td className="py-2 pl-4 text-start">
                   <input
