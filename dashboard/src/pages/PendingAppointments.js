@@ -11,6 +11,7 @@ import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SidebarContext from "../context/SidebarContext";
 import { FiClock } from "react-icons/fi";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const PendingAppointments = () => {
   // Sample data
@@ -22,6 +23,7 @@ const PendingAppointments = () => {
   const itemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   const lastIndex = currentPage * itemsPerPage;
   const firstIndex = lastIndex - itemsPerPage;
@@ -131,15 +133,22 @@ const PendingAppointments = () => {
           {currentAppointments.map((appointment) => (
             <div
               key={appointment._id}
-              className={`bg-white p-4 rounded-lg shadow-md ${
+              className={`rounded-lg shadow-md ${
                 selectedAppointment &&
                 selectedAppointment._id === appointment._id
                   ? "ring-2 ring-gray-800"
                   : ""
-              } cursor-pointer transition-colors duration-300 hover:bg-gray-100`}
+              } 
+              cursor-pointer transition-colors duration-300 hover:bg-gray-100`}
               onClick={() => handleAppointmentSelect(appointment)}
             >
-              <div className="flex items-center justify-between mb-2">
+              <div
+                className={`grid grid-cols-1 sm:grid-cols-2 rounded-lg items-center p-4 ${
+                  isDarkMode
+                    ? "bg-gray-500 text-gray-200"
+                    : "bg-gray-100 text-gray-800"
+                }`}
+              >
                 <div className="flex items-center">
                   <div className="mr-2">
                     {appointment.status === "pending" ? (
@@ -152,7 +161,7 @@ const PendingAppointments = () => {
                     <h2 className="text-lg font-semibold">
                       {appointment.customer.name}
                     </h2>
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex items-center text-gray-700">
                       <RiCalendarEventFill className="mr-1" />
                       <p className="text-sm">
                         {new Intl.DateTimeFormat(["ban", "id"]).format(
@@ -160,7 +169,7 @@ const PendingAppointments = () => {
                         )}
                       </p>
                     </div>
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex items-center text-gray-700">
                       <RiTimeFill className="mr-1" />
                       <p className="text-sm">
                         {new Intl.DateTimeFormat("en", {
@@ -170,12 +179,8 @@ const PendingAppointments = () => {
                     </div>
                   </div>
                 </div>
-                <p className="text-lg font-semibold">
+                <p className="text-lg font-semibold flex justify-end items-center">
                   $
-                  {/* {appointment.service.reduce(
-                    (totalPrice, s) => totalPrice + s.price,
-                    0
-                  )} */}
                   {appointment?.product?.length > 0
                     ? (
                         appointment.service.reduce(
@@ -196,54 +201,6 @@ const PendingAppointments = () => {
           ))}
         </div>
         {pendingAppointments.length > itemsPerPage && (
-          // <div className="mt-6">
-          //   <nav className="flex items-center justify-center">
-          //     <button
-          //       className={`mr-2 px-4 py-2 rounded-md ${
-          //         currentPage === 1
-          //           ? "bg-gray-300 cursor-not-allowed"
-          //           : "bg-gray-800 hover:bg-gray-700 text-white"
-          //       }`}
-          //       onClick={() => handlePageChange(currentPage - 1)}
-          //       disabled={currentPage === 1}
-          //     >
-          //       Prev
-          //     </button>
-          //     {Array.from(
-          //       {
-          //         length: Math.ceil(pendingAppointments.length / itemsPerPage),
-          //       },
-          //       (_, i) => i + 1
-          //     ).map((page) => (
-          //       <button
-          //         key={page}
-          //         className={`mx-2 px-4 py-2 rounded-md ${
-          //           currentPage === page
-          //             ? "bg-gray-800 text-white"
-          //             : "bg-gray-300 hover:bg-gray-800 hover:text-white"
-          //         }`}
-          //         onClick={() => handlePageChange(page)}
-          //       >
-          //         {page}
-          //       </button>
-          //     ))}
-          //     <button
-          //       className={`ml-2 px-4 py-2 rounded-md ${
-          //         currentPage ===
-          //         Math.ceil(pendingAppointments.length / itemsPerPage)
-          //           ? "bg-gray-300 cursor-not-allowed"
-          //           : "bg-gray-800 hover:bg-gray-700 text-white"
-          //       }`}
-          //       onClick={() => handlePageChange(currentPage + 1)}
-          //       disabled={
-          //         currentPage ===
-          //         Math.ceil(pendingAppointments.length / itemsPerPage)
-          //       }
-          //     >
-          //       Next
-          //     </button>
-          //   </nav>
-          // </div>
           <Pagination
             itemsPerPage={itemsPerPage}
             totalItems={pendingAppointments.length}
@@ -254,15 +211,21 @@ const PendingAppointments = () => {
       <div className="lg:w-1/4 pb-3">
         {selectedAppointment ? (
           <div className="mt-4 h-full">
-            <div className="bg-white h-full p-4 rounded-lg shadow-md flex flex-col">
+            <div
+              className={`h-full p-4 rounded-lg shadow-md flex flex-col ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-200"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
               <h2 className="text-xl font-semibold mb-2">
                 {selectedAppointment.customer.name}
               </h2>
-              <p className="text-gray-600 mb-4">
+              <p className="text-gray-700 mb-4">
                 Professional: {selectedAppointment.professional.name}
               </p>
               <div className="flex flex-col mb-4">
-                <p className="text-sm text-gray-600 mb-1">Services:</p>
+                <p className="text-sm text-gray-700 mb-1">Services:</p>
                 {selectedAppointment.service.map((service, index) => (
                   <p
                     key={index}
@@ -319,12 +282,18 @@ const PendingAppointments = () => {
           </div>
         ) : (
           <div className="mt-4 items-center justify-center h-full">
-            <div className="bg-white p-4 rounded-lg shadow-md h-full flex flex-col justify-center text-center items-center">
+            <div
+              className={`p-4 rounded-lg shadow-md h-full flex flex-col justify-center text-center items-center  ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-200"
+                  : "bg-gray-100 text-gray-800"
+              }`}
+            >
               <RiCheckboxBlankCircleLine className="text-gray-800 text-5xl mb-4" />
               <h2 className="text-gray-800 text-3xl font-semibold mb-2">
                 No selected appointment
               </h2>
-              <p className="text-gray-600 text-lg">
+              <p className="text-gray-700 text-lg">
                 Please choose an appointment to proceed.
               </p>
               <button
@@ -345,6 +314,7 @@ export default PendingAppointments;
 
 function Pagination({ itemsPerPage, totalItems, onPageChange }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 
@@ -373,8 +343,18 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
           key={page}
           className={`mx-2 h-[40px] px-4 py-2 rounded-md ${
             currentPage === page
-              ? "bg-gray-800 text-white"
-              : "bg-gray-300 hover:bg-gray-800 hover:text-white"
+              ? `
+              ${
+                isDarkMode
+                  ? "bg-gray-400 text-gray-800"
+                  : "bg-gray-800 text-white"
+              }
+              `
+              : `${
+                  isDarkMode
+                    ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
+                    : "bg-gray-300 hover:bg-gray-800 hover:text-white"
+                }`
           }`}
           onClick={() => handlePageChange(page)}
         >
@@ -393,8 +373,12 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
           <button
             className={`mr-2 h-[40px] my-1 px-4 py-2 rounded-md ${
               currentPage === 1
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gray-800 hover:bg-gray-700 text-white"
+                ? "bg-gray-700 cursor-not-allowed"
+                : `${
+                    isDarkMode
+                      ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
+                      : "bg-gray-800 hover:bg-gray-700 hover:text-white"
+                  }`
             }`}
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
@@ -404,7 +388,12 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
 
           {currentPage > 3 && (
             <button
-              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-800 hover:text-white"
+              className={`mx-2 h-[40px] my-1 px-4 py-2 rounded-md 
+            ${
+              isDarkMode
+                ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
+                : "bg-gray-300 hover:bg-gray-800 hover:text-white"
+            }`}
               onClick={() => handlePageChange(1)}
             >
               1
@@ -413,7 +402,8 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
 
           {currentPage > 4 && (
             <button
-              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300"
+              className={`mx-2 h-[40px] my-1 px-4 py-2 rounded-md 
+          ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`}
               disabled={true}
             >
               ...
@@ -424,7 +414,8 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
 
           {currentPage < totalPages - 3 && (
             <button
-              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300"
+              className={`mx-2 h-[40px] my-1 px-4 py-2 rounded-md 
+            ${isDarkMode ? "bg-gray-600" : "bg-gray-300"}`}
               disabled={true}
             >
               ...
@@ -433,7 +424,12 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
 
           {currentPage < totalPages - 2 && (
             <button
-              className="mx-2 h-[40px] my-1 px-4 py-2 rounded-md bg-gray-300 hover:bg-gray-800 hover:text-white"
+              className={`mx-2 h-[40px] my-1 px-4 py-2 rounded-md 
+              ${
+                isDarkMode
+                  ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
+                  : "bg-gray-300 hover:bg-gray-800 hover:text-white"
+              }`}
               onClick={() => handlePageChange(totalPages)}
             >
               {totalPages}
@@ -441,10 +437,14 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
           )}
 
           <button
-            className={`ml-2 h-[40px] my-1 px-4 py-2 rounded-md ${
+            className={`ml-2 h-[40px] my-1 px-4 py-2 rounded-md  ${
               currentPage === totalPages
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-gray-800 hover:bg-gray-700 text-white"
+                ? "bg-gray-700 cursor-not-allowed"
+                : `${
+                    isDarkMode
+                      ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
+                      : "bg-gray-800 hover:bg-gray-700 hover:text-white"
+                  }`
             }`}
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
