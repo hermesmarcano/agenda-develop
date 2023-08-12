@@ -39,6 +39,9 @@ const CreditPayment = ({
       updatedAt: new Date(),
     };
 
+    console.log(data);
+    console.log(patchData);
+
     let paymentId = "";
 
     const updatePayment = () => {
