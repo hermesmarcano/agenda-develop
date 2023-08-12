@@ -14,6 +14,7 @@ import {
 import { GiPayMoney } from "react-icons/gi";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import SidebarContext from "../context/SidebarContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 // import logo from "./logo.png";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
@@ -21,6 +22,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("Agenda");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   const tabs = [
     {
@@ -135,7 +137,9 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`h-[calc(100%-40px)] z-10 fixed left-0 w-56 bg-gray-800 overflow-y-auto transition-all duration-300 ${
+      className={`h-[calc(100%-40px)] z-10 fixed left-0 w-56 ${
+        isDarkMode ? "bg-gray-600" : "bg-gray-800"
+      } overflow-y-auto transition-all duration-300 ${
         isSidebarOpen
           ? "translate-x-0 ease-out px-1"
           : "-translate-x-36 ease-in"
