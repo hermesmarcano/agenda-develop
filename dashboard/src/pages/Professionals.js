@@ -7,6 +7,7 @@ import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import UpdateProfessional from "../components/UpdateProfessional";
 import Switch from "react-switch";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const Professionals = () => {
   const { shopId } = useContext(SidebarContext);
@@ -20,6 +21,7 @@ const Professionals = () => {
   const [selectiedProfessionalId, setSelectiedProfessionalId] = useState("");
   const [isDeleting, setDeleting] = useState(false);
   const [workingHours, setWorkingHours] = useState([]);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
     axios
@@ -103,7 +105,7 @@ const Professionals = () => {
     } else {
       // Not all IDs are selected, select all IDs
       const allIds = currentProfessionals.map(
-        (professional) => professional.id
+        (professional) => professional._id
       );
       setSelectedIds(allIds);
     }
@@ -136,10 +138,14 @@ const Professionals = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl text-gray-800 font-bold mb-5">Professionals</h1>
+      <h1 className="text-2xl font-bold mb-5">Professionals</h1>
       <div className="flex items-center my-4">
         <button
-          className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-semibold py-2 px-4 rounded flex items-center justify-center"
+          className={` ${
+            isDarkMode
+              ? "bg-gray-500 hover:bg-gray-400 text-gray-800"
+              : "bg-gray-800 hover:bg-gray-600 text-gray-200"
+          } text-sm font-semibold py-2 px-4 rounded flex items-center justify-center`}
           onClick={() => setRegisterModelState(true)}
         >
           <FaPlus className="mr-2" /> Professional
@@ -197,7 +203,11 @@ const Professionals = () => {
         </label>
         <select
           id="clients-per-page"
-          className="border border-gray-300 rounded px-2 py-1 mr-4 text-sm"
+          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${
+            isDarkMode
+              ? "bg-gray-500 text-gray-800"
+              : "bg-gray-50 text-gray-500"
+          }`}
           value={professionalsPerPage}
           onChange={handleProfessionalsPerPageChange}
         >
@@ -213,9 +223,21 @@ const Professionals = () => {
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border border-gray-200 divide-y divide-gray-200">
+        <table
+          className={`w-full table-auto border ${
+            isDarkMode
+              ? "border-gray-700 divide-gray-700"
+              : "border-gray-200 divide-gray-200"
+          }`}
+        >
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+            <tr
+              className={`text-xs uppercase tracking-wider ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-800"
+                  : "bg-gray-50 text-gray-500"
+              }`}
+            >
               <th className="py-3 pl-4 text-start">
                 <input
                   type="checkbox"
@@ -223,7 +245,6 @@ const Professionals = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 px-4 text-center">Id</th>
               <th className="py-3 pl-2 text-left">Name</th>
               <th className="py-3 px-4 text-center">Office Hours</th>
               <th className="py-3 pl-2 pr-6 text-left">Description</th>
@@ -231,11 +252,15 @@ const Professionals = () => {
               <th className="py-3 pr-6 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className={`divide-y ${
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+            }`}
+          >
             {currentProfessionals.map((professional, index) => (
               <tr
                 key={professional.name}
-                className="border-b border-gray-300 text-gray-800 text-xs"
+                className="border-b border-gray-300  text-xs"
               >
                 <td className="py-2 pl-4 text-start">
                   <input
@@ -244,8 +269,7 @@ const Professionals = () => {
                     onChange={() => handleCheckboxChange(professional._id)}
                   />
                 </td>
-                <td className="py-2 px-3 text-center">{index + 1}</td>
-                <td className="py-2 pl-2">{professional.name}</td>
+                <td className="py-2 px-3 text-left">{professional.name}</td>
                 <td className="py-2 pl-2 text-center">
                   {professional.officeHours &&
                     professional.officeHours?.length > 0 &&
