@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { BsArrowLeft } from "react-icons/bs";
 
 const BookingDate = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -11,7 +12,7 @@ const BookingDate = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // console.log("Selected date:", selectedDate);
-    localStorage.setItem("selectedDate", selectedDate);
+    localStorage.setItem(`selectedDate_${params.id}`, selectedDate);
     navigate(`/shops/${params.id}/booking-hour`);
     // Implement logic to check if the selected date has any reserved appointments
     // If there are reserved appointments, handle them accordingly
@@ -52,6 +53,14 @@ const BookingDate = () => {
           </button>
         )}
       </form>
+      <div className="mt-4 flex justify-center">
+      <Link to={`/shops/${params.id}/booking-professional`}> 
+        <button className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg font-medium py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <BsArrowLeft className="inline-block mr-2" />
+          Back to Professional Selection
+        </button>
+      </Link>
+      </div>
     </div>
   );
 };

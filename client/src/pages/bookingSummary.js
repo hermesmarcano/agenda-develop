@@ -6,10 +6,11 @@ import instance from "../axiosConfig/axiosConfig";
 
 const BookingSummary = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const [shopName, setShopName] = useState("");
   const [shopId, setShopId] = useState("");
-  const professional = JSON.parse(localStorage.getItem("professional"));
-  const services = JSON.parse(localStorage.getItem("services"));
+  const professional = JSON.parse(localStorage.getItem(`professional_${params.id}`));
+  const services = JSON.parse(localStorage.getItem(`services_${params.id}`));
   const servicesId = [];
   const servicesNames = [];
   services.map((service) => {
@@ -18,7 +19,7 @@ const BookingSummary = () => {
   services.map((service) => {
     servicesNames.push(service.name);
   });
-  const products = JSON.parse(localStorage.getItem("products"));
+  const products = JSON.parse(localStorage.getItem(`products_${params.id}`));
   console.log("products: ", products);
   const productsId = [];
   const productsNames = [];
@@ -30,14 +31,13 @@ const BookingSummary = () => {
       productsNames.push(product.name);
     });
   }
-  const d = new Date(localStorage.getItem("dateTime"));
+  const d = new Date(localStorage.getItem(`dateTime_${params.id}`));
   const date = new Intl.DateTimeFormat(["ban", "id"]).format(d);
   const time = new Intl.DateTimeFormat("en", {
     hour: "numeric",
     minute: "numeric",
     hourCycle: "h23",
   }).format(d);
-  const params = useParams();
   useEffect(() => {
     instance.get(`/managers/shop?urlSlug=${params.id}`).then((response) => {
       console.log(response.data);

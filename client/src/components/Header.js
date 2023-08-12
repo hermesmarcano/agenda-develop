@@ -6,7 +6,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const handleSignOut = () => {
-    localStorage.removeItem("adminToken");
+    localStorage.removeItem("ag_app_admin_token");
     navigate("/");
   };
 

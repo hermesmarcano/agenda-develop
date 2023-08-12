@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { HiCheckCircle } from "react-icons/hi";
+import { BsArrowLeft } from "react-icons/bs";
 import instance from "../axiosConfig/axiosConfig";
 
 const BuyProduct = () => {
@@ -23,7 +24,7 @@ const BuyProduct = () => {
 
   useEffect(() => {
     console.log(selectedProducts);
-    localStorage.setItem("products", JSON.stringify(selectedProducts));
+    localStorage.setItem(`products_${params.id}`, JSON.stringify(selectedProducts));
   }, [selectedProducts]);
 
   const handleProductSelection = (product) => {
@@ -47,7 +48,7 @@ const BuyProduct = () => {
 
   const handleSkip = () => {
     setSelectedProducts([]);
-    localStorage.removeItem("products");
+    localStorage.removeItem(`products_${params.id}`);
     navigate(`/shops/${params.id}/booking-summary`);
   };
 
@@ -134,7 +135,16 @@ const BuyProduct = () => {
           Skip
         </button>
       </div>
+      <div className="mt-4 flex justify-center">
+      <Link to={`/shops/${params.id}/booking-hour`}> 
+        <button className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg font-medium py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <BsArrowLeft className="inline-block mr-2" />
+          Back to Hour Selection
+        </button>
+      </Link>
+      </div>
     </div>
+    
   );
 };
 
