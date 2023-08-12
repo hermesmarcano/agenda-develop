@@ -5,6 +5,7 @@ import { useContext } from "react";
 import SidebarContext from "../context/SidebarContext";
 import { AlertContext } from "../context/AlertContext";
 import Alert from "../components/Alert";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const PrivateRoutes = () => {
   const isAuthenticated = !!localStorage.getItem("ag_app_shop_token");
@@ -17,6 +18,7 @@ const PrivateRoutes = () => {
     alertMsgType,
     setAlertMsgType,
   } = useContext(AlertContext);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   return isAuthenticated ? (
     <>
@@ -29,7 +31,13 @@ const PrivateRoutes = () => {
         <div
           className={`bg-gray-200 ${
             isSidebarOpen ? "ml-[224.102px]" : "ml-[80px]"
-          } flex-1 overflow-auto`}
+          } flex-1 overflow-auto
+          ${
+            isDarkMode
+              ? "bg-gray-800 text-gray-200"
+              : "bg-gray-100 text-gray-800"
+          }
+          `}
         >
           <Outlet />
         </div>
