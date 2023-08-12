@@ -24,6 +24,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const { isDarkMode } = useContext(DarkModeContext);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const tabs = [
     {
       name: "Agenda",
@@ -37,12 +38,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       icon2: <GiPayMoney className="text-gray-400 h-6 w-6" />,
       link: "/checkout-appointments",
     },
-    // {
-    //   name: "Appointments List",
-    //   icon1: <FaList className="text-gray-400 h-7 w-7" />,
-    //   icon2: <FaList className="text-gray-400 h-6 w-6" />,
-    //   link: "/appointments",
-    // },
     {
       name: "Clients",
       icon1: <FaUsers className="text-gray-400 h-7 w-7" />,
@@ -111,12 +106,6 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       const isSmall = window.innerWidth < 640;
       setIsSmallScreen(isSmall);
 
-      // if (!isSmall && !isSidebarOpen) {
-      //   toggleSidebar(true);
-      // } else if (isSmall && isSidebarOpen) {
-      //   toggleSidebar(false);
-      // }
-
       if (isSmall && isSidebarOpen) {
         toggleSidebar(false);
       }
@@ -137,7 +126,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`h-[calc(100%-40px)] z-10 fixed left-0 w-56 ${
+      className={`h-[calc(100%-40px)] z-10 shadow-lg fixed left-0 w-56 ${
         isDarkMode ? "bg-gray-600" : "bg-gray-800"
       } overflow-y-auto transition-all duration-300 ${
         isSidebarOpen
