@@ -16,6 +16,7 @@ import { RiShoppingCartLine } from "react-icons/ri";
 import { MdAttachMoney } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const CashFlowSection = () => {
   const [customers, setCustomers] = useState([]);
@@ -32,6 +33,7 @@ const CashFlowSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage, setTransactionsPerPage] = useState(5);
   const [expenses, setExpenses] = useState([]);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
     fetch(`http://localhost:4040/payments?shopId=${shopId}`, {
@@ -280,9 +282,17 @@ const CashFlowSection = () => {
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <div className="bg-white shadow-md rounded-md p-6">
+        <div
+          className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+        >
           <h2 className="text-lg font-bold mb-4">Earnings</h2>
-          <div className="flex flex-col sm:flex-row items-center justify-between bg-gray-100 rounded-lg p-4">
+          <div
+            className={`flex flex-col sm:flex-row items-center justify-between rounded-lg p-4
+          ${isDarkMode ? "bg-gray-900" : "bg-gray-100"}
+          `}
+          >
             <div className="mb-4 sm:mb-0 sm:mr-8">
               <div className="text-3xl font-bold text-blue-500">
                 ${totalEarningsLast30Days.toFixed(2)}
@@ -301,7 +311,11 @@ const CashFlowSection = () => {
             </div>
           </div>
         </div>
-        <div className="bg-white shadow-md rounded-md p-6">
+        <div
+          className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+        >
           <h2 className="text-lg font-bold mb-4">Total Customers</h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-green-500">
@@ -310,7 +324,11 @@ const CashFlowSection = () => {
             <div className="text-lg font-semibold text-gray-500">All time</div>
           </div>
         </div>
-        <div className="bg-white shadow-md rounded-md p-6">
+        <div
+          className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+        >
           <h2 className="text-lg font-bold mb-4">Total Sold Products</h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-red-500">
@@ -319,7 +337,11 @@ const CashFlowSection = () => {
             <div className="text-lg font-semibold text-gray-500">All time</div>
           </div>
         </div>
-        <div className="bg-white shadow-md rounded-md p-6">
+        <div
+          className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+        >
           <h2 className="text-lg font-bold mb-4">Reserved Appointments</h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-purple-500">
@@ -332,7 +354,11 @@ const CashFlowSection = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-md p-6 mt-8 mb-8">
+      <div
+        className={`shadow-md rounded-md p-6 mt-8 mb-8
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+      >
         <h2 className="text-lg font-bold mb-4">Earnings/Expenses Per Day</h2>
         <div className="chart-container">
           <ResponsiveContainer width="100%" height={300}>
@@ -360,7 +386,11 @@ const CashFlowSection = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 mx-auto w-full gap-8">
         <div className="mb-8">
-          <div className="bg-white shadow-md rounded-md p-6">
+          <div
+            className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+          >
             <h2 className="text-lg font-bold mb-4">Earnings by Service</h2>
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={300}>
@@ -376,7 +406,11 @@ const CashFlowSection = () => {
         </div>
 
         <div className="mb-8">
-          <div className="bg-white shadow-md rounded-md p-6">
+          <div
+            className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+          >
             <h2 className="text-lg font-bold mb-4">Earnings by Professional</h2>
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={300}>
@@ -392,15 +426,27 @@ const CashFlowSection = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-md p-6">
+      <div
+        className={`shadow-md rounded-md p-6
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+      >
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold">Transactions</h2>
         </div>
         <div className="mt-8">
           <div className="overflow-x-auto">
-            <table className="w-full table-auto">
-              <thead className="bg-gray-200">
-                <tr className="text-xs font-medium tracking-wider text-left text-gray-600 uppercase border-b border-gray-300">
+            <table
+              className={`w-full table-auto border border-gray-300 divide-gray-300`}
+            >
+              <thead>
+                <tr
+                  className={`text-xs uppercase tracking-wider font-medium text-left border-b border-gray-300 ${
+                    isDarkMode
+                      ? "bg-gray-500 text-gray-800"
+                      : "bg-gray-50 text-gray-500"
+                  }`}
+                >
                   <th className="px-4 py-2">ID</th>
                   <th className="px-4 py-2">Customer</th>
                   <th className="px-4 py-2">Professional</th>
@@ -411,7 +457,11 @@ const CashFlowSection = () => {
                   <th className="px-4 py-2">Amount Paid</th>
                 </tr>
               </thead>
-              <tbody className="text-sm font-normal text-left text-gray-700 divide-y divide-gray-300">
+              <tbody
+                className={`text-sm font-normal text-left divide-y divide-gray-300
+              ${isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"}
+              `}
+              >
                 {currentTransactions.map((transaction, index) => (
                   <tr key={transaction._id}>
                     <td className="px-4 py-2">
@@ -513,7 +563,11 @@ const CashFlowSection = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow-md rounded-md p-6 mt-8">
+      <div
+        className={`shadow-md rounded-md p-6 mt-8
+        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        `}
+      >
         <h2 className="text-lg font-bold mb-4">Expenses</h2>
         <Formik
           initialValues={{
@@ -557,7 +611,9 @@ const CashFlowSection = () => {
                     type="text"
                     id="name"
                     name="name"
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className={`w-full p-2 border border-gray-300 rounded-lg ${
+                      isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                    }`}
                   />
                   <ErrorMessage
                     name="name"
@@ -576,7 +632,9 @@ const CashFlowSection = () => {
                     type="text"
                     id="description"
                     name="description"
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className={`w-full p-2 border border-gray-300 rounded-lg ${
+                      isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                    }`}
                   />
                   <ErrorMessage
                     name="description"
@@ -592,7 +650,9 @@ const CashFlowSection = () => {
                     type="number"
                     id="value"
                     name="value"
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className={`w-full p-2 border border-gray-300 rounded-lg ${
+                      isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                    }`}
                   />
                   <ErrorMessage
                     name="value"
@@ -608,7 +668,9 @@ const CashFlowSection = () => {
                     type="date"
                     id="date"
                     name="date"
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className={`w-full p-2 border border-gray-300 rounded-lg ${
+                      isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                    }`}
                   />
                   <ErrorMessage
                     name="date"

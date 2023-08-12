@@ -1,28 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
-import {
-  FiCheckCircle,
-  FiChevronLeft,
-  FiChevronRight,
-  FiSearch,
-} from "react-icons/fi"; // Importing icons from react-icons library
-import Sidebar from "../components/Sidebar";
+import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
 import SidebarContext from "../context/SidebarContext";
-import Header from "../components/Header";
 import {
-  FaCheck,
   FaCheckCircle,
-  FaDashcube,
-  FaDollarSign,
   FaExclamationTriangle,
-  FaHandHolding,
-  FaHandHoldingUsd,
-  FaMoneyCheckAlt,
-  FaPowerOff,
   FaSearch,
-  FaShoppingCart,
   FaSpinner,
-  FaStop,
-  FaStopCircle,
   FaTimesCircle,
 } from "react-icons/fa";
 import axios from "axios";
@@ -35,17 +18,17 @@ import {
   RiDeleteBinLine,
   RiEdit2Line,
 } from "react-icons/ri";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const AppointmentsList = () => {
   const { shopId } = useContext(SidebarContext);
-  const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [appointmentsPerPage, setAppointmentsPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [appointments, setAppointments] = useState([]);
   const [isDeleting, setDeleting] = useState(false);
   const [updateModelState, setUpdateModelState] = React.useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
     React.useContext(AlertContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -211,13 +194,15 @@ const AppointmentsList = () => {
       <div className="flex items-center relative">
         <input
           type="text"
-          className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+          className={`py-2 pl-8 border-b-2  text-gray-800 border-gray-300 focus:outline-none focus:border-blue-500 w-full ${
+            isDarkMode ? "bg-gray-500" : "bg-gray-100"
+          }`}
           placeholder="Search appointments..."
           value={searchQuery}
           onChange={handleSearchQueryChange}
         />
         <button className="absolute right-0 mr-2 focus:outline-none">
-          <FiSearch className="text-gray-500" />
+          <FiSearch />
         </button>
       </div>
       <div className="flex items-center my-4">
@@ -264,7 +249,11 @@ const AppointmentsList = () => {
         </label>
         <select
           id="clients-per-page"
-          className="border border-gray-300 rounded px-2 py-1 mr-4 text-sm"
+          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${
+            isDarkMode
+              ? "bg-gray-500 text-gray-800"
+              : "bg-gray-50 text-gray-500"
+          }`}
           value={appointmentsPerPage}
           onChange={handleAppointmentsPerPageChange}
         >
@@ -280,9 +269,21 @@ const AppointmentsList = () => {
         </span>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border border-gray-200 divide-y divide-gray-200">
+        <table
+          className={`w-full table-auto border ${
+            isDarkMode
+              ? "border-gray-700 divide-gray-700"
+              : "border-gray-200 divide-gray-200"
+          }`}
+        >
           <thead>
-            <tr className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+            <tr
+              className={`text-xs uppercase tracking-wider ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-800"
+                  : "bg-gray-50 text-gray-500"
+              }`}
+            >
               <th className="py-3 pl-3">
                 <input
                   type="checkbox"
@@ -299,11 +300,15 @@ const AppointmentsList = () => {
               <th className="py-3 pr-6 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody
+            className={`divide-y ${
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+            }`}
+          >
             {currentAppointments.map((appointment) => (
               <tr
                 key={appointment._id}
-                className="border-b border-gray-300 text-gray-800 text-xs"
+                className="border-b border-gray-300 text-xs"
               >
                 <td className="py-2 pl-3 text-center">
                   <input
@@ -336,26 +341,6 @@ const AppointmentsList = () => {
                 >
                   {renderStatusIcon(appointment.status)} {appointment.status}
                 </td>
-                {/* <td className="py-2 pr-2 flex items-center justify-end">
-                  <div className="flex items-center space-x-2">
-                    <button
-                      className={`px-2 py-1 ${
-                        new Date(appointment.dateTime) > new Date()
-                          ? "text-gray-800 bg-gray-200 hover:bg-gray-300"
-                          : "text-gray-500 bg-gray-100 cursor-default"
-                      } rounded-md focus:outline-none focus:ring focus:ring-blue-300  flex items-center`}
-                      onClick={() => setUpdateModelState(true)}
-                      disabled={new Date(appointment.dateTime) <= new Date()}
-                      ariaLabel={
-                        new Date(appointment.dateTime) <= new Date()
-                          ? "Can't modify past appointments"
-                          : ""
-                      }
-                    >
-                      Update {renderActionIcon(appointment.status)}
-                    </button>
-                  </div>
-                </td> */}
 
                 <AppointmentButton
                   key={appointment.id}
@@ -434,23 +419,7 @@ const AppointmentButton = ({
   renderActionIcon,
 }) => {
   const isDisabled = new Date(appointment.dateTime) <= new Date();
-  // const [showTooltip, setShowTooltip] = useState(false);
-  // let tooltipTimer;
-
-  // const handleMouseEnter = () => {
-  //   if (isDisabled) {
-  //     tooltipTimer = setTimeout(() => {
-  //       setShowTooltip(true);
-  //     }, 300); // Adjust the delay here as needed (in milliseconds)
-  //   }
-  // };
-
-  // const handleMouseLeave = () => {
-  //   if (tooltipTimer) {
-  //     clearTimeout(tooltipTimer);
-  //   }
-  //   setShowTooltip(false);
-  // };
+  const { isDarkMode } = useContext(DarkModeContext);
 
   return (
     <td className="py-2 pr-2 flex items-center justify-end">
@@ -458,25 +427,27 @@ const AppointmentButton = ({
         className={`flex items-center space-x-2 ${
           isDisabled ? "cursor-default" : "cursor-pointer"
         } relative`}
-        // onMouseEnter={handleMouseEnter}
-        // onMouseLeave={handleMouseLeave}
       >
         <button
           className={`px-2 py-1 ${
             !isDisabled
-              ? "text-gray-800 bg-gray-200 hover:bg-gray-300"
-              : "text-gray-500 bg-gray-100"
+              ? `${
+                  isDarkMode
+                    ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
+                    : "text-gray-800 bg-gray-200 hover:bg-gray-300"
+                }`
+              : `${
+                  isDarkMode
+                    ? "text-gray-800 bg-gray-600"
+                    : "text-gray-500 bg-gray-100"
+                }
+              `
           } rounded-md focus:outline-none focus:ring focus:ring-blue-300 flex items-center`}
           onClick={() => setUpdateModelState(true)}
           disabled={isDisabled}
         >
           Update {renderActionIcon(appointment.status)}
         </button>
-        {/* {showTooltip && isDisabled && (
-          <span className="tooltip absolute top-[-30px] left-0 bg-black text-white px-2 py-1 rounded-md">
-            Can't modify past appointments
-          </span>
-        )} */}
       </div>
     </td>
   );
