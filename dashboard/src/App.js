@@ -12,7 +12,6 @@ import {
 import SidebarContext from "./context/SidebarContext";
 import Professionals from "./pages/Professionals";
 import Register from "./pages/Register";
-import AppointmentsList from "./pages/AppointmentsList";
 import Products from "./pages/Products";
 import Services from "./pages/Services";
 import Analytics from "./pages/Analytics";
@@ -78,10 +77,6 @@ function App() {
                           <Route path="/" exact element={<Agenda />} />
                           <Route path="/agenda" exact element={<Agenda />} />
                           <Route path="/clients" element={<Clients />} />
-                          <Route
-                            path="/appointments"
-                            element={<AppointmentsList />}
-                          />
                           <Route
                             path="/professionals"
                             element={<Professionals />}
