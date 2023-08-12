@@ -59,7 +59,7 @@ const Calculator = ({
         axios
           .patch(
             `http://localhost:4040/payments/${bookingInfo.paymentId}`,
-            patchData,
+            JSON.stringify(patchData),
             {
               headers: {
                 "Content-Type": "application/json",
@@ -101,7 +101,7 @@ const Calculator = ({
 
       const makePayment = () => {
         axios
-          .post("http://localhost:4040/payments", data, {
+          .post("http://localhost:4040/payments", JSON.stringify(data), {
             headers: {
               "Content-Type": "application/json",
               Authorization: token,
@@ -140,16 +140,12 @@ const Calculator = ({
 
       const deletePayment = () => {
         axios
-          .delete(
-            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
-            patchData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: token,
-              },
-            }
-          )
+          .delete(`http://localhost:4040/payments/${bookingInfo.paymentId}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          })
           .then((response) => {
             navigate("/checkout-appointments");
           })
@@ -162,7 +158,7 @@ const Calculator = ({
         axios
           .patch(
             `http://localhost:4040/payments/${paymentId}`,
-            { appointment: bookingInfo.appointmentId },
+            JSON.stringify({ appointment: bookingInfo.appointmentId }),
             {
               headers: {
                 "Content-Type": "application/json",
@@ -183,11 +179,11 @@ const Calculator = ({
         axios
           .patch(
             `http://localhost:4040/appointments/${bookingInfo.appointmentId}`,
-            {
+            JSON.stringify({
               service: bookingInfo.service,
               product: bookingInfo.product,
               status: "confirmed",
-            },
+            }),
             {
               headers: {
                 "Content-Type": "application/json",
