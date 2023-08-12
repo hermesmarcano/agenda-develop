@@ -1,15 +1,8 @@
 import "./App.css";
-import { useState, useContext } from "react";
 import Agenda from "./pages/Agenda";
 import Clients from "./pages/Clients";
 import Login from "./pages/Login";
-import {
-  BrowserRouter as Router,
-  HashRouter,
-  Route,
-  Routes,
-} from "react-router-dom";
-import SidebarContext from "./context/SidebarContext";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import Professionals from "./pages/Professionals";
 import Register from "./pages/Register";
 import Products from "./pages/Products";
@@ -18,59 +11,29 @@ import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import PrivateRoutes from "./utils/PrivateRoutes";
-import DateTimeContext from "./context/DateTimeContext";
 import ForgotPassword from "./pages/ForgotPassword";
 import PasswordReset from "./pages/PasswordReset";
 import CheckEmail from "./pages/CheckEmail";
-import ViewModeContext from "./context/ViewModeContext";
-import ProfessionalIdContext from "./context/ProfessionalIdContext";
 import Checkout from "./pages/Checkout";
 import PendingAppointments from "./pages/PendingAppointments";
+import { SidebarContextWrapper } from "./context/SidebarContext";
+import { ViewModeContextWrapper } from "./context/ViewModeContext";
+import { ProfessionalIdContextWrapper } from "./context/ProfessionalIdContext";
+import { DateTimeContextWrapper } from "./context/DateTimeContext";
 import { AlertContextWrapper } from "./context/AlertContext";
 import { NotificationContextWrapper } from "./context/NotificationContext";
 import { DarkModeContextWrapper } from "./context/DarkModeContext";
 
 function App() {
-  const [isSidebarOpen, toggleSidebar] = useState(true);
-  const [shopId, setShopId] = useState("");
-  const [shopName, setShopName] = useState("");
-  const [dateTime, setDateTime] = useState(new Date());
-  const [viewMode, setViewMode] = useState("daily");
-  const [professionalId, setProfessionalId] = useState("");
-
   return (
     <div className="h-screen overflow-hidden">
       <NotificationContextWrapper>
         <AlertContextWrapper>
           <DarkModeContextWrapper>
-            <ViewModeContext.Provider
-              value={{
-                viewMode: viewMode,
-                setViewMode: setViewMode,
-              }}
-            >
-              <ProfessionalIdContext.Provider
-                value={{
-                  professionalId: professionalId,
-                  setProfessionalId: setProfessionalId,
-                }}
-              >
-                <DateTimeContext.Provider
-                  value={{
-                    dateTime: dateTime,
-                    setDateTime: setDateTime,
-                  }}
-                >
-                  <SidebarContext.Provider
-                    value={{
-                      isSidebarOpen: isSidebarOpen,
-                      toggleSidebar: toggleSidebar,
-                      shopId: shopId,
-                      setShopId: setShopId,
-                      shopName: shopName,
-                      setShopName: setShopName,
-                    }}
-                  >
+            <ViewModeContextWrapper>
+              <ProfessionalIdContextWrapper>
+                <DateTimeContextWrapper>
+                  <SidebarContextWrapper>
                     <HashRouter>
                       <Routes>
                         <Route element={<PrivateRoutes />}>
@@ -120,10 +83,10 @@ function App() {
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </HashRouter>
-                  </SidebarContext.Provider>
-                </DateTimeContext.Provider>
-              </ProfessionalIdContext.Provider>
-            </ViewModeContext.Provider>
+                  </SidebarContextWrapper>
+                </DateTimeContextWrapper>
+              </ProfessionalIdContextWrapper>
+            </ViewModeContextWrapper>
           </DarkModeContextWrapper>
         </AlertContextWrapper>
       </NotificationContextWrapper>

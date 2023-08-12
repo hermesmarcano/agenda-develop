@@ -7,25 +7,24 @@ import {
   FaTimes,
   FaSpinner,
   FaPercent,
-  FaBullseye,
   FaClock,
 } from "react-icons/fa";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { BiBasket } from "react-icons/bi";
-import { FiArrowLeft, FiCalendar, FiClock, FiPercent } from "react-icons/fi";
+import { FiArrowLeft, FiCalendar, FiClock } from "react-icons/fi";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { HiOutlineClipboardCheck } from "react-icons/hi";
 import { CgTrashEmpty } from "react-icons/cg";
 import { RiServiceFill } from "react-icons/ri";
 import Calculator from "../components/Calculator";
 import { useNavigate } from "react-router-dom";
-import DateTimeContext from "../context/DateTimeContext";
-import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
-import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import CreditPayment from "../components/CreditPayment";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import PayLater from "../components/PayLater";
+import { SidebarContext } from "../context/SidebarContext";
+import { DateTimeContext } from "../context/DateTimeContext";
+import { ProfessionalIdContext } from "../context/ProfessionalIdContext";
 
 const StepIndicator = ({ currentStep, totalSteps }) => {
   return (

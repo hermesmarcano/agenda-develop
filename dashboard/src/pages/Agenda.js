@@ -1,16 +1,11 @@
 import React, { useState, useContext, useEffect } from "react";
-import Calendar from "react-calendar";
-import SchedularC from "../components/Schedular-c";
-import "react-calendar/dist/Calendar.css";
-import ArrowLeftSrc from "../images/arrow-left.svg";
-import ArrowRightSrc from "../images/arrow-right.svg";
-import SidebarContext from "../context/SidebarContext";
+import Schedular from "../components/Schedular";
 import axios from "axios";
-import ViewModeContext from "../context/ViewModeContext";
 import { FaCheck, FaCircle, FaCheckCircle, FaSpinner } from "react-icons/fa";
 import { AiOutlineInbox } from "react-icons/ai";
 import { HiEmojiSad } from "react-icons/hi";
-import Alert from "../components/Alert";
+import { SidebarContext } from "../context/SidebarContext";
+import { ViewModeContext } from "../context/ViewModeContext";
 import CalendarBox from "../components/CalendarBox";
 
 const Agenda = () => {
@@ -133,17 +128,6 @@ const Agenda = () => {
     }
   };
 
-  // const formattedDate = new Intl.DateTimeFormat("en-US", {
-  //   weekday: "long",
-  //   year: "numeric",
-  //   month: "long",
-  //   day: "numeric",
-  // }).format(date);
-
-  // function handleDateClick(date) {
-  //   setDate(date);
-  // }
-
   const handleDateClick = (day) => {
     const selected = new Date(
       new Date().getFullYear(),
@@ -175,16 +159,6 @@ const Agenda = () => {
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
           </div>
           <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
-            {/*  <Calendar
-              value={date}
-              onChange={handleDateClick}
-              className="border-none text-xs p-2"
-              locale="en"
-              next2Label={null}
-              prev2Label={null}
-              prevLabel={<ArrowLeft />}
-              nextLabel={<ArrowRight />}
-            /> */}
             <CalendarBox
               selectedDate={date}
               setSelectedDate={setDate}
@@ -307,7 +281,7 @@ const Agenda = () => {
                 <HiEmojiSad className="text-6xl text-gray-500" />
               </div>
             ) : (
-              <SchedularC
+              <Schedular
                 selectedProfessionals={selectedProfessionals}
                 startWeekDate={startWeekDate}
                 date={date}
@@ -317,7 +291,7 @@ const Agenda = () => {
               />
             )
           ) : (
-            <SchedularC
+            <Schedular
               selectedProfessional={selectedProfessional}
               startWeekDate={startWeekDate}
               date={date}
@@ -333,19 +307,3 @@ const Agenda = () => {
 };
 
 export default Agenda;
-
-const ArrowLeft = () => {
-  return (
-    <div className="flex justify-center items-center">
-      <img src={ArrowLeftSrc} alt="" />
-    </div>
-  );
-};
-
-const ArrowRight = () => {
-  return (
-    <div className="flex justify-center items-center">
-      <img src={ArrowRightSrc} alt="" />
-    </div>
-  );
-};

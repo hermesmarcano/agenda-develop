@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import SidebarContext from "../context/SidebarContext";
 
 import { TiTicket } from "react-icons/ti";
 import { AiOutlineDollarCircle } from "react-icons/ai";
@@ -8,9 +7,10 @@ import { BsCreditCard } from "react-icons/bs";
 import axios from "axios";
 import AppointmentsList from "../components/AppointmentsList";
 import CashFlowSection from "../components/CashFlowSection";
-import { DarkModeContext } from "../context/DarkModeContext";
 import CommissionSection from "../components/CommissionSection";
 import BillsSection from "../components/BillsSection";
+import { SidebarContext } from "../context/SidebarContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);

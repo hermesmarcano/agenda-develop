@@ -3,7 +3,7 @@ import Pagination from "./Pagination";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import SidebarContext from "../context/SidebarContext";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const BillsSection = () => {

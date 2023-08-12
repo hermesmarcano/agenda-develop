@@ -9,12 +9,11 @@ import {
 } from "react-icons/ri";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import SidebarContext from "../context/SidebarContext";
 import { FiClock } from "react-icons/fi";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const PendingAppointments = () => {
-  // Sample data
   const { shopId } = useContext(SidebarContext);
   const [pendingAppointments, setPendingAppointments] = useState([]);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -373,11 +372,14 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
           <button
             className={`mr-2 h-[40px] my-1 px-4 py-2 rounded-md ${
               currentPage === 1
-                ? "bg-gray-700 cursor-not-allowed"
+                ? `
+              cursor-not-allowed
+              ${isDarkMode ? "bg-gray-700" : "bg-gray-300"}
+              `
                 : `${
                     isDarkMode
                       ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
-                      : "bg-gray-800 hover:bg-gray-700 hover:text-white"
+                      : "bg-gray-300 hover:bg-gray-800 hover:text-white"
                   }`
             }`}
             onClick={() => handlePageChange(currentPage - 1)}
@@ -439,11 +441,14 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
           <button
             className={`ml-2 h-[40px] my-1 px-4 py-2 rounded-md  ${
               currentPage === totalPages
-                ? "bg-gray-700 cursor-not-allowed"
+                ? `
+                cursor-not-allowed
+                ${isDarkMode ? "bg-gray-700" : "bg-gray-300"}
+                `
                 : `${
                     isDarkMode
                       ? "bg-gray-600 hover:bg-gray-500 hover:text-gray-800"
-                      : "bg-gray-800 hover:bg-gray-700 hover:text-white"
+                      : "bg-gray-300 hover:bg-gray-800 hover:text-white"
                   }`
             }`}
             onClick={() => handlePageChange(currentPage + 1)}

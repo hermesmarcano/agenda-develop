@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import SidebarContext from "../context/SidebarContext";
+import { SidebarContext } from "../context/SidebarContext";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 
@@ -24,10 +24,6 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
   }, []);
 
   const { shopId } = useContext(SidebarContext);
-  // const initialValues = {
-  //   name: customerData.name,
-  //   phone: customerData.phone,
-  // };
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required("Name is required"),

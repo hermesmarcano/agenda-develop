@@ -1,16 +1,14 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
-import SidebarContext from "../context/SidebarContext";
-import { FaCheck, FaChevronDown, FaChevronUp, FaSpinner } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import Switch from "react-switch";
-import ProfessionalIdContext from "../context/ProfessionalIdContext";
-import ThemeContext from "../context/ThemeContext";
+import { SidebarContext } from "../context/SidebarContext";
+import { DateTimeContext } from "../context/DateTimeContext";
+import { ProfessionalIdContext } from "../context/ProfessionalIdContext";
 
 const BlockSchedule = ({ setModelState }) => {
-  const { theme } = useContext(ThemeContext);
   const [blockAllDay, setBlockAllDay] = useState(true);
   const [showFrequency, setShowFrequency] = useState(false);
   const { dateTime } = useContext(DateTimeContext);

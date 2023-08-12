@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
-import SidebarContext from "../context/SidebarContext";
+import { SidebarContext } from "../context/SidebarContext";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";

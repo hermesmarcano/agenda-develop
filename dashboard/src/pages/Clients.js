@@ -2,10 +2,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
 import RegisterCustomer from "../components/RegisterCustomer";
 import Popup from "../components/Popup";
-import { FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
-import SidebarContext from "../context/SidebarContext";
+import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import axios from "axios";
 import UpdateCustomer from "../components/UpdateCustomer";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const Clients = () => {

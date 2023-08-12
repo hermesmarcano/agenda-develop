@@ -2,9 +2,9 @@ import { Outlet, Navigate } from "react-router-dom";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import { useContext } from "react";
-import SidebarContext from "../context/SidebarContext";
-import { AlertContext } from "../context/AlertContext";
 import Alert from "../components/Alert";
+import { SidebarContext } from "../context/SidebarContext";
+import { AlertContext } from "../context/AlertContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const PrivateRoutes = () => {
@@ -41,13 +41,6 @@ const PrivateRoutes = () => {
         >
           <Outlet />
         </div>
-        {/* <div
-          className={`bg-gray-800 text-cyan-600 ${
-            isSidebarOpen ? "ml-[224.102px]" : "ml-[80px]"
-          } flex-1 overflow-auto`}
-        >
-          <Outlet />
-        </div> */}
       </div>
     </>
   ) : (

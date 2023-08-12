@@ -1,11 +1,8 @@
-import React, { useContext, useEffect, useState } from "react";
-import DateTimeContext from "../context/DateTimeContext";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import SidebarContext from "../context/SidebarContext";
 import { FaSpinner, FaCheck } from "react-icons/fa";
 
 const ViewAppointment = ({ setModelState, appointmentId }) => {
-  const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [dateTime, setDateTime] = useState(new Date());
   const [appointmentData, setAppointmentData] = useState(null);

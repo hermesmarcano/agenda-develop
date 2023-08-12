@@ -1,19 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Header from "../components/Header";
-import Sidebar from "../components/Sidebar";
-import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import ImageUpload from "../components/ImageUpload";
-import ThemeContext from "../context/ThemeContext";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
+import { SidebarContext } from "../context/SidebarContext";
 
 const Settings = () => {
-  const { shopName, setShopName } = useContext(SidebarContext);
-  const { theme } = useContext(ThemeContext);
+  const { setShopName } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [loading, setLoading] = useState(true);
   const [shopData, setShopData] = useState({});

@@ -2,11 +2,11 @@ import React, { useState, useContext, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
 import Popup from "../components/Popup";
 import RegisterProduct from "../components/RegisterProduct";
-import { FaEdit, FaPlus, FaTrash } from "react-icons/fa";
-import SidebarContext from "../context/SidebarContext";
+import { FaEdit, FaPlus } from "react-icons/fa";
 import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 import UpdateProduct from "../components/UpdateProduct";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const Products = () => {

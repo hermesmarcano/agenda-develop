@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { FaSpinner, FaSyncAlt } from "react-icons/fa";
 import { MdMonetizationOn } from "react-icons/md";
 import { startOfWeek, subWeeks } from "date-fns";
-import SidebarContext from "../context/SidebarContext";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const CommissionSection = () => {

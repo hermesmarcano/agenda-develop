@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { TiTimes } from "react-icons/ti";
 import { FiCheck } from "react-icons/fi";
 import { FiX } from "react-icons/fi";
 import { BsBackspace } from "react-icons/bs";
@@ -141,17 +140,18 @@ const Calculator = ({
 
       const deletePayment = () => {
         axios
-            .delete(
-              `http://localhost:4040/payments/${bookingInfo.paymentId}`,
-              patchData,
+          .delete(
+            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
+            patchData,
             {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-          })
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token,
+              },
+            }
+          )
           .then((response) => {
-            navigate('/checkout-appointments');
+            navigate("/checkout-appointments");
           })
           .catch((error) => {
             console.error(error.message);

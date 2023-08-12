@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useLayoutEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   FaBold,
   FaChevronLeft,
   FaChevronRight,
   FaCalendar,
-  FaList,
   FaUsers,
   FaCogs,
   FaChartPie,
@@ -12,10 +11,9 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import SidebarContext from "../context/SidebarContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
-// import logo from "./logo.png";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();

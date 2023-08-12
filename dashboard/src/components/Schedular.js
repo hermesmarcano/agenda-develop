@@ -1,21 +1,17 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
-import SidebarContext from "../context/SidebarContext";
 import Popup from "./Popup";
 import ViewAppointment from "./ViewAppointment";
-import DateTimeContext from "../context/DateTimeContext";
-import ViewModeContext from "../context/ViewModeContext";
 import ProcessAppointment from "./ProcessAppointment";
-import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import stripeBackground from "../images/stripe.svg";
-import stripeBackground2 from "../images/stripe2.svg";
 import UpdateAppointment from "./UpdateAppointment";
-import { AlertContext } from "../context/AlertContext";
+import { SidebarContext } from "../context/SidebarContext";
+import { DateTimeContext } from "../context/DateTimeContext";
+import { ViewModeContext } from "../context/ViewModeContext";
+import { ProfessionalIdContext } from "../context/ProfessionalIdContext";
 
-const schedulerData = [];
-
-const SchedulerC = ({
+const Scheduler = ({
   date,
   startWeekDate,
   workingHours,
@@ -25,8 +21,6 @@ const SchedulerC = ({
   selectedProfessionals,
 }) => {
   const { shopId } = React.useContext(SidebarContext);
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
   const { setDateTime } = React.useContext(DateTimeContext);
   const { setProfessionalId } = React.useContext(ProfessionalIdContext);
   const [selectedDate, setSelectedDate] = React.useState(date);
@@ -950,4 +944,4 @@ const SchedulerC = ({
   return <div>{renderScheduler()}</div>;
 };
 
-export default SchedulerC;
+export default Scheduler;

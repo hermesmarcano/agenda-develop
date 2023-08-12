@@ -1,11 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import SubmitPayment from "./SubmitPayment";
 import BlockSchedule from "./BlockSchedule";
-import { ErrorMessage } from "formik";
-import Register from "../pages/Register";
 import RegisterAppointment from "./RegisterAppointment";
 import axios from "axios";
-import SidebarContext from "../context/SidebarContext";
+import { SidebarContext } from "../context/SidebarContext";
 
 const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   const [activeTab, setActiveTab] = useState("appointment");
@@ -62,7 +59,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
               </button>
               <div>
                 <>
-                  {amount === 0 ? (
+                  {amount === 0 && (
                     <>
                       <div>
                         <div className="flex">
@@ -89,7 +86,6 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                         </div>
                         {activeTab === "appointment" ? (
                           <>
-                            {/* <h2 className="text-xl font-bold mb-4">Book an Appointment</h2> */}
                             <RegisterAppointment
                               amount={amount}
                               clients={clients}
@@ -104,21 +100,11 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                           </>
                         ) : (
                           <>
-                            {/* <h2 className="text-xl font-bold mb-4">Block Schedule</h2> */}
                             <BlockSchedule setModelState={setModelState} />
                           </>
                         )}
                       </div>
                     </>
-                  ) : (
-                    <SubmitPayment
-                      amount={amount}
-                      bookingInfo={bookingInfo}
-                      clients={clients}
-                      setModelState={setModelState}
-                      setAmount={setAmount}
-                      addCustomerClicked={addCustomerClicked}
-                    />
                   )}
                 </>
               </div>

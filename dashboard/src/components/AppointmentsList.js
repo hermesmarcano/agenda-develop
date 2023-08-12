@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
-import SidebarContext from "../context/SidebarContext";
 import {
   FaCheckCircle,
   FaExclamationTriangle,
@@ -18,6 +17,7 @@ import {
   RiDeleteBinLine,
   RiEdit2Line,
 } from "react-icons/ri";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const AppointmentsList = () => {

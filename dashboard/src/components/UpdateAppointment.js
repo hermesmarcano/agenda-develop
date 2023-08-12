@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
-import SidebarContext from "../context/SidebarContext";
 import {
   FaCreditCard,
   FaPlus,
@@ -10,18 +9,14 @@ import {
   FaSpinner,
   FaWhatsapp,
 } from "react-icons/fa";
-import ProfessionalIdContext from "../context/ProfessionalIdContext";
 import Select from "react-select";
 import Switch from "react-switch";
-import { Link, useNavigate } from "react-router-dom";
-import Alert from "./Alert";
-import { HiArrowDown, HiCheck, HiSearch, HiX } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
+import { HiCheck, HiX } from "react-icons/hi";
 import { BiChevronDown } from "react-icons/bi";
-import makeAnimated from "react-select/animated";
+import { SidebarContext } from "../context/SidebarContext";
 import { AlertContext } from "../context/AlertContext";
 import { NotificationContext } from "../context/NotificationContext";
-
-const animatedComponents = makeAnimated();
 
 const UpdateAppointment = ({
   amount,
@@ -35,8 +30,6 @@ const UpdateAppointment = ({
   const { shopId } = useContext(SidebarContext);
   const [dateTime, setDateTime] = useState(new Date());
   const token = localStorage.getItem("ag_app_shop_token");
-  const [duration, setDuration] = useState(0);
-  const { professionalId } = useContext(ProfessionalIdContext);
   const [loading, setLoading] = React.useState(true);
   const [clients, setClients] = useState([]);
   const [professionals, setProfessionals] = useState([]);

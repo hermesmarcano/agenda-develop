@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import ImageUpload from "./ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
@@ -24,7 +23,6 @@ const UpdateService = ({ setModelState, serviceId }) => {
       });
   }, []);
 
-  const { shopId } = useContext(SidebarContext);
   const validationSchema = Yup.object({
     name: Yup.string(),
     price: Yup.number(),

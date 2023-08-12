@@ -2,10 +2,10 @@ import React, { useState, useContext, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
 import Popup from "../components/Popup";
 import RegisterService from "../components/RegisterService";
-import { FaEdit, FaPlus, FaSearch, FaTrash } from "react-icons/fa";
-import SidebarContext from "../context/SidebarContext";
+import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import axios from "axios";
 import UpdateService from "../components/UpdateService";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const Services = () => {

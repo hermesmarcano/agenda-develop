@@ -1,37 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
-import {
-  FaBell,
-  FaCog,
-  FaUser,
-  FaPaintBrush,
-  FaXing,
-  FaSun,
-  FaMoon,
-} from "react-icons/fa";
-import { IoMdColorPalette } from "react-icons/io";
-import { FiX, FiSun, FiMoon } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import ThemeContext from "../context/ThemeContext";
-import axios from "axios";
+import React, { useContext, useState } from "react";
+import { FaBell, FaCog, FaUser } from "react-icons/fa";
+import { FiSun, FiMoon } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import { NotificationContext } from "../context/NotificationContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 function Header() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [colorDiv, setColorDiv] = useState(false);
   const { notifications, unreadCount, updateNotificationsSeen } =
     useContext(NotificationContext);
-
-  const handleThemeChange = (color) => {
-    localStorage.setItem("currentTheme", color);
-  };
 
   const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
 
   const toggleDarkLightMode = () => {
-    // theme === "light" ? setTheme("dark") : setTheme("light");
-    // localStorage.setItem("currentTheme", theme);
     setIsDarkMode(!isDarkMode);
   };
 
@@ -193,41 +175,6 @@ function Header() {
               <FiMoon className="text-white text-xl" />
             )}
           </button>
-
-          {/* {colorDiv && (
-            <>
-              <div
-                className={`fixed z-20 inset-0 bg-gray-900 bg-opacity-50`}
-                onClick={() => setColorDiv(false)}
-              ></div>
-              <div className="fixed z-30 right-0 top-0 animate-scale-up-tr shadow-md rounded-lg bg-white p-4 space-y-2">
-                <div className="flex flex-wrap justify-center items-center">
-                  <button
-                    className={`w-10 h-10 rounded-full bg-gray-800 text-white  transition-colors flex items-center justify-center relative mr-1`}
-                  >
-                    <IoMdColorPalette className="w-6 h-6" />
-                    <span className="absolute inset-0.5 rounded-full bg-transparent border-2 border-white"></span>
-                  </button>
-                  <button
-                    className={`w-10 h-10 rounded-full bg-gray-800 text-white hover:text-gray-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
-                  >
-                    <IoMdColorPalette className="w-6 h-6" />
-                  </button>
-                  <button
-                    className={`w-10 h-10 rounded-full bg-gray-800 text-white hover:text-gray-800 hover:bg-gray-50 hover:shadow-inner transition-colors flex items-center justify-center relative mr-1`}
-                  >
-                    <IoMdColorPalette className="w-6 h-6" />
-                  </button>
-                </div>
-                <button
-                  className={`absolute top-1 right-1 text-gray-500 hover:text-gray-800 hover:scale-150 transition-transform focus:outline-none`}
-                  onClick={() => setColorDiv(false)}
-                >
-                  <FiX className="w-4 h-4" />
-                </button>
-              </div>
-            </>
-          )} */}
         </div>
       </div>
     </header>

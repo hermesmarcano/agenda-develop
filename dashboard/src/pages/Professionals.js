@@ -1,12 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
-import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Importing icons from react-icons library
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi"; // Importing icons from react-icons library
 import Popup from "../components/Popup";
 import RegisterProfessional from "../components/RegisterProfessional";
 import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
-import SidebarContext from "../context/SidebarContext";
 import axios from "axios";
 import UpdateProfessional from "../components/UpdateProfessional";
 import Switch from "react-switch";
+import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const Professionals = () => {

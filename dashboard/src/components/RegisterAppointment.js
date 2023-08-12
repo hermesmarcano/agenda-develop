@@ -1,22 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Formik, Form, Field, ErrorMessage, useField } from "formik";
+import { Formik, Form, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
-import DateTimeContext from "../context/DateTimeContext";
 import axios from "axios";
-import SidebarContext from "../context/SidebarContext";
-import {
-  FaBuyNLarge,
-  FaCheck,
-  FaCreditCard,
-  FaPlus,
-  FaSpinner,
-} from "react-icons/fa";
-import ProfessionalIdContext from "../context/ProfessionalIdContext";
+import { FaCheck, FaCreditCard, FaPlus, FaSpinner } from "react-icons/fa";
 import Select from "react-select";
 import Switch from "react-switch";
-import { Link, useNavigate } from "react-router-dom";
-import Alert from "./Alert";
+import { useNavigate } from "react-router-dom";
 import makeAnimated from "react-select/animated";
+import { SidebarContext } from "../context/SidebarContext";
+import { DateTimeContext } from "../context/DateTimeContext";
+import { ProfessionalIdContext } from "../context/ProfessionalIdContext";
 import { AlertContext } from "../context/AlertContext";
 import { NotificationContext } from "../context/NotificationContext";
 
