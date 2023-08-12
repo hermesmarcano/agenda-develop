@@ -48,15 +48,16 @@ const CreditPayment = ({
 
     const updatePayment = () => {
       axios
-          .patch(
-            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
-            patchData,
+        .patch(
+          `http://localhost:4040/payments/${bookingInfo.paymentId}`,
+          JSON.stringify(patchData),
           {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        })
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          }
+        )
         .then((response) => {
           const cuurentClient = clients.find(
             (client) => client._id === bookingInfo.customer
@@ -88,11 +89,10 @@ const CreditPayment = ({
           console.error(error.message);
         });
     };
-    
 
     const makePayment = () => {
       axios
-        .post("http://localhost:4040/payments", data, {
+        .post("http://localhost:4040/payments", JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
@@ -130,17 +130,14 @@ const CreditPayment = ({
 
     const deletePayment = () => {
       axios
-          .delete(
-            `http://localhost:4040/payments/${bookingInfo.paymentId}`,
-            patchData,
-          {
+        .delete(`http://localhost:4040/payments/${bookingInfo.paymentId}`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
           },
         })
         .then((response) => {
-          navigate('/checkout-appointments');
+          navigate("/checkout-appointments");
         })
         .catch((error) => {
           console.error(error.message);
@@ -151,7 +148,7 @@ const CreditPayment = ({
       axios
         .patch(
           `http://localhost:4040/payments/${paymentId}`,
-          { appointment: bookingInfo.appointmentId },
+          JSON.stringify({ appointment: bookingInfo.appointmentId }),
           {
             headers: {
               "Content-Type": "application/json",
@@ -172,11 +169,11 @@ const CreditPayment = ({
       axios
         .patch(
           `http://localhost:4040/appointments/${bookingInfo.appointmentId}`,
-          {
+          JSON.stringify({
             service: bookingInfo.service,
             product: bookingInfo.product,
             status: "confirmed",
-          },
+          }),
           {
             headers: {
               "Content-Type": "application/json",
