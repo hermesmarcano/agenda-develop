@@ -14,25 +14,24 @@ import { Link, useNavigate } from "react-router-dom";
 import ThemeContext from "../context/ThemeContext";
 import axios from "axios";
 import { NotificationContext } from "../context/NotificationContext";
+import { DarkModeContext } from "../context/DarkModeContext";
 
 function Header() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [colorDiv, setColorDiv] = useState(false);
-  const { theme, setTheme } = useContext(ThemeContext);
   const { notifications, unreadCount, updateNotificationsSeen } =
     useContext(NotificationContext);
 
   const handleThemeChange = (color) => {
-    setTheme(color);
     localStorage.setItem("currentTheme", color);
   };
 
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
 
   const toggleDarkLightMode = () => {
-    theme === "light" ? setTheme("dark") : setTheme("light");
-    localStorage.setItem("currentTheme", theme);
+    // theme === "light" ? setTheme("dark") : setTheme("light");
+    // localStorage.setItem("currentTheme", theme);
     setIsDarkMode(!isDarkMode);
   };
 
@@ -57,7 +56,7 @@ function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 shadow-lg py-4 px-6 flex justify-between items-center z-10 ${
-        isDarkMode ? "bg-gray-900 text-gray-200" : "bg-gray-100 text-gray-500"
+        isDarkMode ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-500"
       }`}
     >
       <div className="flex items-center">

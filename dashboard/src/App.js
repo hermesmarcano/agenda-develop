@@ -20,8 +20,6 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import DateTimeContext from "./context/DateTimeContext";
-import ThemeContext from "./context/ThemeContext";
-import axios from "axios";
 import ForgotPassword from "./pages/ForgotPassword";
 import PasswordReset from "./pages/PasswordReset";
 import CheckEmail from "./pages/CheckEmail";
@@ -31,26 +29,13 @@ import Checkout from "./pages/Checkout";
 import PendingAppointments from "./pages/PendingAppointments";
 import { AlertContextWrapper } from "./context/AlertContext";
 import { NotificationContextWrapper } from "./context/NotificationContext";
+import { DarkModeContextWrapper } from "./context/DarkModeContext";
 
 function App() {
   const [isSidebarOpen, toggleSidebar] = useState(true);
   const [shopId, setShopId] = useState("");
   const [shopName, setShopName] = useState("");
   const [dateTime, setDateTime] = useState(new Date());
-  const currentTheme = localStorage.getItem("currentTheme");
-  const [theme, setTheme] = useState(currentTheme ? currentTheme : "light");
-
-  // themes [
-  //   "gray",
-  //   "sky",
-  //   "orange",
-  //   "teal",
-  //   "yellow",
-  //   "amber",
-  //   "emerald",
-  //   "pink",
-  //   "rose",
-  // ]
   const [viewMode, setViewMode] = useState("daily");
   const [professionalId, setProfessionalId] = useState("");
 
@@ -58,12 +43,7 @@ function App() {
     <div className="h-screen overflow-hidden">
       <NotificationContextWrapper>
         <AlertContextWrapper>
-          <ThemeContext.Provider
-            value={{
-              theme: theme,
-              setTheme: setTheme,
-            }}
-          >
+          <DarkModeContextWrapper>
             <ViewModeContext.Provider
               value={{
                 viewMode: viewMode,
@@ -149,7 +129,7 @@ function App() {
                 </DateTimeContext.Provider>
               </ProfessionalIdContext.Provider>
             </ViewModeContext.Provider>
-          </ThemeContext.Provider>
+          </DarkModeContextWrapper>
         </AlertContextWrapper>
       </NotificationContextWrapper>
     </div>
