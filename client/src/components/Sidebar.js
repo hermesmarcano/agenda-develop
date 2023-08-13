@@ -1,16 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  FiHome,
-  FiSettings,
-  FiMenu,
-  FiX,
-  FiShoppingBag,
-  FiBook,
-  FiFileText,
-  FiArchive,
-  FiRewind,
-} from "react-icons/fi";
+import { FiHome, FiSettings } from "react-icons/fi";
 
 import { GiSwordsPower } from "react-icons/gi";
 import { FaBookOpen } from "react-icons/fa";

@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import instance from "../axiosConfig/axiosConfig";
-import { FaSpinner, FaMinus } from "react-icons/fa";
+import { FaSpinner } from "react-icons/fa";
 import { BsArrowLeft } from "react-icons/bs";
-
 
 const BookingHour = () => {
   const [selectedHour, setSelectedHour] = useState(null);
@@ -213,12 +212,12 @@ const BookingHour = () => {
         )}
       </form>
       <div className="mt-4 flex justify-center">
-      <Link to={`/shops/${params.id}/booking-date`}> 
-        <button className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg font-medium py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-          <BsArrowLeft className="inline-block mr-2" />
-          Back to Date Selection
-        </button>
-      </Link>
+        <Link to={`/shops/${params.id}/booking-date`}>
+          <button className="flex items-center bg-gray-300 hover:bg-gray-400 text-gray-800 text-lg font-medium py-2 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <BsArrowLeft className="inline-block mr-2" />
+            Back to Date Selection
+          </button>
+        </Link>
       </div>
     </div>
   );

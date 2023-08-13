@@ -135,7 +135,6 @@ const Agenda = () => {
       day
     );
     setDate(selected);
-    console.log(selected);
   };
 
   const handleSelectedDateChange = (date) => {

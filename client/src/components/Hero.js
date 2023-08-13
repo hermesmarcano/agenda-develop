@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import heroContext from "../context/HeroContext";
+import { HeroContext } from "../context/HeroContext";
 
-function Hero() {
+const Hero = () => {
   const navigate = useNavigate();
-  const { heroData } = useContext(heroContext);
+  const { heroData } = useContext(HeroContext);
   console.log(heroData);
 
   const handleSubmit = (event) => {
@@ -79,6 +79,6 @@ function Hero() {
       )} */}
     </>
   );
-}
+};
 
 export default Hero;

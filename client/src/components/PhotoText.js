@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
-import section1Context from "../context/Section1Context";
+import { Section1Context } from "../context/Section1Context";
 
 const PhotoAndTextSection = () => {
-  const { section1Data } = useContext(section1Context);
+  const { section1Data } = useContext(Section1Context);
 
   return (
     <div className="container mx-auto py-8 px-4 flex flex-col md:flex-row">

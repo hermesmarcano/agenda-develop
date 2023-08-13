@@ -1,9 +1,9 @@
 import { useContext } from "react";
 import ServiceCard from "./ServiceCard";
-import servicesContext from "../context/ServicesContext";
+import { ServicesContext } from "../context/ServicesContext";
 
 const RecommendedServicesSection = () => {
-  const { servicesData } = useContext(servicesContext);
+  const { servicesData } = useContext(ServicesContext);
   return (
     <div className="bg-gray-100 py-8">
       <div className="container mx-auto px-4">

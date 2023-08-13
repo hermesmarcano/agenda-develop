@@ -1,5 +1,36 @@
-import { createContext } from "react";
+import { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
-const logoContext = createContext();
+const LogoContext = createContext();
 
-export default logoContext;
+const LogoContextWrapper = ({ children }) => {
+  const [logo, setLogo] = useState("");
+
+  useEffect(() => {
+    fetchAdminData();
+  }, []);
+
+  const fetchAdminData = async () => {
+    try {
+      const response = await axios.get("http://localhost:4040/admin");
+      console.log(response.data.admin);
+
+      if (response.data.admin.logo) {
+        setLogo(response.data.admin.logo);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const contextValue = {
+    logo,
+    setLogo,
+  };
+
+  return (
+    <LogoContext.Provider value={contextValue}>{children}</LogoContext.Provider>
+  );
+};
+
+export { LogoContext, LogoContextWrapper };

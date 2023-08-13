@@ -2,10 +2,10 @@ import { useContext, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import shopsContext from "../context/ShopsContext";
+import { ShopsContext } from "../context/ShopsContext";
 
 const RecommendedShopsSlider = () => {
-  const { shopsData } = useContext(shopsContext);
+  const { shopsData } = useContext(ShopsContext);
 
   const settings = {
     dots: true,

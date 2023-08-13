@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { FaTrash } from "react-icons/fa";
 import { Table, Tbody, Tr, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { FaStore, FaUsers, FaMoneyBillWave } from "react-icons/fa";

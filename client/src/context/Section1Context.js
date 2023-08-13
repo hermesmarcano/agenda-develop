@@ -1,5 +1,43 @@
-import { createContext } from "react";
+import { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
-const section1Context = createContext();
+const Section1Context = createContext();
 
-export default section1Context;
+const Section1ContextWrapper = ({ children }) => {
+  const [section1Data, setSection1Data] = useState({
+    title: "Lorem Ipsum",
+    image: "https://via.placeholder.com/600x400",
+    content:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce consequat lorem id congue dignissim. Sed vitae diam euismod, bibendum tortor eu, ultrices velit. Nullam in eros sit amet nisi luctus laoreet. Curabitur varius pharetra ex, ac mattis nibh commodo et. Integer laoreet mauris at convallis lacinia. Donec posuere augue a lacinia faucibus. Suspendisse potenti. Aenean semper velit velit, nec fringilla ex interdum eu. Proin ullamcorper, enim ac egestas euismod, augue justo tristique justo, non posuere libero enim non orci. Sed ut magna aliquam, volutpat tellus id, rhoncus tellus. In vulputate quis elit ut dapibus. Cras mollis erat vel justo auctor, vel interdum tellus dignissim. In at turpis pharetra, malesuada diam vel, elementum elit. Integer sollicitudin augue nec sapien luctus, eget vestibulum sem dictum. Fusce rutrum nisl id turpis maximus congue. Sed vel augue vitae nibh gravida lobortis vel at ipsum.",
+  });
+
+  useEffect(() => {
+    fetchAdminData();
+  }, []);
+
+  const fetchAdminData = async () => {
+    try {
+      const response = await axios.get("http://localhost:4040/admin");
+      console.log(response.data.admin);
+
+      if (response.data.admin.section1Data) {
+        setSection1Data(response.data.admin.section1Data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const contextValue = {
+    section1Data,
+    setSection1Data,
+  };
+
+  return (
+    <Section1Context.Provider value={contextValue}>
+      {children}
+    </Section1Context.Provider>
+  );
+};
+
+export { Section1Context, Section1ContextWrapper };

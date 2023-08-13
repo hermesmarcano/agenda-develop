@@ -3,10 +3,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Link } from "react-router-dom";
-import articlesContext from "../context/ArticlesContext";
+import { ArticlesContext } from "../context/ArticlesContext";
 
 const ArticlesSlider = () => {
-  const { articlesData } = useContext(articlesContext);
+  const { articlesData } = useContext(ArticlesContext);
   console.log(articlesData);
 
   const settings = {

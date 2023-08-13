@@ -3,6 +3,7 @@ import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Imp
 import {
   FaCheckCircle,
   FaExclamationTriangle,
+  FaInfoCircle,
   FaSearch,
   FaSpinner,
   FaTimesCircle,
@@ -154,6 +155,8 @@ const AppointmentsList = () => {
         return "text-green-500";
       case "cancelled":
         return "text-red-500";
+      case "in-debt":
+        return "text-purple-500";
       default:
         return "";
     }
@@ -161,14 +164,18 @@ const AppointmentsList = () => {
 
   function renderStatusIcon(status) {
     switch (status) {
-      case "pending":
-        return <FaSpinner className="inline-block mr-1" />;
       case "updating":
-        return <FaExclamationTriangle className="inline-block mr-1" />;
+        return (
+          <FaExclamationTriangle className="inline-block mr-1 text-blue-500" />
+        );
+      case "pending":
+        return <FaSpinner className="inline-block mr-1 text-yellow-500" />;
       case "confirmed":
-        return <FaCheckCircle className="inline-block mr-1" />;
+        return <FaCheckCircle className="inline-block mr-1 text-green-500" />;
       case "cancelled":
-        return <FaTimesCircle className="inline-block mr-1" />;
+        return <FaTimesCircle className="inline-block mr-1 text-red-500" />;
+      case "in-debt":
+        return <FaInfoCircle className="inline-block mr-1 text-purple-500" />;
       default:
         return null;
     }
@@ -179,11 +186,13 @@ const AppointmentsList = () => {
       case "updating":
         return <RiEdit2Line className="w-5 h-5 text-blue-500" />;
       case "pending":
-        return <RiEdit2Line className="w-5 h-5 text-yellow-500" />;
+        return <RiEdit2Line className="w-4 h-4 text-yellow-500" />;
       case "confirmed":
         return <RiCheckLine className="w-5 h-5 text-green-500" />;
       case "cancelled":
         return <RiCloseLine className="w-5 h-5 text-red-500" />;
+      case "in-debt":
+        return <FaInfoCircle className="w-4 h-4 text-purple-500" />;
       default:
         return <RiDeleteBinLine className="w-5 h-5 text-red-500" />;
     }
@@ -446,7 +455,8 @@ const AppointmentButton = ({
           onClick={() => setUpdateModelState(true)}
           disabled={isDisabled}
         >
-          Update {renderActionIcon(appointment.status)}
+          <span className="mr-1">Update</span>
+          {renderActionIcon(appointment.status)}
         </button>
       </div>
     </td>

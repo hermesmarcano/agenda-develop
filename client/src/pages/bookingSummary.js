@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { TiTick } from "react-icons/ti";
 import { FaCalendarAlt, FaClock } from "react-icons/fa";
 import instance from "../axiosConfig/axiosConfig";
@@ -9,7 +9,9 @@ const BookingSummary = () => {
   const params = useParams();
   const [shopName, setShopName] = useState("");
   const [shopId, setShopId] = useState("");
-  const professional = JSON.parse(localStorage.getItem(`professional_${params.id}`));
+  const professional = JSON.parse(
+    localStorage.getItem(`professional_${params.id}`)
+  );
   const services = JSON.parse(localStorage.getItem(`services_${params.id}`));
   const servicesId = [];
   const servicesNames = [];

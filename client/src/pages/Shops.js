@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ShopCard from "../components/ShopCard";
 import { FaSearch } from "react-icons/fa";
 import instance from "../axiosConfig/axiosConfig";
 import { useLocation } from "react-router-dom";

@@ -7,12 +7,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  FaCcVisa,
-  FaCcMastercard,
-  FaMoneyBillWave,
-  FaCreditCard,
-} from "react-icons/fa";
+import { FaMoneyBillWave, FaCreditCard } from "react-icons/fa";
 import instance from "../axiosConfig/axiosConfig";
 
 const stripePromise = loadStripe("your_publishable_key_here");
