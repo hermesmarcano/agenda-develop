@@ -2,12 +2,18 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
-import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import apiProvider from "../../../axiosConfig/axiosConfig";
+import { AlertContext } from "../../../context/AlertContext";
+import { NotificationContext } from "../../../context/NotificationContext";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const UpdateProduct = ({ setModelState, productId }) => {
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [productData, setProductData] = useState(null);
   useEffect(() => {
@@ -83,6 +89,19 @@ const UpdateProduct = ({ setModelState, productId }) => {
           },
         }
       );
+      setAlertMsg("Product has been updated");
+      setAlertMsgType("success");
+      setAlertOn(true);
+      sendNotification(
+        "Product updated - " +
+          new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }).format(new Date())
+      );
     } catch (error) {
       console.log(error);
     }
@@ -93,17 +112,14 @@ const UpdateProduct = ({ setModelState, productId }) => {
 
   const deleteProductImg = () => {
     apiProvider
-      .delete(
-        `products/image/${productData.productImg}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-          data: {
-            id: productData._id,
-          },
-        }
-      )
+      .delete(`products/image/${productData.productImg}`, {
+        headers: {
+          Authorization: token,
+        },
+        data: {
+          id: productData._id,
+        },
+      })
       .then((response) => {
         // Update productData with the empty product image
         setProductData({ ...productData, productImg: "" });
@@ -113,7 +129,13 @@ const UpdateProduct = ({ setModelState, productId }) => {
 
   return (
     <>
-      <h2 className="text-xl text-left font-bold mb-4">Update Product</h2>
+      <h2
+        className={`text-xl text-left font-bold mb-4 text-${
+          isDarkMode ? "white" : "gray-700"
+        }`}
+      >
+        Update Product
+      </h2>
       {productData ? (
         <Formik
           initialValues={{
@@ -128,11 +150,17 @@ const UpdateProduct = ({ setModelState, productId }) => {
           onSubmit={handleFormSubmit}
         >
           {(formikProps) => (
-            <Form className="bg-white text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
+            <Form
+              className={`bg-${
+                isDarkMode ? "gray-700" : "white"
+              } text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
+            >
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  } font-bold mb-2`}
                 >
                   Name
                 </label>
@@ -141,7 +169,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   id="name"
                   name="name"
                   placeholder="Enter the new name of the product"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    isDarkMode ? "gray-500" : "white"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="name"
@@ -152,7 +184,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
               <div className="mb-4">
                 <label
                   htmlFor="speciality"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  } font-bold mb-2`}
                 >
                   Speciality
                 </label>
@@ -161,7 +195,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   id="speciality"
                   name="speciality"
                   placeholder="Enter the speciality of the product"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    isDarkMode ? "gray-500" : "white"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="speciality"
@@ -169,71 +207,93 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   className="text-red-500 text-xs italic"
                 />
               </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="costBRL"
-                  className="block text-sm text-gray-700 font-bold mb-2"
-                >
-                  Cost (BRL)
-                </label>
-                <Field
-                  type="number"
-                  id="costBRL"
-                  name="costBRL"
-                  placeholder="0.00"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-                />
-                <ErrorMessage
-                  name="costBRL"
-                  component="p"
-                  className="text-red-500 text-xs italic"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="price"
-                  className="block text-sm text-gray-700 font-bold mb-2"
-                >
-                  Price
-                </label>
-                <Field
-                  type="number"
-                  id="price"
-                  name="price"
-                  placeholder="0.00"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-                />
-                <ErrorMessage
-                  name="price"
-                  component="p"
-                  className="text-red-500 text-xs italic"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="stock"
-                  className="block text-sm text-gray-700 font-bold mb-2"
-                >
-                  Stock
-                </label>
-                <Field
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  placeholder="0"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
-                />
-                <ErrorMessage
-                  name="stock"
-                  component="p"
-                  className="text-red-500 text-xs italic"
-                />
+              <div className="flex gap-1">
+                <div className="mb-4">
+                  <label
+                    htmlFor="costBRL"
+                    className={`block text-sm ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    } font-bold mb-2`}
+                  >
+                    Cost (BRL)
+                  </label>
+                  <Field
+                    type="number"
+                    id="costBRL"
+                    name="costBRL"
+                    placeholder="0.00"
+                    className={`py-2 pl-8 border-b-2 border-${
+                      isDarkMode ? "gray-600" : "gray-300"
+                    } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                      isDarkMode ? "gray-500" : "white"
+                    } focus:outline-none focus:border-blue-500 w-full`}
+                  />
+                  <ErrorMessage
+                    name="costBRL"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="price"
+                    className={`block text-sm ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    } font-bold mb-2`}
+                  >
+                    Price
+                  </label>
+                  <Field
+                    type="number"
+                    id="price"
+                    name="price"
+                    placeholder="0.00"
+                    className={`py-2 pl-8 border-b-2 border-${
+                      isDarkMode ? "gray-600" : "gray-300"
+                    } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                      isDarkMode ? "gray-500" : "white"
+                    } focus:outline-none focus:border-blue-500 w-full`}
+                  />
+                  <ErrorMessage
+                    name="price"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label
+                    htmlFor="stock"
+                    className={`block text-sm ${
+                      isDarkMode ? "text-white" : "text-gray-700"
+                    } font-bold mb-2`}
+                  >
+                    Stock
+                  </label>
+                  <Field
+                    type="number"
+                    id="stock"
+                    name="stock"
+                    placeholder="0"
+                    className={`py-2 pl-8 border-b-2 border-${
+                      isDarkMode ? "gray-600" : "gray-300"
+                    } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                      isDarkMode ? "gray-500" : "white"
+                    } focus:outline-none focus:border-blue-500 w-full`}
+                  />
+                  <ErrorMessage
+                    name="stock"
+                    component="p"
+                    className="text-red-500 text-xs italic"
+                  />
+                </div>
               </div>
 
               <div className="mb-4">
                 <label
                   htmlFor="productImg"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm ${
+                    isDarkMode ? "text-white" : "text-gray-700"
+                  } font-bold mb-2`}
                 >
                   Image
                 </label>
@@ -246,7 +306,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     />
                     <button
                       type="button"
-                      className="absolute right-2 top-2 hover:bg-gray-800 hover:bg-opacity-25 rounded-full w-8 h-8 flex justify-center items-center"
+                      className={`absolute right-2 top-2 hover:bg-${
+                        isDarkMode ? "gray-800" : "gray-300"
+                      } hover:bg-opacity-25 rounded-full w-8 h-8 flex justify-center items-center`}
                       onClick={deleteProductImg}
                     >
                       <FaTrash size={15} className="text-red-500" />
@@ -268,7 +330,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
               <div className="flex items-center justify-between">
                 <button
                   type="submit"
-                  className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className={`bg-${
+                    isDarkMode ? "gray-800" : "gray-600"
+                  } hover:bg-${
+                    isDarkMode ? "gray-600" : "gray-400"
+                  } text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
                   disabled={formikProps.isSubmitting}
                 >
                   Update

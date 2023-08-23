@@ -2,18 +2,24 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
 import { RiCloseCircleLine } from "react-icons/ri";
 import apiProvider from "../../../axiosConfig/axiosConfig";
+import { AlertContext } from "../../../context/AlertContext";
+import { NotificationContext } from "../../../context/NotificationContext";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const UpdateProfessional = ({
   setModelState,
   professionalId,
   workingHours,
 }) => {
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const [professionalData, setProfessionalData] = useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
@@ -108,7 +114,13 @@ const UpdateProfessional = ({
 
   return (
     <>
-      <h2 className="text-xl text-left font-bold mb-4">Update Professional</h2>
+      <h2
+        className={`text-xl text-left font-bold mb-4 text-${
+          isDarkMode ? "white" : "gray-700"
+        }`}
+      >
+        Update Professional
+      </h2>
       <Formik
         initialValues={{
           name: professionalData.name,
@@ -137,6 +149,19 @@ const UpdateProfessional = ({
                     Authorization: localStorage.getItem("ag_app_shop_token"),
                   },
                 }
+              );
+              setAlertMsg("Professional has been updated");
+              setAlertMsgType("success");
+              setAlertOn(true);
+              sendNotification(
+                "Professional updated - " +
+                  new Intl.DateTimeFormat("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }).format(new Date())
               );
             } catch (e) {
               console.error(e.message);
@@ -167,11 +192,17 @@ const UpdateProfessional = ({
           });
 
           return (
-            <Form className="bg-white text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
+            <Form
+              className={`bg-${
+                isDarkMode ? "gray-700" : "white"
+              } text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
+            >
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
                 >
                   Name
                 </label>
@@ -180,7 +211,11 @@ const UpdateProfessional = ({
                   id="name"
                   name="name"
                   placeholder="Enter the name of the professional"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="name"
@@ -193,7 +228,9 @@ const UpdateProfessional = ({
                   <div className="space-y-4 mb-4">
                     <label
                       htmlFor="officeHours"
-                      className="block text-sm text-gray-700 font-bold mb-2"
+                      className={`block text-sm font-bold mb-2 text-${
+                        isDarkMode ? "white" : "gray-700"
+                      }`}
                     >
                       Office Hours
                     </label>
@@ -218,6 +255,9 @@ const UpdateProfessional = ({
                                   ?.startHour
                                   ? "border-red-500"
                                   : "border-gray-300"
+                              } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                                !isDarkMode ? "white" : "gray-500"
+                              }
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">Start hour</option>
@@ -247,6 +287,9 @@ const UpdateProfessional = ({
                                   ?.endHour
                                   ? "border-red-500"
                                   : "border-gray-300"
+                              } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                                !isDarkMode ? "white" : "gray-500"
+                              }
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">End hour</option>
@@ -286,18 +329,15 @@ const UpdateProfessional = ({
                         </button>
                       )}
                     </div>
-                    {/* <ErrorMessage
-                      name="officeHours"
-                      component="div"
-                      className="mt-1 text-sm text-red-500"
-                    /> */}
                   </div>
                 )}
               </FieldArray>
               <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
                 >
                   Description
                 </label>
@@ -306,7 +346,11 @@ const UpdateProfessional = ({
                   id="description"
                   name="description"
                   placeholder="Enter a description of the professional"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="description"
@@ -317,7 +361,11 @@ const UpdateProfessional = ({
               <div className="flex items-center justify-between">
                 <button
                   type="submit"
-                  className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className={`bg-${
+                    isDarkMode ? "gray-800" : "gray-600"
+                  } hover:bg-${
+                    isDarkMode ? "gray-600" : "gray-400"
+                  } text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
                   disabled={formikProps.isSubmitting}
                 >
                   Update

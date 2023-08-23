@@ -1,14 +1,20 @@
 import React, { useContext } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
 import apiProvider from "../../../axiosConfig/axiosConfig";
+import { AlertContext } from "../../../context/AlertContext";
+import { NotificationContext } from "../../../context/NotificationContext";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const RegisterProfessional = ({ setModelState, workingHours }) => {
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     officeHours: Yup.array()
@@ -64,7 +70,11 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
   });
 
   return (
-    <>
+    <div
+      className={`bg-${
+        isDarkMode ? "gray-700" : "white"
+      } transition-all duration-300`}
+    >
       <h2 className="text-xl font-bold mb-4">Register a Professional</h2>
       <Formik
         initialValues={{
@@ -92,6 +102,19 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                     Authorization: localStorage.getItem("ag_app_shop_token"),
                   },
                 }
+              );
+              setAlertMsg("New Professional has been registered");
+              setAlertMsgType("success");
+              setAlertOn(true);
+              sendNotification(
+                "New Professional - " +
+                  new Intl.DateTimeFormat("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }).format(new Date())
               );
             } catch (e) {
               console.error(e.message);
@@ -122,11 +145,17 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
           });
 
           return (
-            <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
+            <Form
+              className={`bg-${
+                isDarkMode ? "gray-700" : "white"
+              } rounded px-8 pt-6 pb-8 mb-4 min-w-[350px] sm:min-w-[500px] mx-auto`}
+            >
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm text-${
+                    isDarkMode ? "white" : "gray-700"
+                  } font-bold mb-2`}
                 >
                   Name
                 </label>
@@ -135,7 +164,11 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   id="name"
                   name="name"
                   placeholder="Enter the name of the professional"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="name"
@@ -148,7 +181,9 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   <div className="space-y-4 mb-4">
                     <label
                       htmlFor="officeHours"
-                      className="block text-sm text-gray-700 font-bold mb-2"
+                      className={`block text-sm text-${
+                        isDarkMode ? "white" : "gray-700"
+                      } font-bold mb-2`}
                     >
                       Office Hours
                     </label>
@@ -173,6 +208,8 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                                   ?.startHour
                                   ? "border-red-500"
                                   : "border-gray-300"
+                              } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                                !isDarkMode ? "white" : "gray-500"
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">Start hour</option>
@@ -202,6 +239,8 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                                   ?.endHour
                                   ? "border-red-500"
                                   : "border-gray-300"
+                              } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                                !isDarkMode ? "white" : "gray-500"
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">End hour</option>
@@ -252,7 +291,9 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
               <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm text-${
+                    isDarkMode ? "white" : "gray-700"
+                  } font-bold mb-2`}
                 >
                   Description
                 </label>
@@ -261,7 +302,11 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   id="description"
                   name="description"
                   placeholder="Enter a description of the professional"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="description"
@@ -283,7 +328,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
           );
         }}
       </Formik>
-    </>
+    </div>
   );
 };
 

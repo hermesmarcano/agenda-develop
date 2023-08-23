@@ -1,7 +1,6 @@
 import { MdAttachMoney, MdShoppingCart } from "react-icons/md";
 import Pagination from "../../../components/Pagination";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";

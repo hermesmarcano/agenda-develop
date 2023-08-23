@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import apiProvider from "../../../axiosConfig/axiosConfig";
 

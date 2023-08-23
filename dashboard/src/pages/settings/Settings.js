@@ -8,9 +8,11 @@ import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
 import { SidebarContext } from "../../context/SidebarContext";
 import apiProvider from "../../axiosConfig/axiosConfig";
+import { DarkModeContext } from "../../context/DarkModeContext";
 
 const Settings = () => {
   const { setShopName } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [loading, setLoading] = useState(true);
   const [shopData, setShopData] = useState({});
@@ -127,7 +129,11 @@ const Settings = () => {
   }
 
   return (
-    <div className="p-6 pb-9">
+    <div
+      className={`p-6 pb-9 ${
+        isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+      }`}
+    >
       <h1 className="text-3xl font-bold mb-6">Dashboard Settings</h1>
       <div className="grid grid-cols-2 gap-6">
         <div>
@@ -198,11 +204,15 @@ const Settings = () => {
             onSubmit={handleSubmit}
           >
             {(formikProps) => (
-              <Form className="bg-white rounded-lg shadow-md px-8 py-6 mb-4">
+              <Form
+                className={`rounded-lg shadow-md px-8 py-6 mb-4 ${
+                  isDarkMode ? "bg-gray-700" : "bg-white"
+                }`}
+              >
                 <div className="mb-6">
                   <label
                     htmlFor="shop-name"
-                    className="block text-lg text-gray-800 font-semibold mb-2"
+                    className="block text-lg font-semibold mb-2"
                   >
                     Shop Name:
                   </label>
@@ -210,13 +220,17 @@ const Settings = () => {
                     type="text"
                     id="shop-name"
                     name="shopName"
-                    className="py-2 px-4 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:border-blue-500 w-full"
+                    className={`py-2 px-4 border rounded-md focus:outline-none focus:border-blue-500 w-full ${
+                      isDarkMode
+                        ? "bg-gray-700 text-white"
+                        : "bg-white text-gray-800"
+                    }`}
                   />
                 </div>
                 <div className="mb-6">
                   <label
                     htmlFor="manager-name"
-                    className="block text-lg text-gray-800 font-semibold mb-2"
+                    className="block text-lg font-semibold mb-2"
                   >
                     Manager Name:
                   </label>
@@ -224,13 +238,17 @@ const Settings = () => {
                     type="text"
                     id="manager-name"
                     name="name"
-                    className="py-2 px-4 border border-gray-300 rounded-md text-gray-800 focus:outline-none focus:border-blue-500 w-full"
+                    className={`py-2 px-4 border rounded-md focus:outline-none focus:border-blue-500 w-full ${
+                      isDarkMode
+                        ? "bg-gray-700 text-white"
+                        : "bg-white text-gray-800"
+                    }`}
                   />
                 </div>
 
                 <label
                   htmlFor="discount-value"
-                  className="block text-lg text-gray-800 font-semibold mb-2"
+                  className="block text-lg font-semibold mb-2"
                 >
                   Working Hours:
                 </label>
@@ -262,7 +280,11 @@ const Settings = () => {
                                       ?.startHour
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                  } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+                                    isDarkMode
+                                      ? "bg-gray-700 text-white"
+                                      : "bg-white text-gray-800"
+                                  }`}
                                 >
                                   <option value="">Select start hour</option>
                                   {hoursOptions}
@@ -291,7 +313,11 @@ const Settings = () => {
                                       ?.endHour
                                       ? "border-red-500"
                                       : "border-gray-300"
-                                  } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                  } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+                                    isDarkMode
+                                      ? "bg-gray-700 text-white"
+                                      : "bg-white text-gray-800"
+                                  }`}
                                 >
                                   <option value="">Select end hour</option>
                                   {hoursOptions}
@@ -337,7 +363,7 @@ const Settings = () => {
                 <div className="flex items-center justify-end">
                   <button
                     type="submit"
-                    className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                    className="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                     disabled={formikProps.isSubmitting}
                   >
                     Save Changes

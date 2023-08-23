@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import apiProvider from "../../../axiosConfig/axiosConfig";
 import { FaCheck, FaCreditCard, FaPlus, FaSpinner } from "react-icons/fa";
 import Select from "react-select";

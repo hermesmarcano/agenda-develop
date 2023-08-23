@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import Schedular from "./components/Schedular";
-import axios from "axios";
 import apiProvider from "../../axiosConfig/axiosConfig";
 import { FaCheck, FaCircle, FaCheckCircle, FaSpinner } from "react-icons/fa";
 import { AiOutlineInbox } from "react-icons/ai";
@@ -61,14 +60,11 @@ const Agenda = () => {
         response.data?.workingHours &&
           setWorkingHours(response.data?.workingHours);
         apiProvider
-          .get(
-            `professionals/shop?shopId=${response.data._id}`,
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          )
+          .get(`professionals/shop?shopId=${response.data._id}`, {
+            headers: {
+              Authorization: token,
+            },
+          })
           .then((response) => {
             setProfessionals([...response.data.data].reverse());
             setSelectedProfessionals([...response.data.data].reverse());

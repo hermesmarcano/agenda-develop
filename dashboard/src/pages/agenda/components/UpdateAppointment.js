@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import {
   FaCreditCard,
   FaPlus,
@@ -228,16 +227,12 @@ const UpdateAppointment = ({
       };
 
       apiProvider
-        .patch(
-          `appointments/${appointmentId}`,
-          patchData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-          }
-        )
+        .patch(`appointments/${appointmentId}`, patchData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
         .then((response) => {
           setSubmitting(false);
           resetForm();
@@ -333,16 +328,12 @@ const UpdateAppointment = ({
       };
 
       apiProvider
-        .patch(
-          `appointments/${appointmentId}`,
-          patchData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: token,
-            },
-          }
-        )
+        .patch(`appointments/${appointmentId}`, patchData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        })
         .then((response) => {
           setModelState(false);
 
@@ -403,7 +394,7 @@ const UpdateAppointment = ({
 
   const [clientPhoneNumber, setClientPhoneNumber] = useState("123-456-789");
 
-  const openWhatsApp = (phone=clientPhoneNumber) => {
+  const openWhatsApp = (phone = clientPhoneNumber) => {
     if (clientPhoneNumber) {
       const whatsappUrl = `https://web.whatsapp.com/send?phone=${encodeURIComponent(
         clientPhoneNumber
@@ -841,7 +832,9 @@ const UpdateAppointment = ({
                   <button
                     type="button"
                     className="whatsapp-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
-                    onClick={()=>openWhatsApp(appointmentData?.customer?.number)}
+                    onClick={() =>
+                      openWhatsApp(appointmentData?.customer?.number)
+                    }
                   >
                     <FaWhatsapp className="mr-1" />
                     WA

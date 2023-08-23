@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { FaSpinner, FaSyncAlt } from "react-icons/fa";
 import { MdMonetizationOn } from "react-icons/md";
@@ -206,16 +205,12 @@ const CommissionSection = () => {
     };
 
     apiProvider
-      .patch(
-        `professionals/${professionalId}`,
-        patchData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localStorage.getItem("ag_app_shop_token"),
-          },
-        }
-      )
+      .patch(`professionals/${professionalId}`, patchData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("ag_app_shop_token"),
+        },
+      })
       .then((response) => {})
       .catch((error) => console.error(error));
   };

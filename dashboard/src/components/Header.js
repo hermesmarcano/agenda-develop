@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { FaBell, FaCog, FaUser } from "react-icons/fa";
 import { FiSun, FiMoon } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../context/NotificationContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
@@ -32,7 +32,7 @@ function Header() {
   const handleMenuToggle = () => {
     setShowMenu(!showMenu);
     setIsMenuOpen(false);
-    updateNotificationsSeen(); // Mark all notifications as read when menu is opened
+    updateNotificationsSeen();
   };
 
   return (
@@ -65,36 +65,41 @@ function Header() {
           </button>
 
           {showMenu && (
-            <>
-              <div
-                className="fixed inset-0 flex justify-center items-center overflow-y-auto bg-opacity-25"
-                onClick={() => setShowMenu(false)}
-              ></div>
-              <div
-                className={`absolute right-0 mt-2 w-64 ${
-                  isDarkMode ? "bg-gray-800" : "bg-white"
-                } rounded-lg shadow-lg z-10`}
-              >
-                <div className="max-h-64 overflow-y-auto">
-                  {notifications.length > 0 ? (
-                    notifications.map((notification, index) => (
-                      <div
-                        key={index}
-                        className={`p-4  ${
-                          isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
-                        } rounded-lg cursor-pointer`}
-                      >
-                        {notification.content}
-                      </div>
-                    ))
-                  ) : (
-                    <div className={`p-4 text-center text-gray-400`}>
-                      No notifications
-                    </div>
-                  )}
+            <div
+              className={`absolute right-0 mt-2 w-64 ${
+                isDarkMode ? "bg-gray-700" : "bg-white"
+              } rounded-lg shadow-lg z-10`}
+            >
+              <div className="max-h-64 overflow-y-auto">
+                <div className="p-4 border-b border-gray-300">
+                  <div className="flex justify-end items-center">
+                    <Link
+                      to="/notifications"
+                      className="text-blue-500 text-xs hover:underline"
+                    >
+                      View All
+                    </Link>
+                  </div>
                 </div>
+
+                {notifications.length > 0 ? (
+                  notifications.map((notification, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 ${
+                        isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"
+                      } rounded-lg cursor-pointer`}
+                    >
+                      {notification.content}
+                    </div>
+                  ))
+                ) : (
+                  <div className={`p-4 text-center text-gray-400`}>
+                    No notifications
+                  </div>
+                )}
               </div>
-            </>
+            </div>
           )}
         </div>
         <div className="relative">
@@ -116,7 +121,7 @@ function Header() {
               <div
                 className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
                   isDarkMode
-                    ? "bg-gray-800 text-gray-200"
+                    ? "bg-gray-700 text-gray-200"
                     : "bg-white text-gray-800"
                 } ring-1 ring-black ring-opacity-5`}
                 role="menu"
@@ -130,7 +135,7 @@ function Header() {
                   }}
                   className={`block px-4 py-2 text-sm items-center w-full text-left ${
                     isDarkMode
-                      ? "text-gray-200 hover:bg-gray-700"
+                      ? "text-gray-200 hover:bg-gray-600"
                       : "text-gray-700 hover:bg-gray-100"
                   }`}
                   role="menuitem"
@@ -139,7 +144,7 @@ function Header() {
                   <span
                     className={`${
                       isDarkMode
-                        ? "text-gray-200 hover:bg-gray-700"
+                        ? "text-gray-200 hover:bg-gray-600"
                         : "text-gray-700 hover:bg-gray-100"
                     }`}
                   >
@@ -150,7 +155,7 @@ function Header() {
                   onClick={logout}
                   className={`block px-4 py-2 text-sm ${
                     isDarkMode
-                      ? "text-gray-200 hover:bg-gray-700"
+                      ? "text-gray-200 hover:bg-gray-600"
                       : "text-gray-700 hover:bg-gray-100"
                   } w-full text-left`}
                   role="menuitem"

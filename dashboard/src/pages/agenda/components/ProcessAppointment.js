@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import BlockSchedule from "./BlockSchedule";
 import RegisterAppointment from "./RegisterAppointment";
-import axios from "axios";
 import apiProvider from "../../../axiosConfig/axiosConfig";
 import { SidebarContext } from "../../../context/SidebarContext";
 

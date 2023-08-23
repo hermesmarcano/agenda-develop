@@ -23,6 +23,7 @@ import { DateTimeContextWrapper } from "./context/DateTimeContext";
 import { AlertContextWrapper } from "./context/AlertContext";
 import { NotificationContextWrapper } from "./context/NotificationContext";
 import { DarkModeContextWrapper } from "./context/DarkModeContext";
+import Notification from "./pages/notification/Notification";
 
 function App() {
   return (
@@ -56,6 +57,11 @@ function App() {
                             path="/checkout"
                             exact
                             element={<Checkout />}
+                          />
+                          <Route
+                            path="/notifications"
+                            exact
+                            element={<Notification />}
                           />
                         </Route>
                         <Route path="/register" exact element={<Register />} />

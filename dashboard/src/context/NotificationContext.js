@@ -17,7 +17,7 @@ const NotificationContextWrapper = ({ children }) => {
       })
       .then((response) => {
         if (response.data.notifications) {
-          setNotifications(response.data.notifications);
+          setNotifications(response.data.notifications.reverse());
           let count = 0;
           response.data.notifications.map((notification) => {
             if (!notification.isRead) {
@@ -41,6 +41,7 @@ const NotificationContextWrapper = ({ children }) => {
         { content: newNotification, isRead: false },
       ],
     };
+
     axios
       .patch("http://localhost:4040/managers", patchData, {
         headers: {
@@ -77,11 +78,16 @@ const NotificationContextWrapper = ({ children }) => {
       .catch((error) => console.log(error));
   };
 
+  const deleteNotification = () => {
+    console.log("notification deleted");
+  };
+
   const contextValue = {
     notifications,
     unreadCount,
     sendNotification,
     updateNotificationsSeen,
+    deleteNotification,
   };
 
   return (

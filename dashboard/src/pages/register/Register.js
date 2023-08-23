@@ -14,13 +14,14 @@ import {
 import { useNavigate } from "react-router-dom";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
-import axios from "axios";
 import ImageUpload from "../../components/ImageUpload";
 import apiProvider from "../../axiosConfig/axiosConfig";
+import { AlertContext } from "../../context/AlertContext";
 
 const Register = () => {
   const navigate = useNavigate();
-
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     const hour12 = hour % 12 || 12;
@@ -174,7 +175,9 @@ const Register = () => {
                   );
 
                   console.log(updateResponse);
-
+                  setAlertMsg("New Shop has been registered");
+                  setAlertMsgType("success");
+                  setAlertOn(true);
                   navigate("/login");
                 } catch (error) {
                   console.log(error);

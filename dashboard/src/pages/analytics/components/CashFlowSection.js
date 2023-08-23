@@ -10,7 +10,6 @@ import {
   Bar,
   BarChart,
 } from "recharts";
-import axios from "axios";
 import Pagination from "../../../components/Pagination";
 import { RiShoppingCartLine } from "react-icons/ri";
 import { MdAttachMoney } from "react-icons/md";
@@ -37,11 +36,12 @@ const CashFlowSection = () => {
   const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
-    apiProvider.get(`payments?shopId=${shopId}`, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    apiProvider
+      .get(`payments?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => response.data)
       .then((data) => {
         setTransactions([...data.payments].reverse());
@@ -585,16 +585,12 @@ const CashFlowSection = () => {
             };
             let patchData = { expenses: [...expenses, newBill] };
             apiProvider
-              .patch(
-                "managers",
-                JSON.stringify(patchData),
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: token,
-                  },
-                }
-              )
+              .patch("managers", JSON.stringify(patchData), {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: token,
+                },
+              })
               .then((response) => {})
               .catch((error) => console.log(error));
             resetForm();

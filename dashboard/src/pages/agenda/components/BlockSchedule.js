@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import apiProvider from "../../../axiosConfig/axiosConfig";
 import { FaSpinner } from "react-icons/fa";
 import Switch from "react-switch";
@@ -164,7 +163,7 @@ const BlockSchedule = ({ setModelState }) => {
     professionalId,
     blockingReason
   ) => {
-    axios
+    apiProvider
       .post(
         `${apiProvider}/appointments`,
         {

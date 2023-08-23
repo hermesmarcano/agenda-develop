@@ -8,7 +8,6 @@ import {
   FaSpinner,
   FaTimesCircle,
 } from "react-icons/fa";
-import axios from "axios";
 import Popup from "../../../components/Popup";
 import UpdateAppointment from "../../agenda/components/UpdateAppointment";
 import { AlertContext } from "../../../context/AlertContext";

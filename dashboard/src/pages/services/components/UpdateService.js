@@ -1,12 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import apiProvider from "../../../axiosConfig/axiosConfig";
+import { AlertContext } from "../../../context/AlertContext";
+import { NotificationContext } from "../../../context/NotificationContext";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const UpdateService = ({ setModelState, serviceId }) => {
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [serviceData, setServiceData] = useState(null);
   useEffect(() => {
@@ -76,6 +82,19 @@ const UpdateService = ({ setModelState, serviceId }) => {
           },
         }
       );
+      setAlertMsg("Service has been updated");
+      setAlertMsgType("success");
+      setAlertOn(true);
+      sendNotification(
+        "Service updated - " +
+          new Intl.DateTimeFormat("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+          }).format(new Date())
+      );
     } catch (error) {
       console.log(error);
     }
@@ -86,17 +105,14 @@ const UpdateService = ({ setModelState, serviceId }) => {
 
   const deleteServiceImg = () => {
     apiProvider
-      .delete(
-        `services/image/${serviceData.serviceImg}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-          data: {
-            id: serviceData._id,
-          },
-        }
-      )
+      .delete(`services/image/${serviceData.serviceImg}`, {
+        headers: {
+          Authorization: token,
+        },
+        data: {
+          id: serviceData._id,
+        },
+      })
       .then((response) => {
         // Update serviceData with the empty service image
         setServiceData({ ...serviceData, serviceImg: "" });
@@ -106,7 +122,13 @@ const UpdateService = ({ setModelState, serviceId }) => {
 
   return (
     <>
-      <h2 className="text-xl text-left font-bold mb-4">Update Service</h2>
+      <h2
+        className={`text-xl font-bold mb-4 text-${
+          isDarkMode ? "white" : "gray-700"
+        }`}
+      >
+        Update Service
+      </h2>
       {serviceData ? (
         <Formik
           initialValues={{
@@ -119,11 +141,17 @@ const UpdateService = ({ setModelState, serviceId }) => {
           onSubmit={handleFormSubmit}
         >
           {(formikProps) => (
-            <Form className="bg-white text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
+            <Form
+              className={`bg-${
+                isDarkMode ? "gray-700" : "white"
+              } text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
+            >
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
                 >
                   Name
                 </label>
@@ -132,7 +160,11 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   id="name"
                   name="name"
                   placeholder="Enter the new name of the service"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="name"
@@ -143,7 +175,9 @@ const UpdateService = ({ setModelState, serviceId }) => {
               <div className="mb-4">
                 <label
                   htmlFor="price"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
                 >
                   Price
                 </label>
@@ -152,7 +186,11 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   id="price"
                   name="price"
                   placeholder="0.00"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 />
                 <ErrorMessage
                   name="price"
@@ -162,15 +200,21 @@ const UpdateService = ({ setModelState, serviceId }) => {
               </div>
               <div className="mb-4">
                 <label
-                  htmlFor="time"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  htmlFor="duration"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
                 >
                   Duration
                 </label>
                 <Field
                   name="duration"
                   as="select"
-                  className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                  className={`py-2 pl-8 border-b-2 border-${
+                    isDarkMode ? "gray-600" : "gray-300"
+                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
+                    !isDarkMode ? "white" : "gray-500"
+                  } focus:outline-none focus:border-blue-500 w-full`}
                 >
                   <option value="">Select Duration</option>
                   <option value="5">5 min</option>
@@ -186,9 +230,8 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   <option value="55">55 min</option>
                   <option value="60">1 h</option>
                 </Field>
-
                 <ErrorMessage
-                  name="time"
+                  name="duration"
                   component="p"
                   className="text-red-500 text-xs italic"
                 />
@@ -196,12 +239,14 @@ const UpdateService = ({ setModelState, serviceId }) => {
               <div className="mb-4">
                 <label
                   htmlFor="serviceImg"
-                  className="block text-sm text-gray-700 font-bold mb-2"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
                 >
                   Image
                 </label>
                 {serviceData.serviceImg ? (
-                  <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
+                  <div className="relative h-40 border-2 border-dashed rounded-md flex items-center justify-center">
                     <img
                       src={`${process.env.REACT_APP_API}uploads/services/${serviceData.serviceImg}`}
                       alt={serviceData.serviceImg}
@@ -231,7 +276,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
               <div className="flex items-center justify-between">
                 <button
                   type="submit"
-                  className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className={`bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
                   disabled={formikProps.isSubmitting}
                 >
                   Update

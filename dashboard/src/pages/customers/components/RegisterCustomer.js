@@ -2,11 +2,17 @@ import React, { useContext } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
-import axios from "axios";
 import apiProvider from "../../../axiosConfig/axiosConfig";
+import { AlertContext } from "../../../context/AlertContext";
+import { NotificationContext } from "../../../context/NotificationContext";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const RegisterCustomer = ({ setModelState }) => {
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const initialValues = {
     name: "",
     phone: "",
@@ -26,15 +32,24 @@ const RegisterCustomer = ({ setModelState }) => {
 
     const fetchRequest = async () => {
       try {
-        const response = await apiProvider.post(
-          "customers/",
-          data,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: localStorage.getItem("ag_app_shop_token"),
-            },
-          }
+        const response = await apiProvider.post("customers/", data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("ag_app_shop_token"),
+          },
+        });
+        setAlertMsg("New Customer has been registered");
+        setAlertMsgType("success");
+        setAlertOn(true);
+        sendNotification(
+          "New Customer - " +
+            new Intl.DateTimeFormat("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }).format(new Date())
         );
       } catch (e) {
         console.error(e.message);
@@ -49,19 +64,35 @@ const RegisterCustomer = ({ setModelState }) => {
   };
 
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4">Register a Customer</h2>
+    <div
+      className={`bg-${
+        isDarkMode ? "gray-700" : "white"
+      } transition-all duration-300`}
+    >
+      <h2
+        className={`text-xl font-bold mb-4 text-${
+          isDarkMode ? "white" : "gray-700"
+        }`}
+      >
+        Register a Customer
+      </h2>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
-          <Form className="bg-white rounded px-8 pt-6 pb-8 mb-4 min-w-[350px] sm:min-w-[500px] mx-auto">
+          <Form
+            className={`bg-${
+              isDarkMode ? "gray-700" : "white"
+            } rounded px-8 pt-6 pb-8 mb-4 min-w-[350px] sm:min-w-[500px] mx-auto`}
+          >
             <div className="mb-4">
               <label
                 htmlFor="name"
-                className="block text-sm text-gray-700 font-bold mb-2"
+                className={`block text-sm text-${
+                  isDarkMode ? "white" : "gray-700"
+                } font-bold mb-2`}
               >
                 Name
               </label>
@@ -70,7 +101,11 @@ const RegisterCustomer = ({ setModelState }) => {
                 id="name"
                 name="name"
                 placeholder="John Doe"
-                className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                className={`py-2 pl-8 border-b-2 border-${
+                  isDarkMode ? "gray-600" : "gray-300"
+                } text-${isDarkMode ? "white" : "gray-700"}
+                bg-${!isDarkMode ? "white" : "gray-500"}
+                focus:outline-none focus:border-blue-500 w-full`}
               />
               <ErrorMessage
                 name="name"
@@ -81,7 +116,9 @@ const RegisterCustomer = ({ setModelState }) => {
             <div className="mb-4">
               <label
                 htmlFor="phone"
-                className="block text-sm text-gray-700 font-bold mb-2"
+                className={`block text-sm text-${
+                  isDarkMode ? "white" : "gray-700"
+                } font-bold mb-2`}
               >
                 Phone
               </label>
@@ -90,7 +127,12 @@ const RegisterCustomer = ({ setModelState }) => {
                 id="phone"
                 name="phone"
                 placeholder="123-456-7890"
-                className="py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-full"
+                className={`py-2 pl-8 border-b-2 border-${
+                  isDarkMode ? "gray-600" : "gray-300"
+                } text-${isDarkMode ? "white" : "gray-700"} 
+                bg-${
+                  !isDarkMode ? "white" : "gray-500"
+                } focus:outline-none focus:border-blue-500 w-full`}
               />
               <ErrorMessage
                 name="phone"
@@ -101,14 +143,16 @@ const RegisterCustomer = ({ setModelState }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className={`bg-${isDarkMode ? "gray-600" : "gray-800"} hover:bg-${
+                isDarkMode ? "gray-400" : "gray-600"
+              } text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
             >
               Register
             </button>
           </Form>
         )}
       </Formik>
-    </>
+    </div>
   );
 };
 

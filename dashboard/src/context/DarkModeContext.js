@@ -3,7 +3,20 @@ import React, { createContext, useState } from "react";
 const DarkModeContext = createContext();
 
 const DarkModeContextWrapper = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const storedDarkMode = localStorage.getItem("dark_mode");
+  const [isDarkMode, setDarkMode] = useState(
+    storedDarkMode === "dark" ? true : false
+  );
+
+  const setIsDarkMode = (isDark) => {
+    if (isDark) {
+      localStorage.setItem("dark_mode", "dark");
+      setDarkMode(true);
+    } else {
+      localStorage.setItem("dark_mode", "light");
+      setDarkMode(false);
+    }
+  };
 
   const contextValue = {
     isDarkMode,

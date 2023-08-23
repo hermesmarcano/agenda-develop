@@ -4,7 +4,6 @@ import { TiTicket } from "react-icons/ti";
 import { AiOutlineDollarCircle } from "react-icons/ai";
 import { IoMdCash } from "react-icons/io";
 import { BsCreditCard } from "react-icons/bs";
-import axios from "axios";
 import AppointmentsList from "./components/AppointmentsList";
 import CashFlowSection from "./components/CashFlowSection";
 import CommissionSection from "./components/CommissionSection";
@@ -29,11 +28,12 @@ const Analytics = () => {
   const token = localStorage.getItem("ag_app_shop_token");
 
   useEffect(() => {
-    apiProvider.get(`http://localhost:4040/payments?shopId=${shopId}`, {
-      headers: {
-        Authorization: token,
-      },
-    })
+    apiProvider
+      .get(`http://localhost:4040/payments?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
       .then((response) => response.json())
       .then((data) => {
         setTransactions([...data.payments].reverse());
