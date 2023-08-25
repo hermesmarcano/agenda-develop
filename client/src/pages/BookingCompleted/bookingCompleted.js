@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import instance from "../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 function BookingCompleted() {
   const navigate = useNavigate();
