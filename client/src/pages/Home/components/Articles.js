@@ -36,7 +36,7 @@ const ArticlesSlider = () => {
               <div className="border rounded-lg overflow-hidden">
                 <img
                   className="w-full"
-                  src={`http://localhost:4040/uploads/admin/${article.image}`}
+                  src={`${process.env.REACT_APP_API}uploads/admin/${article.image}`}
                   alt={article.title}
                 />
                 <div className="px-4 py-2">

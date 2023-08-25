@@ -22,7 +22,7 @@ const Shop = () => {
             <div
               className="w-[300px] h-[200px] bg-no-repeat bg-cover bg-center"
               style={{
-                backgroundImage: `url(http://localhost:4040/uploads/profile/${currentShop.profileImg})`,
+                backgroundImage: `url(${process.env.REACT_APP_API}uploads/profile/${currentShop.profileImg})`,
               }}
             ></div>
           ) : (

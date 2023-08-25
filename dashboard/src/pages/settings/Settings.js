@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";

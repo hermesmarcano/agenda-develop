@@ -3,7 +3,6 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi"; // Importing ico
 import Popup from "../../components/Popup";
 import RegisterProfessional from "./components/RegisterProfessional";
 import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
-import axios from "axios";
 import UpdateProfessional from "./components/UpdateProfessional";
 import Switch from "react-switch";
 import { SidebarContext } from "../../context/SidebarContext";
@@ -296,7 +295,6 @@ const Professionals = () => {
                 <td className="py-2 pr-6 text-center">
                   {/* {professional.activated ? "active" : "inactive"} */}
                   <div className="flex justify-center items-center">
-                    
                     <Switch
                       id="blockAllDay"
                       name="blockAllDay"

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardSectionOne = () => {
   const [section1Data, setSection1Data] = useState(null);
@@ -21,7 +21,7 @@ const DashboardSectionOne = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin", {
+      const response = await instance.get("admin", {
         headers: {
           Authorization: token,
         },
@@ -49,8 +49,8 @@ const DashboardSectionOne = () => {
       }
       // Upload the image if it exists
       if (values.image) {
-        const uploadResponse = await axios.post(
-          "http://localhost:4040/admin/uploads-section1-imgs",
+        const uploadResponse = await instance.post(
+          "admin/uploads-section1-imgs",
           formData,
           {
             headers: {
@@ -76,15 +76,11 @@ const DashboardSectionOne = () => {
         },
       };
 
-      const updateResponse = await axios.patch(
-        "http://localhost:4040/admin",
-        patchData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const updateResponse = await instance.patch("admin", patchData, {
+        headers: {
+          Authorization: token,
+        },
+      });
       alert("Data saved successfully");
       console.log(updateResponse.data); // Updated admin data
       fetchAdminData(); // Call fetchAdminData to update the data after submit
@@ -158,7 +154,7 @@ const DashboardSectionOne = () => {
                 {!hiddenImage && (
                   <div className="relative">
                     <img
-                      src={`http://localhost:4040/uploads/admin/${section1Data.image}`}
+                      src={`${process.env.REACT_APP_API}uploads/admin/${section1Data.image}`}
                       alt={`${section1Data.image}`}
                       className="w-screen rounded-md max-h-40 object-cover mt-2"
                     />

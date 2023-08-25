@@ -23,7 +23,7 @@ function Navbar() {
             className="text-gray-800 font-bold text-lg flex items-center justify-center"
           >
             <img
-              src={`http://localhost:4040/uploads/admin/${logo}`}
+              src={`${process.env.REACT_APP_API}uploads/admin/${logo}`}
               alt={logo}
               className="w-9 mr-1"
             />

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import apiProvider from "../../axiosConfig/axiosConfig";
 
@@ -18,13 +17,10 @@ const PasswordReset = () => {
     setWaiting(true);
     try {
       // Send a request to your backend API with the new password and the token
-      const response = await apiProvider.post(
-        "password/reset-password",
-        {
-          token,
-          newPassword: values.newPassword,
-        }
-      );
+      const response = await apiProvider.post("password/reset-password", {
+        token,
+        newPassword: values.newPassword,
+      });
 
       // Handle success case
       setIsSubmitting(false);

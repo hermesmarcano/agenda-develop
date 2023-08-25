@@ -2,7 +2,6 @@ import { useState } from "react";
 import { FiMail } from "react-icons/fi";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import apiProvider from "../../axiosConfig/axiosConfig";

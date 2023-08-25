@@ -3,8 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
+import instance from "../../axiosConfig/axiosConfig";
 
 const ArticleView = () => {
   const [article, setArticle] = useState({});
@@ -16,9 +16,7 @@ const ArticleView = () => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:4040/admin/article/${param.id}`
-      );
+      const response = await instance.get(`admin/article/${param.id}`);
       console.log(response.data);
       setArticle(response.data);
     } catch (error) {
@@ -49,7 +47,7 @@ const ArticleView = () => {
           </Link>
           <div className="bg-white shadow-lg rounded-lg p-6">
             <img
-              src={`http://localhost:4040/uploads/admin/${image}`}
+              src={`${process.env.REACT_APP_API}uploads/admin/${image}`}
               alt="Article"
               className="w-full mb-4 rounded-lg"
             />

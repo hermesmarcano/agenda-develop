@@ -49,7 +49,7 @@ const RecommendedShops = () => {
             <div className="border rounded-lg overflow-hidden">
               <img
                 className="w-full"
-                src={`http://localhost:4040/uploads/admin/${shop.image}`}
+                src={`${process.env.REACT_APP_API}uploads/admin/${shop.image}`}
                 alt={shop.title}
               />
               <div className="px-4 py-2">

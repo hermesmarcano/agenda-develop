@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Table, Tbody, Tr, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 import { FaStore, FaUsers, FaMoneyBillWave } from "react-icons/fa";
-import axios from "axios";
 import Popup from "../../../components/Popup";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardHome = () => {
   const [shops, setShops] = useState([]);
@@ -29,17 +29,17 @@ const DashboardHome = () => {
 
         const [shopsResponse, customersResponse, paymentsResponse] =
           await Promise.all([
-            axios.get("http://localhost:4040/admin/shops", {
+            instance.get("admin/shops", {
               headers: {
                 Authorization: token,
               },
             }),
-            axios.get("http://localhost:4040/admin/customers", {
+            instance.get("admin/customers", {
               headers: {
                 Authorization: token,
               },
             }),
-            axios.get("http://localhost:4040/admin/payments", {
+            instance.get("admin/payments", {
               headers: {
                 Authorization: token,
               },
@@ -93,7 +93,7 @@ const DashboardHome = () => {
   const handleDeleteShop = async (shopId) => {
     const token = localStorage.getItem("ag_app_admin_token");
     try {
-      await axios.delete(`http://localhost:4040/admin/shops/${shopId}`, {
+      await instance.delete(`admin/shops/${shopId}`, {
         headers: {
           Authorization: token,
         },

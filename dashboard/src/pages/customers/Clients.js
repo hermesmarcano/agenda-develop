@@ -3,7 +3,6 @@ import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Imp
 import RegisterCustomer from "./components/RegisterCustomer";
 import Popup from "../../components/Popup";
 import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
-import axios from "axios";
 import UpdateCustomer from "./components/UpdateCustomer";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";

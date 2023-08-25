@@ -8,7 +8,7 @@ const PhotoText = () => {
     <div className="container mx-auto py-8 px-4 flex flex-col md:flex-row">
       <div className={`w-full md:w-1/2 md:mr-8`}>
         <img
-          src={`http://localhost:4040/uploads/admin/${section1Data.image}`}
+          src={`${process.env.REACT_APP_API}uploads/admin/${section1Data.image}`}
           alt={section1Data.title}
           className="w-full"
         />

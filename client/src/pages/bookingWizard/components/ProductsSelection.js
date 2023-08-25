@@ -97,7 +97,7 @@ const ProductsSelection = ({ paramsId }) => {
               >
                 {product.productImg ? (
                   <img
-                    src={`http://localhost:4040/uploads/products/${product.productImg}`}
+                    src={`${process.env.REACT_APP_API}uploads/products/${product.productImg}`}
                     alt={product.name}
                     className="h-32 w-full rounded-t-lg object-cover"
                   />

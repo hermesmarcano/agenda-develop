@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardHero = () => {
   const [heroData, setHeroData] = useState(null);
@@ -19,7 +19,7 @@ const DashboardHero = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin", {
+      const response = await instance.get("admin", {
         headers: {
           Authorization: token,
         },
@@ -40,15 +40,11 @@ const DashboardHero = () => {
         return;
       }
 
-      const response = await axios.patch(
-        "http://localhost:4040/admin",
-        values,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await instance.patch("admin", values, {
+        headers: {
+          Authorization: token,
+        },
+      });
       alert("Data saved successfully");
     } catch (error) {
       console.log(error);

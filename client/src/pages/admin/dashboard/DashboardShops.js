@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Formik, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardShops = () => {
   const [shopsDataArr, setShopsDataArr] = useState([]);
@@ -22,7 +22,7 @@ const DashboardShops = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin", {
+      const response = await instance.get("admin", {
         headers: {
           Authorization: token,
         },
@@ -62,8 +62,8 @@ const DashboardShops = () => {
           ? formData.append("existingImg", shopsDataArr[index].image)
           : formData.append("existingImg", "nonExistingImg.jpeg");
 
-        const uploadResponse = await axios.post(
-          "http://localhost:4040/admin/uploads-shops-Imgs",
+        const uploadResponse = await instance.post(
+          "admin/uploads-shops-Imgs",
           formData,
           {
             headers: {
@@ -81,8 +81,8 @@ const DashboardShops = () => {
 
       const uploadedShops = await Promise.all(uploadPromises);
 
-      const response = await axios.patch(
-        "http://localhost:4040/admin/",
+      const response = await instance.patch(
+        "admin/",
         { shopsData: uploadedShops },
         {
           headers: {
@@ -167,7 +167,7 @@ const DashboardShops = () => {
                       {!hiddenImages.includes(index) && (
                         <div className="relative">
                           <img
-                            src={`http://localhost:4040/uploads/admin/${shopsDataArr[index].image}`}
+                            src={`${process.env.REACT_APP_API}uploads/admin/${shopsDataArr[index].image}`}
                             alt={`Service Image ${index}`}
                             className="w-screen rounded-md max-h-40 object-cover mt-2"
                           />

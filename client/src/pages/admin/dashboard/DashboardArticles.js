@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Formik, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardArticles = () => {
   const [articlesDataArr, setArticlesDataArr] = useState([]);
@@ -22,7 +22,7 @@ const DashboardArticles = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin", {
+      const response = await instance.get("admin", {
         headers: {
           Authorization: token,
         },
@@ -65,8 +65,8 @@ const DashboardArticles = () => {
           ? formData.append("existingImg", articlesDataArr[index].image)
           : formData.append("existingImg", "nonExistingImg.jpeg");
 
-        const uploadResponse = await axios.post(
-          "http://localhost:4040/admin/uploads-articles-Imgs",
+        const uploadResponse = await instance.post(
+          "admin/uploads-articles-Imgs",
           formData,
           {
             headers: {
@@ -84,8 +84,8 @@ const DashboardArticles = () => {
 
       const uploadedArticles = await Promise.all(uploadPromises);
 
-      const response = await axios.patch(
-        "http://localhost:4040/admin/",
+      const response = await instance.patch(
+        "admin/",
         { articlesData: uploadedArticles },
         {
           headers: {
@@ -211,47 +211,11 @@ const DashboardArticles = () => {
                         component="div"
                         className="text-red-600"
                       />
-                      {/* {articlesDataArr[index].image && oldImageData[index] ? (
-                        <div className="relative">
-                          <img
-                            src={`http://localhost:4040/uploads/admin/${articlesDataArr[index].image}`}
-                            alt={articlesDataArr[index].image}
-                            className="rounded-md"
-                          />
-                          <button
-                            type="button"
-                            className="absolute right-2 top-2 hover:bg-gray-800 hover:bg-opacity-25 rounded-full w-8 h-8 flex justify-center items-center"
-                            onClick={() => setOldImageData(false)}
-                          >
-                            <FaTrash size={15} className="text-red-500" />
-                          </button>
-                        </div>
-                      ) : (
-                        <ImageUpload
-                          field={{
-                            name: `articlesData[${index}].image`,
-                            value: article.image,
-                            onChange: formikProps.handleChange,
-                            onBlur: formikProps.handleBlur,
-                          }}
-                          form={formikProps}
-                        />
-                      )} */}
-
-                      {/* <ImageUpload
-                        field={{
-                          name: `articlesData[${index}].image`,
-                          value: article.image,
-                          onChange: formikProps.handleChange,
-                          onBlur: formikProps.handleBlur,
-                        }}
-                        form={formikProps}
-                      /> */}
 
                       {!hiddenImages.includes(index) && (
                         <div className="relative">
                           <img
-                            src={`http://localhost:4040/uploads/admin/${articlesDataArr[index].image}`}
+                            src={`${process.env.REACT_APP_API}uploads/admin/${articlesDataArr[index].image}`}
                             alt={`Service Image ${index}`}
                             className="w-screen rounded-md max-h-40 object-cover mt-2"
                           />

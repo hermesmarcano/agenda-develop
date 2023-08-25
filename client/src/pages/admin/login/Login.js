@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { FaUserShield } from "react-icons/fa";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const Login = () => {
     // Check if it's the first time and no admins in the database
     const checkFirstTime = async () => {
       try {
-        const response = await axios.get("http://localhost:4040/admin/check");
+        const response = await instance.get("admin/check");
         console.log(response.data);
         const adminsLength = response.data.count;
         if (adminsLength === 0) {
@@ -20,7 +20,7 @@ const Login = () => {
             username: "admin",
             password: "123456",
           };
-          await axios.post("http://localhost:4040/admin/", adminData);
+          await instance.post("admin/", adminData);
         }
       } catch (error) {
         console.error("Error checking first time:", error);
@@ -31,8 +31,8 @@ const Login = () => {
   }, []);
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
-    axios
-      .post("http://localhost:4040/admin/login", values)
+    instance
+      .post("admin/login", values)
       .then((response) => {
         const token = response.data.token;
         localStorage.setItem("ag_app_admin_token", token);

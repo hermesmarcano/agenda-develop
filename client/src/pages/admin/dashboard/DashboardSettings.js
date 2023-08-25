@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardSettings = () => {
   const [settingsData, setSettingsData] = useState(null);
@@ -21,7 +21,7 @@ const DashboardSettings = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin/id", {
+      const response = await instance.get("admin/id", {
         headers: {
           Authorization: token,
         },
@@ -53,8 +53,8 @@ const DashboardSettings = () => {
       }
       // Upload the image if it exists
       if (values.logo) {
-        const uploadResponse = await axios.post(
-          "http://localhost:4040/admin/uploads-logo",
+        const uploadResponse = await instance.post(
+          "admin/uploads-logo",
           formData,
           {
             headers: {
@@ -82,15 +82,11 @@ const DashboardSettings = () => {
         patchData.password = values.password;
       }
 
-      const updateResponse = await axios.patch(
-        "http://localhost:4040/admin",
-        patchData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const updateResponse = await instance.patch("admin", patchData, {
+        headers: {
+          Authorization: token,
+        },
+      });
       alert("Data saved successfully");
       console.log(updateResponse.data); // Updated admin data
       fetchAdminData(); // Call fetchAdminData to update the data after submit
@@ -195,7 +191,7 @@ const DashboardSettings = () => {
                 {!hiddenImage && (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
                     <img
-                      src={`http://localhost:4040/uploads/admin/${settingsData.logo}`}
+                      src={`${process.env.REACT_APP_API}uploads/admin/${settingsData.logo}`}
                       alt={`${settingsData.logo}`}
                       className="rounded-md h-[100%]"
                     />

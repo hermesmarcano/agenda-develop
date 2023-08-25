@@ -1,5 +1,5 @@
-import axios from "axios";
 import { createContext, useEffect, useState } from "react";
+import apiProvider from "../axiosConfig/axiosConfig";
 
 const NotificationContext = createContext();
 
@@ -9,8 +9,8 @@ const NotificationContextWrapper = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotificationData = () => {
-    axios
-      .get("http://localhost:4040/managers/id", {
+    apiProvider
+      .get("managers/id", {
         headers: {
           Authorization: token,
         },
@@ -42,8 +42,8 @@ const NotificationContextWrapper = ({ children }) => {
       ],
     };
 
-    axios
-      .patch("http://localhost:4040/managers", patchData, {
+    apiProvider
+      .patch("managers", patchData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,
@@ -63,8 +63,8 @@ const NotificationContextWrapper = ({ children }) => {
     patchData.notifications.map((notification) => {
       notification.isRead = true;
     });
-    axios
-      .patch("http://localhost:4040/managers", patchData, {
+    apiProvider
+      .patch("managers", patchData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: token,

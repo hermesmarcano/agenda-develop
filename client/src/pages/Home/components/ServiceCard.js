@@ -2,7 +2,7 @@ import React from "react";
 
 const ServiceCard = ({ service }) => {
   const cardStyle = {
-    backgroundImage: `url(http://localhost:4040/uploads/admin/${service.image})`,
+    backgroundImage: `url(${process.env.REACT_APP_API}uploads/admin/${service.image})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     height: "300px",

@@ -99,7 +99,7 @@ const ShopSelection = () => {
                 <div
                   className="w-full h-40 bg-no-repeat bg-cover bg-center"
                   style={{
-                    backgroundImage: `url(http://localhost:4040/uploads/profile/${shop.profileImg})`,
+                    backgroundImage: `url(${process.env.REACT_APP_API}uploads/profile/${shop.profileImg})`,
                   }}
                 ></div>
               ) : (

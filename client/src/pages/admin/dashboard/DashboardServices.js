@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Formik, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
-import axios from "axios";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const DashboardServices = () => {
   const [servicesDataArr, setServicesDataArr] = useState([]);
@@ -21,7 +21,7 @@ const DashboardServices = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:4040/admin", {
+      const response = await instance.get("admin", {
         headers: {
           Authorization: token,
         },
@@ -60,8 +60,8 @@ const DashboardServices = () => {
           ? formData.append("existingImg", servicesDataArr[index].image)
           : formData.append("existingImg", "nonExistingImg.jpeg");
 
-        const uploadResponse = await axios.post(
-          "http://localhost:4040/admin/uploads-services-imgs",
+        const uploadResponse = await instance.post(
+          "admin/uploads-services-imgs",
           formData,
           {
             headers: {
@@ -79,8 +79,8 @@ const DashboardServices = () => {
 
       const uploadedServices = await Promise.all(uploadPromises);
 
-      const response = await axios.patch(
-        "http://localhost:4040/admin/",
+      const response = await instance.patch(
+        "admin/",
         { servicesData: uploadedServices },
         {
           headers: {
@@ -155,7 +155,7 @@ const DashboardServices = () => {
                       {!hiddenImages.includes(index) && (
                         <div className="relative">
                           <img
-                            src={`http://localhost:4040/uploads/admin/${servicesDataArr[index].image}`}
+                            src={`${process.env.REACT_APP_API}uploads/admin/${servicesDataArr[index].image}`}
                             alt={`${servicesDataArr[index].image}`}
                             className="w-screen rounded-md max-h-40 object-cover mt-2"
                           />

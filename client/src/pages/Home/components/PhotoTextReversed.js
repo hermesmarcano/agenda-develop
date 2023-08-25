@@ -12,7 +12,7 @@ const PhotoTextReversed = () => {
       </div>
       <div className={`w-full md:w-1/2 md:mr-8`}>
         <img
-          src={`http://localhost:4040/uploads/admin/${section2Data.image}`}
+          src={`${process.env.REACT_APP_API}uploads/admin/${section2Data.image}`}
           alt={section2Data.title}
           className="w-full"
         />

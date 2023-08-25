@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import instance from "../axiosConfig/axiosConfig";
 
 const ShopsContext = createContext();
 
@@ -49,7 +49,7 @@ const ShopsContextWrapper = ({ children }) => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get("http://localhost:4040/admin");
+      const response = await instance.get("admin");
       console.log(response.data.admin);
       if (response.data.admin.shopsData) {
         setShopsData(response.data.admin.shopsData);

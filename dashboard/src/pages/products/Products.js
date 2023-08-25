@@ -3,7 +3,6 @@ import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi"; // Imp
 import Popup from "../../components/Popup";
 import RegisterProduct from "./components/RegisterProduct";
 import { FaEdit, FaPlus } from "react-icons/fa";
-import axios from "axios";
 import { FaSearch } from "react-icons/fa";
 import UpdateProduct from "./components/UpdateProduct";
 import { SidebarContext } from "../../context/SidebarContext";

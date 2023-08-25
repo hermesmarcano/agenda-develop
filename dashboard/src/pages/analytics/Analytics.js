@@ -29,7 +29,7 @@ const Analytics = () => {
 
   useEffect(() => {
     apiProvider
-      .get(`http://localhost:4040/payments?shopId=${shopId}`, {
+      .get(`payments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },

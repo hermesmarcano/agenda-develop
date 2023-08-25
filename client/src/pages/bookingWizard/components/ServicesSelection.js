@@ -102,7 +102,7 @@ const ServicesSelection = ({ paramsId }) => {
               >
                 {service.serviceImg ? (
                   <img
-                    src={`http://localhost:4040/uploads/services/${service.serviceImg}`}
+                    src={`${process.env.REACT_APP_API}uploads/services/${service.serviceImg}`}
                     alt={service.name}
                     className="h-32 w-full rounded-t-lg object-cover"
                   />
