@@ -38,15 +38,14 @@ const Login = () => {
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginSchema}
             onSubmit={(values, { setSubmitting }) => {
-              apiProvider.post("managers/login",
-              values,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                },
-              })
+              apiProvider
+                .post("managers/login", values, {
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                })
                 .then((response) => {
-                  if (response.ok) {
+                  if (response.status === 200) {
                     setRegistered(() => true);
                   } else {
                     setRegistered(() => false);

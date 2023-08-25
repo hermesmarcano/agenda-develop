@@ -34,7 +34,7 @@ const Analytics = () => {
           Authorization: token,
         },
       })
-      .then((response) => response.json())
+      .then((response) => response.data)
       .then((data) => {
         setTransactions([...data.payments].reverse());
 

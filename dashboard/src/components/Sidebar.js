@@ -71,21 +71,21 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   const { shopId, setShopId } = useContext(SidebarContext);
   const [shopName, setShopName] = useState("");
-
+  const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
     apiProvider
       .get("managers/", {
         headers: {
-          Authorization: localStorage.getItem("ag_app_shop_token"),
+          Authorization: token,
         },
       })
       .then((response) => {
-        if (!response.ok) {
+        if (response.status !== 200) {
           localStorage.removeItem("ag_app_shop_token");
           navigate("/login");
         }
 
-        return response.json();
+        return response.data;
       })
       .then((data) => {
         setShopName(data.shopName);
