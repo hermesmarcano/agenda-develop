@@ -24,7 +24,7 @@ import ArticleView from "./pages/articles/ArticleView";
 import BookingWizard from "./pages/bookingWizard/BookingWizard";
 import Checkout from "./pages/checkout/Checkout";
 import Shop from "./pages/shop/Shop";
-import BookingCompleted from "./pages/bookingCompleted/bookingCompleted";
+import BookingCompleted from "./pages/bookingCompleted/BookingCompleted";
 
 function App() {
   return (
