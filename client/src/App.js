@@ -24,6 +24,7 @@ import ArticleView from "./pages/articles/ArticleView";
 import BookingWizard from "./pages/bookingWizard/BookingWizard";
 import Checkout from "./pages/checkout/Checkout";
 import Shop from "./pages/shop/Shop";
+import BookingCompleted from "./pages/bookingCompleted/bookingCompleted";
 
 function App() {
   return (
@@ -54,6 +55,11 @@ function App() {
                             path="/shops/:id/checkout"
                             exact
                             element={<Checkout />}
+                          />
+                          <Route
+                            path="/shops/:id/booking-completed"
+                            exact
+                            element={<BookingCompleted />}
                           />
                           <Route element={<PrivateRoutes />}>
                             <Route
