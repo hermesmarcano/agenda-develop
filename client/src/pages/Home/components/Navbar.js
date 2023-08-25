@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { animateScroll } from "react-scroll";
-import { WebsiteTitleContext } from "../context/WebsiteTitleContext";
-import { LogoContext } from "../context/LogoContext";
+import { WebsiteTitleContext } from "../../../context/WebsiteTitleContext";
+import { LogoContext } from "../../../context/LogoContext";
 
 function Navbar() {
   const [isOpen, setIsOpen] = React.useState(false);

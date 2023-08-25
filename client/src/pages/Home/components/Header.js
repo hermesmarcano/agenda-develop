@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { HiHome, HiUser } from "react-icons/hi";
+import { HiHome, HiBell, HiUser } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -21,6 +21,11 @@ const Header = () => {
         >
           Admin Dashboard
         </button>
+        <div className="ml-6">
+          <button className="p-2">
+            <HiBell className="text-white text-xl" />
+          </button>
+        </div>
       </div>
       <div className="flex items-center space-x-4">
         <div className="relative">

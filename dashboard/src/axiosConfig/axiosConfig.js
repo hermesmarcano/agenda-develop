@@ -8,7 +8,6 @@ const apiProvider = axios.create({
 // Add a request interceptor
 apiProvider.interceptors.request.use(
   (config) => {
-    
     return config;
   },
   (error) => {
@@ -35,4 +34,4 @@ apiProvider.interceptors.response.use(
 //   instance
 // }
 
-export default apiProvider
+export default apiProvider;

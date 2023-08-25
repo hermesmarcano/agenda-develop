@@ -9,10 +9,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     // Add any request headers here
-    const token = localStorage.getItem("ag_app_customer_token");
-    if (token) {
-      config.headers.Authorization = token;
-    }
+
     return config;
   },
   (error) => {
