@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { FaEnvelope, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Login = () => {
             initialValues={{ email: "", password: "" }}
             validationSchema={LoginSchema}
             onSubmit={(values, { setSubmitting }) => {
-              apiProvider
+              instance
                 .post("managers/login", values, {
                   headers: {
                     "Content-Type": "application/json",

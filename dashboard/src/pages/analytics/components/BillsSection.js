@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const BillsSection = () => {
   const { shopId } = useContext(SidebarContext);
@@ -24,7 +24,7 @@ const BillsSection = () => {
   }, []);
 
   const fetchAppointmentData = () =>
-    apiProvider
+    instance
       .get(`appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,

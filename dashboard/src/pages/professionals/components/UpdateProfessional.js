@@ -5,7 +5,7 @@ import { SidebarContext } from "../../../context/SidebarContext";
 import { FaSpinner } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
 import { RiCloseCircleLine } from "react-icons/ri";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -23,7 +23,7 @@ const UpdateProfessional = ({
   const [professionalData, setProfessionalData] = useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
-    apiProvider
+    instance
       .get(`professionals/${professionalId}`, {
         headers: {
           Authorization: token,
@@ -140,7 +140,7 @@ const UpdateProfessional = ({
 
           const fetchRequest = async () => {
             try {
-              const response = await apiProvider.patch(
+              const response = await instance.patch(
                 `professionals/${professionalId}`,
                 patchData,
                 {

@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { FaSpinner } from "react-icons/fa";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -16,7 +16,7 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
   const [customerData, setCustomerData] = useState(null);
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
-    apiProvider
+    instance
       .get(`customers/${customerId}`, {
         headers: {
           Authorization: token,
@@ -46,16 +46,12 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
 
     const fetchRequest = async () => {
       try {
-        const response = await apiProvider.patch(
-          `customers/${customerId}`,
-          data,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: localStorage.getItem("ag_app_shop_token"),
-            },
-          }
-        );
+        const response = await instance.patch(`customers/${customerId}`, data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("ag_app_shop_token"),
+          },
+        });
         setAlertMsg("Customer has been updated");
         setAlertMsgType("success");
         setAlertOn(true);

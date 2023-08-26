@@ -4,7 +4,7 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const ForgotPassword = () => {
 
   const handleSubmit = (values, { setSubmitting }) => {
     setWaiting(true);
-    apiProvider
+    instance
       .post(`password/forgot-password`, values)
       .then((res) => {
         setWaiting(false);

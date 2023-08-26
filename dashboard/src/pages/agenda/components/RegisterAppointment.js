@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { FaCheck, FaCreditCard, FaPlus, FaSpinner } from "react-icons/fa";
 import Select from "react-select";
 import Switch from "react-switch";
@@ -41,7 +41,7 @@ const RegisterAppointment = ({
   const { sendNotification } = useContext(NotificationContext);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -56,7 +56,7 @@ const RegisterAppointment = ({
   }, [shopId]);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`services/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -86,7 +86,7 @@ const RegisterAppointment = ({
   });
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`professionals/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -144,7 +144,7 @@ const RegisterAppointment = ({
       if (bookingInfo.product) {
         apptData.product = bookingInfo.product;
       }
-      apiProvider
+      instance
         .post("appointments", apptData, {
           headers: {
             "Content-Type": "application/json",
@@ -178,7 +178,7 @@ const RegisterAppointment = ({
     };
 
     const registerCustomerWithAppointment = () => {
-      apiProvider
+      instance
         .post(
           "customers/",
           {
@@ -241,7 +241,7 @@ const RegisterAppointment = ({
       if (bookingInfo.product) {
         apptData.product = bookingInfo.product;
       }
-      apiProvider
+      instance
         .post("appointments", apptData, {
           headers: {
             "Content-Type": "application/json",
@@ -273,7 +273,7 @@ const RegisterAppointment = ({
     };
 
     const registerCustomerWithAppointment = () => {
-      apiProvider
+      instance
         .post(
           "customers/",
           {

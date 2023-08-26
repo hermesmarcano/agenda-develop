@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -93,16 +93,12 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
 
           const fetchRequest = async () => {
             try {
-              const response = await apiProvider.post(
-                "professionals/",
-                postData,
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("ag_app_shop_token"),
-                  },
-                }
-              );
+              const response = await instance.post("professionals/", postData, {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: localStorage.getItem("ag_app_shop_token"),
+                },
+              });
               setAlertMsg("New Professional has been registered");
               setAlertMsgType("success");
               setAlertOn(true);

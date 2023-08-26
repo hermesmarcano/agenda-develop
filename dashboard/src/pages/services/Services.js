@@ -6,7 +6,7 @@ import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import UpdateService from "./components/UpdateService";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const Services = () => {
   const { shopId } = useContext(SidebarContext);
@@ -22,7 +22,7 @@ const Services = () => {
   const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`services/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -103,7 +103,7 @@ const Services = () => {
 
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
-      apiProvider
+      instance
         .delete(`services/${id}`, {
           headers: {
             Authorization: token,

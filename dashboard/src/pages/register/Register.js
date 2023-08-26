@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
 import ImageUpload from "../../components/ImageUpload";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../context/AlertContext";
 
 const Register = () => {
@@ -143,7 +143,7 @@ const Register = () => {
                   formData.append("profileImg", values.profileImg);
 
                   // Upload the image
-                  const uploadResponse = await apiProvider.post(
+                  const uploadResponse = await instance.post(
                     "managers/profileImg",
                     formData,
                     {
@@ -169,7 +169,7 @@ const Register = () => {
 
                   console.log(postData);
 
-                  const updateResponse = await apiProvider.post(
+                  const updateResponse = await instance.post(
                     "managers",
                     postData
                   );

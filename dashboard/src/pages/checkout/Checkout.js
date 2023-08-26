@@ -24,7 +24,7 @@ import PayLater from "./components/PayLater";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DateTimeContext } from "../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../context/ProfessionalIdContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
 
 const StepIndicator = ({ currentStep, totalSteps }) => {
@@ -92,7 +92,7 @@ const Checkout = () => {
         localStorage.getItem("ag_app_booking_info")
       ).appointmentId;
 
-      const fetchPayments = apiProvider
+      const fetchPayments = instance
         .get(`payments?appt=${appointmentId}`, {
           headers: {
             Authorization: token,
@@ -107,22 +107,19 @@ const Checkout = () => {
           return null; // Resolve with null if there was an error
         });
 
-      const fetchCustomers = apiProvider.get(
-        `customers/shop?shopId=${shopId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-
-      const fetchServices = apiProvider.get(`services/shop?shopId=${shopId}`, {
+      const fetchCustomers = instance.get(`customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },
       });
 
-      const fetchProducts = apiProvider.get(`products/shop?shopId=${shopId}`, {
+      const fetchServices = instance.get(`services/shop?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      const fetchProducts = instance.get(`products/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
         },

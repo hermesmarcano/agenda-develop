@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import BlockSchedule from "./BlockSchedule";
 import RegisterAppointment from "./RegisterAppointment";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { SidebarContext } from "../../../context/SidebarContext";
 
 const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
@@ -18,7 +18,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   };
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,

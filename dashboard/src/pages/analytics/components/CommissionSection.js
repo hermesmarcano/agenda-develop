@@ -4,7 +4,7 @@ import { MdMonetizationOn } from "react-icons/md";
 import { startOfWeek } from "date-fns";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const CommissionSection = () => {
   const [professionals, setProfessionals] = useState([]);
@@ -20,7 +20,7 @@ const CommissionSection = () => {
   const token = localStorage.getItem("ag_app_shop_token");
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`professionals/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -62,7 +62,7 @@ const CommissionSection = () => {
         setDefaultCommissions();
       }
 
-      apiProvider
+      instance
         .get(`payments?shopId=${shopId}`, {
           headers: {
             Authorization: token,
@@ -204,7 +204,7 @@ const CommissionSection = () => {
       commissionPercentProducts: professional.commissionPercentProducts,
     };
 
-    apiProvider
+    instance
       .patch(`professionals/${professionalId}`, patchData, {
         headers: {
           "Content-Type": "application/json",

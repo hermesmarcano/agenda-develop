@@ -3,7 +3,7 @@ import { FiCheck } from "react-icons/fi";
 import { FiX } from "react-icons/fi";
 import { BsBackspace } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const Calculator = ({
@@ -58,7 +58,7 @@ const Calculator = ({
       let paymentId = "";
 
       const updatePayment = () => {
-        apiProvider
+        instance
           .patch(
             `payments/${bookingInfo.paymentId}`,
             JSON.stringify(patchData),
@@ -77,7 +77,7 @@ const Calculator = ({
               Number(cuurentClient.payments) +
               Number(bookingInfo.amount) +
               Number(bookingInfo.prevPaid);
-            apiProvider
+            instance
               .patch(
                 `customers/${bookingInfo.customer}`,
                 JSON.stringify({ payments: updatedClientPayments }),
@@ -102,7 +102,7 @@ const Calculator = ({
       };
 
       const makePayment = () => {
-        apiProvider
+        instance
           .post("payments", JSON.stringify(data), {
             headers: {
               "Content-Type": "application/json",
@@ -116,7 +116,7 @@ const Calculator = ({
             );
             const updatedClientPayments =
               Number(cuurentClient.payments) + Number(bookingInfo.amount);
-            apiProvider
+            instance
               .patch(
                 `customers/${bookingInfo.customer}`,
                 JSON.stringify({ payments: updatedClientPayments }),
@@ -141,7 +141,7 @@ const Calculator = ({
       };
 
       const deletePayment = () => {
-        apiProvider
+        instance
           .delete(`payments/${bookingInfo.paymentId}`, {
             headers: {
               "Content-Type": "application/json",
@@ -157,7 +157,7 @@ const Calculator = ({
       };
 
       const linkPaymentToAppointment = () => {
-        apiProvider
+        instance
           .patch(
             `payments/${paymentId}`,
             JSON.stringify({ appointment: bookingInfo.appointmentId }),
@@ -178,7 +178,7 @@ const Calculator = ({
       };
 
       const confirmAppointmentPayment = () => {
-        apiProvider
+        instance
           .patch(
             `appointments/${bookingInfo.appointmentId}`,
             JSON.stringify({

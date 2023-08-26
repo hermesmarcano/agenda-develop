@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { SidebarContext } from "../../../context/SidebarContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -32,7 +32,7 @@ const RegisterService = ({ setModelState }) => {
       formData.append("serviceImg", values.serviceImg);
 
       // Upload the image
-      const uploadResponse = await apiProvider.post(
+      const uploadResponse = await instance.post(
         "services/imageUpload",
         formData,
         {
@@ -56,7 +56,7 @@ const RegisterService = ({ setModelState }) => {
         managerId: shopId,
       };
 
-      const updateResponse = await apiProvider.post("services", postData, {
+      const updateResponse = await instance.post("services", postData, {
         headers: {
           Authorization: token,
         },

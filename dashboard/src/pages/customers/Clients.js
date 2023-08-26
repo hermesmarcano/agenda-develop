@@ -6,7 +6,7 @@ import { FaEdit, FaPlus, FaSearch } from "react-icons/fa";
 import UpdateCustomer from "./components/UpdateCustomer";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const Clients = () => {
   const { shopId } = useContext(SidebarContext);
@@ -22,7 +22,7 @@ const Clients = () => {
 
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
-    apiProvider
+    instance
       .get(`customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -103,7 +103,7 @@ const Clients = () => {
 
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
-      apiProvider
+      instance
         .delete(`customers/${id}`, {
           headers: {
             Authorization: token,

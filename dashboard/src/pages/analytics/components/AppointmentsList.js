@@ -19,7 +19,7 @@ import {
 } from "react-icons/ri";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const AppointmentsList = () => {
   const { shopId } = useContext(SidebarContext);
@@ -38,7 +38,7 @@ const AppointmentsList = () => {
   }, [isDeleting]);
 
   const fetchAppointmentData = () =>
-    apiProvider
+    instance
       .get(`appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -124,7 +124,7 @@ const AppointmentsList = () => {
 
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
-      apiProvider
+      instance
         .delete(`appointments/${id}`, {
           headers: {
             Authorization: token,

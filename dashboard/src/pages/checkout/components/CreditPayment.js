@@ -1,7 +1,7 @@
 import { FaCreditCard } from "react-icons/fa";
 import { FiX } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { useContext } from "react";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 
@@ -50,7 +50,7 @@ const CreditPayment = ({
     let paymentId = "";
 
     const updatePayment = () => {
-      apiProvider
+      instance
         .patch(`payments/${bookingInfo.paymentId}`, JSON.stringify(patchData), {
           headers: {
             "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const CreditPayment = ({
             Number(cuurentClient.payments) +
             Number(bookingInfo.amount) +
             Number(bookingInfo.prevPaid);
-          apiProvider
+          instance
             .patch(
               `customers/${bookingInfo.customer}`,
               JSON.stringify({ payments: updatedClientPayments }),
@@ -90,7 +90,7 @@ const CreditPayment = ({
     };
 
     const makePayment = () => {
-      apiProvider
+      instance
         .post("payments", JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
@@ -104,7 +104,7 @@ const CreditPayment = ({
           );
           const updatedClientPayments =
             Number(cuurentClient.payments) + Number(bookingInfo.amount);
-          apiProvider
+          instance
             .patch(
               `customers/${bookingInfo.customer}`,
               JSON.stringify({ payments: updatedClientPayments }),
@@ -128,7 +128,7 @@ const CreditPayment = ({
     };
 
     const deletePayment = () => {
-      apiProvider
+      instance
         .delete(`payments/${bookingInfo.paymentId}`, {
           headers: {
             "Content-Type": "application/json",
@@ -144,7 +144,7 @@ const CreditPayment = ({
     };
 
     const linkPaymentToAppointment = () => {
-      apiProvider
+      instance
         .patch(
           `payments/${paymentId}`,
           JSON.stringify({ appointment: bookingInfo.appointmentId }),
@@ -165,7 +165,7 @@ const CreditPayment = ({
     };
 
     const confirmAppointmentPayment = () => {
-      apiProvider
+      instance
         .patch(
           `appointments/${bookingInfo.appointmentId}`,
           JSON.stringify({

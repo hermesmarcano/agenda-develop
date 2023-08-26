@@ -14,7 +14,7 @@ import { GiPayMoney } from "react-icons/gi";
 import { useNavigate, useLocation } from "react-router-dom";
 import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
-import apiProvider from "../axiosConfig/axiosConfig";
+import instance from "../axiosConfig/axiosConfig";
 
 const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const navigate = useNavigate();
@@ -73,7 +73,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const [shopName, setShopName] = useState("");
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
-    apiProvider
+    instance
       .get("managers/", {
         headers: {
           Authorization: token,

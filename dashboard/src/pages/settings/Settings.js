@@ -6,7 +6,7 @@ import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
 import { SidebarContext } from "../../context/SidebarContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
 
 const Settings = () => {
@@ -27,7 +27,7 @@ const Settings = () => {
   }
 
   useEffect(() => {
-    apiProvider
+    instance
       .get("managers/id", {
         headers: {
           Authorization: token,
@@ -52,7 +52,7 @@ const Settings = () => {
       workingHours: values.workingHours,
     };
 
-    apiProvider
+    instance
       .patch("managers", JSON.stringify(data), {
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const Settings = () => {
   };
 
   const deleteProfileImg = () => {
-    apiProvider
+    instance
       .delete(`managers/profile/${shopData.profileImg}`, {
         headers: {
           Authorization: token,
@@ -85,7 +85,7 @@ const Settings = () => {
     let updatedImg = {
       profileImg: values.profileImg,
     };
-    apiProvider
+    instance
       .post("managers/profileImg", updatedImg, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -94,7 +94,7 @@ const Settings = () => {
       })
       .then((response) => {
         // Update shopData with the new profile image
-        apiProvider
+        instance
           .patch(
             "managers/",
             JSON.stringify({ profileImg: response.data.profileImg }),

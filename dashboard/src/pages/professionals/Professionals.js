@@ -7,7 +7,7 @@ import UpdateProfessional from "./components/UpdateProfessional";
 import Switch from "react-switch";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const Professionals = () => {
   const { shopId } = useContext(SidebarContext);
@@ -24,7 +24,7 @@ const Professionals = () => {
   const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`professionals/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -35,7 +35,7 @@ const Professionals = () => {
   }, [registerModelState, updateModelState, isDeleting]);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get("managers/id", {
         headers: {
           Authorization: token,
@@ -113,7 +113,7 @@ const Professionals = () => {
 
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
-      apiProvider
+      instance
         .delete(`professionals/${id}`, {
           headers: {
             Authorization: token,

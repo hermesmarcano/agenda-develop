@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const apiProvider = axios.create({
+const instance = axios.create({
   baseURL: process.env.REACT_APP_API,
   timeout: 55000,
 });
 
 // Add a request interceptor
-apiProvider.interceptors.request.use(
+instance.interceptors.request.use(
   (config) => {
     return config;
   },
@@ -18,7 +18,7 @@ apiProvider.interceptors.request.use(
 );
 
 // Add a response interceptor
-apiProvider.interceptors.response.use(
+instance.interceptors.response.use(
   (response) => {
     // Do something with response data
     return response;
@@ -30,8 +30,8 @@ apiProvider.interceptors.response.use(
   }
 );
 
-// const apiProvider = {
+// const instance = {
 //   instance
 // }
 
-export default apiProvider;
+export default instance;

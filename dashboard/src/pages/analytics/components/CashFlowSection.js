@@ -16,7 +16,7 @@ import { MdAttachMoney } from "react-icons/md";
 import { IoMdAdd } from "react-icons/io";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const CashFlowSection = () => {
   const [customers, setCustomers] = useState([]);
@@ -36,7 +36,7 @@ const CashFlowSection = () => {
   const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`payments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -209,7 +209,7 @@ const CashFlowSection = () => {
     lastTransactionIndex
   );
   useEffect(() => {
-    apiProvider
+    instance
       .get(`customers/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -229,7 +229,7 @@ const CashFlowSection = () => {
   );
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -261,7 +261,7 @@ const CashFlowSection = () => {
   }, []);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`managers/id`, {
         headers: {
           Authorization: token,
@@ -584,7 +584,7 @@ const CashFlowSection = () => {
               date: new Date(values.date),
             };
             let patchData = { expenses: [...expenses, newBill] };
-            apiProvider
+            instance
               .patch("managers", JSON.stringify(patchData), {
                 headers: {
                   "Content-Type": "application/json",
