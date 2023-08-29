@@ -1,5 +1,5 @@
 import "./App.css";
-import { HashRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, BrowserRouter, Route, Routes } from "react-router-dom";
 import Agenda from "./pages/agenda/Agenda";
 import Clients from "./pages/customers/Clients";
 import Login from "./pages/login/Login";
@@ -35,7 +35,7 @@ function App() {
               <ProfessionalIdContextWrapper>
                 <DateTimeContextWrapper>
                   <SidebarContextWrapper>
-                    <HashRouter>
+                    <BrowserRouter>
                       <Routes>
                         <Route element={<PrivateRoutes />}>
                           <Route path="/" exact element={<Agenda />} />
@@ -88,7 +88,7 @@ function App() {
                         />
                         <Route path="*" element={<NotFound />} />
                       </Routes>
-                    </HashRouter>
+                    </BrowserRouter>
                   </SidebarContextWrapper>
                 </DateTimeContextWrapper>
               </ProfessionalIdContextWrapper>

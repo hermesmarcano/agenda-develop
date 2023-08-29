@@ -5,7 +5,7 @@ const NotificationContext = createContext();
 
 const NotificationContextWrapper = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
-  const token = localStorage.getItem("ag_app_shop_token");
+  const token = `${localStorage.getItem("ag_app_shop_token")}`;
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotificationData = () => {
@@ -17,6 +17,7 @@ const NotificationContextWrapper = ({ children }) => {
       })
       .then((response) => {
         if (response.data.notifications) {
+          console.log(token);
           setNotifications(response.data.notifications.reverse());
           let count = 0;
           response.data.notifications.map((notification) => {

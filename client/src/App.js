@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NotFound from "./pages/notFound/NotFound";
-import Home from "./pages/Home/Home";
+import Home from "./pages/home/Home";
 import ShopSelection from "./pages/shopSelection/ShopSelection";
 import { HeroContextWrapper } from "./context/HeroContext";
 import { ShopsContextWrapper } from "./context/ShopsContext";
