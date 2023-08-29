@@ -17,13 +17,9 @@ const NotificationContextWrapper = ({ children }) => {
       })
       .then((response) => {
         if (response.data.notifications) {
-<<<<<<< HEAD
-          console.log(token);
-          setNotifications(response.data.notifications.reverse());
-=======
+
           let orderedNotifications = response.data.notifications.reverse();
           setNotifications(orderedNotifications);
->>>>>>> 190f27e59dfffbcfe5824c5b713947a0fb5265a8
           let count = 0;
           response.data.notifications.map((notification) => {
             if (!notification.isRead) {
