@@ -300,10 +300,15 @@ const UpdateProduct = ({ setModelState, productId }) => {
                 {productData.productImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
                     <img
-                      src={`${process.env.REACT_APP_API}uploads/products/${productData.productImg}`}
-                      alt={productData.productImg}
-                      className="rounded-md h-[100%]"
-                    />
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/products/${productData.productImg}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/products/${productData.productImg}`
+  }
+  alt={productData.productImg}
+  className="rounded-md h-[100%]"
+/>
+
                     <button
                       type="button"
                       className={`absolute right-2 top-2 hover:bg-${

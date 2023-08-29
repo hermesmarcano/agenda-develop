@@ -248,10 +248,15 @@ const UpdateService = ({ setModelState, serviceId }) => {
                 {serviceData.serviceImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items-center justify-center">
                     <img
-                      src={`${process.env.REACT_APP_API}uploads/services/${serviceData.serviceImg}`}
-                      alt={serviceData.serviceImg}
-                      className="rounded-md h-[100%]"
-                    />
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/services/${serviceData.serviceImg}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/services/${serviceData.serviceImg}`
+  }
+  alt={serviceData.serviceImg}
+  className="rounded-md h-[100%]"
+/>
+
                     <button
                       type="button"
                       className="absolute right-2 top-2 hover:bg-gray-800 hover:bg-opacity-25 rounded-full w-8 h-8 flex justify-center items-center"

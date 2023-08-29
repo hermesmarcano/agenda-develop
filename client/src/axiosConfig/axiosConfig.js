@@ -1,10 +1,13 @@
 import axios from "axios";
 
+const baseURL = process.env.REACT_APP_DEVELOPMENT
+  ? process.env.REACT_APP_API_DEV
+  : process.env.REACT_APP_API;
+
 const instance = axios.create({
-  baseURL: process.env.REACT_APP_API,
+  baseURL,
   timeout: 55000,
 });
-
 // Add a request interceptor
 instance.interceptors.request.use(
   (config) => {

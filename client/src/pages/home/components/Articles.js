@@ -34,11 +34,16 @@ const ArticlesSlider = () => {
           <div key={article._id} className="px-2">
             <Link to={`/article/${article._id}`}>
               <div className="border rounded-lg overflow-hidden">
-                <img
-                  className="w-full"
-                  src={`${process.env.REACT_APP_API}uploads/admin/${article.image}`}
-                  alt={article.title}
-                />
+              <img
+  className="w-full"
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${article.image}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${article.image}`
+  }
+  alt={article.title}
+/>
+
                 <div className="px-4 py-2">
                   <h3 className="font-bold text-lg mb-2">{article.title}</h3>
                   <p className="text-gray-700">

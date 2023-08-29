@@ -155,10 +155,15 @@ const DashboardServices = () => {
                       {!hiddenImages.includes(index) && (
                         <div className="relative">
                           <img
-                            src={`${process.env.REACT_APP_API}uploads/admin/${servicesDataArr[index].image}`}
-                            alt={`${servicesDataArr[index].image}`}
-                            className="w-screen rounded-md max-h-40 object-cover mt-2"
-                          />
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${servicesDataArr[index].image}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${servicesDataArr[index].image}`
+  }
+  alt={servicesDataArr[index].image}
+  className="w-screen rounded-md max-h-40 object-cover mt-2"
+/>
+
                           <button
                             type="button"
                             onClick={() => deleteImage(formikProps, index)}

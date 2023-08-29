@@ -20,11 +20,16 @@ const Shop = () => {
         <div className="w-fit mx-auto rounded overflow-hidden shadow-lg mb-4">
           {currentShop.profileImg ? (
             <div
-              className="w-[300px] h-[200px] bg-no-repeat bg-cover bg-center"
-              style={{
-                backgroundImage: `url(${process.env.REACT_APP_API}uploads/profile/${currentShop.profileImg})`,
-              }}
-            ></div>
+            className="w-[300px] h-[200px] bg-no-repeat bg-cover bg-center"
+            style={{
+              backgroundImage: `url(${
+                process.env.REACT_APP_DEVELOPMENT
+                  ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${currentShop.profileImg}`
+                  : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${currentShop.profileImg}`
+              })`,
+            }}
+          ></div>
+          
           ) : (
             <img
               className="w-full"

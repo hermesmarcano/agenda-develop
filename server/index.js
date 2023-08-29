@@ -30,7 +30,11 @@ app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 
-mongoose.connect(process.env.DATABASE_URL_LOCAL, {
+const databaseURL = process.env.NODE_APP_DEVELOPMENT
+  ? process.env.DATABASE_URL_DEV
+  : process.env.DATABASE_URL
+
+mongoose.connect(databaseURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

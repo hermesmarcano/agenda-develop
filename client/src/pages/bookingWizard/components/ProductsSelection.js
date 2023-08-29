@@ -97,10 +97,15 @@ const ProductsSelection = ({ paramsId }) => {
               >
                 {product.productImg ? (
                   <img
-                    src={`${process.env.REACT_APP_API}uploads/products/${product.productImg}`}
-                    alt={product.name}
-                    className="h-32 w-full rounded-t-lg object-cover"
-                  />
+                  src={
+                    process.env.REACT_APP_DEVELOPMENT
+                      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/products/${product.productImg}`
+                      : `${process.env.REACT_APP_IMAGE_URI}uploads/products/${product.productImg}`
+                  }
+                  alt={product.name}
+                  className="h-32 w-full rounded-t-lg object-cover"
+                />
+                
                 ) : (
                   <img
                     src="https://via.placeholder.com/150"

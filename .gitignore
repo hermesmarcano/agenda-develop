@@ -4,6 +4,13 @@ server/node_modules/
 client/node_modules/
 dashboard/node_modules/
 
-server/.env.example
-client/.env.example
-dashboard/.env.example
+# Example environment files
+server/.env
+client/.env
+dashboard/.env
+
+# Ignored folders with their content
+server/uploads/admin/*
+server/uploads/services/*
+server/uploads/products/*
+server/uploads/profile/*

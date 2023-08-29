@@ -102,10 +102,15 @@ const ServicesSelection = ({ paramsId }) => {
               >
                 {service.serviceImg ? (
                   <img
-                    src={`${process.env.REACT_APP_API}uploads/services/${service.serviceImg}`}
-                    alt={service.name}
-                    className="h-32 w-full rounded-t-lg object-cover"
-                  />
+                  src={
+                    process.env.REACT_APP_DEVELOPMENT
+                      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/services/${service.serviceImg}`
+                      : `${process.env.REACT_APP_IMAGE_URI}uploads/services/${service.serviceImg}`
+                  }
+                  alt={service.name}
+                  className="h-32 w-full rounded-t-lg object-cover"
+                />
+                
                 ) : (
                   <img
                     src="https://via.placeholder.com/150"

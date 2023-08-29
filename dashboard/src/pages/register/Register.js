@@ -17,8 +17,12 @@ import { TiPlus } from "react-icons/ti";
 import ImageUpload from "../../components/ImageUpload";
 import instance from "../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../context/AlertContext";
+import { imageDb } from '../../services/fireBaseStorage';
+import { ref, uploadBytes } from "firebase/storage";
+import { v4 } from 'uuid';
 
 const Register = () => {
+  const [profileImage, setProfileImage] = useState('');
   const navigate = useNavigate();
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
     React.useContext(AlertContext);
@@ -138,52 +142,54 @@ const Register = () => {
               }}
               validationSchema={RegisterSchema}
               onSubmit={async (values, { setSubmitting }) => {
-                try {
-                  const formData = new FormData();
-                  formData.append("profileImg", values.profileImg);
+                // try {
+                //   const formData = new FormData();
+                //   formData.append("profileImg", values.profileImg);
 
-                  // Upload the image
-                  const uploadResponse = await instance.post(
-                    "managers/profileImg",
-                    formData,
-                    {
-                      headers: {
-                        "Content-Type": "multipart/form-data",
-                      },
-                    }
-                  );
+                //   // Upload the image
+                //   const uploadResponse = await instance.post(
+                //     "managers/profileImg",
+                //     formData,
+                //     {
+                //       headers: {
+                //         "Content-Type": "multipart/form-data",
+                //       },
+                //     }
+                //   );
 
-                  // Get the uploaded image name from the response
-                  const profileImg = uploadResponse.data.profileImg;
+                //   // Get the uploaded image name from the response
+                //   const profileImg = uploadResponse.data.profileImg;
 
-                  // Update the data with new values (including the image name)
-                  const postData = {
-                    name: values.name,
-                    email: values.email,
-                    password: values.password,
-                    shopName: values.shopName,
-                    urlSlug: values.urlSlug,
-                    workingHours: values.workingHours,
-                    profileImg: profileImg,
-                  };
+                //   // Update the data with new values (including the image name)
+                //   const postData = {
+                //     name: values.name,
+                //     email: values.email,
+                //     password: values.password,
+                //     shopName: values.shopName,
+                //     urlSlug: values.urlSlug,
+                //     workingHours: values.workingHours,
+                //     profileImg: profileImg,
+                //   };
 
-                  console.log(postData);
+                //   console.log(postData);
 
-                  const updateResponse = await instance.post(
-                    "managers",
-                    postData
-                  );
+                //   const updateResponse = await instance.post(
+                //     "managers",
+                //     postData
+                //   );
 
-                  console.log(updateResponse);
-                  setAlertMsg("New Shop has been registered");
-                  setAlertMsgType("success");
-                  setAlertOn(true);
-                  navigate("/login");
-                } catch (error) {
-                  console.log(error);
-                }
+                //   console.log(updateResponse);
+                //   setAlertMsg("New Shop has been registered");
+                //   setAlertMsgType("success");
+                //   setAlertOn(true);
+                //   navigate("/login");
+                // } catch (error) {
+                //   console.log(error);
+                // }
 
                 // setSubmitting(false);
+              const imageRef = ref(imageDb, `files/${v4()}`)
+              uploadBytes(imageRef, profileImage);
               }}
             >
               {(formikProps) => (

@@ -46,11 +46,16 @@ const ArticleView = () => {
             Back to Home
           </Link>
           <div className="bg-white shadow-lg rounded-lg p-6">
-            <img
-              src={`${process.env.REACT_APP_API}uploads/admin/${image}`}
-              alt="Article"
-              className="w-full mb-4 rounded-lg"
-            />
+          <img
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${image}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${image}`
+  }
+  alt="Article"
+  className="w-full mb-4 rounded-lg"
+/>
+
             <div className="text-gray-500 mb-2">{date}</div>
             <h1 className="text-3xl font-bold mb-4">{title}</h1>
             <p className="text-gray-700">{content}</p>

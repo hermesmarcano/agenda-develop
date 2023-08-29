@@ -147,11 +147,15 @@ const Agenda = () => {
       <div className="grid grid-cols-1 gap-1 md:flex md: mx-auto px-2 mt-2 pb-2">
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
           <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
-            <img
-              className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-              src={`${process.env.REACT_APP_API}uploads/profile/${myShopImg}`}
-              alt="Shop logo"
-            />
+          <img
+  className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${myShopImg}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${myShopImg}`
+  }
+  alt="Shop logo"
+/>
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
           </div>
           <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
@@ -162,11 +166,16 @@ const Agenda = () => {
             />
           </div>
           <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
-            <img
-              className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-              src={`${process.env.REACT_APP_API}uploads/profile/${myShopImg}`}
-              alt="Shop logo"
-            />
+          <img
+  className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${myShopImg}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${myShopImg}`
+  }
+  alt="Shop logo"
+/>
+
           </div>
           <div className="flex flex-col items-start border border-gray-400 p-4 mt-3">
             {viewMode === "daily" ? (

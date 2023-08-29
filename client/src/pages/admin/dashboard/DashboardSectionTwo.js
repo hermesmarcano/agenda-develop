@@ -154,10 +154,15 @@ const DashboardSectionTwo = () => {
                 {!hiddenImage && (
                   <div className="relative">
                     <img
-                      src={`${process.env.REACT_APP_API}uploads/admin/${section2Data.image}`}
-                      alt={`${section2Data.image}`}
-                      className="w-screen rounded-md max-h-40 object-cover mt-2"
-                    />
+  src={
+    process.env.REACT_APP_DEVELOPMENT
+      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${section2Data.image}`
+      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${section2Data.image}`
+  }
+  alt={section2Data.image}
+  className="w-screen rounded-md max-h-40 object-cover mt-2"
+/>
+
                     <button
                       type="button"
                       onClick={() => deleteImage(formikProps)}

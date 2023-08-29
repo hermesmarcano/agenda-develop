@@ -1,12 +1,16 @@
 import React from "react";
 
 const ServiceCard = ({ service }) => {
-  const cardStyle = {
-    backgroundImage: `url(${process.env.REACT_APP_API}uploads/admin/${service.image})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    height: "300px",
-  };
+  const backgroundImageUrl = process.env.REACT_APP_DEVELOPMENT
+  ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${service.image}`
+  : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${service.image}`;
+
+const cardStyle = {
+  backgroundImage: `url(${backgroundImageUrl})`,
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+  height: "300px",
+};
 
   return (
     <div className="bg-white rounded-lg overflow-hidden shadow-lg">
