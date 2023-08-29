@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
 import ImageUpload from "../../../components/ImageUpload";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -50,7 +50,7 @@ const RegisterProduct = ({ setModelState }) => {
       formData.append("productImg", values.productImg);
 
       // Upload the image
-      const uploadResponse = await apiProvider.post(
+      const uploadResponse = await instance.post(
         "products/imageUpload",
         formData,
         {
@@ -76,7 +76,7 @@ const RegisterProduct = ({ setModelState }) => {
         productImg: filename,
       };
 
-      const updateResponse = await apiProvider.post("products", postData, {
+      const updateResponse = await instance.post("products", postData, {
         headers: {
           Authorization: token,
         },

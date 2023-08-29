@@ -10,7 +10,7 @@ import CommissionSection from "./components/CommissionSection";
 import BillsSection from "./components/BillsSection";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);
@@ -28,7 +28,7 @@ const Analytics = () => {
   const token = localStorage.getItem("ag_app_shop_token");
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`payments?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -153,7 +153,7 @@ const Analytics = () => {
 
   const [products, setProducts] = useState([]);
   useEffect(() => {
-    apiProvider
+    instance
       .get(`products/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,

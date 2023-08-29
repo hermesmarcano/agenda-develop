@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const ViewAppointment = ({ setModelState, appointmentId }) => {
   const token = localStorage.getItem("ag_app_shop_token");
@@ -8,7 +8,7 @@ const ViewAppointment = ({ setModelState, appointmentId }) => {
   const [appointmentData, setAppointmentData] = useState(null);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`appointments/${appointmentId}`, {
         headers: {
           Authorization: token,

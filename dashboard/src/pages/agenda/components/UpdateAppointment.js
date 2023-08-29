@@ -16,7 +16,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 
 const UpdateAppointment = ({
   amount,
@@ -45,14 +45,11 @@ const UpdateAppointment = ({
   useEffect(() => {
     const fetchClients = async () => {
       try {
-        const response = await apiProvider.get(
-          `customers/shop?shopId=${shopId}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await instance.get(`customers/shop?shopId=${shopId}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setClients(response.data);
       } catch (error) {
         console.error(error);
@@ -61,14 +58,11 @@ const UpdateAppointment = ({
 
     const fetchServices = async () => {
       try {
-        const response = await apiProvider.get(
-          `services/shop?shopId=${shopId}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await instance.get(`services/shop?shopId=${shopId}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setServices(response.data.services);
       } catch (error) {
         console.error(error);
@@ -77,14 +71,11 @@ const UpdateAppointment = ({
 
     const fetchProducts = async () => {
       try {
-        const response = await apiProvider.get(
-          `products/shop?shopId=${shopId}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await instance.get(`products/shop?shopId=${shopId}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setProducts(response.data.products);
       } catch (error) {
         console.error(error);
@@ -93,14 +84,11 @@ const UpdateAppointment = ({
 
     const fetchAppointment = async () => {
       try {
-        const response = await apiProvider.get(
-          `appointments/${appointmentId}`,
-          {
-            headers: {
-              Authorization: token,
-            },
-          }
-        );
+        const response = await instance.get(`appointments/${appointmentId}`, {
+          headers: {
+            Authorization: token,
+          },
+        });
         setAppointmentData(response.data.appointment);
       } catch (error) {
         console.error(error);
@@ -139,7 +127,7 @@ const UpdateAppointment = ({
   });
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`professionals/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -226,7 +214,7 @@ const UpdateAppointment = ({
         status: "updating",
       };
 
-      apiProvider
+      instance
         .patch(`appointments/${appointmentId}`, patchData, {
           headers: {
             "Content-Type": "application/json",
@@ -260,7 +248,7 @@ const UpdateAppointment = ({
     };
 
     const registerCustomerWithAppointment = () => {
-      apiProvider
+      instance
         .post(
           "customers/",
           {
@@ -327,7 +315,7 @@ const UpdateAppointment = ({
         status: "updating",
       };
 
-      apiProvider
+      instance
         .patch(`appointments/${appointmentId}`, patchData, {
           headers: {
             "Content-Type": "application/json",
@@ -361,7 +349,7 @@ const UpdateAppointment = ({
     };
 
     const registerCustomerWithAppointment = () => {
-      apiProvider
+      instance
         .post(
           "customers/",
           {

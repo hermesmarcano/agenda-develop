@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -32,7 +32,7 @@ const RegisterCustomer = ({ setModelState }) => {
 
     const fetchRequest = async () => {
       try {
-        const response = await apiProvider.post("customers/", data, {
+        const response = await instance.post("customers/", data, {
           headers: {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("ag_app_shop_token"),

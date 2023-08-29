@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -17,7 +17,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
   const token = localStorage.getItem("ag_app_shop_token");
   const [productData, setProductData] = useState(null);
   useEffect(() => {
-    apiProvider
+    instance
       .get(`products/${productId}`, {
         headers: {
           Authorization: token,
@@ -54,7 +54,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
         formData.append("productImg", values.productImg);
 
         // Upload the image
-        const uploadResponse = await apiProvider.post(
+        const uploadResponse = await instance.post(
           "products/imageUpload",
           formData,
           {
@@ -80,7 +80,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
         productImg: values.productImg || productData.productImg,
       };
 
-      const updateResponse = await apiProvider.patch(
+      const updateResponse = await instance.patch(
         `products/${productId}`,
         patchData,
         {
@@ -111,7 +111,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
   };
 
   const deleteProductImg = () => {
-    apiProvider
+    instance
       .delete(`products/image/${productData.productImg}`, {
         headers: {
           Authorization: token,

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import Schedular from "./components/Schedular";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 import { FaCheck, FaCircle, FaCheckCircle, FaSpinner } from "react-icons/fa";
 import { AiOutlineInbox } from "react-icons/ai";
 import { HiEmojiSad } from "react-icons/hi";
@@ -35,7 +35,7 @@ const Agenda = () => {
 
   useEffect(() => {
     if (shopId !== "") {
-      apiProvider
+      instance
         .get(`appointments?shopId=${shopId}`, {
           headers: {
             Authorization: token,
@@ -49,7 +49,7 @@ const Agenda = () => {
   }, [shopId]);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get("managers/id", {
         headers: {
           Authorization: token,
@@ -59,7 +59,7 @@ const Agenda = () => {
         setMyShopImg(response.data.profileImg);
         response.data?.workingHours &&
           setWorkingHours(response.data?.workingHours);
-        apiProvider
+        instance
           .get(`professionals/shop?shopId=${response.data._id}`, {
             headers: {
               Authorization: token,

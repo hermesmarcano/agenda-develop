@@ -7,7 +7,7 @@ import { FaSearch } from "react-icons/fa";
 import UpdateProduct from "./components/UpdateProduct";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const Products = () => {
   const { shopId } = useContext(SidebarContext);
@@ -23,7 +23,7 @@ const Products = () => {
   const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
-    apiProvider
+    instance
       .get(`products/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -104,7 +104,7 @@ const Products = () => {
 
   const handleRemoveSelected = () => {
     selectedIds.forEach((id) => {
-      apiProvider
+      instance
         .delete(`products/${id}`, {
           headers: {
             Authorization: token,

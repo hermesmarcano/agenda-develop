@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import apiProvider from "../axiosConfig/axiosConfig";
+import instance from "../axiosConfig/axiosConfig";
 
 const NotificationContext = createContext();
 
@@ -9,7 +9,7 @@ const NotificationContextWrapper = ({ children }) => {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotificationData = () => {
-    apiProvider
+    instance
       .get("managers/id", {
         headers: {
           Authorization: token,
@@ -17,8 +17,13 @@ const NotificationContextWrapper = ({ children }) => {
       })
       .then((response) => {
         if (response.data.notifications) {
+<<<<<<< HEAD
           console.log(token);
           setNotifications(response.data.notifications.reverse());
+=======
+          let orderedNotifications = response.data.notifications.reverse();
+          setNotifications(orderedNotifications);
+>>>>>>> 190f27e59dfffbcfe5824c5b713947a0fb5265a8
           let count = 0;
           response.data.notifications.map((notification) => {
             if (!notification.isRead) {
@@ -43,7 +48,7 @@ const NotificationContextWrapper = ({ children }) => {
       ],
     };
 
-    apiProvider
+    instance
       .patch("managers", patchData, {
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +69,7 @@ const NotificationContextWrapper = ({ children }) => {
     patchData.notifications.map((notification) => {
       notification.isRead = true;
     });
-    apiProvider
+    instance
       .patch("managers", patchData, {
         headers: {
           "Content-Type": "application/json",

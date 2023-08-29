@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { FaSpinner } from "react-icons/fa";
 import Switch from "react-switch";
 import { SidebarContext } from "../../../context/SidebarContext";
@@ -19,7 +19,7 @@ const BlockSchedule = ({ setModelState }) => {
 
   const [professionals, setProfessionals] = useState([]);
   useEffect(() => {
-    apiProvider
+    instance
       .get(`professionals/shop?shopId=${shopId}`, {
         headers: {
           Authorization: token,
@@ -163,9 +163,9 @@ const BlockSchedule = ({ setModelState }) => {
     professionalId,
     blockingReason
   ) => {
-    apiProvider
+    instance
       .post(
-        `${apiProvider}/appointments`,
+        `${instance}/appointments`,
         {
           professional: professionalId,
           dateTime: new Date(dateTime),

@@ -3,7 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
@@ -16,7 +16,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
   const token = localStorage.getItem("ag_app_shop_token");
   const [serviceData, setServiceData] = useState(null);
   useEffect(() => {
-    apiProvider
+    instance
       .get(`services/${serviceId}`, {
         headers: {
           Authorization: token,
@@ -48,7 +48,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
         formData.append("serviceImg", values.serviceImg);
 
         // Upload the image
-        const uploadResponse = await apiProvider.post(
+        const uploadResponse = await instance.post(
           "services/imageUpload",
           formData,
           {
@@ -73,7 +73,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
         serviceImg: values.serviceImg || serviceData.serviceImg,
       };
 
-      const updateResponse = await apiProvider.patch(
+      const updateResponse = await instance.patch(
         `services/${serviceId}`,
         patchData,
         {
@@ -104,7 +104,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
   };
 
   const deleteServiceImg = () => {
-    apiProvider
+    instance
       .delete(`services/image/${serviceData.serviceImg}`, {
         headers: {
           Authorization: token,

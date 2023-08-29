@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { FiClock } from "react-icons/fi";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import apiProvider from "../../axiosConfig/axiosConfig";
+import instance from "../../axiosConfig/axiosConfig";
 
 const PendingAppointments = () => {
   const { shopId } = useContext(SidebarContext);
@@ -32,7 +32,7 @@ const PendingAppointments = () => {
   }, []);
 
   const fetchAppointmentData = () =>
-    apiProvider
+    instance
       .get(`appointments?shopId=${shopId}`, {
         headers: {
           Authorization: token,

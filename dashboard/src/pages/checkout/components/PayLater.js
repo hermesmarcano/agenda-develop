@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { FiX } from "react-icons/fi";
 import { FaCheckCircle, FaClock } from "react-icons/fa";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const PayLater = ({
@@ -18,7 +18,7 @@ const PayLater = ({
 
   const handleConfirm = () => {
     const confirmAppointmentLaterPayment = () => {
-      apiProvider
+      instance
         .patch(
           `appointments/${bookingInfo.appointmentId}`,
           {

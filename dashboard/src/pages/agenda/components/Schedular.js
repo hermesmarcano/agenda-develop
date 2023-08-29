@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import apiProvider from "../../../axiosConfig/axiosConfig";
+import instance from "../../../axiosConfig/axiosConfig";
 import { FaUserCircle } from "react-icons/fa";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Popup from "../../../components/Popup";
@@ -52,14 +52,11 @@ const Scheduler = ({
   const fetchAppointments = async () => {
     setLoading(true);
     try {
-      const response = await apiProvider.get(
-        `appointments?shopId=${shopId}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await instance.get(`appointments?shopId=${shopId}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
       const data = await response.data;
       setAppointmentsList(data.appointments);
       const appointmentsObject = data.appointments.reduce(
