@@ -249,7 +249,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items-center justify-center">
                     <img
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/services/${serviceData.serviceImg}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/services/${serviceData.serviceImg}`
   }

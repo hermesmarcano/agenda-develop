@@ -23,7 +23,7 @@ const Shop = () => {
             className="w-[300px] h-[200px] bg-no-repeat bg-cover bg-center"
             style={{
               backgroundImage: `url(${
-                process.env.REACT_APP_DEVELOPMENT
+                process.env.REACT_APP_DEVELOPMENT === "true"
                   ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${currentShop.profileImg}`
                   : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${currentShop.profileImg}`
               })`,

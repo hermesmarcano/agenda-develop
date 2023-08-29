@@ -168,7 +168,7 @@ const DashboardShops = () => {
                         <div className="relative">
                           <img
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${shopsDataArr[index].image}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${shopsDataArr[index].image}`
   }

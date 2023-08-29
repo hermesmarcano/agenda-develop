@@ -48,7 +48,7 @@ const ArticleView = () => {
           <div className="bg-white shadow-lg rounded-lg p-6">
           <img
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${image}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${image}`
   }

@@ -1,7 +1,7 @@
 import React from "react";
 
 const ServiceCard = ({ service }) => {
-  const backgroundImageUrl = process.env.REACT_APP_DEVELOPMENT
+  const backgroundImageUrl = process.env.REACT_APP_DEVELOPMENT === "true"
   ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${service.image}`
   : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${service.image}`;
 

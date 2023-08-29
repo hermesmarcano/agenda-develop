@@ -37,7 +37,7 @@ const ArticlesSlider = () => {
               <img
   className="w-full"
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${article.image}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${article.image}`
   }

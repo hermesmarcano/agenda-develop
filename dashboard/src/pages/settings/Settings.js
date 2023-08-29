@@ -378,7 +378,7 @@ const Settings = () => {
             <div className="relative">
               <img
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${shopData.profileImg}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${shopData.profileImg}`
   }

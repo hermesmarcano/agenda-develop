@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_DEVELOPMENT
+const baseURL = process.env.REACT_APP_DEVELOPMENT === "true"
   ? process.env.REACT_APP_API_DEV
   : process.env.REACT_APP_API;
 

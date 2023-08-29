@@ -103,7 +103,7 @@ const ServicesSelection = ({ paramsId }) => {
                 {service.serviceImg ? (
                   <img
                   src={
-                    process.env.REACT_APP_DEVELOPMENT
+                    process.env.REACT_APP_DEVELOPMENT === "true"
                       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/services/${service.serviceImg}`
                       : `${process.env.REACT_APP_IMAGE_URI}uploads/services/${service.serviceImg}`
                   }

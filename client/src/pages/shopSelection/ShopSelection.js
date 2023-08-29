@@ -100,7 +100,7 @@ const ShopSelection = () => {
                className="w-full h-40 bg-no-repeat bg-cover bg-center"
                style={{
                  backgroundImage: `url(${
-                   process.env.REACT_APP_DEVELOPMENT
+                   process.env.REACT_APP_DEVELOPMENT === "true"
                      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${shop.profileImg}`
                      : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${shop.profileImg}`
                  })`,

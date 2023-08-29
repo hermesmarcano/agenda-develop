@@ -24,7 +24,7 @@ function Navbar() {
           >
             <img
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${logo}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${logo}`
   }

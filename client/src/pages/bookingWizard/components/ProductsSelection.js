@@ -98,7 +98,7 @@ const ProductsSelection = ({ paramsId }) => {
                 {product.productImg ? (
                   <img
                   src={
-                    process.env.REACT_APP_DEVELOPMENT
+                    process.env.REACT_APP_DEVELOPMENT === "true"
                       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/products/${product.productImg}`
                       : `${process.env.REACT_APP_IMAGE_URI}uploads/products/${product.productImg}`
                   }

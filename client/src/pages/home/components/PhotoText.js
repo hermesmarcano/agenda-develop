@@ -9,7 +9,7 @@ const PhotoText = () => {
       <div className={`w-full md:w-1/2 md:mr-8`}>
       <img
   src={
-    process.env.REACT_APP_DEVELOPMENT
+    process.env.REACT_APP_DEVELOPMENT === "true"
       ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${section1Data.image}`
       : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${section1Data.image}`
   }

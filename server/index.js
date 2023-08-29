@@ -30,7 +30,7 @@ app.use(express.json());
 
 app.use("/uploads", express.static("uploads"));
 
-const databaseURL = process.env.NODE_APP_DEVELOPMENT
+const databaseURL = process.env.NODE_APP_DEVELOPMENT === "true"
   ? process.env.DATABASE_URL_DEV
   : process.env.DATABASE_URL
 
