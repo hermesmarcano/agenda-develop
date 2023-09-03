@@ -8,8 +8,21 @@ import { TiPlus } from "react-icons/ti";
 import { SidebarContext } from "../../context/SidebarContext";
 import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
+import { AlertContext } from "../../context/AlertContext";
+import { NotificationContext } from "../../context/NotificationContext";
+import { storage } from "../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
 
 const Settings = () => {
+  const { setAlertOn, setAlertMsg, setAlertMsgType } =
+    React.useContext(AlertContext);
+  const { sendNotification } = useContext(NotificationContext);
   const { setShopName } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -66,53 +79,95 @@ const Settings = () => {
   };
 
   const deleteProfileImg = () => {
-    instance
-      .delete(`managers/profile/${shopData.profileImg}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        // Update shopData with the empty profile image
-        setShopData({ ...shopData, profileImg: "" });
-      })
-      .catch((error) => console.log(error));
-  };
+    const desertRef = ref(storage, shopData.profileImg);
 
-  const uploadProfileImg = (values, { resetForm }) => {
-    const formData = new FormData();
-    formData.append("profileImg", values.profileImg);
-    let updatedImg = {
-      profileImg: values.profileImg,
-    };
-    instance
-      .post("managers/profileImg", updatedImg, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: token,
-        },
+    deleteObject(desertRef)
+      .then(() => {
+        setShopData((prev) => ({ ...prev, profileImg: null }));
       })
-      .then((response) => {
-        // Update shopData with the new profile image
+      .then(() => {
         instance
           .patch(
-            "managers/",
-            JSON.stringify({ profileImg: response.data.profileImg }),
+            "managers",
+            { profileImg: null },
             {
               headers: {
-                "Content-Type": "application/json",
                 Authorization: token,
               },
             }
           )
-          .then((response) => {
-            setShopData({
-              ...shopData,
-              profileImg: response.data.manager.profileImg,
-            });
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((error) => {
+            console.log(error);
           });
-        // setShopData({ ...shopData, profileImg: response.data.profileImg });
       })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const uploadProfileImg = (values, { resetForm }) => {
+    console.log("uploading ....");
+    if (values.profileImg === null) return;
+    let imageName = v4(values.profileImg.name);
+    const fileRef = ref(storage, `profile/${imageName}`);
+    const uploadTask = uploadBytesResumable(fileRef, values.profileImg);
+
+    uploadTask
+      .on(
+        "state_changed",
+        (snapshot) => {
+          let progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(progress);
+        },
+        (error) => {
+          console.log("error");
+        },
+        () => {
+          console.log("success");
+          let profileImg = null;
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              console.log(downloadURL);
+              profileImg = downloadURL;
+            })
+            .then(() => {
+              const patchData = {
+                profileImg: profileImg,
+              };
+
+              instance
+                .patch("managers", patchData, {
+                  headers: {
+                    Authorization: token,
+                  },
+                })
+                .then((res) => {
+                  console.log(res);
+                  setAlertMsg("Profile Image has been updated");
+                  setAlertMsgType("success");
+                  setAlertOn(true);
+                  sendNotification(
+                    "Profile Image updated - " +
+                      new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date())
+                  );
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            });
+        }
+      )
+
       .catch((error) => console.log(error));
   };
 
@@ -377,14 +432,10 @@ const Settings = () => {
           {shopData.profileImg ? (
             <div className="relative">
               <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${shopData.profileImg}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${shopData.profileImg}`
-  }
-  alt={shopData.profileImg}
-  className="w-full rounded-md max-h-40 object-cover mt-2"
-/>
+                src={shopData.profileImg}
+                alt={shopData.profileImg}
+                className="w-full rounded-md max-h-40 object-cover mt-2"
+              />
 
               <button
                 type="button"

@@ -8,6 +8,14 @@ import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
 
 const UpdateProduct = ({ setModelState, productId }) => {
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
@@ -49,59 +57,103 @@ const UpdateProduct = ({ setModelState, productId }) => {
         console.error("Token not found");
         return;
       }
-      const formData = new FormData();
-      if (values.productImg) {
-        formData.append("productImg", values.productImg);
+      if (productData.productImg === null) {
+        console.log("uploading ....");
+        if (values.productImg === null) return;
+        let imageName = v4(values.productImg.name);
+        const fileRef = ref(storage, `products/${imageName}`);
+        const uploadTask = uploadBytesResumable(fileRef, values.productImg);
 
-        // Upload the image
-        const uploadResponse = await instance.post(
-          "products/imageUpload",
-          formData,
-          {
-            headers: {
-              Authorization: token,
-              "Content-Type": "multipart/form-data",
-            },
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            let progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress);
+          },
+          (error) => {
+            console.log("error");
+          },
+          () => {
+            console.log("success");
+            let productImg = null;
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log(downloadURL);
+                productImg = downloadURL;
+              })
+              .then(() => {
+                const patchData = {
+                  name: values.name || productData.name,
+                  speciality: values.speciality || productData.speciality,
+                  costBRL: values.costBRL || productData.costBRL,
+                  price: values.price || productData.price,
+                  stock: values.stock || productData.stock,
+                  productImg: productImg,
+                };
+
+                instance
+                  .patch(`products/${productId}`, patchData, {
+                    headers: {
+                      Authorization: token,
+                    },
+                  })
+                  .then((res) => {
+                    console.log(res);
+                    setAlertMsg("Product has been updated");
+                    setAlertMsgType("success");
+                    setAlertOn(true);
+                    sendNotification(
+                      "Product updated - " +
+                        new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }).format(new Date())
+                    );
+                    setModelState(false);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              });
           }
         );
+      } else {
+        const patchData = {
+          name: values.name || productData.name,
+          speciality: values.speciality || productData.speciality,
+          costBRL: values.costBRL || productData.costBRL,
+          price: values.price || productData.price,
+          stock: values.stock || productData.stock,
+        };
 
-        // Get the uploaded image name from the response
-        const { filename } = uploadResponse.data;
-        values.productImg = filename;
+        instance
+          .patch(`products/${productId}`, patchData, {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            setAlertMsg("Product has been updated");
+            setAlertMsgType("success");
+            setAlertOn(true);
+            sendNotification(
+              "Product updated - " +
+                new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date())
+            );
+            setModelState(false);
+          });
       }
-
-      // Update the admin data with new values (including the image name)
-      const patchData = {
-        name: values.name || productData.name,
-        speciality: values.speciality || productData.speciality,
-        costBRL: values.costBRL || productData.costBRL,
-        price: values.price || productData.price,
-        stock: values.stock || productData.stock,
-        productImg: values.productImg || productData.productImg,
-      };
-
-      const updateResponse = await instance.patch(
-        `products/${productId}`,
-        patchData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      setAlertMsg("Product has been updated");
-      setAlertMsgType("success");
-      setAlertOn(true);
-      sendNotification(
-        "Product updated - " +
-          new Intl.DateTimeFormat("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date())
-      );
     } catch (error) {
       console.log(error);
     }
@@ -111,20 +163,33 @@ const UpdateProduct = ({ setModelState, productId }) => {
   };
 
   const deleteProductImg = () => {
-    instance
-      .delete(`products/image/${productData.productImg}`, {
-        headers: {
-          Authorization: token,
-        },
-        data: {
-          id: productData._id,
-        },
+    const desertRef = ref(storage, productData.productImg);
+
+    deleteObject(desertRef)
+      .then(() => {
+        setProductData((prev) => ({ ...prev, productImg: null }));
       })
-      .then((response) => {
-        // Update productData with the empty product image
-        setProductData({ ...productData, productImg: "" });
+      .then(() => {
+        instance
+          .patch(
+            `products/${productId}`,
+            { productImg: null },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -300,14 +365,10 @@ const UpdateProduct = ({ setModelState, productId }) => {
                 {productData.productImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
                     <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/products/${productData.productImg}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/products/${productData.productImg}`
-  }
-  alt={productData.productImg}
-  className="rounded-md h-[100%]"
-/>
+                      src={productData.productImg}
+                      alt={productData.productImg}
+                      className="rounded-md h-[100%]"
+                    />
 
                     <button
                       type="button"

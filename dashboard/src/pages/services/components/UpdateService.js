@@ -7,6 +7,14 @@ import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
 
 const UpdateService = ({ setModelState, serviceId }) => {
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
@@ -43,81 +51,141 @@ const UpdateService = ({ setModelState, serviceId }) => {
         console.error("Token not found");
         return;
       }
-      const formData = new FormData();
-      if (values.serviceImg) {
-        formData.append("serviceImg", values.serviceImg);
+      if (serviceData.serviceImg === null) {
+        console.log("uploading ....");
+        if (values.serviceImg === null) return;
+        let imageName = v4(values.serviceImg.name);
+        const fileRef = ref(storage, `services/${imageName}`);
+        const uploadTask = uploadBytesResumable(fileRef, values.serviceImg);
 
-        // Upload the image
-        const uploadResponse = await instance.post(
-          "services/imageUpload",
-          formData,
-          {
-            headers: {
-              Authorization: token,
-              "Content-Type": "multipart/form-data",
-            },
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            let progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress);
+          },
+          (error) => {
+            console.log("error");
+          },
+          () => {
+            console.log("success");
+            let serviceImg = null;
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log(downloadURL);
+                serviceImg = downloadURL;
+              })
+              .then(() => {
+                const d = +values.duration;
+                const patchData = {
+                  name: values.name || serviceData.name,
+                  price: values.price || serviceData.price,
+                  duration: d || serviceData.duration,
+                  serviceImg: serviceImg,
+                };
+
+                instance
+                  .patch(`services/${serviceId}`, patchData, {
+                    headers: {
+                      Authorization: token,
+                    },
+                  })
+                  .then((res) => {
+                    console.log(res);
+                    setServiceData((prev) => ({ ...prev, patchData }));
+                    setAlertMsg("Service has been updated");
+                    setAlertMsgType("success");
+                    setAlertOn(true);
+                    sendNotification(
+                      "Service updated - " +
+                        new Intl.DateTimeFormat("en-GB", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }).format(new Date())
+                    );
+                    setModelState(false);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              });
           }
         );
+      } else {
+        const d = +values.duration;
+        const patchData = {
+          name: values.name || serviceData.name,
+          price: values.price || serviceData.price,
+          duration: d || serviceData.duration,
+        };
 
-        // Get the uploaded image name from the response
-        const { filename } = uploadResponse.data;
-        values.serviceImg = filename;
+        instance
+          .patch(`services/${serviceId}`, patchData, {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            setServiceData((prev) => ({ ...prev, patchData }));
+            setAlertMsg("Service has been updated");
+            setAlertMsgType("success");
+            setAlertOn(true);
+            sendNotification(
+              "Service updated - " +
+                new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date())
+            );
+            setModelState(false);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
-
-      // Update the admin data with new values (including the image name)
-      const d = +values.duration;
-      const patchData = {
-        name: values.name || serviceData.name,
-        price: values.price || serviceData.price,
-        duration: d || serviceData.duration,
-        serviceImg: values.serviceImg || serviceData.serviceImg,
-      };
-
-      const updateResponse = await instance.patch(
-        `services/${serviceId}`,
-        patchData,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      setAlertMsg("Service has been updated");
-      setAlertMsgType("success");
-      setAlertOn(true);
-      sendNotification(
-        "Service updated - " +
-          new Intl.DateTimeFormat("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date())
-      );
     } catch (error) {
       console.log(error);
     }
 
     setSubmitting(false);
-    setModelState(false);
   };
 
   const deleteServiceImg = () => {
-    instance
-      .delete(`services/image/${serviceData.serviceImg}`, {
-        headers: {
-          Authorization: token,
-        },
-        data: {
-          id: serviceData._id,
-        },
+    const desertRef = ref(storage, serviceData.serviceImg);
+
+    deleteObject(desertRef)
+      .then(() => {
+        setServiceData((prev) => ({ ...prev, serviceImg: null }));
       })
-      .then((response) => {
-        // Update serviceData with the empty service image
-        setServiceData({ ...serviceData, serviceImg: "" });
+      .then(() => {
+        instance
+          .patch(
+            `services/${serviceId}`,
+            { serviceImg: null },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -248,14 +316,10 @@ const UpdateService = ({ setModelState, serviceId }) => {
                 {serviceData.serviceImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items-center justify-center">
                     <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/services/${serviceData.serviceImg}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/services/${serviceData.serviceImg}`
-  }
-  alt={serviceData.serviceImg}
-  className="rounded-md h-[100%]"
-/>
+                      src={serviceData.serviceImg}
+                      alt={serviceData.serviceImg}
+                      className="rounded-md h-[100%]"
+                    />
 
                     <button
                       type="button"

@@ -7,6 +7,9 @@ import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { storage } from "../../../services/fireBaseStorage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { v4 } from "uuid";
 
 const RegisterProduct = ({ setModelState }) => {
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
@@ -20,7 +23,7 @@ const RegisterProduct = ({ setModelState }) => {
     costBRL: "",
     price: "",
     stock: "",
-    productImg: "",
+    productImg: null,
   };
 
   const validationSchema = Yup.object().shape({
@@ -41,65 +44,83 @@ const RegisterProduct = ({ setModelState }) => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
+      console.log(
+        process.env.REACT_APP_IMAGE_URI
+      );
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
         console.error("Token not found");
         return;
       }
-      const formData = new FormData();
-      formData.append("productImg", values.productImg);
+      console.log("uploading ....");
+      if (values.productImg === null) return;
+      let imageName = v4(values.productImg.name);
+      const fileRef = ref(storage, `products/${imageName}`);
+      const uploadTask = uploadBytesResumable(fileRef, values.productImg);
 
-      // Upload the image
-      const uploadResponse = await instance.post(
-        "products/imageUpload",
-        formData,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      // Get the uploaded image name from the response
-      const { filename } = uploadResponse.data;
-
-      // Update the admin data with new values (including the image name)
-
-      const postData = {
-        name: values.name,
-        speciality: values.speciality,
-        costBRL: values.costBRL,
-        price: values.costBRL,
-        stock: values.stock,
-        managerId: shopId,
-        productImg: filename,
-      };
-
-      const updateResponse = await instance.post("products", postData, {
-        headers: {
-          Authorization: token,
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          let progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(progress);
         },
-      });
-      setAlertMsg("Product has been registered");
-      setAlertMsgType("success");
-      setAlertOn(true);
-      sendNotification(
-        "New Product - " +
-          new Intl.DateTimeFormat("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date())
+        (error) => {
+          console.log("error");
+        },
+        () => {
+          console.log("success");
+          let productImg = null;
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              console.log(downloadURL);
+              productImg = downloadURL;
+            })
+            .then(() => {
+              const postData = {
+                name: values.name,
+                speciality: values.speciality,
+                costBRL: values.costBRL,
+                price: values.costBRL,
+                stock: values.stock,
+                managerId: shopId,
+                productImg: productImg,
+              };
+
+              instance
+                .post("products", postData, {
+                  headers: {
+                    Authorization: token,
+                  },
+                })
+                .then((res) => {
+                  console.log(res.data);
+                  setAlertMsg("Product has been registered");
+                  setAlertMsgType("success");
+                  setAlertOn(true);
+                  sendNotification(
+                    "New Product - " +
+                      new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date())
+                  );
+                  setModelState(false);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            });
+        }
       );
     } catch (error) {
       console.log(error);
     }
 
     setSubmitting(false);
-    setModelState(false);
   };
 
   return (

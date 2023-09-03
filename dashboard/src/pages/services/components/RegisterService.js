@@ -7,6 +7,9 @@ import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { v4 } from "uuid";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../services/fireBaseStorage";
 
 const RegisterService = ({ setModelState }) => {
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
@@ -28,58 +31,75 @@ const RegisterService = ({ setModelState }) => {
         console.error("Token not found");
         return;
       }
-      const formData = new FormData();
-      formData.append("serviceImg", values.serviceImg);
+      console.log("uploading ....");
+      if (values.serviceImg === null) return;
+      let imageName = v4(values.serviceImg.name);
+      const fileRef = ref(storage, `services/${imageName}`);
+      const uploadTask = uploadBytesResumable(fileRef, values.serviceImg);
 
-      // Upload the image
-      const uploadResponse = await instance.post(
-        "services/imageUpload",
-        formData,
-        {
-          headers: {
-            Authorization: token,
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      // Get the uploaded image name from the response
-      const { filename } = uploadResponse.data;
-
-      // Update the admin data with new values (including the image name)
-      const d = +values.duration;
-      const postData = {
-        name: values.name,
-        price: values.price,
-        duration: d,
-        serviceImg: filename,
-        managerId: shopId,
-      };
-
-      const updateResponse = await instance.post("services", postData, {
-        headers: {
-          Authorization: token,
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          let progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(progress);
         },
-      });
-      setAlertMsg("New Service has been registered");
-      setAlertMsgType("success");
-      setAlertOn(true);
-      sendNotification(
-        "New Service - " +
-          new Intl.DateTimeFormat("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          }).format(new Date())
+        (error) => {
+          console.log("error");
+        },
+        () => {
+          console.log("success");
+          let serviceImg = null;
+          getDownloadURL(uploadTask.snapshot.ref)
+            .then((downloadURL) => {
+              console.log(downloadURL);
+              serviceImg = downloadURL;
+            })
+            .then(() => {
+              const d = +values.duration;
+              const postData = {
+                name: values.name,
+                price: values.price,
+                duration: d,
+                serviceImg: serviceImg,
+                managerId: shopId,
+              };
+
+              instance
+                .post("services", postData, {
+                  headers: {
+                    Authorization: token,
+                  },
+                })
+                .then((res) => {
+                  console.log(res.data);
+                  setAlertMsg("New Service has been registered");
+                  setAlertMsgType("success");
+                  setAlertOn(true);
+                  sendNotification(
+                    "New Service - " +
+                      new Intl.DateTimeFormat("en-GB", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date())
+                  );
+                  setModelState(false);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            });
+        }
       );
     } catch (error) {
       console.log(error);
     }
 
     setSubmitting(false);
-    setModelState(false);
+    
   };
 
   return (

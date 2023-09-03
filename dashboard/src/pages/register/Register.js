@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
@@ -17,12 +17,11 @@ import { TiPlus } from "react-icons/ti";
 import ImageUpload from "../../components/ImageUpload";
 import instance from "../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../context/AlertContext";
-import { imageDb } from '../../services/fireBaseStorage';
-import { ref, uploadBytes } from "firebase/storage";
-import { v4 } from 'uuid';
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { v4 } from "uuid";
+import { storage } from "../../services/fireBaseStorage";
 
 const Register = () => {
-  const [profileImage, setProfileImage] = useState('');
   const navigate = useNavigate();
   const { setAlertOn, setAlertMsg, setAlertMsgType } =
     React.useContext(AlertContext);
@@ -138,58 +137,69 @@ const Register = () => {
                 shopName: "",
                 urlSlug: "",
                 workingHours: [{ startHour: 0, endHour: 0 }],
-                profileImg: "",
+                profileImg: null,
               }}
               validationSchema={RegisterSchema}
-              onSubmit={async (values, { setSubmitting }) => {
-                // try {
-                //   const formData = new FormData();
-                //   formData.append("profileImg", values.profileImg);
+              onSubmit={(values, { setSubmitting }) => {
+                try {
+                  console.log("uploading ....");
+                  if (values.profileImg === null) return;
+                  let imageName = v4(values.profileImg.name);
+                  const fileRef = ref(storage, `profile/${imageName}`);
+                  const uploadTask = uploadBytesResumable(
+                    fileRef,
+                    values.profileImg
+                  );
 
-                //   // Upload the image
-                //   const uploadResponse = await instance.post(
-                //     "managers/profileImg",
-                //     formData,
-                //     {
-                //       headers: {
-                //         "Content-Type": "multipart/form-data",
-                //       },
-                //     }
-                //   );
+                  uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {
+                      let progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      console.log(progress);
+                    },
+                    (error) => {
+                      console.log("error");
+                    },
+                    () => {
+                      console.log("success");
+                      let profileImg = null;
+                      getDownloadURL(uploadTask.snapshot.ref)
+                        .then((downloadURL) => {
+                          console.log(downloadURL);
+                          profileImg = downloadURL;
+                        })
+                        .then(async () => {
+                          const postData = {
+                            name: values.name,
+                            email: values.email,
+                            password: values.password,
+                            shopName: values.shopName,
+                            urlSlug: values.urlSlug,
+                            workingHours: values.workingHours,
+                            profileImg: profileImg,
+                          };
 
-                //   // Get the uploaded image name from the response
-                //   const profileImg = uploadResponse.data.profileImg;
+                          console.log(postData);
 
-                //   // Update the data with new values (including the image name)
-                //   const postData = {
-                //     name: values.name,
-                //     email: values.email,
-                //     password: values.password,
-                //     shopName: values.shopName,
-                //     urlSlug: values.urlSlug,
-                //     workingHours: values.workingHours,
-                //     profileImg: profileImg,
-                //   };
+                          const updateResponse = await instance.post(
+                            "managers",
+                            postData
+                          );
 
-                //   console.log(postData);
+                          console.log(updateResponse);
+                          setAlertMsg("New Shop has been registered");
+                          setAlertMsgType("success");
+                          setAlertOn(true);
+                          navigate("/login");
+                        });
+                    }
+                  );
+                } catch (error) {
+                  console.log(error);
+                }
 
-                //   const updateResponse = await instance.post(
-                //     "managers",
-                //     postData
-                //   );
-
-                //   console.log(updateResponse);
-                //   setAlertMsg("New Shop has been registered");
-                //   setAlertMsgType("success");
-                //   setAlertOn(true);
-                //   navigate("/login");
-                // } catch (error) {
-                //   console.log(error);
-                // }
-
-                // setSubmitting(false);
-              const imageRef = ref(imageDb, `files/${v4()}`)
-              uploadBytes(imageRef, profileImage);
+                setSubmitting(false);
               }}
             >
               {(formikProps) => (

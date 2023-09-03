@@ -149,11 +149,7 @@ const Agenda = () => {
           <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
           <img
   className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${myShopImg}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${myShopImg}`
-  }
+  src={myShopImg}
   alt="Shop logo"
 />
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
@@ -168,11 +164,7 @@ const Agenda = () => {
           <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
           <img
   className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/profile/${myShopImg}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/profile/${myShopImg}`
-  }
+  src={myShopImg}
   alt="Shop logo"
 />
 
