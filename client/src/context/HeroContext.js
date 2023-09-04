@@ -23,10 +23,8 @@ const HeroContextWrapper = ({ children }) => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      console.log(response.data.admin);
-
       if (response.data.admin.heroData) {
-        setHeroData(response.data.admin.heroData);
+        setHeroData(response.data.admin.heroData)
       }
     } catch (error) {
       console.log(error);

@@ -47,15 +47,7 @@ const RecommendedShops = () => {
         {shopsData.map((shop) => (
           <div key={shop._id} className="px-2">
             <div className="border rounded-lg overflow-hidden">
-            <img
-  className="w-full"
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${shop.image}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${shop.image}`
-  }
-  alt={shop.title}
-/>
+              <img className="w-full" src={shop.image} alt={shop.title} />
 
               <div className="px-4 py-2">
                 <h3 className="font-bold text-lg mb-2">{shop.title}</h3>

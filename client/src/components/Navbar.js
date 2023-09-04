@@ -22,15 +22,7 @@ function Navbar() {
             to="/"
             className="text-gray-800 font-bold text-lg flex items-center justify-center"
           >
-            <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${logo}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${logo}`
-  }
-  alt={logo}
-  className="w-9 mr-1"
-/>
+            <img src={logo} alt={logo} className="w-9 mr-1" />
 
             {websiteTitle}
           </Link>

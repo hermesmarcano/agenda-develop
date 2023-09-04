@@ -9,7 +9,6 @@ import { HeroContext } from "../../../context/HeroContext";
 const Hero = () => {
   const navigate = useNavigate();
   const { heroData } = useContext(HeroContext);
-  console.log(heroData);
 
   const handleSubmit = (event) => {
     event.preventDefault();

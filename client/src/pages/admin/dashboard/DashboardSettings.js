@@ -1,14 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { LogoContext } from "../../../context/LogoContext";
+import { WebsiteTitleContext } from "../../../context/WebsiteTitleContext";
 
 const DashboardSettings = () => {
-  const [settingsData, setSettingsData] = useState(null);
-  const [hiddenImage, setHiddenImage] = useState(false);
-
+  const [username, setUsername] = useState("");
+  const { websiteTitle, setWebsiteTitle } = useContext(WebsiteTitleContext);
+  const { logo, setLogo } = useContext(LogoContext);
+  const [ isFetched, setIsFetched ] = useState(false);
   useEffect(() => {
     fetchAdminData();
   }, []);
@@ -27,11 +38,10 @@ const DashboardSettings = () => {
         },
       });
       console.log(response.data.admin);
-      setSettingsData({
-        username: response.data.admin.username,
-        websiteTitle: response.data.admin.websiteTitle,
-        logo: response.data.admin.logo,
-      });
+      setUsername(response.data.admin.username);
+      setWebsiteTitle(response.data.admin.websiteTitle);
+      setLogo(response.data.admin.logo)
+      setIsFetched(true);
     } catch (error) {
       console.log(error);
     }
@@ -46,50 +56,82 @@ const DashboardSettings = () => {
         return;
       }
 
-      const formData = new FormData();
-      if (values.logo) {
-        formData.append("image", values.logo);
-        formData.append("existingImg", settingsData.logo);
-      }
-      // Upload the image if it exists
-      if (values.logo) {
-        const uploadResponse = await instance.post(
-          "admin/uploads-logo",
-          formData,
-          {
-            headers: {
-              Authorization: token,
-              "Content-Type": "multipart/form-data",
-            },
+      if (logo !== null) {
+        console.log("uploading ....");
+        if (values.logo === null) return;
+        let imageName = v4(values.logo);
+        const fileRef = ref(storage, `logo/${imageName}`);
+        const uploadTask = uploadBytesResumable(fileRef, values.logo);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            let progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress);
+          },
+          (error) => {
+            console.log("error");
+          },
+          () => {
+            console.log("success");
+            let logoImg = null;
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log(downloadURL);
+                logoImg = downloadURL;
+              })
+              .then(() => {
+                const patchData = {
+                  username: values.title || username,
+                  websiteTitle: values.websiteTitle || websiteTitle,
+                  logo: logoImg,
+                };
+
+                if (values.password) {
+                  patchData.password = values.password;
+                }
+
+                instance
+                  .patch("admin", patchData, {
+                    headers: {
+                      Authorization: token,
+                    },
+                  })
+                  .then((res) => {
+                    console.log(res);
+                    alert("Data saved successfully");
+                    fetchAdminData();
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              });
           }
         );
+      } else {
+        const patchData = {
+          username: values.title || username,
+          websiteTitle: values.websiteTitle || websiteTitle,
+          logo: logo,
+        };
 
-        // Get the uploaded image name from the response
-        const { filename } = uploadResponse.data;
+        if (values.password) {
+          patchData.password = values.password;
+        }
 
-        // Update the admin data with new image name
-        values.logo.filename = filename;
+        instance
+          .patch("admin", patchData, {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            alert("Data saved successfully");
+            fetchAdminData();
+          });
       }
-
-      // Update the admin data with new values
-      const patchData = {
-        username: values.title || settingsData.username,
-        websiteTitle: values.websiteTitle || settingsData.websiteTitle,
-        logo: (values.logo && values.logo.filename) || settingsData.logo,
-      };
-
-      if (values.password) {
-        patchData.password = values.password;
-      }
-
-      const updateResponse = await instance.patch("admin", patchData, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      alert("Data saved successfully");
-      console.log(updateResponse.data); // Updated admin data
-      fetchAdminData(); // Call fetchAdminData to update the data after submit
     } catch (error) {
       console.log(error);
     }
@@ -98,18 +140,55 @@ const DashboardSettings = () => {
   };
 
   const deleteImage = (formikProps) => {
-    formikProps.setFieldValue(`settingsData.logo`, null);
-    setHiddenImage(true);
+    try {
+      const token = localStorage.getItem("ag_app_admin_token");
+      if (!token) {
+        console.error("Token not found");
+        return;
+      }
+      const desertRef = ref(storage, logo);
+      let updatedLogo = logo;
+      updatedLogo = null;
+      deleteObject(desertRef)
+        .then(() => {
+          updatedLogo = null;
+          setLogo((prev) => updatedLogo);
+        })
+        .then(() => {
+          instance
+            .patch(
+              "admin/",
+              { logo: updatedLogo },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data);
+              fetchAdminData();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">Settings</h1>
-      {settingsData ? (
+      {isFetched ? (
         <Formik
           initialValues={{
-            username: settingsData.username,
-            websiteTitle: settingsData.websiteTitle,
+            username: username,
+            websiteTitle: websiteTitle,
             password: "",
             logo: null,
           }}
@@ -188,17 +267,13 @@ const DashboardSettings = () => {
                   Logo
                 </label>
 
-                {!hiddenImage && (
+                {logo && (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
                     <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${settingsData.logo}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${settingsData.logo}`
-  }
-  alt={settingsData.logo}
-  className="rounded-md h-[100%]"
-/>
+                      src={logo}
+                      alt={logo}
+                      className="rounded-md h-[100%]"
+                    />
 
                     <button
                       type="button"
@@ -210,7 +285,7 @@ const DashboardSettings = () => {
                   </div>
                 )}
 
-                {hiddenImage && settingsData.logo && (
+                {!logo && (
                   <div>
                     <ImageUpload
                       field={{

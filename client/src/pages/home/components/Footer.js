@@ -11,7 +11,6 @@ const Footer = () => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      console.log(response.data.admin);
 
       if (response.data.admin.websiteTitle) {
         setWebsiteTitle(response.data.admin.websiteTitle);

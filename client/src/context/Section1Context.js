@@ -18,14 +18,15 @@ const Section1ContextWrapper = ({ children }) => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      console.log(response.data.admin);
-
       if (response.data.admin.section1Data) {
-        setSection1Data(response.data.admin.section1Data);
+        setSection1Data((prev) => (response.data.admin.section1Data))
+        if(response.data.admin.section1Data.image === null || response.data.admin.section1Data.image === ""){
+          setSection1Data((prev) => ({...prev, image: "https://via.placeholder.com/600x400"}))
+        }
       }
     } catch (error) {
       console.log(error);
-    }
+    }    
   };
 
   const contextValue = {

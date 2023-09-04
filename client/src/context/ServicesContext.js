@@ -29,12 +29,17 @@ const ServicesContextWrapper = ({ children }) => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      console.log(response.data.admin);
 
-      if (response.data.admin.servicesData) {
-        setServicesData(response.data.admin.servicesData);
+      if (response.data.admin.servicesData.length !== 0) {
+        let servicesDataArr = response.data.admin.servicesData
+        servicesDataArr?.map((service, index) => {
+          if(!service.image){
+            service.image = "https://via.placeholder.com/500x300";
+          }
+        })
+        setServicesData((prev) => servicesDataArr);
       }
-    } catch (error) {
+  } catch (error) {
       console.log(error);
     }
   };

@@ -46,10 +46,15 @@ const ArticlesContextWrapper = ({ children }) => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      console.log(response.data.admin);
-
-      if (response.data.admin.articlesData) {
-        setArticlesData(response.data.admin.articlesData);
+      if (response.data.admin.articlesData.length !== 0) {
+        let articlesDataArr = response.data.admin.articlesData;
+        articlesDataArr?.map((article, index) => {
+          if (!article.image) {
+            article.image = "https://via.placeholder.com/600x400";
+          }
+        });
+        console.log(articlesDataArr);
+        setArticlesData((prev) => articlesDataArr);
       }
     } catch (error) {
       console.log(error);

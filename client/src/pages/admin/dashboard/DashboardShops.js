@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { ShopsContext } from "../../../context/ShopsContext";
 
 const DashboardShops = () => {
   const [shopsDataArr, setShopsDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [hiddenImages, setHiddenImages] = useState([]);
+  const {shopsData} = useContext(ShopsContext);
+
 
   useEffect(() => {
     fetchAdminData();
@@ -27,8 +38,29 @@ const DashboardShops = () => {
           Authorization: token,
         },
       });
-      console.log(response.data.admin.shopsData);
+      console.log(response.data.admin);
       setShopsDataArr(response.data.admin.shopsData);
+      if (response.data.admin.shopsData.length === 0) {
+        let shopsDataArr = shopsData;
+        shopsDataArr.map((shop) => {
+          delete shop["_id"];
+          shop.image = null;
+        });
+        console.log(shopsDataArr);
+        instance
+          .patch(
+            "admin/",
+            { shopsData: shopsDataArr },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
+      }
       setDataFetched(true);
     } catch (error) {
       console.log(error);
@@ -52,47 +84,66 @@ const DashboardShops = () => {
         return;
       }
 
-      const uploadPromises = values.shopsData.map(async (shop, index) => {
-        if (!shop.image) {
-          return shop;
+      
+      const uploadPromises = values.shopsData.map((shop, index) => {
+        if (shop.image !== null) {
+          return new Promise((resolve, reject) => {
+            console.log("uploading ....");
+            let imageName = v4(shop.image.name);
+            const fileRef = ref(storage, `home/shops/${imageName}`);
+            const uploadTask = uploadBytesResumable(fileRef, shop.image);
+  
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                let progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(progress);
+              },
+              (error) => {
+                console.log("error");
+                reject(error);
+              },
+              () => {
+                console.log("success");
+                getDownloadURL(uploadTask.snapshot.ref)
+                  .then((downloadURL) => {
+                    console.log(downloadURL);
+                    resolve({ ...shop, image: downloadURL });
+                  })
+                  .catch((err) => {
+                    reject(err);
+                  });
+              }
+            );
+          });
+        } else {
+          console.log(shopsDataArr[index]);
+          let oldShop = shopsDataArr[index];
+          return oldShop;
         }
-        const formData = new FormData();
-        formData.append("image", shop.image);
-        shopsDataArr[index]
-          ? formData.append("existingImg", shopsDataArr[index].image)
-          : formData.append("existingImg", "nonExistingImg.jpeg");
-
-        const uploadResponse = await instance.post(
-          "admin/uploads-shops-Imgs",
-          formData,
+      });
+  
+      const shopsPatchedData = await Promise.all(uploadPromises);
+  
+      instance
+        .patch(
+          "admin/",
+          { shopsData: shopsPatchedData },
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
             },
           }
-        );
-
-        return {
-          ...shop,
-          image: uploadResponse.data.filename,
-        };
-      });
-
-      const uploadedShops = await Promise.all(uploadPromises);
-
-      const response = await instance.patch(
-        "admin/",
-        { shopsData: uploadedShops },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      alert("Data saved successfully");
-      console.log(response.data); // Handle success response
-      fetchAdminData(); // Call fetchAdminData to update the data after submit
+        )
+        .then((res) => {
+          console.log(res.data);
+          alert("Data saved successfully");
+          fetchAdminData();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (error) {
       console.log(error);
       // Handle error
@@ -102,10 +153,46 @@ const DashboardShops = () => {
   };
 
   const deleteImage = (formikProps, index) => {
-    formikProps.setFieldValue(`shopsData[${index}].image`, null);
-    setHiddenImages((prevHiddenImages) => [...prevHiddenImages, index]);
+    try {
+      const token = localStorage.getItem("ag_app_admin_token");
+      if (!token) {
+        console.error("Token not found");
+        return;
+      }
+    const desertRef = ref(storage, shopsDataArr[index].image);
+    let updatedShopsArr = shopsDataArr
+    updatedShopsArr[index].image =null
+    deleteObject(desertRef)
+      .then(() => {
+        updatedShopsArr[index].image = null;
+        setShopsDataArr((prev) => (updatedShopsArr));
+      })
+      .then(() => {
+        instance
+          .patch(
+            "admin/",
+         { shopsData: updatedShopsArr },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            fetchAdminData()
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }catch (error) {
+      console.log(error);
+    }
   };
-
   return (
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">Reccomended Shops</h1>
@@ -164,17 +251,13 @@ const DashboardShops = () => {
                         }}
                         form={formikProps}
                       /> */}
-                      {!hiddenImages.includes(index) && (
+                      {shopsDataArr[index].image && (
                         <div className="relative">
                           <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${shopsDataArr[index].image}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${shopsDataArr[index].image}`
-  }
-  alt={`Service Image ${index}`}
-  className="w-screen rounded-md max-h-40 object-cover mt-2"
-/>
+                            src={shopsDataArr[index].image}
+                            alt={`Shop ${index}`}
+                            className="w-screen rounded-md max-h-40 object-cover mt-2"
+                          />
 
                           <button
                             type="button"
@@ -186,8 +269,7 @@ const DashboardShops = () => {
                         </div>
                       )}
 
-                      {hiddenImages.includes(index) &&
-                        shopsDataArr[index].image && (
+                      {!shopsDataArr[index].image && (
                           <div>
                             <ImageUpload
                               field={{

@@ -1,14 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { ServicesContext } from "../../../context/ServicesContext";
 
 const DashboardServices = () => {
   const [servicesDataArr, setServicesDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [hiddenImages, setHiddenImages] = useState([]);
+  const {servicesData} = useContext(ServicesContext);
+  
   useEffect(() => {
     fetchAdminData();
   }, []);
@@ -28,6 +39,27 @@ const DashboardServices = () => {
       });
       console.log(response.data.admin.servicesData);
       setServicesDataArr(response.data.admin.servicesData);
+      if (response.data.admin.servicesData.length === 0) {
+        let servicesDataArr = servicesData;
+        servicesDataArr.map((service) => {
+          delete service["_id"];
+          service.image = null;
+        });
+        console.log(servicesDataArr);
+        instance
+          .patch(
+            "admin/",
+            { servicesData: servicesDataArr },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
+      }
       setDataFetched(true);
     } catch (error) {
       console.log(error);
@@ -49,59 +81,112 @@ const DashboardServices = () => {
         return;
       }
 
-      const uploadPromises = values.servicesData.map(async (service, index) => {
-        if (!service.image) {
-          return service;
+      const uploadPromises = values.servicesData.map((service, index) => {
+        if (service.image !== null) {
+          return new Promise((resolve, reject) => {
+            console.log("uploading ....");
+            let imageName = v4(service.image.name);
+            const fileRef = ref(storage, `home/services/${imageName}`);
+            const uploadTask = uploadBytesResumable(fileRef, service.image);
+  
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                let progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(progress);
+              },
+              (error) => {
+                console.log("error");
+                reject(error);
+              },
+              () => {
+                console.log("success");
+                getDownloadURL(uploadTask.snapshot.ref)
+                  .then((downloadURL) => {
+                    console.log(downloadURL);
+                    resolve({ ...service, image: downloadURL });
+                  })
+                  .catch((err) => {
+                    reject(err);
+                  });
+              }
+            );
+          });
+        } else {
+          console.log(servicesDataArr[index]);
+          let oldService = servicesDataArr[index];
+          return oldService;
         }
-
-        const formData = new FormData();
-        formData.append("image", service.image);
-        servicesDataArr[index]
-          ? formData.append("existingImg", servicesDataArr[index].image)
-          : formData.append("existingImg", "nonExistingImg.jpeg");
-
-        const uploadResponse = await instance.post(
-          "admin/uploads-services-imgs",
-          formData,
+      });
+  
+      const servicesPatchedData = await Promise.all(uploadPromises);
+  
+      instance
+        .patch(
+          "admin/",
+          { servicesData: servicesPatchedData },
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
             },
           }
-        );
-
-        return {
-          ...service,
-          image: uploadResponse.data.filename,
-        };
-      });
-
-      const uploadedServices = await Promise.all(uploadPromises);
-
-      const response = await instance.patch(
-        "admin/",
-        { servicesData: uploadedServices },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      alert("Data saved successfully");
-      console.log(response.data); // Handle success response
-      fetchAdminData(); // Call fetchAdminData to update the data after submit
+        )
+        .then((res) => {
+          console.log(res.data);
+          alert("Data saved successfully");
+          fetchAdminData();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (error) {
       console.log(error);
-      // Handle error
     } finally {
       setSubmitting(false);
     }
   };
 
   const deleteImage = (formikProps, index) => {
-    formikProps.setFieldValue(`servicesData[${index}].image`, null);
-    setHiddenImages((prevHiddenImages) => [...prevHiddenImages, index]);
+    try {
+      const token = localStorage.getItem("ag_app_admin_token");
+      if (!token) {
+        console.error("Token not found");
+        return;
+      }
+    const desertRef = ref(storage, servicesDataArr[index].image);
+    let updatedServicesArr = servicesDataArr
+    updatedServicesArr[index].image =null
+    deleteObject(desertRef)
+      .then(() => {
+        updatedServicesArr[index].image = null;
+        setServicesDataArr((prev) => (updatedServicesArr));
+      })
+      .then(() => {
+        instance
+          .patch(
+            "admin/",
+         { servicesData: updatedServicesArr },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            fetchAdminData()
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -152,17 +237,13 @@ const DashboardServices = () => {
                         Image
                       </label>
 
-                      {!hiddenImages.includes(index) && (
+                      {servicesDataArr[index].image && (
                         <div className="relative">
                           <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${servicesDataArr[index].image}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${servicesDataArr[index].image}`
-  }
-  alt={servicesDataArr[index].image}
-  className="w-screen rounded-md max-h-40 object-cover mt-2"
-/>
+                            src={servicesDataArr[index].image}
+                            alt={servicesDataArr[index].image}
+                            className="w-screen rounded-md max-h-40 object-cover mt-2"
+                          />
 
                           <button
                             type="button"
@@ -174,8 +255,7 @@ const DashboardServices = () => {
                         </div>
                       )}
 
-                      {hiddenImages.includes(index) &&
-                        servicesDataArr[index].image && (
+                      {!servicesDataArr[index].image && (
                           <div>
                             <ImageUpload
                               field={{

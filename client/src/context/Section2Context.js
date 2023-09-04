@@ -18,10 +18,11 @@ const Section2ContextWrapper = ({ children }) => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      console.log(response.data.admin);
-
       if (response.data.admin.section2Data) {
-        setSection2Data(response.data.admin.section2Data);
+        setSection2Data((prev) => (response.data.admin.section2Data))
+        if(response.data.admin.section2Data.image === null || response.data.admin.section2Data.image === ""){
+          setSection2Data((prev) => ({...prev, image: "https://via.placeholder.com/600x400"}))
+        }
       }
     } catch (error) {
       console.log(error);

@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Formik, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { Section1Context } from "../../../context/Section1Context";
 
 const DashboardSectionOne = () => {
-  const [section1Data, setSection1Data] = useState(null);
-  const [hiddenImage, setHiddenImage] = useState(false);
+  const { section1Data, setSection1Data } = useContext(Section1Context);
 
   useEffect(() => {
     fetchAdminData();
@@ -26,8 +34,25 @@ const DashboardSectionOne = () => {
           Authorization: token,
         },
       });
-      console.log(response.data.admin.section1Data);
       setSection1Data(response.data.admin.section1Data);
+      if (!response.data.admin.section1Data) {
+        let section1 = section1Data;
+        section1.image = null;
+        console.log(section1);
+        instance
+          .patch(
+            "admin/",
+            { section1Data: section1 },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
+      }
     } catch (error) {
       console.log(error);
     }
@@ -42,48 +67,77 @@ const DashboardSectionOne = () => {
         return;
       }
 
-      const formData = new FormData();
-      if (values.image) {
-        formData.append("image", values.image);
-        formData.append("existingImg", section1Data.image);
-      }
-      // Upload the image if it exists
-      if (values.image) {
-        const uploadResponse = await instance.post(
-          "admin/uploads-section1-imgs",
-          formData,
-          {
-            headers: {
-              Authorization: token,
-              "Content-Type": "multipart/form-data",
-            },
+      if (section1Data.section1Img !== null) {
+        console.log("uploading ....");
+        if (values.image === null) return;
+        let imageName = v4(values.image);
+        const fileRef = ref(storage, `section1/${imageName}`);
+        const uploadTask = uploadBytesResumable(fileRef, values.image);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            let progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progress);
+          },
+          (error) => {
+            console.log("error");
+          },
+          () => {
+            console.log("success");
+            let section1Img = null;
+            getDownloadURL(uploadTask.snapshot.ref)
+              .then((downloadURL) => {
+                console.log(downloadURL);
+                section1Img = downloadURL;
+              })
+              .then(() => {
+                const patchData = {
+                  section1Data: {
+                    title: values.title || section1Data.title,
+                    image: section1Img,
+                    content: values.content || section1Data.content,
+                  },
+                };
+
+                instance
+                  .patch("admin", patchData, {
+                    headers: {
+                      Authorization: token,
+                    },
+                  })
+                  .then((res) => {
+                    console.log(res);
+                    alert("Data saved successfully");
+                    fetchAdminData();
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              });
           }
         );
-
-        // Get the uploaded image name from the response
-        const { filename } = uploadResponse.data;
-
-        // Update the admin data with new image name
-        values.image.filename = filename;
+      } else {
+        const patchData = {
+          section1Data: {
+            title: values.title || section1Data.title,
+            image: section1Data.image,
+            content: values.content || section1Data.content,
+          },
+        };
+        instance
+          .patch("admin", patchData, {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((res) => {
+            console.log(res);
+            alert("Data saved successfully");
+            fetchAdminData();
+          });
       }
-
-      // Update the admin data with new values
-      const patchData = {
-        section1Data: {
-          title: values.title || section1Data.title,
-          image: values.image.filename || section1Data.image,
-          content: values.content || section1Data.content,
-        },
-      };
-
-      const updateResponse = await instance.patch("admin", patchData, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      alert("Data saved successfully");
-      console.log(updateResponse.data); // Updated admin data
-      fetchAdminData(); // Call fetchAdminData to update the data after submit
     } catch (error) {
       console.log(error);
     }
@@ -92,8 +146,45 @@ const DashboardSectionOne = () => {
   };
 
   const deleteImage = (formikProps) => {
-    formikProps.setFieldValue(`section1Data.image`, null);
-    setHiddenImage(true);
+    try {
+      const token = localStorage.getItem("ag_app_admin_token");
+      if (!token) {
+        console.error("Token not found");
+        return;
+      }
+      const desertRef = ref(storage, section1Data.image);
+      let updatedSection1 = section1Data;
+      updatedSection1.image = null;
+      deleteObject(desertRef)
+        .then(() => {
+          updatedSection1.image = null;
+          setSection1Data((prev) => updatedSection1);
+        })
+        .then(() => {
+          instance
+            .patch(
+              "admin/",
+              { section1Data: updatedSection1 },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data);
+              fetchAdminData();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -151,17 +242,13 @@ const DashboardSectionOne = () => {
                   className="text-red-600"
                 />
 
-                {!hiddenImage && (
+                {section1Data.image && (
                   <div className="relative">
                     <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${section1Data.image}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${section1Data.image}`
-  }
-  alt={section1Data.image}
-  className="w-screen rounded-md max-h-40 object-cover mt-2"
-/>
+                      src={section1Data.image}
+                      alt={section1Data.image}
+                      className="w-screen rounded-md max-h-40 object-cover mt-2"
+                    />
 
                     <button
                       type="button"
@@ -173,7 +260,7 @@ const DashboardSectionOne = () => {
                   </div>
                 )}
 
-                {hiddenImage && section1Data.image && (
+                {!section1Data.image && (
                   <div>
                     <ImageUpload
                       field={{

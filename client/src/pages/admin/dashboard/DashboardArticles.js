@@ -1,14 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { storage } from "../../../services/fireBaseStorage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { v4 } from "uuid";
+import { ArticlesContext } from "../../../context/ArticlesContext";
 
 const DashboardArticles = () => {
   const [articlesDataArr, setArticlesDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
-  const [hiddenImages, setHiddenImages] = useState([]);
+  const { articlesData } = useContext(ArticlesContext);
 
   useEffect(() => {
     fetchAdminData();
@@ -27,8 +36,28 @@ const DashboardArticles = () => {
           Authorization: token,
         },
       });
-      console.log(response.data.admin.articlesData);
-      setArticlesDataArr(response.data.admin.articlesData);
+      setArticlesDataArr(prev => response.data.admin.articlesData);
+      if (response.data.admin.articlesData.length === 0) {
+        let articlesDataArr = articlesData;
+        articlesDataArr.map((article) => {
+          delete article["_id"];
+          article.image = null;
+        });
+        console.log(articlesDataArr);
+        instance
+          .patch(
+            "admin/",
+            { articlesData: articlesDataArr },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
+      }
       setDataFetched(true);
     } catch (error) {
       console.log(error);
@@ -54,59 +83,112 @@ const DashboardArticles = () => {
         return;
       }
 
-      const uploadPromises = values.articlesData.map(async (article, index) => {
-        if (!article.image) {
-          return article;
+      const uploadPromises = values.articlesData.map((article, index) => {
+        if (article.image !== null) {
+          return new Promise((resolve, reject) => {
+            console.log("uploading ....");
+            let imageName = v4(article.image.name);
+            const fileRef = ref(storage, `home/articles/${imageName}`);
+            const uploadTask = uploadBytesResumable(fileRef, article.image);
+  
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                let progress =
+                  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log(progress);
+              },
+              (error) => {
+                console.log("error");
+                reject(error);
+              },
+              () => {
+                console.log("success");
+                getDownloadURL(uploadTask.snapshot.ref)
+                  .then((downloadURL) => {
+                    console.log(downloadURL);
+                    resolve({ ...article, image: downloadURL });
+                  })
+                  .catch((err) => {
+                    reject(err);
+                  });
+              }
+            );
+          });
+        } else {
+          console.log(articlesDataArr[index]);
+          let oldArticle = articlesDataArr[index];
+          return oldArticle;
         }
-
-        const formData = new FormData();
-        formData.append("image", article.image);
-        articlesDataArr[index]
-          ? formData.append("existingImg", articlesDataArr[index].image)
-          : formData.append("existingImg", "nonExistingImg.jpeg");
-
-        const uploadResponse = await instance.post(
-          "admin/uploads-articles-Imgs",
-          formData,
+      });
+  
+      const articlesPatchedData = await Promise.all(uploadPromises);
+  
+      instance
+        .patch(
+          "admin/",
+          { articlesData: articlesPatchedData },
           {
             headers: {
               Authorization: token,
-              "Content-Type": "multipart/form-data",
             },
           }
-        );
-
-        return {
-          ...article,
-          image: uploadResponse.data.filename,
-        };
-      });
-
-      const uploadedArticles = await Promise.all(uploadPromises);
-
-      const response = await instance.patch(
-        "admin/",
-        { articlesData: uploadedArticles },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      alert("Data saved successfully");
-      console.log(response.data); // Handle success response
-      fetchAdminData(); // Call fetchAdminData to update the data after submit
+        )
+        .then((res) => {
+          console.log(res.data);
+          alert("Data saved successfully");
+          fetchAdminData();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     } catch (error) {
       console.log(error);
-      // Handle error
     } finally {
       setSubmitting(false);
     }
   };
 
   const deleteImage = (formikProps, index) => {
-    formikProps.setFieldValue(`shopsData[${index}].image`, null);
-    setHiddenImages((prevHiddenImages) => [...prevHiddenImages, index]);
+    try {
+      const token = localStorage.getItem("ag_app_admin_token");
+      if (!token) {
+        console.error("Token not found");
+        return;
+      }
+    const desertRef = ref(storage, articlesDataArr[index].image);
+    let updatedArticlesArr = articlesDataArr
+    updatedArticlesArr[index].image =null
+    deleteObject(desertRef)
+      .then(() => {
+        updatedArticlesArr[index].image = null;
+        setArticlesDataArr((prev) => (updatedArticlesArr));
+      })
+      .then(() => {
+        instance
+          .patch(
+            "admin/",
+         { articlesData: updatedArticlesArr },
+            {
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+          .then((res) => {
+            console.log(res.data);
+            fetchAdminData()
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -212,30 +294,25 @@ const DashboardArticles = () => {
                         className="text-red-600"
                       />
 
-                      {!hiddenImages.includes(index) && (
-                        <div className="relative">
-                          <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${articlesDataArr[index].image}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${articlesDataArr[index].image}`
-  }
-  alt={`Service Image ${index}`}
-  className="w-screen rounded-md max-h-40 object-cover mt-2"
-/>
+                      {articlesDataArr[index].image && (
+                          <div className="relative">
+                            <img
+                              src={articlesDataArr[index].image}
+                              alt={`Service ${index}`}
+                              className="w-screen rounded-md max-h-40 object-cover mt-2"
+                            />
 
-                          <button
-                            type="button"
-                            onClick={() => deleteImage(formikProps, index)}
-                            className="text-red-600 font-medium mt-2 absolute right-1 top-1"
-                          >
-                            <FaTrash />
-                          </button>
-                        </div>
-                      )}
+                            <button
+                              type="button"
+                              onClick={() => deleteImage(formikProps, index)}
+                              className="text-red-600 font-medium mt-2 absolute right-1 top-1"
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        )}
 
-                      {hiddenImages.includes(index) &&
-                        articlesDataArr[index].image && (
+                      {!articlesDataArr[index].image && (
                           <div>
                             <ImageUpload
                               field={{
