@@ -9,6 +9,7 @@ import {
   FaChartPie,
   FaUserTie,
   FaShoppingCart,
+  FaStore,
 } from "react-icons/fa";
 import { GiPayMoney } from "react-icons/gi";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -125,24 +126,27 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`h-[calc(100%-40px)] z-10 shadow-lg fixed left-0 w-56 ${
-        isDarkMode ? "bg-gray-600" : "bg-gray-800"
-      } overflow-y-auto transition-all duration-300 ${
-        isSidebarOpen
+      className={`h-[calc(100%-40px)] z-10 shadow-lg fixed left-0 w-56 ${isDarkMode ? "bg-gray-600" : "bg-teal-800"
+        } overflow-y-auto transition-all duration-300 ${isSidebarOpen
           ? "translate-x-0 ease-out px-1"
           : "-translate-x-36 ease-in"
-      }`}
+        }`}
     >
       <div className="flex items-center justify-center mt-8">
         {!isSidebarOpen && (
           <div className="w-full flex justify-end pe-6 pb-5 border-b-2">
-            <FaBold className="text-gray-400 h-9 w-9" />
+            <FaStore className="text-gray-400 h-9 w-9" />
           </div>
         )}
         {isSidebarOpen && (
-          <span className="text-white text-lg border rounded-md border-white py-2 px-4 mx-2 font-semibold">
-            {shopName}
-          </span>
+          <div className="flex items-center">
+            <div className="rounded-full p-2 bg-white">
+              <FaStore className="text-gray-800 text-3xl" />
+            </div>
+            <span className="text-white text-lg ml-2 font-semibold">
+              {shopName}
+            </span>
+          </div>
         )}
       </div>
 
@@ -150,9 +154,13 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         {tabs.map((tab) => (
           <button
             key={tab.name}
-            className={`w-full flex items-center mt-4 py-2 px-6 ${
+            className={`w-full flex items-center mt-4 py-2 px-6 ${isDarkMode
+              ?
               activeTab === tab.name ? "bg-gray-700" : "bg-gray-900"
-            } ${isSidebarOpen && "rounded-lg"}`}
+              :
+
+              activeTab === tab.name ? "bg-teal-700" : "bg-teal-900"
+              } ${isSidebarOpen && "rounded-lg"}`}
             onClick={() => {
               handleClick(tab.name, tab.link);
             }}
@@ -172,7 +180,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       {!isSmallScreen && (
         <div className="absolute bottom-0 right-0 mb-8">
           <button
-            className="flex items-center mx-auto px-3 py-2 bg-gray-700 rounded-lg"
+            className={`flex items-center mx-auto px-3 py-2 ${isDarkMode ? "bg-gray-700" : "bg-teal-700"} rounded-lg`}
             onClick={() => toggleSidebar(!isSidebarOpen)}
           >
             {isSidebarOpen ? (

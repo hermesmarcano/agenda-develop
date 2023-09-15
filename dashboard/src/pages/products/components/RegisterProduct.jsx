@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
@@ -10,13 +10,41 @@ import { DarkModeContext } from "../../../context/DarkModeContext";
 import { storage } from "../../../services/fireBaseStorage";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 } from "uuid";
+import { FaSpinner } from "react-icons/fa";
+import ProgressBar from "../../../components/ProgressBar";
+import { Store } from "react-notifications-component";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, LoadingRegisterButton } from "../../../components/Styled";
 
 const RegisterProduct = ({ setModelState }) => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const { shopId } = useContext(SidebarContext);
+  const [isRegistering, setIsRegistering] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: 'top',
+      container: 'bottom-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
+
+
   const initialValues = {
     name: "",
     speciality: "",
@@ -44,6 +72,7 @@ const RegisterProduct = ({ setModelState }) => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
+      setIsRegistering(true)
       console.log(
         process.env.REACT_APP_IMAGE_URI
       );
@@ -64,6 +93,7 @@ const RegisterProduct = ({ setModelState }) => {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log(progress);
+          setUploadProgress(progress);
         },
         (error) => {
           console.log("error");
@@ -95,9 +125,7 @@ const RegisterProduct = ({ setModelState }) => {
                 })
                 .then((res) => {
                   console.log(res.data);
-                  setAlertMsg("Product has been registered");
-                  setAlertMsgType("success");
-                  setAlertOn(true);
+                  notify("New Product", `New Product "${values.name}" has been registered`, "success")
                   sendNotification(
                     "New Product - " +
                       new Intl.DateTimeFormat("en-GB", {
@@ -108,10 +136,11 @@ const RegisterProduct = ({ setModelState }) => {
                         minute: "2-digit",
                       }).format(new Date())
                   );
+                  setIsRegistering(false);
                   setModelState(false);
                 })
                 .catch((error) => {
-                  console.log(error);
+                  notify("Error", `Some of the data has already been registered before`, "danger");
                 });
             });
         }
@@ -124,14 +153,11 @@ const RegisterProduct = ({ setModelState }) => {
   };
 
   return (
-    <>
-      <h2
-        className={`text-xl font-bold mb-4 text-${
-          isDarkMode ? "white" : "gray-700"
-        }`}
-      >
-        Register a Product
-      </h2>
+    <div
+      className={`bg-${
+        isDarkMode ? "gray-800" : "white"
+      } transition-all duration-300  shadow-lg rounded-md m-2`}
+    >
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -139,10 +165,10 @@ const RegisterProduct = ({ setModelState }) => {
       >
         {(formikProps) => (
           <Form
-            className={`bg-${
-              isDarkMode ? "gray-700" : "white"
-            } rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
-          >
+          className={`bg-${
+            isDarkMode ? "gray-800" : "white"
+          } rounded px-8 pt-6 pb-8 mb-4`}
+        >
             <div className="mb-4">
               <label
                 htmlFor="name"
@@ -157,12 +183,8 @@ const RegisterProduct = ({ setModelState }) => {
                 id="name"
                 name="name"
                 placeholder="Product Name"
-                className={`py-2 pl-8 border-b-2 border-${
-                  isDarkMode ? "gray-600" : "gray-300"
-                } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                  isDarkMode ? "gray-500" : "white"
-                } focus:outline-none focus:border-blue-500 w-full`}
-              />
+                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
+                />
               <ErrorMessage
                 name="name"
                 component="p"
@@ -183,12 +205,8 @@ const RegisterProduct = ({ setModelState }) => {
                 id="speciality"
                 name="speciality"
                 placeholder="Product Speciality"
-                className={`py-2 pl-8 border-b-2 border-${
-                  isDarkMode ? "gray-600" : "gray-300"
-                } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                  isDarkMode ? "gray-500" : "white"
-                } focus:outline-none focus:border-blue-500 w-full`}
-              />
+                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
+                />
               <ErrorMessage
                 name="speciality"
                 component="p"
@@ -210,11 +228,7 @@ const RegisterProduct = ({ setModelState }) => {
                   id="costBRL"
                   name="costBRL"
                   placeholder="0.00"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    isDarkMode ? "gray-500" : "white"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="costBRL"
@@ -236,11 +250,7 @@ const RegisterProduct = ({ setModelState }) => {
                   id="price"
                   name="price"
                   placeholder="0.00"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    isDarkMode ? "gray-500" : "white"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="price"
@@ -262,11 +272,7 @@ const RegisterProduct = ({ setModelState }) => {
                   id="stock"
                   name="stock"
                   placeholder="0"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    isDarkMode ? "gray-500" : "white"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="stock"
@@ -295,23 +301,21 @@ const RegisterProduct = ({ setModelState }) => {
                 form={formikProps}
               />
             </div>
-            <div className="flex items-center justify-between">
-              <button
-                type="submit"
-                disabled={formikProps.isSubmitting}
-                className={`bg-${
-                  isDarkMode ? "gray-800" : "gray-600"
-                } hover:bg-${
-                  isDarkMode ? "gray-600" : "gray-400"
-                } text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-              >
-                Register Product
-              </button>
+            
+            <div className="mb-4">
+              <ProgressBar progress={uploadProgress} />
+            </div>
+
+            <div className="flex items-center justify-end mt-8">
+            <LoadingRegisterButton 
+                 disabled={formikProps.isSubmitting}
+                 isRegistering={isRegistering}
+              />
             </div>
           </Form>
         )}
       </Formik>
-    </>
+    </div>
   );
 };
 

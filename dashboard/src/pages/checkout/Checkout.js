@@ -28,21 +28,22 @@ import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
 
 const StepIndicator = ({ currentStep, totalSteps }) => {
+  const { isDarkMode } = useContext(DarkModeContext)
   return (
     <div className="flex items-center mb-4 justify-center">
       {Array.from({ length: totalSteps }, (_, index) => (
         <div
           key={index}
-          className={`relative w-4 h-4 mx-1 rounded-full ${
-            index + 1 === currentStep ? "bg-gray-800" : "bg-gray-300"
-          }`}
+          className={`relative w-4 h-4 mx-1 rounded-full ${index + 1 === currentStep ? (isDarkMode ? "bg-gray-800" : "bg-teal-800") : "bg-gray-300"
+            }`}
         >
           {index + 1 === currentStep && (
             <div className="absolute inset-0 m-auto w-2 h-2 rounded-full bg-white"></div>
           )}
         </div>
-      ))}
-    </div>
+      ))
+      }
+    </div >
   );
 };
 
@@ -193,8 +194,8 @@ const Checkout = () => {
         } else {
           setTotalPrice(
             subTotalPrice -
-              prevPaidAmount -
-              ((subTotalPrice - prevPaidAmount) * discount) / 100
+            prevPaidAmount -
+            ((subTotalPrice - prevPaidAmount) * discount) / 100
           );
         }
       } else {
@@ -335,9 +336,8 @@ const Checkout = () => {
       <div className="flex flex-wrap">
         <div className="w-full lg:w-3/4 lg:pr-4">
           <div
-            className={`rounded shadow-lg p-8 mb-4 ${
-              isDarkMode ? "bg-gray-500" : "bg-white"
-            }`}
+            className={`rounded shadow-lg p-8 mb-4 ${isDarkMode ? "bg-gray-500" : "bg-white"
+              }`}
           >
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-xl font-bold">Checkout Process</h2>
@@ -372,19 +372,18 @@ const Checkout = () => {
                   {servicesData.map((service, index) => (
                     <button
                       key={index}
-                      className={`flex flex-col items-center justify-center p-4 rounded transition-all duration-300 ${
-                        isDarkMode
-                          ? extraServices.find(
-                              (eservice) => eservice._id === service._id
-                            )
-                            ? "bg-gray-700 text-gray-200"
-                            : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
-                          : extraServices.find(
-                              (eservice) => eservice._id === service._id
-                            )
-                          ? "bg-gray-800 text-gray-200"
-                          : "bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white"
-                      }`}
+                      className={`flex flex-col items-center justify-center p-4 rounded transition-all duration-300 ${isDarkMode
+                        ? extraServices.find(
+                          (eservice) => eservice._id === service._id
+                        )
+                          ? "bg-gray-700 text-gray-200"
+                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                        : extraServices.find(
+                          (eservice) => eservice._id === service._id
+                        )
+                          ? "bg-teal-800 text-gray-200"
+                          : "bg-teal-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                        }`}
                       onClick={() => handleAddExtraService(service)}
                     >
                       <RiServiceFill size={24} />
@@ -394,21 +393,18 @@ const Checkout = () => {
                   ))}
                   <button
                     className={`flex flex-col min-h-[104px] items-center justify-center p-4 rounded transition-all duration-300
-                    ${
-                      isDarkMode
+                    ${isDarkMode
                         ? `bg-gray-800 text-gray-200
-                    ${
-                      extraServices.length > 0 &&
-                      "hover:bg-gray-700 hover:text-white"
-                    }
+                    ${extraServices.length > 0 &&
+                        "hover:bg-gray-700 hover:text-white"
+                        }
                    `
                         : `bg-gray-200 text-gray-800
-                      ${
-                        extraServices.length > 0 &&
-                        "hover:bg-gray-800 hover:text-white"
-                      }
+                      ${extraServices.length > 0 &&
+                        "hover:bg-teal-800 hover:text-white"
+                        }
                      `
-                    }`}
+                      }`}
                     onClick={() => setCurrentStep(2)}
                     disabled={extraServices.length === 0}
                   >
@@ -438,9 +434,8 @@ const Checkout = () => {
                       .map((service, index) => (
                         <div
                           key={index}
-                          className={`flex items-center justify-between ${
-                            isDarkMode ? "bg-gray-800" : "bg-gray-200"
-                          } p-4 rounded mb-4`}
+                          className={`flex items-center justify-between ${isDarkMode ? "bg-gray-800" : "bg-gray-200"
+                            } p-4 rounded mb-4`}
                         >
                           <div>
                             <p>
@@ -469,11 +464,10 @@ const Checkout = () => {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <button
                     className={`flex flex-col min-h-[104px] items-center justify-center p-4 rounded transition-all duration-300
-                    ${
-                      isDarkMode
+                    ${isDarkMode
                         ? `bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white`
-                        : `bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white`
-                    }`}
+                        : `bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white`
+                      }`}
                     onClick={() => setCurrentStep(1)}
                   >
                     <BsArrowLeft size={24} />
@@ -482,19 +476,18 @@ const Checkout = () => {
                   {productsData.map((product, index) => (
                     <button
                       key={index}
-                      className={`flex flex-col items-center justify-center p-4 rounded transition-all duration-300 ${
-                        isDarkMode
-                          ? products.find(
-                              (eproduct) => eproduct._id === product._id
-                            )
-                            ? "bg-gray-700 text-gray-200"
-                            : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
-                          : products.find(
-                              (eproduct) => eproduct._id === product._id
-                            )
-                          ? "bg-gray-800 text-gray-200"
-                          : "bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white"
-                      }`}
+                      className={`flex flex-col items-center justify-center p-4 rounded transition-all duration-300 ${isDarkMode
+                        ? products.find(
+                          (eproduct) => eproduct._id === product._id
+                        )
+                          ? "bg-gray-700 text-gray-200"
+                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                        : products.find(
+                          (eproduct) => eproduct._id === product._id
+                        )
+                          ? "bg-teal-800 text-gray-200"
+                          : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                        }`}
                       onClick={() => handleAddProduct(product)}
                     >
                       <BiBasket size={24} />
@@ -504,11 +497,10 @@ const Checkout = () => {
                   ))}
                   <button
                     className={`flex flex-col min-h-[104px] items-center justify-center p-4 rounded transition-all duration-300
-                    ${
-                      isDarkMode
+                    ${isDarkMode
                         ? `bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white`
-                        : `bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white`
-                    }`}
+                        : `bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white`
+                      }`}
                     onClick={() => setCurrentStep(3)}
                   >
                     <BsArrowRight size={24} />
@@ -538,9 +530,8 @@ const Checkout = () => {
                       .map((product, index) => (
                         <div
                           key={index}
-                          className={`flex items-center justify-between ${
-                            isDarkMode ? "bg-gray-800" : "bg-gray-200"
-                          } p-4 rounded mb-4`}
+                          className={`flex items-center justify-between ${isDarkMode ? "bg-gray-800" : "bg-gray-200"
+                            } p-4 rounded mb-4`}
                         >
                           <div>
                             <p>
@@ -568,11 +559,10 @@ const Checkout = () => {
                 <h2 className="text-xl font-bold mb-4">Payment Method</h2>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <button
-                    className={`flex flex-col items-center justify-center min-h-[104px] ${
-                      isDarkMode
-                        ? "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white"
-                    } p-4 rounded transition-all duration-300`}
+                    className={`flex flex-col items-center justify-center min-h-[104px] ${isDarkMode
+                      ? "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                      : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                      } p-4 rounded transition-all duration-300`}
                     onClick={() => setCurrentStep(2)}
                   >
                     <BsArrowLeft size={24} />
@@ -580,30 +570,28 @@ const Checkout = () => {
                   </button>
                   <button
                     className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 
-                    ${
-                      isDarkMode
+                    ${isDarkMode
                         ? paymentMethod === "cash"
                           ? "bg-gray-700 text-white"
                           : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
                         : paymentMethod === "cash"
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white"
-                    }`}
+                          ? "bg-teal-800 text-white"
+                          : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                      }`}
                     onClick={() => handleChoosePaymentMethod("cash")}
                   >
                     <FaDollarSign size={24} />
                     <span>Cash</span>
                   </button>
                   <button
-                    className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${
-                      isDarkMode
-                        ? paymentMethod === "credit"
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
-                        : paymentMethod === "credit"
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white"
-                    }`}
+                    className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${isDarkMode
+                      ? paymentMethod === "credit"
+                        ? "bg-gray-700 text-white"
+                        : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                      : paymentMethod === "credit"
+                        ? "bg-teal-800 text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                      }`}
                     onClick={() => handleChoosePaymentMethod("credit")}
                   >
                     <FaCreditCard size={24} />
@@ -611,15 +599,14 @@ const Checkout = () => {
                   </button>
                   {/* New "Pay later" button */}
                   <button
-                    className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${
-                      isDarkMode
-                        ? paymentMethod === "payLater"
-                          ? "bg-gray-700 text-white"
-                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
-                        : paymentMethod === "payLater"
-                        ? "bg-gray-800 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-800 hover:text-white"
-                    }`}
+                    className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${isDarkMode
+                      ? paymentMethod === "payLater"
+                        ? "bg-gray-700 text-white"
+                        : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                      : paymentMethod === "payLater"
+                        ? "bg-teal-800 text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                      }`}
                     onClick={() => handleChoosePaymentMethod("payLater")}
                   >
                     <FaClock size={24} />
@@ -634,14 +621,14 @@ const Checkout = () => {
                 <h2 className="text-xl font-bold mb-4">Payment Confirmation</h2>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <button
-                    className="bg-gray-800 text-white px-4 py-2 rounded flex items-center justify-center"
+                    className={`${isDarkMode ? "bg-gray-800" : "bg-teal-800"} text-white px-4 py-2 rounded flex items-center justify-center`}
                     onClick={handlePreviousStep}
                   >
                     <IoMdArrowRoundBack className="mr-2" />
                     Go Back
                   </button>
                   <button
-                    className="bg-gray-800 text-white px-4 py-2 rounded flex items-center justify-center"
+                    className={`${isDarkMode ? "bg-gray-800" : "bg-teal-800"} text-white px-4 py-2 rounded flex items-center justify-center`}
                     // onClick={handleConfirmPayment}
                     onClick={() => {
                       if (paymentMethod === "cash") {
@@ -709,7 +696,7 @@ const Checkout = () => {
                   </div>
                   <p>Appointment has been scheduled successfully.</p>
                   <button
-                    className="mt-4 px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-700"
+                    className={`mt-4 px-4 py-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-teal-800 hocver:bg-teal-700"} text-white rounded`}
                     onClick={handleCheckoutComplete}
                   >
                     Return to Home
@@ -722,15 +709,14 @@ const Checkout = () => {
 
         <div className="w-full lg:w-1/4">
           <div
-            className={` ${
-              isDarkMode ? "bg-gray-500" : "bg-white"
-            } rounded shadow-lg p-8`}
+            className={` ${isDarkMode ? "bg-gray-500" : "bg-white"
+              } rounded shadow-lg p-8`}
           >
             <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
             <div className="mb-4">
               {currentStep < 5 && (
                 <button
-                  className="bg-gray-800 text-sm hover:bg-gray-600 flex justify-center items-center text-white px-4 py-2 rounded w-full mb-4"
+                  className={`${isDarkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-teal-800 hover:bg-teal-700"} text-sm flex justify-center items-center text-white px-4 py-2 rounded w-full mb-4`}
                   onClick={handleAddCustomerDetails}
                 >
                   <FaUser className="mr-2" />
@@ -822,21 +808,19 @@ const Checkout = () => {
                 <div className="flex justify-center items-center">
                   <div className="flex items-center w-28 h-8 rounded-md bg-gray-300">
                     <button
-                      className={`w-14 ${
-                        discountType === "%"
-                          ? "text-gray-700 shadow-md bg-white"
-                          : "text-gray-500 shadow-inner"
-                      } flex justify-center items-center h-full rounded-md transition-transform`}
+                      className={`w-14 ${discountType === "%"
+                        ? "text-gray-700 shadow-md bg-white"
+                        : "text-gray-500 shadow-inner"
+                        } flex justify-center items-center h-full rounded-md transition-transform`}
                       onClick={handleDiscountTypeChange}
                     >
                       <FaPercent className="text-gray-600" />
                     </button>
                     <button
-                      className={`w-14 ${
-                        discountType === "$"
-                          ? "text-gray-700 shadow-md bg-white"
-                          : "text-gray-500 shadow-inner"
-                      } flex justify-center items-center h-full rounded-md transition-transform`}
+                      className={`w-14 ${discountType === "$"
+                        ? "text-gray-700 shadow-md bg-white"
+                        : "text-gray-500 shadow-inner"
+                        } flex justify-center items-center h-full rounded-md transition-transform`}
                       onClick={handleDiscountTypeChange}
                     >
                       <FaDollarSign className="text-gray-600" />

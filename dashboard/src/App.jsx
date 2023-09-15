@@ -1,7 +1,7 @@
 import "./App.css";
 import { HashRouter, BrowserRouter, Route, Routes } from "react-router-dom";
 import Agenda from "./pages/agenda/Agenda";
-import Clients from "./pages/customers/Clients";
+import Customers from "./pages/customers/Customers";
 import Login from "./pages/login/Login";
 import Professionals from "./pages/professionals/Professionals";
 import Register from "./pages/register/Register";
@@ -24,6 +24,7 @@ import { AlertContextWrapper } from "./context/AlertContext";
 import { NotificationContextWrapper } from "./context/NotificationContext";
 import { DarkModeContextWrapper } from "./context/DarkModeContext";
 import Notification from "./pages/notification/Notification";
+import { ReactNotifications } from "react-notifications-component";
 
 function App() {
   return (
@@ -36,11 +37,12 @@ function App() {
                 <DateTimeContextWrapper>
                   <SidebarContextWrapper>
                     <BrowserRouter>
+                    <ReactNotifications />
                       <Routes>
                         <Route element={<PrivateRoutes />}>
                           <Route path="/" exact element={<Agenda />} />
                           <Route path="/agenda" exact element={<Agenda />} />
-                          <Route path="/clients" element={<Clients />} />
+                          <Route path="/customers" element={<Customers />} />
                           <Route
                             path="/professionals"
                             element={<Professionals />}

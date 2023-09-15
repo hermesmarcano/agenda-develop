@@ -20,6 +20,7 @@ import {
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import instance from "../../../axiosConfig/axiosConfig";
+import { RemoveSelectedButton } from "../../../components/Styled";
 
 const AppointmentsList = () => {
   const { shopId } = useContext(SidebarContext);
@@ -102,10 +103,8 @@ const AppointmentsList = () => {
   const handleCheckboxChange = (id) => {
     setSelectedIds((prevSelectedIds) => {
       if (prevSelectedIds.includes(id)) {
-        // ID already exists, remove it from the array
         return prevSelectedIds.filter((selectedId) => selectedId !== id);
       } else {
-        // ID doesn't exist, add it to the array
         return [...prevSelectedIds, id];
       }
     });
@@ -113,10 +112,8 @@ const AppointmentsList = () => {
 
   const handleSelectAll = () => {
     if (selectedIds.length === currentAppointments.length) {
-      // All IDs are selected, deselect all IDs
       setSelectedIds([]);
     } else {
-      // Not all IDs are selected, select all IDs
       const allIds = currentAppointments.map((appointment) => appointment._id);
       setSelectedIds(allIds);
     }
@@ -131,11 +128,9 @@ const AppointmentsList = () => {
           },
         })
         .then((response) => {
-          // Handle successful deletion
           setDeleting(false);
         })
         .catch((error) => {
-          // Handle error
           console.error(`Failed to delete appointment with ID ${id}.`, error);
         });
     });
@@ -200,32 +195,44 @@ const AppointmentsList = () => {
 
   return (
     <>
-      <div className="flex items-center relative">
+      <div className="relative w-full">
+        <label className="sr-only" htmlFor="search">
+          {" "}
+          Search{" "}
+        </label>
+
         <input
-          type="text"
-          className={`py-2 pl-8 border-b-2  text-gray-800 border-gray-300 focus:outline-none focus:border-blue-500 w-full ${
-            isDarkMode ? "bg-gray-500" : "bg-gray-100"
-          }`}
-          placeholder="Search appointments..."
+          className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
+          id="search"
+          type="search"
+          placeholder="Search service..."
           value={searchQuery}
           onChange={handleSearchQueryChange}
         />
-        <button className="absolute right-0 mr-2 focus:outline-none">
-          <FiSearch />
-        </button>
+
+        <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
+          <span className="sr-only">Search</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </span>
       </div>
       <div className="flex items-center my-4">
-        <button
-          className={`ml-2 ${
-            selectedIds.length === 0
-              ? "bg-red-400"
-              : "bg-red-500 hover:bg-red-700"
-          } text-white text-sm font-semibold py-2 px-4 rounded`}
+        <RemoveSelectedButton
           onClick={() => setDeleting(true)}
           disabled={selectedIds.length === 0}
-        >
-          Remove Selected
-        </button>
+        />
         <Popup
           isOpen={isDeleting}
           onClose={() => setDeleting(!isDeleting)}
@@ -443,7 +450,7 @@ const AppointmentButton = ({
               ? `${
                   isDarkMode
                     ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
-                    : "text-gray-800 bg-gray-200 hover:bg-gray-300"
+                    : "text-teal-800 bg-teal-500 hover:bg-teal-600"
                 }`
               : `${
                   isDarkMode

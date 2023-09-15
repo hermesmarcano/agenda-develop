@@ -1,20 +1,62 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
-import { RiCloseCircleLine } from "react-icons/ri";
+import { FaSpinner } from "react-icons/fa";
 import { TiPlus } from "react-icons/ti";
+import { RiCloseCircleLine } from "react-icons/ri";
 import instance from "../../../axiosConfig/axiosConfig";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, UpdateButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
 
-const RegisterProfessional = ({ setModelState, workingHours }) => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
+const UpdateProfessional = ({
+  setModelState,
+  professionalId,
+  workingHours,
+}) => {
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
+  const [professionalData, setProfessionalData] = useState(null);
+  const token = localStorage.getItem("ag_app_shop_token");
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: 'top',
+      container: 'bottom-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
+
+  useEffect(() => {
+    instance
+      .get(`professionals/${professionalId}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        setProfessionalData(response.data.data);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }, []);
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     officeHours: Yup.array()
@@ -69,22 +111,42 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
     description: Yup.string().required("Required"),
   });
 
+  const hoursOptions = [];
+  for (let i = 8; i <= 17; i++) {
+    const hour = i <= 12 ? i : i - 12;
+    const period = i < 12 ? "AM" : "PM";
+    hoursOptions.push(
+      <option key={i} value={i}>
+        {hour}:00 {period}
+      </option>
+    );
+  }
+
+  if (!professionalData) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Hourglass />
+      </div>
+    );
+  }
+
   return (
     <div
       className={`bg-${
-        isDarkMode ? "gray-700" : "white"
-      } transition-all duration-300`}
+        isDarkMode ? "gray-800" : "white"
+      } transition-all duration-300  shadow-lg rounded-md m-2`}
     >
-      <h2 className="text-xl font-bold mb-4">Register a Professional</h2>
       <Formik
         initialValues={{
-          name: "",
-          officeHours: [{ startHour: 0, endHour: 0 }],
-          description: "",
+          name: professionalData.name,
+          officeHours: professionalData?.officeHours || [
+            { startHour: 0, endHour: 0 },
+          ],
+          description: professionalData.description,
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          const postData = {
+          const patchData = {
             name: values.name,
             officeHours: values.officeHours,
             description: values.description,
@@ -93,27 +155,29 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
 
           const fetchRequest = async () => {
             try {
-              const response = await instance.post("professionals/", postData, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: localStorage.getItem("ag_app_shop_token"),
-                },
-              });
-              setAlertMsg("New Professional has been registered");
-              setAlertMsgType("success");
-              setAlertOn(true);
+              const response = await instance.patch(
+                `professionals/${professionalId}`,
+                patchData,
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("ag_app_shop_token"),
+                  },
+                }
+              );
+              notify("Update", `Professional "${values.name}" info has been updated`, "success")
               sendNotification(
-                "New Professional - " +
-                  new Intl.DateTimeFormat("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }).format(new Date())
+                "Professional updated - " +
+                new Intl.DateTimeFormat("en-GB", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date())
               );
             } catch (e) {
-              console.error(e.message);
+              notify("Error", `Some of the data has already been registered before`, "danger");
             }
           };
 
@@ -143,15 +207,14 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
           return (
             <Form
               className={`bg-${
-                isDarkMode ? "gray-700" : "white"
-              } rounded px-8 pt-6 pb-8 mb-4 min-w-[350px] sm:min-w-[500px] mx-auto`}
+                isDarkMode ? "gray-800" : "white"
+              } rounded px-8 pt-6 pb-8 mb-4`}
             >
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className={`block text-sm text-${
-                    isDarkMode ? "white" : "gray-700"
-                  } font-bold mb-2`}
+                  className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
+                    }`}
                 >
                   Name
                 </label>
@@ -159,12 +222,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Enter the name of the professional"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="name"
@@ -177,9 +235,8 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   <div className="space-y-4 mb-4">
                     <label
                       htmlFor="officeHours"
-                      className={`block text-sm text-${
-                        isDarkMode ? "white" : "gray-700"
-                      } font-bold mb-2`}
+                      className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
+                        }`}
                     >
                       Office Hours
                     </label>
@@ -197,15 +254,14 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                               id={`officeHours[${index}].startHour`}
                               name={`officeHours[${index}].startHour`}
                               as="select"
-                              className={`block appearance-none rounded-md w-full px-3 py-2 border ${
-                                formikProps.errors.officeHours?.[index]
-                                  ?.startHour &&
+                              className={`block appearance-none rounded-md w-full px-3 py-2 border ${formikProps.errors.officeHours?.[index]
+                                ?.startHour &&
                                 formikProps.touched.officeHours?.[index]
                                   ?.startHour
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                                !isDarkMode ? "white" : "gray-500"
+                                ? "border-red-500"
+                                : "border-gray-300"
+                                } text-${isDarkMode ? "white" : "gray-700"} bg-${!isDarkMode ? "white" : "gray-500"
+                                }
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">Start hour</option>
@@ -228,15 +284,14 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                               id={`officeHours[${index}].endHour`}
                               name={`officeHours[${index}].endHour`}
                               as="select"
-                              className={`block appearance-none rounded-md w-full px-3 py-2 border ${
-                                formikProps.errors.officeHours?.[index]
-                                  ?.endHour &&
+                              className={`block appearance-none rounded-md w-full px-3 py-2 border ${formikProps.errors.officeHours?.[index]
+                                ?.endHour &&
                                 formikProps.touched.officeHours?.[index]
                                   ?.endHour
-                                  ? "border-red-500"
-                                  : "border-gray-300"
-                              } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                                !isDarkMode ? "white" : "gray-500"
+                                ? "border-red-500"
+                                : "border-gray-300"
+                                } text-${isDarkMode ? "white" : "gray-700"} bg-${!isDarkMode ? "white" : "gray-500"
+                                }
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">End hour</option>
@@ -250,7 +305,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                           </div>
                         </div>
                         {index > 0 && (
-                          <div>
+                          <div className="flex justify-end">
                             <button
                               type="button"
                               className="flex items-center px-2 py-1 text-sm text-red-600 hover:text-red-800"
@@ -266,30 +321,24 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                     <div className="flex justify-start">
                       {formikProps.values.officeHours.length <
                         workingHours.length && (
-                        <button
-                          type="button"
-                          className="flex items-center px-2 py-1 text-sm text-blue-600 hover:text-blue-800"
-                          onClick={() => push({ startHour: 0, endHour: 0 })}
-                        >
-                          <TiPlus className="mr-1" />
-                          Add Office Hour
-                        </button>
-                      )}
+                          <button
+                            type="button"
+                            className="flex items-center px-2 py-1 text-sm text-blue-600 hover:text-blue-800"
+                            onClick={() => push({ startHour: 0, endHour: 0 })}
+                          >
+                            <TiPlus className="mr-1" />
+                            Add Office Hour
+                          </button>
+                        )}
                     </div>
-                    {/* <ErrorMessage
-                      name="officeHours"
-                      component="div"
-                      className="mt-1 text-sm text-red-500"
-                    /> */}
                   </div>
                 )}
               </FieldArray>
               <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className={`block text-sm text-${
-                    isDarkMode ? "white" : "gray-700"
-                  } font-bold mb-2`}
+                  className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
+                    }`}
                 >
                   Description
                 </label>
@@ -298,11 +347,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   id="description"
                   name="description"
                   placeholder="Enter a description of the professional"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="description"
@@ -310,15 +355,8 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   className="text-red-500 text-xs italic"
                 />
               </div>
-
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  className="bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  disabled={formikProps.isSubmitting}
-                >
-                  Register
-                </button>
+              <div className="flex items-center justify-end mt-8">
+                <UpdateButton disabled={formikProps.isSubmitting} />
               </div>
             </Form>
           );
@@ -328,4 +366,4 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
   );
 };
 
-export default RegisterProfessional;
+export default UpdateProfessional;

@@ -2,9 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Regular */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-Regular.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Bold */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-Bold.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Bold Italic */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-BoldItalic.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-BoldItalic.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* Italic */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-Italic.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-Italic.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+}
+
+/* Light */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-Light.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-Light.woff') format('woff');
+  font-weight: 300; /* Adjust the font weight as needed */
+  font-style: normal;
+}
+
+/* Light Italic */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-LightItalic.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-LightItalic.woff') format('woff');
+  font-weight: 300; /* Adjust the font weight as needed */
+  font-style: italic;
+}
+
+/* Medium */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-Medium.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-Medium.woff') format('woff');
+  font-weight: 500; /* Adjust the font weight as needed */
+  font-style: normal;
+}
+
+/* Medium Italic */
+@font-face {
+  font-family: 'Ubuntu';
+  src: url('../public/fonts/Ubuntu-MediumItalic.woff2') format('woff2'),
+       url('../public/fonts/Ubuntu-MediumItalic.woff') format('woff');
+  font-weight: 500; /* Adjust the font weight as needed */
+  font-style: italic;
+}
+
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  font-family: 'Ubuntu', "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;

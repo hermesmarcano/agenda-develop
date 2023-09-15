@@ -2,9 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
-import { FaSpinner, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import { storage } from "../../../services/fireBaseStorage";
@@ -15,14 +14,45 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { v4 } from "uuid";
+import ProgressBar from "../../../components/ProgressBar";
+import { Store } from "react-notifications-component";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  Hourglass,
+  LoadingRegisterButton,
+  LoadingUpdateButton,
+} from "../../../components/Styled";
 
 const UpdateService = ({ setModelState, serviceId }) => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [serviceData, setServiceData] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
+
   useEffect(() => {
     instance
       .get(`services/${serviceId}`, {
@@ -46,6 +76,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
+      setIsUpdating(true);
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
         console.error("Token not found");
@@ -64,6 +95,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
             let progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log(progress);
+            setUploadProgress(progress);
           },
           (error) => {
             console.log("error");
@@ -94,9 +126,11 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   .then((res) => {
                     console.log(res);
                     setServiceData((prev) => ({ ...prev, patchData }));
-                    setAlertMsg("Service has been updated");
-                    setAlertMsgType("success");
-                    setAlertOn(true);
+                    notify(
+                      "Update",
+                      `"Service ${values.name}" has been updated`,
+                      "success"
+                    );
                     sendNotification(
                       "Service updated - " +
                         new Intl.DateTimeFormat("en-GB", {
@@ -107,10 +141,15 @@ const UpdateService = ({ setModelState, serviceId }) => {
                           minute: "2-digit",
                         }).format(new Date())
                     );
+                    setIsUpdating(false);
                     setModelState(false);
                   })
                   .catch((error) => {
-                    console.log(error);
+                    notify(
+                      "Error",
+                      `Some of the data has already been registered before`,
+                      "danger"
+                    );
                   });
               });
           }
@@ -132,9 +171,11 @@ const UpdateService = ({ setModelState, serviceId }) => {
           .then((res) => {
             console.log(res);
             setServiceData((prev) => ({ ...prev, patchData }));
-            setAlertMsg("Service has been updated");
-            setAlertMsgType("success");
-            setAlertOn(true);
+            notify(
+              "Update",
+              `"Service ${values.name}" has been updated`,
+              "success"
+            );
             sendNotification(
               "Service updated - " +
                 new Intl.DateTimeFormat("en-GB", {
@@ -145,11 +186,20 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   minute: "2-digit",
                 }).format(new Date())
             );
+            setUploadProgress(100);
+            setIsUpdating(false);
             setModelState(false);
           })
           .catch((error) => {
-            console.log(error);
+            notify(
+              "Error",
+              `Some of the data has already been registered before`,
+              "danger"
+            );
           });
+
+        setSubmitting(false);
+        setModelState(false);
       }
     } catch (error) {
       console.log(error);
@@ -189,14 +239,11 @@ const UpdateService = ({ setModelState, serviceId }) => {
   };
 
   return (
-    <>
-      <h2
-        className={`text-xl font-bold mb-4 text-${
-          isDarkMode ? "white" : "gray-700"
-        }`}
-      >
-        Update Service
-      </h2>
+    <div
+      className={`bg-${
+        isDarkMode ? "gray-800" : "white"
+      } transition-all duration-300  shadow-lg rounded-md m-2`}
+    >
       {serviceData ? (
         <Formik
           initialValues={{
@@ -211,8 +258,8 @@ const UpdateService = ({ setModelState, serviceId }) => {
           {(formikProps) => (
             <Form
               className={`bg-${
-                isDarkMode ? "gray-700" : "white"
-              } text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
+                isDarkMode ? "gray-800" : "white"
+              } rounded px-8 pt-6 pb-8 mb-4`}
             >
               <div className="mb-4">
                 <label
@@ -228,11 +275,9 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   id="name"
                   name="name"
                   placeholder="Enter the new name of the service"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 />
                 <ErrorMessage
                   name="name"
@@ -254,11 +299,9 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   id="price"
                   name="price"
                   placeholder="0.00"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 />
                 <ErrorMessage
                   name="price"
@@ -278,11 +321,9 @@ const UpdateService = ({ setModelState, serviceId }) => {
                 <Field
                   name="duration"
                   as="select"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 >
                   <option value="">Select Duration</option>
                   <option value="5">5 min</option>
@@ -342,27 +383,26 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   />
                 )}
               </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  className={`bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
+
+              <div className="mb-4">
+                <ProgressBar progress={uploadProgress} />
+              </div>
+
+              <div className="flex items-center justify-end mt-8">
+                <LoadingUpdateButton
                   disabled={formikProps.isSubmitting}
-                >
-                  Update
-                </button>
+                  isUpdating={isUpdating}
+                />
               </div>
             </Form>
           )}
         </Formik>
       ) : (
         <div className="flex items-center justify-center h-screen">
-          <div className="flex flex-col justify-center items-center space-x-2">
-            <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
-          </div>
+          <Hourglass />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

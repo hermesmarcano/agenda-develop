@@ -1,9 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaBell, FaCog, FaUser } from "react-icons/fa";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../context/NotificationContext";
 import { DarkModeContext } from "../context/DarkModeContext";
+import instance from "../axiosConfig/axiosConfig";
 
 function Header() {
   const navigate = useNavigate();
@@ -12,6 +13,20 @@ function Header() {
     useContext(NotificationContext);
 
   const { isDarkMode, setIsDarkMode } = useContext(DarkModeContext);
+  const [websiteTitle, setWebsiteTitle] = useState('Dashboard');
+  const [logo, setLogo] = useState('');
+
+  useEffect(() => {
+    instance.get("admin")
+      .then(response => {
+        if (response.data?.admin?.websiteTitle) {
+          setWebsiteTitle(response.data.admin.websiteTitle)
+        }
+        if (response.data?.admin?.logo) {
+          setLogo(response.data.admin.logo)
+        }
+      })
+  }, [])
 
   const toggleDarkLightMode = () => {
     setIsDarkMode(!isDarkMode);
@@ -37,17 +52,15 @@ function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 shadow-lg py-4 px-6 flex justify-between items-center z-10 ${
-        isDarkMode ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-500"
-      }`}
+      className={`fixed top-0 left-0 right-0 shadow-lg py-4 px-6 flex justify-between items-center z-10 ${isDarkMode ? "bg-gray-800 text-gray-200" : "bg-gray-100 text-gray-500"
+        }`}
     >
       <div className="flex items-center">
         <h1
-          className={`text-xl font-bold ${
-            isDarkMode ? "text-gray-200" : "text-gray-900"
-          }`}
+          className={`text-xl font-bold ${isDarkMode ? "text-gray-200" : "text-gray-900"
+            }`}
         >
-          Dashboard
+          {logo && <img src={logo} alt="logo" className="mr-2" />}{websiteTitle}
         </h1>
       </div>
       <div className="flex items-center">
@@ -66,9 +79,8 @@ function Header() {
 
           {showMenu && (
             <div
-              className={`absolute right-0 mt-2 w-64 ${
-                isDarkMode ? "bg-gray-700" : "bg-white"
-              } rounded-lg shadow-lg z-10`}
+              className={`absolute right-0 mt-2 w-64 ${isDarkMode ? "bg-gray-700" : "bg-white"
+                } rounded-lg shadow-lg z-10`}
             >
               <div className="max-h-64 overflow-y-auto">
                 <div className="p-4 border-b border-gray-300">
@@ -86,9 +98,8 @@ function Header() {
                   notifications.map((notification, index) => (
                     <div
                       key={index}
-                      className={`p-4 ${
-                        isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"
-                      } rounded-lg cursor-pointer`}
+                      className={`p-4 ${isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"
+                        } rounded-lg cursor-pointer`}
                     >
                       {notification.content}
                     </div>
@@ -119,11 +130,10 @@ function Header() {
                 onClick={() => setIsMenuOpen(false)}
               ></div>
               <div
-                className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${
-                  isDarkMode
-                    ? "bg-gray-700 text-gray-200"
-                    : "bg-white text-gray-800"
-                } ring-1 ring-black ring-opacity-5`}
+                className={`origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 ${isDarkMode
+                  ? "bg-gray-700 text-gray-200"
+                  : "bg-white text-gray-800"
+                  } ring-1 ring-black ring-opacity-5`}
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu"
@@ -133,31 +143,28 @@ function Header() {
                     navigate("/settings");
                     setIsMenuOpen(false);
                   }}
-                  className={`block px-4 py-2 text-sm items-center w-full text-left ${
-                    isDarkMode
-                      ? "text-gray-200 hover:bg-gray-600"
-                      : "text-gray-700 hover:bg-gray-100"
-                  }`}
+                  className={`block px-4 py-2 text-sm items-center w-full text-left ${isDarkMode
+                    ? "text-gray-200 hover:bg-gray-600"
+                    : "text-gray-700 hover:bg-gray-100"
+                    }`}
                   role="menuitem"
                 >
                   <FaCog className={`inline-block w-4 h-4 mr-2`} />
                   <span
-                    className={`${
-                      isDarkMode
-                        ? "text-gray-200 hover:bg-gray-600"
-                        : "text-gray-700 hover:bg-gray-100"
-                    }`}
+                    className={`${isDarkMode
+                      ? "text-gray-200 hover:bg-gray-600"
+                      : "text-gray-700 hover:bg-gray-100"
+                      }`}
                   >
                     Settings
                   </span>
                 </button>
                 <button
                   onClick={logout}
-                  className={`block px-4 py-2 text-sm ${
-                    isDarkMode
-                      ? "text-gray-200 hover:bg-gray-600"
-                      : "text-gray-700 hover:bg-gray-100"
-                  } w-full text-left`}
+                  className={`block px-4 py-2 text-sm ${isDarkMode
+                    ? "text-gray-200 hover:bg-gray-600"
+                    : "text-gray-700 hover:bg-gray-100"
+                    } w-full text-left`}
                   role="menuitem"
                 >
                   Sign out
@@ -168,9 +175,8 @@ function Header() {
         </div>
         <div className="flex items-center ml-2">
           <button
-            className={`flex items-center justify-center w-10 h-10 rounded-full ${
-              !isDarkMode ? "bg-gray-700" : "bg-yellow-400"
-            }`}
+            className={`flex items-center justify-center w-10 h-10 rounded-full ${!isDarkMode ? "bg-gray-700" : "bg-yellow-400"
+              }`}
             onClick={toggleDarkLightMode}
             style={{ transition: "background-color 0.3s" }}
           >

@@ -11,6 +11,7 @@ import { SidebarContext } from "../../../context/SidebarContext";
 import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ViewModeContext } from "../../../context/ViewModeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const Scheduler = ({
   date,
@@ -24,6 +25,7 @@ const Scheduler = ({
   const { shopId } = React.useContext(SidebarContext);
   const { setDateTime } = React.useContext(DateTimeContext);
   const { setProfessionalId } = React.useContext(ProfessionalIdContext);
+  const { isDarkMode } = React.useContext(DarkModeContext);
   const [selectedDate, setSelectedDate] = React.useState(date);
   const [selectedWeekDate, setSelectedWeekDate] = React.useState(startWeekDate);
   const { viewMode, setViewMode } = React.useContext(ViewModeContext);
@@ -226,7 +228,7 @@ const Scheduler = ({
         <div className="w-16">
           <button
             className={`px-2 py-1 text-sm rounded-md ${
-              viewMode === "daily" ? "bg-gray-800 text-white" : "text-gray-700"
+               viewMode === "daily" ? (isDarkMode ? "bg-teal-600" : "bg-teal-100") : (isDarkMode ? "text-white" : "text-gray-800")
             }`}
             onClick={() => setViewMode("daily")}
           >
@@ -236,7 +238,7 @@ const Scheduler = ({
         <div className="w-16">
           <button
             className={`px-2 py-1 text-sm rounded-md ${
-              viewMode === "weekly" ? "bg-gray-800 text-white" : "text-gray-700"
+              viewMode === "weekly" ? (isDarkMode ? "bg-teal-600" : "bg-teal-100") : (isDarkMode ? "text-white" : "text-gray-800")
             }`}
             onClick={() => setViewMode("weekly")}
           >
@@ -427,7 +429,7 @@ const Scheduler = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 p-1
+                            className={`h-6 bg-teal-600 p-1
                       ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                       cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
                             disabled={isDisabled}
@@ -456,7 +458,7 @@ const Scheduler = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-800 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
+                            className={`h-6 bg-teal-600 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                             onClick={() =>
@@ -688,7 +690,7 @@ const Scheduler = ({
                             className={`h-6 ${
                               proIndex % 2 === 0
                                 ? professionalsAppt[proIndex] % 2 === 0
-                                  ? "bg-gray-800"
+                                  ? "bg-teal-600"
                                   : "bg-slate-700"
                                 : professionalsAppt[proIndex] % 2 === 0
                                 ? "bg-cyan-700"
@@ -730,7 +732,7 @@ const Scheduler = ({
                             className={`h-6 ${
                               proIndex % 2 === 0
                                 ? appointmentIndex % 2 === 0
-                                  ? "bg-gray-800"
+                                  ? "bg-teal-600"
                                   : "bg-slate-700"
                                 : appointmentIndex % 2 === 0
                                 ? "bg-cyan-700"
@@ -811,7 +813,7 @@ const Scheduler = ({
 
   const renderScheduler = () => {
     return (
-      <div className="border border-gray-400 p-4 mb-3 overflow-y-auto">
+      <div className={`p-4 mb-3 overflow-y-auto rounded-md shadow ${isDarkMode? "bg-gray-800" : "bg-white"}`}>
         <div
           className={`flex items-center justify-between ${
             viewMode === "daily" ? `` : `min-w-[989px]`
@@ -875,12 +877,12 @@ const Scheduler = ({
         {viewMode === "daily" && (
           <>
             <div
-              className={`grid grid-cols-4 pt-2`}
+              className={`grid grid-cols-4 pt-2 ${isDarkMode && "text-white"}`}
               ref={containerRef}
               style={{ minWidth: `${containerWidth}px` }}
             >
               <div>
-                <p className=" text-gray-500">
+                <p >
                   {formatDateShort(selectedDate)}
                 </p>
               </div>

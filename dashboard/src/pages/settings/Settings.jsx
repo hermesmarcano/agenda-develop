@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaSpinner, FaTrash } from "react-icons/fa";
+import { IoSettingsSharp } from "react-icons/io5"
 import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
@@ -18,16 +19,22 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { v4 } from "uuid";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, LoadingUploadButton, UpdateButton, titleDarkStyle, titleLightStyle } from "../../components/Styled";
+import { Store } from "react-notifications-component";
+import ProgressBar from "../../components/ProgressBar";
+import { useNavigate } from "react-router-dom";
 
 const Settings = () => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
+  const navigate = useNavigate();
   const { sendNotification } = useContext(NotificationContext);
   const { setShopName } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [loading, setLoading] = useState(true);
   const [shopData, setShopData] = useState({});
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     const hour12 = hour % 12 || 12;
@@ -38,6 +45,28 @@ const Settings = () => {
       </option>
     );
   }
+
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: 'top',
+      container: 'bottom-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
 
   useEffect(() => {
     instance
@@ -74,8 +103,11 @@ const Settings = () => {
       })
       .then((response) => {
         setShopName(response.data.shopName);
+        notify("Update", `Shop "${values.name}" info has been updated`, "success")
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        notify("Error", `Some of the data has already been registered before`, "danger");
+      });
   };
 
   const deleteProfileImg = () => {
@@ -110,6 +142,7 @@ const Settings = () => {
 
   const uploadProfileImg = (values, { resetForm }) => {
     console.log("uploading ....");
+    setIsUploading(true);
     if (values.profileImg === null) return;
     let imageName = v4(values.profileImg.name);
     const fileRef = ref(storage, `profile/${imageName}`);
@@ -122,6 +155,7 @@ const Settings = () => {
           let progress =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           console.log(progress);
+          setUploadProgress(progress);
         },
         (error) => {
           console.log("error");
@@ -146,10 +180,7 @@ const Settings = () => {
                   },
                 })
                 .then((res) => {
-                  console.log(res);
-                  setAlertMsg("Profile Image has been updated");
-                  setAlertMsgType("success");
-                  setAlertOn(true);
+                  notify("Update", `Shop image has been updated`, "success")
                   sendNotification(
                     "Profile Image updated - " +
                       new Intl.DateTimeFormat("en-GB", {
@@ -160,9 +191,11 @@ const Settings = () => {
                         minute: "2-digit",
                       }).format(new Date())
                   );
+                  navigate(0);
                 })
+                setIsUploading(false)
                 .catch((error) => {
-                  console.log(error);
+                  notify("Error", `Some of the data has already been registered before`, "danger");
                 });
             });
         }
@@ -174,21 +207,19 @@ const Settings = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="flex flex-col justify-center items-center space-x-2">
-          <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">Loading...</span>
-        </div>
+        <Hourglass />
       </div>
     );
   }
 
   return (
-    <div
-      className={`p-6 pb-9 ${
-        isDarkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"
-      }`}
-    >
-      <h1 className="text-3xl font-bold mb-6">Dashboard Settings</h1>
+    <div className="flex w-full flex-col h-full p-6">
+      <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
+          <div className="flex items-center justify-center">
+            <IoSettingsSharp className="mr-2 text-xl" />
+            <span>Dashboard Settings</span>
+          </div>
+        </div>
       <div className="grid grid-cols-2 gap-6">
         <div>
           <Formik
@@ -260,7 +291,7 @@ const Settings = () => {
             {(formikProps) => (
               <Form
                 className={`rounded-lg shadow-md px-8 py-6 mb-4 ${
-                  isDarkMode ? "bg-gray-700" : "bg-white"
+                  isDarkMode ? "bg-gray-800" : "bg-white"
                 }`}
               >
                 <div className="mb-6">
@@ -274,11 +305,8 @@ const Settings = () => {
                     type="text"
                     id="shop-name"
                     name="shopName"
-                    className={`py-2 px-4 border rounded-md focus:outline-none focus:border-blue-500 w-full ${
-                      isDarkMode
-                        ? "bg-gray-700 text-white"
-                        : "bg-white text-gray-800"
-                    }`}
+                    className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
+                
                   />
                 </div>
                 <div className="mb-6">
@@ -292,11 +320,8 @@ const Settings = () => {
                     type="text"
                     id="manager-name"
                     name="name"
-                    className={`py-2 px-4 border rounded-md focus:outline-none focus:border-blue-500 w-full ${
-                      isDarkMode
-                        ? "bg-gray-700 text-white"
-                        : "bg-white text-gray-800"
-                    }`}
+                    className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
+                
                   />
                 </div>
 
@@ -415,13 +440,9 @@ const Settings = () => {
                 </FieldArray>
 
                 <div className="flex items-center justify-end">
-                  <button
-                    type="submit"
-                    className="bg-gray-800 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                  <UpdateButton 
                     disabled={formikProps.isSubmitting}
-                  >
-                    Save Changes
-                  </button>
+                  />
                 </div>
               </Form>
             )}
@@ -455,13 +476,15 @@ const Settings = () => {
               {({ isSubmitting }) => (
                 <Form>
                   <Field name="profileImg" component={ImageUpload} />
-                  <button
-                    type="submit"
-                    className="bg-gray-800 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded mt-4 focus:outline-none focus:shadow-outline"
-                    disabled={isSubmitting}
-                  >
-                    Upload
-                  </button>
+                  <div className="mt-2">
+                  <LoadingUploadButton
+                      disabled={isSubmitting}
+                      isUploading={isUploading}
+                  />
+                  </div>
+                  <div className="my-4">
+              <ProgressBar progress={uploadProgress} />
+            </div>
                 </Form>
               )}
             </Formik>

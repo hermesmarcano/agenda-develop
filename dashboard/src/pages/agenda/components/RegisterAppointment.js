@@ -12,6 +12,9 @@ import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
+import { Store } from "react-notifications-component";
+import { AddButton, AddButtonWithTitle } from "../../../components/Styled";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const animatedComponents = makeAnimated();
 
@@ -27,6 +30,7 @@ const RegisterAppointment = ({
   setModelState,
 }) => {
   const navigate = useNavigate(this);
+  const { isDarkMode } = useContext(DarkModeContext);
   const { shopId } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -36,9 +40,28 @@ const RegisterAppointment = ({
   const [professionals, setProfessionals] = useState([]);
   const [services, setServices] = useState([]);
   const [allowManualDuration, setAllowManualDuration] = useState(false);
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
   const { sendNotification } = useContext(NotificationContext);
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
 
   useEffect(() => {
     instance
@@ -141,6 +164,8 @@ const RegisterAppointment = ({
         managerId: shopId,
       };
 
+      const customerName = clients.find((client) => client.id === customer);
+
       if (bookingInfo.product) {
         apptData.product = bookingInfo.product;
       }
@@ -155,11 +180,12 @@ const RegisterAppointment = ({
           setSubmitting(false);
           resetForm();
           setModelState(false);
-          setAlertMsg(
-            "Reservation has been scheduled, go to checkout to process payment"
+          notify(
+            "New Reservation",
+            `Reservation for customer ${customerName.name} has been scheduled, go to checkout to process payment`,
+            "success"
           );
-          setAlertMsgType("success");
-          setAlertOn(true);
+
           sendNotification(
             "New Reservation - " +
               new Intl.DateTimeFormat("en-GB", {
@@ -172,8 +198,11 @@ const RegisterAppointment = ({
           );
         })
         .catch((error) => {
-          console.error(error.message);
-          // Handle errors
+          notify(
+            "Error",
+            `Some of the data has already been registered before`,
+            "danger"
+          );
         });
     };
 
@@ -399,7 +428,7 @@ const RegisterAppointment = ({
           }
 
           return (
-            <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto">
+            <Form className="rounded-lg px-8 py-6 mb-4 overflow-y-auto">
               {loading ? (
                 <div className="grid grid-cols-2 gap-5">
                   <div>
@@ -468,14 +497,14 @@ const RegisterAppointment = ({
                           <>
                             <label
                               htmlFor="name"
-                              className="block text-sm font-semibold text-gray-700 mb-2"
+                              className="block text-sm font-semibold mb-2"
                             >
                               New Client
                             </label>
                             <div className="mb-4">
                               <label
                                 htmlFor="name"
-                                className="block text-xs font-semibold text-gray-700 mb-2"
+                                className="block text-xs font-semibold mb-2"
                               >
                                 Name
                               </label>
@@ -483,7 +512,9 @@ const RegisterAppointment = ({
                                 type="text"
                                 id="name"
                                 name="name"
-                                className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className={`input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500  ${
+                                  isDarkMode ? "bg-gray-700" : "bg-white"
+                                }`}
                                 {...getFieldProps("name")}
                               />
                               <ErrorMessage
@@ -495,7 +526,7 @@ const RegisterAppointment = ({
                             <div className="mb-4">
                               <label
                                 htmlFor="phone"
-                                className="block text-xs font-semibold text-gray-700 mb-2"
+                                className="block text-xs font-semibold mb-2"
                               >
                                 Phone
                               </label>
@@ -503,7 +534,9 @@ const RegisterAppointment = ({
                                 type="text"
                                 id="phone"
                                 name="phone"
-                                className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className={`input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500   ${
+                                  isDarkMode ? "bg-gray-700" : "bg-white"
+                                }`}
                                 {...getFieldProps("phone")}
                               />
                               <ErrorMessage
@@ -516,36 +549,33 @@ const RegisterAppointment = ({
                         )}
                       </div>
                       <div>
-                        <button
-                          type="button"
-                          className="add-customer-button w-full flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        <AddButtonWithTitle
                           onClick={() =>
                             setAddCustomerClicked(!addCustomerClicked)
                           }
                         >
                           {!addCustomerClicked ? (
-                            <>
-                              <FaPlus className="mr-2" />
-                              Add Customer
-                            </>
+                            <>Add Customer</>
                           ) : (
                             "Select Customer"
                           )}
-                        </button>
+                        </AddButtonWithTitle>
                       </div>
                     </div>
 
                     <div className="mb-4">
                       <label
                         htmlFor="service"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold mb-2"
                       >
                         Services
                       </label>
                       <Select
                         id="service"
                         name="service"
-                        className="input-field"
+                        className={`input-field  ${
+                          isDarkMode ? "bg-gray-700" : "bg-white"
+                        }`}
                         options={services.map((service) => ({
                           value: service._id,
                           label: service.name,
@@ -582,7 +612,7 @@ const RegisterAppointment = ({
                     <div className="flex justify-start items-center">
                       <label
                         htmlFor="manualDuration"
-                        className={`block text-sm font-semibold text-gray-700 mb-2`}
+                        className={`block text-sm font-semibold mb-2`}
                       >
                         Set Duration Manually
                       </label>
@@ -608,28 +638,42 @@ const RegisterAppointment = ({
                     <div className="mb-4">
                       <label
                         htmlFor="appointmentDuration"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold mb-2"
                       >
                         Appointment Duration
                       </label>
-                      <div className="flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden">
+                      <div
+                        className={`flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden  ${
+                          isDarkMode ? "bg-gray-700" : "bg-white"
+                        }`}
+                      >
                         <div className="flex items-center w-full">
                           <input
                             type="number"
                             id="hours"
                             name="hours"
                             value={values.appointmentDuration.split(":")[0]}
-                            className="input-field w-1/2 sm:w-14 py-2 px-2 text-center text-gray-700 focus:outline-none"
+                            className={`input-field w-1/2 sm:w-14 py-2 px-2 text-center focus:outline-none ${
+                              isDarkMode ? "bg-gray-700" : "bg-white"
+                            }`}
                             onChange={handleDurationChange}
                             disabled={!allowManualDuration}
                           />
-                          <span className="text-gray-600 px-2">:</span>
+                          <div
+                            className={`px-2 h-full ${
+                              isDarkMode ? "bg-gray-700" : "bg-white"
+                            }`}
+                          >
+                            <span>:</span>
+                          </div>
                           <input
                             type="number"
                             id="minutes"
                             name="minutes"
                             value={values.appointmentDuration.split(":")[1]}
-                            className="input-field w-1/2 sm:w-14 py-2 px-2 text-center text-gray-700 focus:outline-none"
+                            className={`input-field w-1/2 sm:w-14 py-2 px-2 text-center focus:outline-none ${
+                              isDarkMode ? "bg-gray-700" : "bg-white"
+                            }`}
                             onChange={handleDurationChange}
                             step="5"
                             disabled={!allowManualDuration}
@@ -647,7 +691,7 @@ const RegisterAppointment = ({
                     <div className="mb-4">
                       <label
                         htmlFor="date"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold mb-2"
                       >
                         Date
                       </label>
@@ -656,7 +700,10 @@ const RegisterAppointment = ({
                         id="date"
                         name="date"
                         value={values.date}
-                        className="input-field"
+                        className={`input-field  ${
+                          isDarkMode ? "bg-gray-700" : "bg-white"
+                        }
+                        ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
                         {...getFieldProps("date")}
                       />
                       <ErrorMessage
@@ -668,7 +715,7 @@ const RegisterAppointment = ({
                     <div className="mb-4">
                       <label
                         htmlFor="time"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold mb-2"
                       >
                         Time
                       </label>
@@ -677,7 +724,10 @@ const RegisterAppointment = ({
                         id="time"
                         name="time"
                         value={values.time}
-                        className="input-field"
+                        className={`input-field  ${
+                          isDarkMode ? "bg-gray-700" : "bg-white"
+                        }
+                        ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
                         {...getFieldProps("time")}
                       />
                       <ErrorMessage
@@ -690,18 +740,6 @@ const RegisterAppointment = ({
                 </div>
               )}
               <div className="flex items-center">
-                {/* <button
-                type="submit"
-                disabled={isSubmitting}
-                className="checkout-button flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {isSubmitting ? (
-                  <FaSpinner className="animate-spin mr-2" />
-                ) : (
-                  <FaCheck className="mr-2" />
-                )}
-                Proceed to Checkout
-              </button> */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -739,6 +777,7 @@ const RegisterAppointment = ({
 export default RegisterAppointment;
 
 const CustomSelect = ({ label, options, ...props }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
   const [field, meta, helpers] = useField(props);
 
   const handleChange = (selectedOption) => {
@@ -754,14 +793,16 @@ const CustomSelect = ({ label, options, ...props }) => {
     <div className="mb-4">
       <label
         htmlFor={props.id || props.name}
-        className="block text-sm font-semibold text-gray-700 mb-2"
+        className="block text-sm font-semibold mb-2"
       >
         {label}
       </label>
       <Select
         id={props.id || props.name}
         name={props.name}
-        className="input-field"
+        className={`input-field ${
+          isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"
+        }`}
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}

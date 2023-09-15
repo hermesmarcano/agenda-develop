@@ -83,11 +83,10 @@ const Login = () => {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${
-                        errors.email && touched.email
+                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${errors.email && touched.email
                           ? "border-red-500"
                           : "border-gray-300"
-                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                        } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                       placeholder="Email address"
                     />
                   </div>
@@ -114,11 +113,10 @@ const Login = () => {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
-                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${
-                        errors.password && touched.password
+                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${errors.password && touched.password
                           ? "border-red-500"
                           : "border-gray-300"
-                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                        } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                       placeholder="Password"
                     />
                     <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
@@ -150,7 +148,7 @@ const Login = () => {
                 <div>
                   <button
                     type="submit"
-                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded  text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded  text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-300"
                   >
                     Sign in
                   </button>

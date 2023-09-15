@@ -1,41 +1,41 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
-import { FaSpinner } from "react-icons/fa";
-import { TiPlus } from "react-icons/ti";
 import { RiCloseCircleLine } from "react-icons/ri";
+import { TiPlus } from "react-icons/ti";
 import instance from "../../../axiosConfig/axiosConfig";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, RegisterButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
 
-const UpdateProfessional = ({
-  setModelState,
-  professionalId,
-  workingHours,
-}) => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
+const RegisterProfessional = ({ setModelState, workingHours }) => {
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
-  const [professionalData, setProfessionalData] = useState(null);
-  const token = localStorage.getItem("ag_app_shop_token");
-  useEffect(() => {
-    instance
-      .get(`professionals/${professionalId}`, {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        setProfessionalData(response.data.data);
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
-  }, []);
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: 'top',
+      container: 'bottom-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
+
   const validationSchema = Yup.object({
     name: Yup.string().required("Required"),
     officeHours: Yup.array()
@@ -70,7 +70,6 @@ const UpdateProfessional = ({
             const startHourB = value[j].startHour;
             const endHourB = value[j].endHour;
 
-            // Check if there is any overlap between the two periods
             if (
               (startHourA <= startHourB && startHourB < endHourA) ||
               (startHourA < endHourB && endHourB <= endHourA) ||
@@ -90,48 +89,21 @@ const UpdateProfessional = ({
     description: Yup.string().required("Required"),
   });
 
-  const hoursOptions = [];
-  for (let i = 8; i <= 17; i++) {
-    const hour = i <= 12 ? i : i - 12;
-    const period = i < 12 ? "AM" : "PM";
-    hoursOptions.push(
-      <option key={i} value={i}>
-        {hour}:00 {period}
-      </option>
-    );
-  }
-
-  if (!professionalData) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="flex flex-col justify-center items-center space-x-2">
-          <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <>
-      <h2
-        className={`text-xl text-left font-bold mb-4 text-${
-          isDarkMode ? "white" : "gray-700"
-        }`}
-      >
-        Update Professional
-      </h2>
+    <div
+      className={`bg-${
+        isDarkMode ? "gray-800" : "white"
+      } transition-all duration-300  shadow-lg rounded-md m-2`}
+    >
       <Formik
         initialValues={{
-          name: professionalData.name,
-          officeHours: professionalData?.officeHours || [
-            { startHour: 0, endHour: 0 },
-          ],
-          description: professionalData.description,
+          name: "",
+          officeHours: [{ startHour: 0, endHour: 0 }],
+          description: "",
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting, resetForm }) => {
-          const patchData = {
+          const postData = {
             name: values.name,
             officeHours: values.officeHours,
             description: values.description,
@@ -140,21 +112,15 @@ const UpdateProfessional = ({
 
           const fetchRequest = async () => {
             try {
-              const response = await instance.patch(
-                `professionals/${professionalId}`,
-                patchData,
-                {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: localStorage.getItem("ag_app_shop_token"),
-                  },
-                }
-              );
-              setAlertMsg("Professional has been updated");
-              setAlertMsgType("success");
-              setAlertOn(true);
+              const response = await instance.post("professionals/", postData, {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: localStorage.getItem("ag_app_shop_token"),
+                },
+              });
+              notify("New Professional", `New Professional "${values.name}" has registered`, "success")
               sendNotification(
-                "Professional updated - " +
+                "New Professional - " +
                   new Intl.DateTimeFormat("en-GB", {
                     day: "2-digit",
                     month: "2-digit",
@@ -164,7 +130,7 @@ const UpdateProfessional = ({
                   }).format(new Date())
               );
             } catch (e) {
-              console.error(e.message);
+              notify("Error", `Some of the data has already been registered before`, "danger");
             }
           };
 
@@ -194,15 +160,15 @@ const UpdateProfessional = ({
           return (
             <Form
               className={`bg-${
-                isDarkMode ? "gray-700" : "white"
-              } text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
+                isDarkMode ? "gray-800" : "white"
+              } rounded px-8 pt-6 pb-8 mb-4`}
             >
               <div className="mb-4">
                 <label
                   htmlFor="name"
-                  className={`block text-sm font-bold mb-2 text-${
+                  className={`block text-sm text-${
                     isDarkMode ? "white" : "gray-700"
-                  }`}
+                  } font-bold mb-2`}
                 >
                   Name
                 </label>
@@ -210,12 +176,8 @@ const UpdateProfessional = ({
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Enter the name of the professional"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  placeholder="Professional Name"
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="name"
@@ -228,15 +190,15 @@ const UpdateProfessional = ({
                   <div className="space-y-4 mb-4">
                     <label
                       htmlFor="officeHours"
-                      className={`block text-sm font-bold mb-2 text-${
+                      className={`block text-sm text-${
                         isDarkMode ? "white" : "gray-700"
-                      }`}
+                      } font-bold mb-2`}
                     >
                       Office Hours
                     </label>
                     {formikProps.values.officeHours.map((officeHour, index) => (
                       <div key={index} className="flex items-center space-x-2">
-                        <div className="flex items-center space-x-2 w-64">
+                        <div className="flex items-center space-x-2">
                           <div>
                             <label
                               htmlFor={`officeHours[${index}].startHour`}
@@ -257,7 +219,6 @@ const UpdateProfessional = ({
                                   : "border-gray-300"
                               } text-${isDarkMode ? "white" : "gray-700"} bg-${
                                 !isDarkMode ? "white" : "gray-500"
-                              }
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">Start hour</option>
@@ -289,7 +250,6 @@ const UpdateProfessional = ({
                                   : "border-gray-300"
                               } text-${isDarkMode ? "white" : "gray-700"} bg-${
                                 !isDarkMode ? "white" : "gray-500"
-                              }
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
                               <option value="">End hour</option>
@@ -329,15 +289,20 @@ const UpdateProfessional = ({
                         </button>
                       )}
                     </div>
+                    {/* <ErrorMessage
+                      name="officeHours"
+                      component="div"
+                      className="mt-1 text-sm text-red-500"
+                    /> */}
                   </div>
                 )}
               </FieldArray>
               <div className="mb-4">
                 <label
                   htmlFor="description"
-                  className={`block text-sm font-bold mb-2 text-${
+                  className={`block text-sm text-${
                     isDarkMode ? "white" : "gray-700"
-                  }`}
+                  } font-bold mb-2`}
                 >
                   Description
                 </label>
@@ -345,12 +310,8 @@ const UpdateProfessional = ({
                   as="textarea"
                   id="description"
                   name="description"
-                  placeholder="Enter a description of the professional"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    !isDarkMode ? "white" : "gray-500"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  placeholder="Short Description ..."
+                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 />
                 <ErrorMessage
                   name="description"
@@ -358,25 +319,16 @@ const UpdateProfessional = ({
                   className="text-red-500 text-xs italic"
                 />
               </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  className={`bg-${
-                    isDarkMode ? "gray-800" : "gray-600"
-                  } hover:bg-${
-                    isDarkMode ? "gray-600" : "gray-400"
-                  } text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-                  disabled={formikProps.isSubmitting}
-                >
-                  Update
-                </button>
+
+              <div className="flex items-center justify-end mt-8">
+                <RegisterButton disabled={formikProps.isSubmitting} />
               </div>
             </Form>
           );
         }}
       </Formik>
-    </>
+    </div>
   );
 };
 
-export default UpdateProfessional;
+export default RegisterProfessional;

@@ -7,9 +7,12 @@ import { HiEmojiSad } from "react-icons/hi";
 import { SidebarContext } from "../../context/SidebarContext";
 import { ViewModeContext } from "../../context/ViewModeContext";
 import CalendarBox from "./components/CalendarBox";
+import { Hourglass } from "../../components/Styled";
+import { DarkModeContext } from "../../context/DarkModeContext";
 
 const Agenda = () => {
   const { shopName, shopId } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   const [date, setDate] = useState(new Date());
   const getStartOfWeek = (date) => {
@@ -31,7 +34,7 @@ const Agenda = () => {
   const [selectedProfessional, setSelectedProfessional] = useState(null);
   const [selectedProfessionals, setSelectedProfessionals] = useState([]);
   const { viewMode } = useContext(ViewModeContext);
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (shopId !== "") {
@@ -80,8 +83,7 @@ const Agenda = () => {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col justify-center items-center space-x-2">
-          <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">Loading...</span>
+          <Hourglass />
         </div>
       </div>
     );
@@ -144,32 +146,31 @@ const Agenda = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-1 md:flex md: mx-auto px-2 mt-2 pb-2">
+      <div className="grid grid-cols-1 gap-1 md:flex md:mx-auto px-2 mt-2 pb-2">
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
-          <div className="md:hidden flex justify-center w-full items-center border border-gray-400 p-4 mb-3">
-          <img
-  className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-  src={myShopImg}
-  alt="Shop logo"
-/>
+          <div className={`md:hidden flex justify-center w-full items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"} shadow p-4 mb-3`}>
+            <img
+              className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+              src={myShopImg}
+              alt="Shop logo"
+            />
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
           </div>
-          <div className="w-full md:w-auto mb-3 md:mb-0 flex justify-center ">
+          <div className={`w-full md:w-auto mb-3 flex justify-center items-center ${isDarkMode? "bg-gray-800" : "bg-teal-600"} rounded-md shadow`}>
             <CalendarBox
               selectedDate={date}
               setSelectedDate={setDate}
               handleDateClick={handleDateClick}
             />
           </div>
-          <div className="hidden md:flex justify-center items-center border border-gray-400 p-4 mt-3">
-          <img
-  className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
-  src={myShopImg}
-  alt="Shop logo"
-/>
-
+          <div className={`hidden md:flex justify-center items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"} shadow p-4`}>
+            <img
+              className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
+              src={myShopImg}
+              alt="Shop logo"
+            />
           </div>
-          <div className="flex flex-col items-start border border-gray-400 p-4 mt-3">
+          <div className={`flex flex-col items-start  ${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-md shadow p-4 mt-3`}>
             {viewMode === "daily" ? (
               <>
                 <label className="mb-1 font-bold">Select Professionals:</label>
@@ -214,7 +215,7 @@ const Agenda = () => {
                       />
                       <label
                         htmlFor={professional._id}
-                        className="service-name text-sm font-medium text-gray-700 flex  items-center"
+                        className="service-name text-sm font-medium flex  items-center"
                       >
                         <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
                           {selectedProfessionals.some(

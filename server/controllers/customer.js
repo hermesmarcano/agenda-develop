@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 // Function to create a new customer
 const createCustomer = async (req, res) => {
   try {
+    console.log(req.body);
     const customer = new Customer(req.body);
     await customer.save();
     res
@@ -87,7 +88,7 @@ const getCustomerById = async (req, res) => {
   try {
     const id = req.params.id;
     const customer = await Customer.findById(id).select(
-      "_id shopName name phone"
+      "_id shopName name phone email birthday address"
     );
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });

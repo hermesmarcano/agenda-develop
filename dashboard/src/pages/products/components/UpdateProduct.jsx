@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { SidebarContext } from "../../../context/SidebarContext";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
@@ -16,14 +15,39 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { v4 } from "uuid";
+import ProgressBar from "../../../components/ProgressBar";
+import { Store } from "react-notifications-component";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, LoadingRegisterButton, LoadingUpdateButton } from "../../../components/Styled";
 
 const UpdateProduct = ({ setModelState, productId }) => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [productData, setProductData] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0);
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: 'top',
+      container: 'bottom-center',
+      animationIn: ['animated', 'fadeIn'],
+      animationOut: ['animated', 'fadeOut'],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
+
   useEffect(() => {
     instance
       .get(`products/${productId}`, {
@@ -39,7 +63,6 @@ const UpdateProduct = ({ setModelState, productId }) => {
       });
   }, []);
 
-  const { shopId } = useContext(SidebarContext);
   const validationSchema = Yup.object().shape({
     name: Yup.string(),
     speciality: Yup.string(),
@@ -52,6 +75,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
+      setIsUpdating(true)
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
         console.error("Token not found");
@@ -70,6 +94,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
             let progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log(progress);
+            setUploadProgress(progress)
           },
           (error) => {
             console.log("error");
@@ -100,9 +125,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   })
                   .then((res) => {
                     console.log(res);
-                    setAlertMsg("Product has been updated");
-                    setAlertMsgType("success");
-                    setAlertOn(true);
+                    notify("Update", `"Product ${values.name}" has been updated`, "success")
                     sendNotification(
                       "Product updated - " +
                         new Intl.DateTimeFormat("en-GB", {
@@ -113,10 +136,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
                           minute: "2-digit",
                         }).format(new Date())
                     );
+                    setIsUpdating(false);
                     setModelState(false);
                   })
                   .catch((error) => {
-                    console.log(error);
+                    notify("Error", `Some of the data has already been registered before`, "danger");
                   });
               });
           }
@@ -138,9 +162,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
           })
           .then((res) => {
             console.log(res);
-            setAlertMsg("Product has been updated");
-            setAlertMsgType("success");
-            setAlertOn(true);
+            notify("Update", `"Product ${values.name}" has been updated`, "success")
             sendNotification(
               "Product updated - " +
                 new Intl.DateTimeFormat("en-GB", {
@@ -151,11 +173,13 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   minute: "2-digit",
                 }).format(new Date())
             );
+            setUploadProgress(100);
+            setIsUpdating(false);
             setModelState(false);
           });
       }
     } catch (error) {
-      console.log(error);
+      notify("Error", `Some of the data has already been registered before`, "danger");
     }
 
     setSubmitting(false);
@@ -193,14 +217,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
   };
 
   return (
-    <>
-      <h2
-        className={`text-xl text-left font-bold mb-4 text-${
-          isDarkMode ? "white" : "gray-700"
-        }`}
-      >
-        Update Product
-      </h2>
+    <div
+      className={`bg-${
+        isDarkMode ? "gray-800" : "white"
+      } transition-all duration-300  shadow-lg rounded-md m-2`}
+    >
       {productData ? (
         <Formik
           initialValues={{
@@ -216,10 +237,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
         >
           {(formikProps) => (
             <Form
-              className={`bg-${
-                isDarkMode ? "gray-700" : "white"
-              } text-left rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}
-            >
+            className={`bg-${isDarkMode ? "gray-700" : "white"
+              } rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto text-left`}
+          >
               <div className="mb-4">
                 <label
                   htmlFor="name"
@@ -234,11 +254,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   id="name"
                   name="name"
                   placeholder="Enter the new name of the product"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    isDarkMode ? "gray-500" : "white"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 />
                 <ErrorMessage
                   name="name"
@@ -260,11 +278,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   id="speciality"
                   name="speciality"
                   placeholder="Enter the speciality of the product"
-                  className={`py-2 pl-8 border-b-2 border-${
-                    isDarkMode ? "gray-600" : "gray-300"
-                  } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                    isDarkMode ? "gray-500" : "white"
-                  } focus:outline-none focus:border-blue-500 w-full`}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 />
                 <ErrorMessage
                   name="speciality"
@@ -287,11 +303,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     id="costBRL"
                     name="costBRL"
                     placeholder="0.00"
-                    className={`py-2 pl-8 border-b-2 border-${
-                      isDarkMode ? "gray-600" : "gray-300"
-                    } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                      isDarkMode ? "gray-500" : "white"
-                    } focus:outline-none focus:border-blue-500 w-full`}
+                    className={`${
+                      isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                    }`}
                   />
                   <ErrorMessage
                     name="costBRL"
@@ -313,11 +327,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     id="price"
                     name="price"
                     placeholder="0.00"
-                    className={`py-2 pl-8 border-b-2 border-${
-                      isDarkMode ? "gray-600" : "gray-300"
-                    } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                      isDarkMode ? "gray-500" : "white"
-                    } focus:outline-none focus:border-blue-500 w-full`}
+                    className={`${
+                      isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                    }`}
                   />
                   <ErrorMessage
                     name="price"
@@ -339,11 +351,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     id="stock"
                     name="stock"
                     placeholder="0"
-                    className={`py-2 pl-8 border-b-2 border-${
-                      isDarkMode ? "gray-600" : "gray-300"
-                    } text-${isDarkMode ? "white" : "gray-700"} bg-${
-                      isDarkMode ? "gray-500" : "white"
-                    } focus:outline-none focus:border-blue-500 w-full`}
+                    className={`${
+                      isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                    }`}
                   />
                   <ErrorMessage
                     name="stock"
@@ -393,31 +403,25 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   />
                 )}
               </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="submit"
-                  className={`bg-${
-                    isDarkMode ? "gray-800" : "gray-600"
-                  } hover:bg-${
-                    isDarkMode ? "gray-600" : "gray-400"
-                  } text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
+              <div className="mb-4">
+                <ProgressBar progress={uploadProgress} />
+              </div>
+
+              <div className="flex items-center justify-end mt-8">
+              <LoadingUpdateButton
                   disabled={formikProps.isSubmitting}
-                >
-                  Update
-                </button>
+                  isUpdating={isUpdating}
+                />
               </div>
             </Form>
           )}
         </Formik>
       ) : (
         <div className="flex items-center justify-center h-screen">
-          <div className="flex flex-col justify-center items-center space-x-2">
-            <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
-          </div>
+          <Hourglass />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

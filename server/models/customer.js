@@ -24,9 +24,6 @@ const customerSchema = new mongoose.Schema(
     address: {
       type: String,
     },
-    shopName: {
-      type: String,
-    },
     payments: {
       type: Number,
       default: 0,

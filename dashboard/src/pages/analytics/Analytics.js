@@ -11,6 +11,8 @@ import BillsSection from "./components/BillsSection";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import instance from "../../axiosConfig/axiosConfig";
+import { titleDarkStyle, titleLightStyle } from "../../components/Styled";
+import { FaChartLine } from "react-icons/fa";
 
 const Analytics = () => {
   const { shopId } = useContext(SidebarContext);
@@ -169,23 +171,26 @@ const Analytics = () => {
 
   return (
     <div className="flex w-full flex-col h-full p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold mb-5">Analytics</h1>
-      </div>
-      <div className="flex w-full flex-col gap-2 lg:flex-row h-full overflow-y-auto p-6">
-        <div className="flex justify-between lg:block mb-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-1 gap-1 mx-auto">
+      <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
+          <div className="flex items-center justify-center">
+            <FaChartLine className="mr-2 text-xl" />
+            <span>Analytics</span>
+          </div>
+        </div>
+      <div className="flex w-full flex-col gap- h-full overflow-y-auto p-6">
+        <div className="flex justify-between mb-4">
+          <div className="grid grid-cols-4 gap-1 mx-auto">
             <div>
               <button
-                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                className={`flex justify-center items-center py-2 rounded-md  ${
                   currentSection === 1
-                    ? ` text-blue-500 animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center
+                    ? ` text-blue-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto text-gray-700
                     ${
                       isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 "
+                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
                         : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
@@ -200,7 +205,7 @@ const Analytics = () => {
                     <TiTicket className="w-5 h-5" />
                   </span>
                   <span
-                    className={`lg:hidden ${
+                    className={`${
                       currentSection === 1 ? "animate-drop" : "opacity-100"
                     }`}
                   >
@@ -208,32 +213,20 @@ const Analytics = () => {
                   </span>
                 </span>
               </button>
-              {currentSection === 1 && (
-                <span
-                  className={`hidden lg:flex justify-center shadow-inner lg:rounded-b-md text-sm
-                ${
-                  isDarkMode
-                    ? "bg-gray-500 text-gray-300"
-                    : "bg-gray-300 text-gray-500"
-                }
-                `}
-                >
-                  Tickets
-                </span>
-              )}
+              
             </div>
 
             <div>
               <button
-                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                className={`flex justify-center items-center py-2 rounded-md  ${
                   currentSection === 2
-                    ? ` text-green-500 animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center
+                    ? ` text-green-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto text-gray-700
                     ${
                       isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 "
+                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
                         : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
@@ -248,7 +241,7 @@ const Analytics = () => {
                     <IoMdCash className="w-5 h-5" />
                   </span>
                   <span
-                    className={`lg:hidden ${
+                    className={`${
                       currentSection === 2 ? "animate-drop" : "opacity-100"
                     }`}
                   >
@@ -256,31 +249,20 @@ const Analytics = () => {
                   </span>
                 </span>
               </button>
-              {currentSection === 2 && (
-                <span
-                  className={`hidden lg:flex justify-center shadow-inner lg:rounded-b-md text-sm
-                ${
-                  isDarkMode
-                    ? "bg-gray-500 text-gray-300"
-                    : "bg-gray-300 text-gray-500"
-                }
-                `}
-                >
-                  Cash Flow
-                </span>
-              )}
+              
             </div>
+
             <div>
               <button
-                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                className={`flex justify-center items-center py-2 rounded-md  ${
                   currentSection === 3
-                    ? ` text-yellow-500 animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center
+                    ? ` text-yellow-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto text-gray-700
                     ${
                       isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 "
+                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
                         : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
@@ -295,7 +277,7 @@ const Analytics = () => {
                     <BsCreditCard className="w-5 h-5" />
                   </span>
                   <span
-                    className={`lg:hidden ${
+                    className={`${
                       currentSection === 3 ? "animate-drop" : "opacity-100"
                     }`}
                   >
@@ -303,32 +285,20 @@ const Analytics = () => {
                   </span>
                 </span>
               </button>
-              {currentSection === 3 && (
-                <span
-                  className={`hidden lg:flex justify-center shadow-inner lg:rounded-b-md text-sm
-                ${
-                  isDarkMode
-                    ? "bg-gray-500 text-gray-300"
-                    : "bg-gray-300 text-gray-500"
-                }
-                `}
-                >
-                  Commission
-                </span>
-              )}
+              
             </div>
 
             <div>
               <button
-                className={`flex justify-center lg:justify-start items-center py-2 rounded-md lg:rounded-t-md lg:rounded-b-none ${
+                className={`flex justify-center items-center py-2 rounded-md  ${
                   currentSection === 4
-                    ? ` text-red-500 animate-drop nav-item-selected lg:w-24 lg:flex lg:justify-center
+                    ? ` text-red-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto text-gray-700
                     ${
                       isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 "
+                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
                         : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
@@ -343,7 +313,7 @@ const Analytics = () => {
                     <AiOutlineDollarCircle className="w-5 h-5" />
                   </span>
                   <span
-                    className={`lg:hidden ${
+                    className={`${
                       currentSection === 4 ? "animate-drop" : "opacity-100"
                     }`}
                   >
@@ -351,19 +321,7 @@ const Analytics = () => {
                   </span>
                 </span>
               </button>
-              {currentSection === 4 && (
-                <span
-                  className={`hidden lg:flex justify-center shadow-inner lg:rounded-b-md text-sm
-                ${
-                  isDarkMode
-                    ? "bg-gray-500 text-gray-300"
-                    : "bg-gray-300 text-gray-500"
-                }
-                `}
-                >
-                  Bills
-                </span>
-              )}
+              
             </div>
           </div>
         </div>

@@ -17,6 +17,7 @@ import { IoMdAdd } from "react-icons/io";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import instance from "../../../axiosConfig/axiosConfig";
+import { SaveButton } from "../../../components/Styled";
 
 const CashFlowSection = () => {
   const [customers, setCustomers] = useState([]);
@@ -238,7 +239,6 @@ const CashFlowSection = () => {
       .then((response) => {
         setAppointments(response.data.appointments);
 
-        // Get the next 7 days' appointments
         const today = new Date();
         const nextSevenDays = [];
         for (let i = 1; i <= 7; i++) {
@@ -284,7 +284,7 @@ const CashFlowSection = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         <div
           className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
           <h2 className="text-lg font-bold mb-4">Earnings</h2>
@@ -313,7 +313,7 @@ const CashFlowSection = () => {
         </div>
         <div
           className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
           <h2 className="text-lg font-bold mb-4">Total Customers</h2>
@@ -326,7 +326,7 @@ const CashFlowSection = () => {
         </div>
         <div
           className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
           <h2 className="text-lg font-bold mb-4">Total Sold Products</h2>
@@ -339,7 +339,7 @@ const CashFlowSection = () => {
         </div>
         <div
           className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
           <h2 className="text-lg font-bold mb-4">Reserved Appointments</h2>
@@ -356,7 +356,7 @@ const CashFlowSection = () => {
 
       <div
         className={`shadow-md rounded-md p-6 mt-8 mb-8
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
       >
         <h2 className="text-lg font-bold mb-4">Earnings/Expenses Per Day</h2>
@@ -388,7 +388,7 @@ const CashFlowSection = () => {
         <div className="mb-8">
           <div
             className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
           >
             <h2 className="text-lg font-bold mb-4">Earnings by Service</h2>
@@ -408,7 +408,7 @@ const CashFlowSection = () => {
         <div className="mb-8">
           <div
             className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
           >
             <h2 className="text-lg font-bold mb-4">Earnings by Professional</h2>
@@ -428,7 +428,7 @@ const CashFlowSection = () => {
 
       <div
         className={`shadow-md rounded-md p-6
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
       >
         <div className="flex justify-between items-center">
@@ -565,7 +565,7 @@ const CashFlowSection = () => {
 
       <div
         className={`shadow-md rounded-md p-6 mt-8
-        ${isDarkMode ? "bg-gray-700" : "bg-white"}
+        ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
       >
         <h2 className="text-lg font-bold mb-4">Expenses</h2>
@@ -675,14 +675,11 @@ const CashFlowSection = () => {
                   />
                 </div>
               </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="mt-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg flex items-center"
-              >
-                <IoMdAdd className="mr-2" />
-                Add Expense
-              </button>
+              <div className="mt-4">
+                    <SaveButton 
+                       disabled={isSubmitting}       
+                    />
+              </div>
             </Form>
           )}
         </Formik>

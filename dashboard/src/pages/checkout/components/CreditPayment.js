@@ -209,22 +209,18 @@ const CreditPayment = ({
       {isOpen && (
         <div className="fixed z-20 inset-0 flex justify-center items-center overflow-y-auto bg-black bg-opacity-25">
           <div
-            className={`w-96 my-auto mx-auto rounded-md ${
-              isDarkMode ? "bg-gray-800" : "bg-white"
-            }`}
+            className={`w-96 my-auto mx-auto rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"
+              }`}
           >
-            <form onSubmit={handleConfirm}>
               <div
-                className={`rounded-md shadow-md p-6 ${
-                  isDarkMode ? "bg-gray-800" : "bg-white"
-                }`}
+                className={`rounded-md shadow-md p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"
+                  }`}
               >
                 <PaymentWaiting />
                 <div className="flex justify-between items-center mt-4">
                   <span
-                    className={`font-semibold ${
-                      isDarkMode ? "text-white" : "text-gray-700"
-                    }`}
+                    className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-700"
+                      }`}
                   >
                     Amount to Pay:
                   </span>
@@ -233,29 +229,26 @@ const CreditPayment = ({
                   </span>
                 </div>
                 <button
-                  type="submit"
-                  className={`w-full mt-4 ${
-                    isDarkMode
-                      ? "bg-gray-700 hover:bg-gray-600"
-                      : "bg-gray-800 hover:bg-gray-700"
-                  } text-white py-2 px-4 rounded-md font-semibold text-sm`}
+                  onClick={handleConfirm}
+                  className={`w-full mt-4 ${isDarkMode
+                    ? "bg-gray-700 hover:bg-gray-600"
+                    : "bg-teal-800 hover:bg-teal-700"
+                    } text-white py-2 px-4 rounded-md font-semibold text-sm`}
                 >
                   {/* Pay Now */}
                   Confirm Payment
                 </button>
                 <button
-                  className={`w-full mt-2 ${
-                    isDarkMode
-                      ? "bg-gray-600 hover:bg-gray-500"
-                      : "bg-gray-500 hover:bg-gray-600"
-                  } text-white py-2 px-4 rounded-md flex items-center justify-center font-semibold text-sm`}
+                  className={`w-full mt-2 ${isDarkMode
+                    ? "bg-gray-600 hover:bg-gray-500"
+                    : "bg-gray-500 hover:bg-gray-600"
+                    } text-white py-2 px-4 rounded-md flex items-center justify-center font-semibold text-sm`}
                   onClick={handleCancel}
                 >
                   <FiX className="h-5 w-5 mr-2" />
                   Cancel
                 </button>
               </div>
-            </form>
           </div>
         </div>
       )}
@@ -270,95 +263,80 @@ const PaymentWaiting = () => {
 
   return (
     <div
-      className={`flex justify-center items-center rounded-md ${
-        isDarkMode ? "bg-gray-800" : "bg-gray-200"
-      }`}
+      className={`flex justify-center items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-gray-200"
+        }`}
     >
       <div
-        className={`max-w-sm rounded overflow-hidden shadow-lg ${
-          isDarkMode ? "bg-gray-900" : "bg-white"
-        } p-8`}
+        className={`max-w-sm rounded overflow-hidden shadow-lg ${isDarkMode ? "bg-gray-900" : "bg-white"
+          } p-8`}
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <FaCreditCard
-              className={`text-4xl ${
-                isDarkMode ? "text-gray-200" : "text-gray-800"
-              } mr-4`}
+              className={`text-4xl ${isDarkMode ? "text-gray-200" : "text-teal-800"
+                } mr-4`}
             />
             <h1
-              className={`text-xl font-semibold ${
-                isDarkMode ? "text-gray-200" : "text-gray-800"
-              }`}
+              className={`text-xl font-semibold ${isDarkMode ? "text-gray-200" : "text-gray-800"
+                }`}
             >
               Credit Card Payment
             </h1>
           </div>
           <div
-            className={`w-6 h-6 rounded-full ${
-              isDarkMode ? "bg-gray-600" : "bg-gray-800"
-            } animate-pulse`}
+            className={`w-6 h-6 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-teal-800"
+              } animate-pulse`}
           />
         </div>
         <div
-          className={`${
-            isDarkMode ? "bg-gray-700" : "bg-gray-100"
-          } p-6 rounded-lg`}
+          className={`${isDarkMode ? "bg-gray-700" : "bg-gray-100"
+            } p-6 rounded-lg`}
         >
           <div className="flex items-center mb-4">
             <div
-              className={`w-12 h-8 ${
-                isDarkMode ? "bg-gray-600" : "bg-gray-300"
-              } rounded`}
+              className={`w-12 h-8 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                } rounded`}
             />
             <div className="ml-4">
               <div
-                className={`w-24 h-4 ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-300"
-                } rounded mb-2`}
+                className={`w-24 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                  } rounded mb-2`}
               />
               <div
-                className={`w-16 h-4 ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-300"
-                } rounded`}
+                className={`w-16 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                  } rounded`}
               />
             </div>
           </div>
           <div className="flex items-center mb-4">
             <div
-              className={`w-24 h-4 ${
-                isDarkMode ? "bg-gray-600" : "bg-gray-300"
-              } rounded mr-4`}
+              className={`w-24 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                } rounded mr-4`}
             />
             <div className="flex-1">
               <div
-                className={`w-20 h-4 ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-300"
-                } rounded mb-2`}
+                className={`w-20 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                  } rounded mb-2`}
               />
               <div
-                className={`w-36 h-4 ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-300"
-                } rounded`}
+                className={`w-36 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                  } rounded`}
               />
             </div>
           </div>
           <div className="flex items-center">
             <div
-              className={`w-32 h-4 ${
-                isDarkMode ? "bg-gray-600" : "bg-gray-300"
-              } rounded mr-4`}
+              className={`w-32 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                } rounded mr-4`}
             />
             <div className="flex-1">
               <div
-                className={`w-56 h-4 ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-300"
-                } rounded mb-2`}
+                className={`w-56 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                  } rounded mb-2`}
               />
               <div
-                className={`w-48 h-4 ${
-                  isDarkMode ? "bg-gray-600" : "bg-gray-300"
-                } rounded`}
+                className={`w-48 h-4 ${isDarkMode ? "bg-gray-600" : "bg-gray-300"
+                  } rounded`}
               />
             </div>
           </div>

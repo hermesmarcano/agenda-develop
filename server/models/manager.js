@@ -66,6 +66,10 @@ const ManagerSchema = new Schema(
       enum: [true],
     },
     notifications: [notificationSchema],
+    isActive: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
