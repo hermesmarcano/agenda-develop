@@ -39,6 +39,18 @@ const Scheduler = ({
   const token = localStorage.getItem("ag_app_shop_token");
   const containerRef = React.useRef(null);
   const [containerWidth, setContainerWidth] = React.useState(0);
+  const [screenWidth, setScreenWidth] = React.useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
 
   useEffect(() => {
     const containerElement = containerRef.current;
@@ -349,11 +361,6 @@ const Scheduler = ({
                       startDateTime.setMinutes(hour.getMinutes());
                       startDateTime.setMinutes(index * 15);
 
-                      // const appointment = appointmentsList.find(
-                      //   (appt) =>
-                      //     new Date(appt.dateTime).toString() ===
-                      //     startDateTime.toString()
-                      // );
 
                       const appointment = appointmentsList.find((appt) => {
                         const isDateTimeMatch =
@@ -481,7 +488,7 @@ const Scheduler = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-gray-200 p-1 ${
+                            className={`h-6 p-1 ${
                               index !== 3 &&
                               "border-b border-dotted border-gray-400"
                             } cursor-crosshair hover:bg-gray-300`}
@@ -534,7 +541,7 @@ const Scheduler = ({
   const renderDailyView = (hoursArr, ind) => {
     const timeSlots = [];
     const numProfessionals = selectedProfessionals.length;
-    const slotWidth = `min-w-[135px] md:w-[100%]`;
+    const slotWidth = `min-w-[135px] md:w-full`;
     timeSlots.push(
       <div
         key="title"
@@ -813,7 +820,7 @@ const Scheduler = ({
 
   const renderScheduler = () => {
     return (
-      <div className={`p-4 mb-3 overflow-y-auto rounded-md shadow ${isDarkMode? "bg-gray-800" : "bg-white"}`}>
+      <div className={`p-4 mb-3 rounded-md shadow ${isDarkMode? "bg-gray-800" : "bg-white"}`}>
         <div
           className={`flex items-center justify-between ${
             viewMode === "daily" ? `` : `min-w-[989px]`

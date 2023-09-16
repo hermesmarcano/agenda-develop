@@ -9,6 +9,7 @@ import { ViewModeContext } from "../../context/ViewModeContext";
 import CalendarBox from "./components/CalendarBox";
 import { Hourglass } from "../../components/Styled";
 import { DarkModeContext } from "../../context/DarkModeContext";
+import SchedulerC from "./components/SchedularC";
 
 const Agenda = () => {
   const { shopName, shopId } = useContext(SidebarContext);
@@ -33,7 +34,7 @@ const Agenda = () => {
   const [workingHours, setWorkingHours] = useState([]);
   const [selectedProfessional, setSelectedProfessional] = useState(null);
   const [selectedProfessionals, setSelectedProfessionals] = useState([]);
-  const { viewMode } = useContext(ViewModeContext);
+  const { viewMode, setViewMode } = useContext(ViewModeContext);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -148,7 +149,11 @@ const Agenda = () => {
     <>
       <div className="grid grid-cols-1 gap-1 md:flex md:mx-auto px-2 mt-2 pb-2">
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
-          <div className={`md:hidden flex justify-center w-full items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"} shadow p-4 mb-3`}>
+          <div
+            className={`md:hidden flex justify-center w-full items-center rounded-md ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } shadow p-4 mb-3`}
+          >
             <img
               className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
               src={myShopImg}
@@ -156,21 +161,33 @@ const Agenda = () => {
             />
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
           </div>
-          <div className={`w-full md:w-auto mb-3 flex justify-center items-center ${isDarkMode? "bg-gray-800" : "bg-teal-600"} rounded-md shadow`}>
+          <div
+            className={`w-full md:w-auto mb-3 flex justify-center items-center ${
+              isDarkMode ? "bg-gray-800" : "bg-teal-600"
+            } rounded-md shadow`}
+          >
             <CalendarBox
               selectedDate={date}
               setSelectedDate={setDate}
               handleDateClick={handleDateClick}
             />
           </div>
-          <div className={`hidden md:flex justify-center items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"} shadow p-4`}>
+          <div
+            className={`hidden md:flex justify-center items-center rounded-md ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } shadow p-4`}
+          >
             <img
               className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
               src={myShopImg}
               alt="Shop logo"
             />
           </div>
-          <div className={`flex flex-col items-start  ${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-md shadow p-4 mt-3`}>
+          <div
+            className={`flex flex-col items-start  ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } rounded-md shadow p-4 mt-3`}
+          >
             {viewMode === "daily" ? (
               <>
                 <label className="mb-1 font-bold">Select Professionals:</label>
@@ -265,7 +282,29 @@ const Agenda = () => {
             )}
           </div>
         </div>
-        <div className="w-full flex-1">
+        <div className="w-full h-full">
+          {/* {selectedProfessionals.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-3xl font-bold mb-4">
+                <AiOutlineInbox className="inline-block mr-2" />
+                No Professionals Selected
+              </div>
+              <div className="text-gray-600 text-lg mb-8">
+                Please select professionals to show the Schedular.
+              </div>
+              <HiEmojiSad className="text-6xl text-gray-500" />
+            </div>
+          ) : (
+            <SchedulerC
+              selectedProfessional={selectedProfessional}
+              selectedProfessionals={selectedProfessionals}
+              startWeekDate={startWeekDate}
+              date={date}
+              workingHours={workingHours}
+              onSelectedDateChange={handleSelectedDateChange}
+              onSelectedWeekDateChange={handleSelectedWeekDateChange}
+            />
+          )} */}
           {viewMode === "daily" ? (
             selectedProfessionals.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full">

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, ErrorMessage, useField } from "formik";
 import * as Yup from "yup";
 import instance from "../../../axiosConfig/axiosConfig";
-import { FaCheck, FaCreditCard, FaPlus, FaSpinner } from "react-icons/fa";
+import { FaCheck, FaCreditCard, FaSpinner } from "react-icons/fa";
 import Select from "react-select";
 import Switch from "react-switch";
 import { useNavigate } from "react-router-dom";
@@ -10,10 +10,9 @@ import makeAnimated from "react-select/animated";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { Store } from "react-notifications-component";
-import { AddButton, AddButtonWithTitle } from "../../../components/Styled";
+import { AddButtonWithTitle } from "../../../components/Styled";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const animatedComponents = makeAnimated();
@@ -164,7 +163,8 @@ const RegisterAppointment = ({
         managerId: shopId,
       };
 
-      const customerName = clients.find((client) => client.id === customer);
+
+      const customerName = clients.find((client) => client._id === customer);
 
       if (bookingInfo.product) {
         apptData.product = bookingInfo.product;
@@ -198,11 +198,7 @@ const RegisterAppointment = ({
           );
         })
         .catch((error) => {
-          notify(
-            "Error",
-            `Some of the data has already been registered before`,
-            "danger"
-          );
+          notify("Error", error.message, "danger");
         });
     };
 
@@ -800,9 +796,7 @@ const CustomSelect = ({ label, options, ...props }) => {
       <Select
         id={props.id || props.name}
         name={props.name}
-        className={`input-field ${
-          isDarkMode ? "bg-gray-700 text-white" : "bg-white text-gray-800"
-        }`}
+        styles={{ color: "#222" }}
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}

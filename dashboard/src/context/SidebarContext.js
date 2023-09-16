@@ -4,7 +4,7 @@ import instance from "../axiosConfig/axiosConfig";
 const SidebarContext = React.createContext();
 
 const SidebarContextWrapper = ({ children }) => {
-  const [isSidebarOpen, toggleSidebar] = useState(true);
+  const [isSidebarOpen, toggleSidebar] = useState(false);
   const [shopId, setShopId] = useState("");
   const [shopName, setShopName] = useState("");
   const token = localStorage.getItem("ag_app_shop_token");

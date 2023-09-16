@@ -42,7 +42,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       name: "Clients",
       icon1: <FaUsers className="text-gray-400 h-7 w-7" />,
       icon2: <FaUsers className="text-gray-400 h-6 w-6" />,
-      link: "/clients",
+      link: "/customers",
     },
     {
       name: "Services",

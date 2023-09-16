@@ -11,7 +11,7 @@ import instance from "../axiosConfig/axiosConfig";
 const SideMenu = () => {
   const navigate = useNavigate();
   const { shopId, setShopId } = useContext(SidebarContext);
-  const { isSidebarOpen } = useContext(SidebarContext);
+  const { toggleSidebar } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const [expanded, setExpanded] = useState(false);
   const [selectedTag, setSelectedTag] = useState("agenda");
@@ -50,6 +50,7 @@ const SideMenu = () => {
 
   const handleExpansion = () => {
     setExpanded(!expanded);
+    toggleSidebar(!expanded);
   }
 
   return (
@@ -426,7 +427,7 @@ const SideMenu = () => {
                 </span>
                 </button>
               <button
-                type="submit"
+                onClick={logout}
                 className="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
               >
                 <svg
