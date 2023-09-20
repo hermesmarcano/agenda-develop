@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import {
   deleteObject,
   getDownloadURL,
@@ -19,7 +19,7 @@ const DashboardSettings = () => {
   const [username, setUsername] = useState("");
   const { websiteTitle, setWebsiteTitle } = useContext(WebsiteTitleContext);
   const { logo, setLogo } = useContext(LogoContext);
-  const [ isFetched, setIsFetched ] = useState(false);
+  const [isFetched, setIsFetched] = useState(false);
   useEffect(() => {
     fetchAdminData();
   }, []);

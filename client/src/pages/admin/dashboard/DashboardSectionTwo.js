@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import {
   deleteObject,
   getDownloadURL,

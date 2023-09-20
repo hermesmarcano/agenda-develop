@@ -100,17 +100,6 @@ const SchedulerC = ({
     onSelectedWeekDateChange(nextWeekDate);
   };
 
-  const getStartOfWeek = (date) => {
-    const startOfWeek = new Date(date);
-    const diff =
-      startOfWeek.getDate() -
-      startOfWeek.getDay() +
-      (startOfWeek.getDay() === 0 ? -6 : 1);
-    startOfWeek.setDate(diff);
-    startOfWeek.setHours(0, 0, 0, 0);
-    return startOfWeek;
-  };
-
   const formatDate = (date) => {
     const options = {
       weekday: "long",
@@ -120,7 +109,6 @@ const SchedulerC = ({
     };
     return date.toLocaleDateString(undefined, options);
   };
-
 
   return (
     <>
@@ -165,10 +153,10 @@ const SchedulerC = ({
             </div>
           )}
         </div>
-        <div>
+        <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => handleViewChange("daily")}
-            className={`mr-4 p-2 rounded ${
+            className={`p-2 rounded ${
               viewMode === "daily"
                 ? "bg-teal-600 text-white"
                 : "bg-teal-100 text-gray-800"

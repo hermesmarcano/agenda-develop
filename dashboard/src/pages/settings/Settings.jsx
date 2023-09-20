@@ -11,7 +11,7 @@ import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import { AlertContext } from "../../context/AlertContext";
 import { NotificationContext } from "../../context/NotificationContext";
-import { storage } from "../../services/fireBaseStorage";
+import { storage } from "../../services/firebaseStorage";
 import {
   deleteObject,
   getDownloadURL,

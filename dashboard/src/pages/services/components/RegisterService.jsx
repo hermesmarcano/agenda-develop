@@ -8,7 +8,7 @@ import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import { v4 } from "uuid";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import ProgressBar from "../../../components/ProgressBar";
 import { Store } from "react-notifications-component";
 import { DefaultInputDarkStyle, DefaultInputLightStyle, LoadingRegisterButton } from "../../../components/Styled";

@@ -46,6 +46,7 @@ const AppointmentsList = () => {
         },
       })
       .then((response) => {
+        console.log(response.data.appointments);
         const registeredAppointments = response.data.appointments.filter(
           (appt) => !appt.blocking
         );
@@ -86,11 +87,10 @@ const AppointmentsList = () => {
     pagination.push(
       <button
         key={i}
-        className={`${
-          currentPage === i
-            ? "bg-gray-200 text-gray-700"
-            : "bg-gray-100 text-gray-600"
-        } px-4 py-2 mx-1 rounded-md`}
+        className={`${currentPage === i
+          ? "bg-gray-200 text-gray-700"
+          : "bg-gray-100 text-gray-600"
+          } px-4 py-2 mx-1 rounded-md`}
         onClick={() => handlePageClick(i)}
       >
         {i}
@@ -265,11 +265,10 @@ const AppointmentsList = () => {
         </label>
         <select
           id="clients-per-page"
-          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${
-            isDarkMode
-              ? "bg-gray-500 text-gray-800"
-              : "bg-gray-50 text-gray-500"
-          }`}
+          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${isDarkMode
+            ? "bg-gray-500 text-gray-800"
+            : "bg-gray-50 text-gray-500"
+            }`}
           value={appointmentsPerPage}
           onChange={handleAppointmentsPerPageChange}
         >
@@ -286,19 +285,17 @@ const AppointmentsList = () => {
       </div>
       <div className="overflow-x-auto">
         <table
-          className={`w-full table-auto border ${
-            isDarkMode
-              ? "border-gray-700 divide-gray-700"
-              : "border-gray-200 divide-gray-200"
-          }`}
+          className={`w-full table-auto border ${isDarkMode
+            ? "border-gray-700 divide-gray-700"
+            : "border-gray-200 divide-gray-200"
+            }`}
         >
           <thead>
             <tr
-              className={`text-xs uppercase tracking-wider ${
-                isDarkMode
-                  ? "bg-gray-500 text-gray-800"
-                  : "bg-gray-50 text-gray-500"
-              }`}
+              className={`text-xs uppercase tracking-wider ${isDarkMode
+                ? "bg-gray-500 text-gray-800"
+                : "bg-gray-50 text-gray-500"
+                }`}
             >
               <th className="py-3 pl-3">
                 <input
@@ -317,9 +314,8 @@ const AppointmentsList = () => {
             </tr>
           </thead>
           <tbody
-            className={`divide-y ${
-              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
-            }`}
+            className={`divide-y ${isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+              }`}
           >
             {currentAppointments.map((appointment) => (
               <tr
@@ -399,11 +395,10 @@ const AppointmentsList = () => {
       <div className="flex justify-center mt-6">
         <div className="flex">
           <button
-            className={`${
-              currentPage === 1
-                ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-            } px-4 py-2 mx-1 rounded-md`}
+            className={`${currentPage === 1
+              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-300"
+              } px-4 py-2 mx-1 rounded-md`}
             onClick={() => handlePageClick(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -411,11 +406,10 @@ const AppointmentsList = () => {
           </button>
           {pagination}
           <button
-            className={`${
-              currentPage === totalPages
-                ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-            } px-4 py-2 mx-1 rounded-md`}
+            className={`${currentPage === totalPages
+              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+              : "bg-gray-100 text-gray-600 hover:bg-gray-300"
+              } px-4 py-2 mx-1 rounded-md`}
             onClick={() => handlePageClick(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
@@ -440,25 +434,21 @@ const AppointmentButton = ({
   return (
     <td className="py-2 pr-2 flex items-center justify-end">
       <div
-        className={`flex items-center space-x-2 ${
-          isDisabled ? "cursor-default" : "cursor-pointer"
-        } relative`}
+        className={`flex items-center space-x-2 ${isDisabled ? "cursor-default" : "cursor-pointer"
+          } relative`}
       >
         <button
-          className={`px-2 py-1 ${
-            !isDisabled
-              ? `${
-                  isDarkMode
-                    ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
-                    : "text-teal-800 bg-teal-500 hover:bg-teal-600"
-                }`
-              : `${
-                  isDarkMode
-                    ? "text-gray-800 bg-gray-600"
-                    : "text-gray-500 bg-gray-100"
-                }
+          className={`px-2 py-1 ${!isDisabled
+            ? `${isDarkMode
+              ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
+              : "text-teal-800 bg-teal-500 hover:bg-teal-600"
+            }`
+            : `${isDarkMode
+              ? "text-gray-800 bg-gray-600"
+              : "text-gray-500 bg-gray-100"
+            }
               `
-          } rounded-md focus:outline-none focus:ring focus:ring-blue-300 flex items-center`}
+            } rounded-md focus:outline-none focus:ring focus:ring-blue-300 flex items-center`}
           onClick={() => setUpdateModelState(true)}
           disabled={isDisabled}
         >

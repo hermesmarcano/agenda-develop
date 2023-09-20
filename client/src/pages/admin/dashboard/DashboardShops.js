@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import {
   deleteObject,
   getDownloadURL,
@@ -18,7 +18,7 @@ const DashboardShops = () => {
   const [shopsDataArr, setShopsDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [hiddenImages, setHiddenImages] = useState([]);
-  const {shopsData} = useContext(ShopsContext);
+  const { shopsData } = useContext(ShopsContext);
 
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const DashboardShops = () => {
         return;
       }
 
-      
+
       const uploadPromises = values.shopsData.map((shop, index) => {
         if (shop.image !== null) {
           return new Promise((resolve, reject) => {
@@ -92,7 +92,7 @@ const DashboardShops = () => {
             let imageName = v4(shop.image.name);
             const fileRef = ref(storage, `home/shops/${imageName}`);
             const uploadTask = uploadBytesResumable(fileRef, shop.image);
-  
+
             uploadTask.on(
               "state_changed",
               (snapshot) => {
@@ -123,9 +123,9 @@ const DashboardShops = () => {
           return oldShop;
         }
       });
-  
+
       const shopsPatchedData = await Promise.all(uploadPromises);
-  
+
       instance
         .patch(
           "admin/",
@@ -159,37 +159,37 @@ const DashboardShops = () => {
         console.error("Token not found");
         return;
       }
-    const desertRef = ref(storage, shopsDataArr[index].image);
-    let updatedShopsArr = shopsDataArr
-    updatedShopsArr[index].image =null
-    deleteObject(desertRef)
-      .then(() => {
-        updatedShopsArr[index].image = null;
-        setShopsDataArr((prev) => (updatedShopsArr));
-      })
-      .then(() => {
-        instance
-          .patch(
-            "admin/",
-         { shopsData: updatedShopsArr },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(res.data);
-            fetchAdminData()
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }catch (error) {
+      const desertRef = ref(storage, shopsDataArr[index].image);
+      let updatedShopsArr = shopsDataArr
+      updatedShopsArr[index].image = null
+      deleteObject(desertRef)
+        .then(() => {
+          updatedShopsArr[index].image = null;
+          setShopsDataArr((prev) => (updatedShopsArr));
+        })
+        .then(() => {
+          instance
+            .patch(
+              "admin/",
+              { shopsData: updatedShopsArr },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data);
+              fetchAdminData()
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
       console.log(error);
     }
   };
@@ -270,22 +270,22 @@ const DashboardShops = () => {
                       )}
 
                       {!shopsDataArr[index].image && (
-                          <div>
-                            <ImageUpload
-                              field={{
-                                name: `shopsData[${index}].image`,
-                                value: shop.image,
-                                onChange: (file) =>
-                                  formikProps.setFieldValue(
-                                    `shopsData[${index}].image`,
-                                    file
-                                  ),
-                                onBlur: formikProps.handleBlur,
-                              }}
-                              form={formikProps}
-                            />
-                          </div>
-                        )}
+                        <div>
+                          <ImageUpload
+                            field={{
+                              name: `shopsData[${index}].image`,
+                              value: shop.image,
+                              onChange: (file) =>
+                                formikProps.setFieldValue(
+                                  `shopsData[${index}].image`,
+                                  file
+                                ),
+                              onBlur: formikProps.handleBlur,
+                            }}
+                            form={formikProps}
+                          />
+                        </div>
+                      )}
 
                       <label
                         htmlFor={`urlSlug${index}`}

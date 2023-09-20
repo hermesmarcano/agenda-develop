@@ -20,7 +20,7 @@ import instance from "../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../context/AlertContext";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 } from "uuid";
-import { storage } from "../../services/fireBaseStorage";
+import { storage } from "../../services/firebaseStorage";
 import ReactNotification, { Store } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 

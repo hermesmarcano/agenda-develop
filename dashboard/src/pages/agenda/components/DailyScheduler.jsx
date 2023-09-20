@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import "./style.css";
 import ProcessAppointment from "./ProcessAppointment";
@@ -12,16 +12,15 @@ const DailyScheduler = ({
   onTimeSlotSelect,
   selectedProfessionals,
   workingHours,
-  appointmentsList
+  appointmentsList,
 }) => {
-  console.log(appointmentsList);
   const { isDarkMode } = useContext(DarkModeContext);
   const { dateTime, setDateTime } = useContext(DateTimeContext);
   const { setProfessionalId } = useContext(ProfessionalIdContext);
-  const [modelState, setModelState] = React.useState(false);
-  const [updateModelState, setUpdateModelState] = React.useState(false);
-  const [viewModelState, setViewModelState] = React.useState(false);
-  const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
+  const [modelState, setModelState] = useState(false);
+  const [updateModelState, setUpdateModelState] = useState(false);
+  const [viewModelState, setViewModelState] = useState(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
 
   const timeSlotDuration = 15;
   const timeSlotsArray = workingHours.map((item) => {
@@ -63,9 +62,12 @@ const DailyScheduler = ({
   const handleBooking = (time, professionalId, appointment) => {
     const reservationDate = new Date(time);
     setDateTime(reservationDate);
-    appointment && alert(appointment.status)
-    setProfessionalId(professionalId)
-    setModelState(true);
+    setProfessionalId(professionalId);
+
+    setSelectedAppointmentId(appointment ? appointment._id : ""); // Store the appointment ID
+
+    !appointment && setModelState(true);
+    appointment && setViewModelState(true);
   };
 
   return (
@@ -106,7 +108,7 @@ const DailyScheduler = ({
             <tr className="text-gray-700">
               <th className="w-16 border-teal-600"></th>
               {selectedProfessionals.map((professional) => (
-                <th key={professional._id} className="text-center px-2 py-2">
+                <th key={professional._id} className="text-center">
                   {professional.name}
                 </th>
               ))}
@@ -127,45 +129,117 @@ const DailyScheduler = ({
                   <tr key={time.toISOString()}>
                     <td
                       className={`w-16 text-center ${
-                        time.getMinutes() === 0 ? "border-t-2" : ""
-                      } border-gray-300 h-7 px-2 min-w-135`}
+                        time.getMinutes() === 0 ? "border-t" : ""
+                      } border-gray-300 h-7 min-w-135`}
                     >
                       {time.getMinutes() === 0 && timeFormat.format(time)}
                     </td>
-                    {selectedProfessionals.map((professional) => 
-                    {
-                      const startDateTime = new Date(time);
-                      startDateTime.setMinutes(index * 15);
+                    {selectedProfessionals.map((professional, proIndex) => {
+                      let appointmentIndex = 0;
 
-                      const appointment = appointmentsList.find((appt) => {
-                        const isDateTimeMatch =
-                          new Date(appt.dateTime).toString() ===
-                          startDateTime.toString();
-                        const isProfessionalIdMatch =
-                          appt.professional._id === professional._id;
-                        return isDateTimeMatch && isProfessionalIdMatch;
-                      });
-                      console.log(appointment);
-                      return(
-                      <td
-                        key={`${professional._id}-${time.toISOString()}`}
-                        className={`text-center ${
-                          time.getMinutes() === 0
-                            ? "border-t-2 border"
-                            : "border"
-                        } border-gray-300 px-2 min-w-[135px]
-                        ${
-                          time <= new Date() ? "stripe-bg" : "hover:bg-gray-100"
+                      const matchingAppointmentsFirstSlot =
+                        appointmentsList.filter((appt, apptIndex) => {
+                          const isDateTimeMatch =
+                            new Date(appt.dateTime).toString() ===
+                            time.toString();
+                          const isProfessionalIdMatch =
+                            appt.professional._id === professional._id;
+                          return isDateTimeMatch && isProfessionalIdMatch;
+                        });
+
+                      const matchingAppointments = appointmentsList.filter(
+                        (appt, apptIndex) => {
+                          const apptTime = new Date(appt.dateTime);
+                          const apptEndTime = new Date(
+                            apptTime.getTime() + appt.duration * 60000
+                          );
+
+                          if (
+                            apptTime <= time &&
+                            apptEndTime >= time &&
+                            appt.professional._id === professional._id
+                          )
+                            appointmentIndex = apptIndex;
+
+                          return (
+                            apptTime <= time &&
+                            apptEndTime >= time &&
+                            appt.professional._id === professional._id
+                          );
                         }
-                      `}
-                        onClick={() => handleBooking(time, professional._id, appointment)}
-                        disabled={time <= new Date()}
-                      >
-                        
-                      </td>
-                    )
-                      }
-                    )}
+                      );
+
+                      return (
+                        <td
+                          key={`${professional._id}-${time.toISOString()}`}
+                          className={`p-0 text-center border ${
+                            time.getMinutes() === 0
+                              ? "border-t-gray-500 border"
+                              : "border-gray-300 "
+                          } min-w-[135px]
+        ${time <= new Date() ? "stripe-bg" : "hover:bg-gray-100"}
+      `}
+                          onClick={() =>
+                            handleBooking(
+                              time,
+                              professional._id,
+                              matchingAppointments[0]
+                            )
+                          } // Pass the appointment to the handler
+                          disabled={time <= new Date()}
+                        >
+                          {matchingAppointments.length > 0 && (
+                            <div
+                              key={index}
+                              className={`m-0 ${
+                                proIndex % 2 === 0
+                                  ? appointmentIndex % 2 === 0
+                                    ? "bg-teal-600"
+                                    : "bg-slate-700"
+                                  : appointmentIndex % 2 === 0
+                                  ? "bg-cyan-700"
+                                  : "bg-sky-800"
+                              } z-10 h-7 px-2 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500`}
+                            >
+                              {matchingAppointmentsFirstSlot[0] ? (
+                                <>
+                                  {matchingAppointmentsFirstSlot[0].blocking &&
+                                    matchingAppointmentsFirstSlot[0]
+                                      .blockingDuration && (
+                                      // Check if blocking is true and blockingDuration is provided
+                                      <div className="bg-red-400 text-white p-2 rounded-md">
+                                        Blocking Reason:{" "}
+                                        {
+                                          matchingAppointmentsFirstSlot[0]
+                                            .blockingReason
+                                        }
+                                      </div>
+                                    )}
+                                  {!matchingAppointmentsFirstSlot[0]
+                                    .blocking && (
+                                    <>
+                                      <span className="font-bold text-white mr-1 whitespace-nowrap">
+                                        {matchingAppointments[0].customer.name}
+                                      </span>
+                                      <span className="text-gray-300">
+                                        Services:
+                                      </span>
+                                      <span className="italic text-white ml-1 truncate">
+                                        {matchingAppointments[0]?.service
+                                          ?.map((s) => s.name)
+                                          .join(", ") || ""}
+                                      </span>
+                                    </>
+                                  )}
+                                </>
+                              ) : (
+                                <div>...</div>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </React.Fragment>

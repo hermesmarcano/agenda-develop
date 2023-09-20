@@ -7,7 +7,7 @@ import instance from "../../../axiosConfig/axiosConfig";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 } from "uuid";
 import { FaSpinner } from "react-icons/fa";

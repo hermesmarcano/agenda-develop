@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import {
   deleteObject,
   getDownloadURL,
@@ -18,8 +18,8 @@ const DashboardServices = () => {
   const [servicesDataArr, setServicesDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [hiddenImages, setHiddenImages] = useState([]);
-  const {servicesData} = useContext(ServicesContext);
-  
+  const { servicesData } = useContext(ServicesContext);
+
   useEffect(() => {
     fetchAdminData();
   }, []);
@@ -88,7 +88,7 @@ const DashboardServices = () => {
             let imageName = v4(service.image.name);
             const fileRef = ref(storage, `home/services/${imageName}`);
             const uploadTask = uploadBytesResumable(fileRef, service.image);
-  
+
             uploadTask.on(
               "state_changed",
               (snapshot) => {
@@ -119,9 +119,9 @@ const DashboardServices = () => {
           return oldService;
         }
       });
-  
+
       const servicesPatchedData = await Promise.all(uploadPromises);
-  
+
       instance
         .patch(
           "admin/",
@@ -154,37 +154,37 @@ const DashboardServices = () => {
         console.error("Token not found");
         return;
       }
-    const desertRef = ref(storage, servicesDataArr[index].image);
-    let updatedServicesArr = servicesDataArr
-    updatedServicesArr[index].image =null
-    deleteObject(desertRef)
-      .then(() => {
-        updatedServicesArr[index].image = null;
-        setServicesDataArr((prev) => (updatedServicesArr));
-      })
-      .then(() => {
-        instance
-          .patch(
-            "admin/",
-         { servicesData: updatedServicesArr },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(res.data);
-            fetchAdminData()
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }catch (error) {
+      const desertRef = ref(storage, servicesDataArr[index].image);
+      let updatedServicesArr = servicesDataArr
+      updatedServicesArr[index].image = null
+      deleteObject(desertRef)
+        .then(() => {
+          updatedServicesArr[index].image = null;
+          setServicesDataArr((prev) => (updatedServicesArr));
+        })
+        .then(() => {
+          instance
+            .patch(
+              "admin/",
+              { servicesData: updatedServicesArr },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data);
+              fetchAdminData()
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
       console.log(error);
     }
   };
@@ -256,22 +256,22 @@ const DashboardServices = () => {
                       )}
 
                       {!servicesDataArr[index].image && (
-                          <div>
-                            <ImageUpload
-                              field={{
-                                name: `servicesData[${index}].image`,
-                                value: service.image,
-                                onChange: (file) =>
-                                  formikProps.setFieldValue(
-                                    `servicesData[${index}].image`,
-                                    file
-                                  ),
-                                onBlur: formikProps.handleBlur,
-                              }}
-                              form={formikProps}
-                            />
-                          </div>
-                        )}
+                        <div>
+                          <ImageUpload
+                            field={{
+                              name: `servicesData[${index}].image`,
+                              value: service.image,
+                              onChange: (file) =>
+                                formikProps.setFieldValue(
+                                  `servicesData[${index}].image`,
+                                  file
+                                ),
+                              onBlur: formikProps.handleBlur,
+                            }}
+                            form={formikProps}
+                          />
+                        </div>
+                      )}
                     </div>
                   ))
                 }

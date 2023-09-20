@@ -9,7 +9,7 @@ import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import instance from "../../axiosConfig/axiosConfig";
 import Drawer from "../../components/Drawer";
-import { storage } from "../../services/fireBaseStorage";
+import { storage } from "../../services/firebaseStorage";
 import { deleteObject, ref } from "firebase/storage";
 import { AddButton, RemoveSelectedButton, titleDarkStyle, titleLightStyle } from "../../components/Styled";
 import ProductCard from "./components/ProductCard";

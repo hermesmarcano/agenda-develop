@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { storage } from "../../../services/fireBaseStorage";
+import { storage } from "../../../services/firebaseStorage";
 import {
   deleteObject,
   getDownloadURL,
@@ -90,7 +90,7 @@ const DashboardArticles = () => {
             let imageName = v4(article.image.name);
             const fileRef = ref(storage, `home/articles/${imageName}`);
             const uploadTask = uploadBytesResumable(fileRef, article.image);
-  
+
             uploadTask.on(
               "state_changed",
               (snapshot) => {
@@ -121,9 +121,9 @@ const DashboardArticles = () => {
           return oldArticle;
         }
       });
-  
+
       const articlesPatchedData = await Promise.all(uploadPromises);
-  
+
       instance
         .patch(
           "admin/",
@@ -156,37 +156,37 @@ const DashboardArticles = () => {
         console.error("Token not found");
         return;
       }
-    const desertRef = ref(storage, articlesDataArr[index].image);
-    let updatedArticlesArr = articlesDataArr
-    updatedArticlesArr[index].image =null
-    deleteObject(desertRef)
-      .then(() => {
-        updatedArticlesArr[index].image = null;
-        setArticlesDataArr((prev) => (updatedArticlesArr));
-      })
-      .then(() => {
-        instance
-          .patch(
-            "admin/",
-         { articlesData: updatedArticlesArr },
-            {
-              headers: {
-                Authorization: token,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(res.data);
-            fetchAdminData()
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    }catch (error) {
+      const desertRef = ref(storage, articlesDataArr[index].image);
+      let updatedArticlesArr = articlesDataArr
+      updatedArticlesArr[index].image = null
+      deleteObject(desertRef)
+        .then(() => {
+          updatedArticlesArr[index].image = null;
+          setArticlesDataArr((prev) => (updatedArticlesArr));
+        })
+        .then(() => {
+          instance
+            .patch(
+              "admin/",
+              { articlesData: updatedArticlesArr },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res.data);
+              fetchAdminData()
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
       console.log(error);
     }
   };
@@ -295,40 +295,40 @@ const DashboardArticles = () => {
                       />
 
                       {articlesDataArr[index].image && (
-                          <div className="relative">
-                            <img
-                              src={articlesDataArr[index].image}
-                              alt={`Service ${index}`}
-                              className="w-screen rounded-md max-h-40 object-cover mt-2"
-                            />
+                        <div className="relative">
+                          <img
+                            src={articlesDataArr[index].image}
+                            alt={`Service ${index}`}
+                            className="w-screen rounded-md max-h-40 object-cover mt-2"
+                          />
 
-                            <button
-                              type="button"
-                              onClick={() => deleteImage(formikProps, index)}
-                              className="text-red-600 font-medium mt-2 absolute right-1 top-1"
-                            >
-                              <FaTrash />
-                            </button>
-                          </div>
-                        )}
+                          <button
+                            type="button"
+                            onClick={() => deleteImage(formikProps, index)}
+                            className="text-red-600 font-medium mt-2 absolute right-1 top-1"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      )}
 
                       {!articlesDataArr[index].image && (
-                          <div>
-                            <ImageUpload
-                              field={{
-                                name: `articlesData[${index}].image`,
-                                value: article.image,
-                                onChange: (file) =>
-                                  formikProps.setFieldValue(
-                                    `articlesData[${index}].image`,
-                                    file
-                                  ),
-                                onBlur: formikProps.handleBlur,
-                              }}
-                              form={formikProps}
-                            />
-                          </div>
-                        )}
+                        <div>
+                          <ImageUpload
+                            field={{
+                              name: `articlesData[${index}].image`,
+                              value: article.image,
+                              onChange: (file) =>
+                                formikProps.setFieldValue(
+                                  `articlesData[${index}].image`,
+                                  file
+                                ),
+                              onBlur: formikProps.handleBlur,
+                            }}
+                            form={formikProps}
+                          />
+                        </div>
+                      )}
 
                       <hr className="my-1" />
                     </div>

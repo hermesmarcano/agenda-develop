@@ -163,31 +163,39 @@ const BlockSchedule = ({ setModelState }) => {
     professionalId,
     blockingReason
   ) => {
-    instance
-      .post(
-        `${instance}/appointments`,
-        {
-          professional: professionalId,
-          dateTime: new Date(dateTime),
-          managerId: shopId,
-          blocking: true,
-          blockingDuration: duration,
-          blockingReason: blockingReason,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token,
-          },
-        }
-      )
-      .then((response) => {
-        setModelState(false);
-      })
-      .catch((error) => {
-        console.error(error.message);
-        // Handle errors
-      });
+    // instance
+    //   .post(
+    //     `${instance}/appointments`,
+    //     {
+    //       professional: professionalId,
+    //       dateTime: new Date(dateTime),
+    //       managerId: shopId,
+    //       blocking: true,
+    //       blockingDuration: duration,
+    //       blockingReason: blockingReason,
+    //     },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         Authorization: token,
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     setModelState(false);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error.message);
+    //     // Handle errors
+    //   });
+    console.log({
+      professional: professionalId,
+      dateTime: new Date(dateTime),
+      managerId: shopId,
+      blocking: true,
+      blockingDuration: duration,
+      blockingReason: blockingReason,
+    },);
   };
 
   if (loading) {
