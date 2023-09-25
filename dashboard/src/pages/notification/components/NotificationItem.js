@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import "./NotificationItem.css";
 
 const NotificationItem = ({ notification, onDelete }) => {
   const { _id, content, date } = notification;
@@ -8,7 +9,7 @@ const NotificationItem = ({ notification, onDelete }) => {
   return (
     <div
       className={`${
-        isDarkMode ? "bg-gray-700" : "bg-white"
+        isDarkMode ? "bg-gray-800" : "bg-white"
       } p-4 shadow-md rounded-md mb-4`}
     >
       <div className="flex justify-between items-center">
@@ -17,9 +18,11 @@ const NotificationItem = ({ notification, onDelete }) => {
 
         <button
           onClick={onDelete}
-          className="mt-2 px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:ring focus:ring-red-300"
+          className={`${
+            isDarkMode ? "icon-trash icon-trash-white" : "icon-trash"
+          }`}
         >
-          Delete
+          <span class="icon-trash"></span>
         </button>
       </div>
     </div>

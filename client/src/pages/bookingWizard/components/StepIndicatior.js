@@ -29,7 +29,7 @@ const StepIndicator = ({ currentStep }) => {
             <div
               className={`absolute h-0.5 w-8 top-6 sm:h-1 sm:w-16 sm:top-11 ${
                 currentStep > index + 1
-                  ? "bg-indigo-500"
+                  ? "bg-teal-500"
                   : "bg-gray-300 shadow-inner"
               }`}
               style={{ left: "100%" }}
@@ -38,7 +38,7 @@ const StepIndicator = ({ currentStep }) => {
           <div
             className={`w-14 h-14 sm:w-24 sm:h-24 rounded flex items-center justify-center sm:text-2xl text-lg ${
               currentStep >= index + 1
-                ? "bg-gradient-to-br from-indigo-500 to-indigo-700 text-white shadow-lg"
+                ? "bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-lg"
                 : "bg-gray-300 text-gray-500 shadow-inner"
             }`}
           >

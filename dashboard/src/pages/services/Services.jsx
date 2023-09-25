@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
-import { FiChevronLeft, FiChevronRight, FiSearch } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Popup from "../../components/Popup";
 import RegisterService from "./components/RegisterService";
-import { FaEdit, FaPlus, FaSearch, FaSpinner, FaTags } from "react-icons/fa";
+import { FaEdit, FaSearch, FaSpinner, FaTags } from "react-icons/fa";
 import UpdateService from "./components/UpdateService";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";

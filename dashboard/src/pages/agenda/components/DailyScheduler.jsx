@@ -7,20 +7,28 @@ import ViewAppointment from "./ViewAppointment";
 import UpdateAppointment from "./UpdateAppointment";
 import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
+import { FaUserCircle } from "react-icons/fa";
+import BlockCard from "./BlockCard";
 const DailyScheduler = ({
   date,
   onTimeSlotSelect,
   selectedProfessionals,
   workingHours,
   appointmentsList,
+  modelState,
+  updateModelState,
+  viewModelState,
+  viewBlockingModelState,
+  setModelState,
+  setUpdateModelState,
+  setViewModelState,
+  setViewBlockingModelState,
 }) => {
   const { isDarkMode } = useContext(DarkModeContext);
   const { dateTime, setDateTime } = useContext(DateTimeContext);
   const { setProfessionalId } = useContext(ProfessionalIdContext);
-  const [modelState, setModelState] = useState(false);
-  const [updateModelState, setUpdateModelState] = useState(false);
-  const [viewModelState, setViewModelState] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
+  const [blockingPeriod, setBlockingPeriod] = useState(null);
 
   const timeSlotDuration = 15;
   const timeSlotsArray = workingHours.map((item) => {
@@ -44,34 +52,44 @@ const DailyScheduler = ({
     return timeSlots;
   });
 
-  const startTime = new Date();
-  startTime.setHours(8, 0, 0, 0);
-  const timeSlots = [];
-  for (let i = 0; i < 9; i++) {
-    const currentTime = new Date(startTime);
-    currentTime.setMinutes(startTime.getMinutes() + i * 15);
-    timeSlots.push(currentTime);
-  }
-
   const timeFormat = new Intl.DateTimeFormat([], {
     hour: "2-digit",
     minute: "2-digit",
     hour12: false,
   });
 
-  const handleBooking = (time, professionalId, appointment) => {
+  const handleBooking = (time, professionalId, appointment, blockedPeriod) => {
+    if(blockedPeriod?.blocking > 0) {
+      setBlockingPeriod(blockedPeriod);
+      setViewBlockingModelState(true);
+      return;
+    }
     const reservationDate = new Date(time);
     setDateTime(reservationDate);
     setProfessionalId(professionalId);
 
-    setSelectedAppointmentId(appointment ? appointment._id : ""); // Store the appointment ID
+    setSelectedAppointmentId(appointment ? appointment._id : "");
 
     !appointment && setModelState(true);
-    appointment && setViewModelState(true);
+    if(appointment && time < new Date()){
+      appointment && setViewModelState(true);
+    }
+    if(appointment && time >= new Date()){
+      appointment && setUpdateModelState(true);
+    }
   };
 
   return (
     <>
+      <Popup 
+        isOpen={viewBlockingModelState}
+        onClose={() => setViewBlockingModelState(!viewBlockingModelState)}
+        children={
+          <BlockCard
+            blockingPeriod={blockingPeriod}
+          />
+        }
+      />
       <ProcessAppointment
         isOpen={modelState}
         onClose={() => setModelState(!modelState)}
@@ -103,13 +121,16 @@ const DailyScheduler = ({
           isDarkMode ? "bg-gray-800" : "bg-white"
         }`}
       >
-        <table className="w-full table-auto border-collapse border">
+        <table className="w-full ">
           <thead>
-            <tr className="text-gray-700">
-              <th className="w-16 border-teal-600"></th>
+            <tr>
+              <th className="w-16"></th>
               {selectedProfessionals.map((professional) => (
                 <th key={professional._id} className="text-center">
-                  {professional.name}
+                  <div className="flex flex-col justify-center items-center py-2">
+                    <FaUserCircle size={30} />
+                    <span>{professional.name}</span>
+                  </div>
                 </th>
               ))}
             </tr>
@@ -130,7 +151,7 @@ const DailyScheduler = ({
                     <td
                       className={`w-16 text-center ${
                         time.getMinutes() === 0 ? "border-t" : ""
-                      } border-gray-300 h-7 min-w-135`}
+                      } border-gray-300 h-7`}
                     >
                       {time.getMinutes() === 0 && timeFormat.format(time)}
                     </td>
@@ -163,7 +184,29 @@ const DailyScheduler = ({
 
                           return (
                             apptTime <= time &&
+                            apptEndTime > time &&
+                            appt.professional._id === professional._id
+                          );
+                        }
+                      );
+
+                      const matchingBlockedPeriod = appointmentsList.filter(
+                        (appt, apptIndex) => {
+                          const apptTime = new Date(appt.dateTime);
+                          const apptEndTime = new Date(
+                            apptTime.getTime() + appt.blockingDuration * 60000
+                          );
+
+                          if (
+                            apptTime <= time &&
                             apptEndTime >= time &&
+                            appt.professional._id === professional._id
+                          )
+                            appointmentIndex = apptIndex;
+
+                          return (
+                            apptTime <= time &&
+                            apptEndTime > time &&
                             appt.professional._id === professional._id
                           );
                         }
@@ -172,26 +215,33 @@ const DailyScheduler = ({
                       return (
                         <td
                           key={`${professional._id}-${time.toISOString()}`}
-                          className={`p-0 text-center border ${
+                          className={`p-0 text-center ${
+                            matchingAppointments.length === 0
+                              ? "border"
+                              : "border-none"
+                          } hover:cursor-crosshair ${
                             time.getMinutes() === 0
                               ? "border-t-gray-500 border"
                               : "border-gray-300 "
-                          } min-w-[135px]
-        ${time <= new Date() ? "stripe-bg" : "hover:bg-gray-100"}
-      `}
+                          } min-w-[135px] ${
+                            time <= new Date()
+                              ? "stripe-bg"
+                              : "hover:bg-gray-100"
+                          }`}
                           onClick={() =>
                             handleBooking(
                               time,
                               professional._id,
-                              matchingAppointments[0]
+                              matchingAppointments[0],
+                              matchingBlockedPeriod[0]
                             )
-                          } // Pass the appointment to the handler
-                          disabled={time <= new Date()}
+                          }
                         >
                           {matchingAppointments.length > 0 && (
                             <div
                               key={index}
-                              className={`m-0 ${
+                              className={`m-0 ${time < new Date() && "opacity-50"} ${
+                                matchingBlockedPeriod.length === 0 ? (
                                 proIndex % 2 === 0
                                   ? appointmentIndex % 2 === 0
                                     ? "bg-teal-600"
@@ -199,20 +249,28 @@ const DailyScheduler = ({
                                   : appointmentIndex % 2 === 0
                                   ? "bg-cyan-700"
                                   : "bg-sky-800"
-                              } z-10 h-7 px-2 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500`}
+                                )
+                                :
+                                (
+                                  "bg-orange-700"
+                                )
+                              } z-30 h-7 px-2 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500`}
                             >
                               {matchingAppointmentsFirstSlot[0] ? (
                                 <>
                                   {matchingAppointmentsFirstSlot[0].blocking &&
                                     matchingAppointmentsFirstSlot[0]
                                       .blockingDuration && (
-                                      // Check if blocking is true and blockingDuration is provided
-                                      <div className="bg-red-400 text-white p-2 rounded-md">
+                                      <div>
                                         Blocking Reason:{" "}
-                                        {
-                                          matchingAppointmentsFirstSlot[0]
-                                            .blockingReason
-                                        }
+                                        {matchingAppointmentsFirstSlot[0]
+                                          .blockingReason.length > 7
+                                          ? matchingAppointmentsFirstSlot[0].blockingReason.slice(
+                                              0,
+                                              7
+                                            ) + "..."
+                                          : matchingAppointmentsFirstSlot[0]
+                                              .blockingReason}
                                       </div>
                                     )}
                                   {!matchingAppointmentsFirstSlot[0]
@@ -233,7 +291,7 @@ const DailyScheduler = ({
                                   )}
                                 </>
                               ) : (
-                                <div>...</div>
+                                <div></div>
                               )}
                             </div>
                           )}

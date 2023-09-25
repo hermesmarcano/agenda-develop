@@ -25,6 +25,11 @@ const SchedulerC = ({
   const [appointmentsList, setAppointmentsList] = useState([]);
   const [appointmentsObject, setAppointmentsObject] = useState(null);
 
+  const [modelState, setModelState] = useState(false);
+  const [updateModelState, setUpdateModelState] = useState(false);
+  const [viewModelState, setViewModelState] = useState(false);
+  const [viewBlockingModelState, setViewBlockingModelState] = useState(false);
+
   const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
 
@@ -60,7 +65,7 @@ const SchedulerC = ({
 
   React.useEffect(() => {
     fetchAppointments();
-  }, [shopId]);
+  }, [shopId, modelState, updateModelState, viewModelState]);
 
   const handleViewChange = (view) => {
     setViewMode(view);
@@ -159,7 +164,7 @@ const SchedulerC = ({
             className={`p-2 rounded ${
               viewMode === "daily"
                 ? "bg-teal-600 text-white"
-                : "bg-teal-100 text-gray-800"
+                : ""
             }`}
           >
             <FaCalendarDay className="inline-block mr-2" />
@@ -170,7 +175,7 @@ const SchedulerC = ({
             className={`p-2 rounded ${
               viewMode === "weekly"
                 ? "bg-teal-600 text-white"
-                : "bg-teal-100 text-gray-800"
+                : ""
             }`}
           >
             <FaCalendarWeek className="inline-block mr-2" />
@@ -186,6 +191,14 @@ const SchedulerC = ({
           selectedProfessionals={selectedProfessionals}
           workingHours={workingHours}
           appointmentsList={appointmentsList}
+          modelState={modelState}
+          updateModelState={updateModelState}
+          viewModelState={viewModelState}
+          viewBlockingModelState={viewBlockingModelState}
+          setModelState={setModelState}
+          setUpdateModelState={setUpdateModelState}
+          setViewModelState={setViewModelState}
+          setViewBlockingModelState={setViewBlockingModelState}
         />
       )}
 
@@ -198,6 +211,14 @@ const SchedulerC = ({
           startWeekDate={startWeekDate}
           workingHours={workingHours}
           appointmentsList={appointmentsList}
+          modelState={modelState}
+          updateModelState={updateModelState}
+          viewModelState={viewModelState}
+          viewBlockingModelState={viewBlockingModelState}
+          setModelState={setModelState}
+          setUpdateModelState={setUpdateModelState}
+          setViewModelState={setViewModelState}
+          setViewBlockingModelState={setViewBlockingModelState}
         />
       )}
     </>

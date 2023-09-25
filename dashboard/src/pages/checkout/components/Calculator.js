@@ -55,6 +55,7 @@ const Calculator = ({
         updatedAt: new Date(),
       };
 
+            
       let paymentId = "";
 
       const updatePayment = () => {
@@ -208,7 +209,11 @@ const Calculator = ({
       };
 
       if (bookingInfo.checkoutType === "updating") {
-        updatePayment();
+        if(bookingInfo.paymentId){
+          updatePayment();
+        }else{
+          makePayment();  
+        }
       } else {
         makePayment();
       }

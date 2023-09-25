@@ -100,6 +100,7 @@ const Checkout = () => {
           },
         })
         .then((response) => {
+          console.log(response);
           const payment = response.data.payment;
           return payment ? payment : null; // Resolve with null if payment is not found
         })
@@ -135,7 +136,7 @@ const Checkout = () => {
             productsResponse,
           ]) => {
             const payment = paymentsResponse !== null ? paymentsResponse : null;
-
+            console.log(payment);
             if (payment) {
               setPrevPaidAmount(payment.amount);
               setPaymentId(payment._id);
@@ -376,13 +377,13 @@ const Checkout = () => {
                         ? extraServices.find(
                           (eservice) => eservice._id === service._id
                         )
-                          ? "bg-gray-700 text-gray-200"
+                          ? "bg-teal-600 text-gray-200"
                           : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
                         : extraServices.find(
                           (eservice) => eservice._id === service._id
                         )
                           ? "bg-teal-800 text-gray-200"
-                          : "bg-teal-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                          : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
                         }`}
                       onClick={() => handleAddExtraService(service)}
                     >
@@ -480,7 +481,7 @@ const Checkout = () => {
                         ? products.find(
                           (eproduct) => eproduct._id === product._id
                         )
-                          ? "bg-gray-700 text-gray-200"
+                          ? "bg-teal-600 text-gray-200"
                           : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
                         : products.find(
                           (eproduct) => eproduct._id === product._id
@@ -572,10 +573,10 @@ const Checkout = () => {
                     className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 
                     ${isDarkMode
                         ? paymentMethod === "cash"
-                          ? "bg-gray-700 text-white"
+                          ? "bg-teal-600 text-white"
                           : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
                         : paymentMethod === "cash"
-                          ? "bg-teal-800 text-white"
+                          ? "bg-teal-600 text-white"
                           : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
                       }`}
                     onClick={() => handleChoosePaymentMethod("cash")}
@@ -586,10 +587,10 @@ const Checkout = () => {
                   <button
                     className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${isDarkMode
                       ? paymentMethod === "credit"
-                        ? "bg-gray-700 text-white"
+                        ? "bg-teal-600 text-white"
                         : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
                       : paymentMethod === "credit"
-                        ? "bg-teal-800 text-white"
+                        ? "bg-teal-600 text-white"
                         : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
                       }`}
                     onClick={() => handleChoosePaymentMethod("credit")}
@@ -601,10 +602,10 @@ const Checkout = () => {
                   <button
                     className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${isDarkMode
                       ? paymentMethod === "payLater"
-                        ? "bg-gray-700 text-white"
+                        ? "bg-teal-600 text-white"
                         : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
                       : paymentMethod === "payLater"
-                        ? "bg-teal-800 text-white"
+                        ? "bg-teal-600 text-white"
                         : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
                       }`}
                     onClick={() => handleChoosePaymentMethod("payLater")}

@@ -4,6 +4,7 @@ import { FiMoon, FiSun } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import instance from "../axiosConfig/axiosConfig";
 import { NotificationContext } from "../context/NotificationContext";
+import { Fa500Px, FaAccessibleIcon, FaAccusoft, FaAd, FaAddressBook, FaAdjust, FaAirFreshener, FaAirbnb, FaAlgolia, FaAngleRight, FaBell, FaClock, FaGavel, FaRing } from "react-icons/fa";
 
 const Header = () => {
   const {isDarkMode, setIsDarkMode} = useContext(DarkModeContext);
@@ -54,7 +55,7 @@ const Header = () => {
               <span className="sr-only">Home</span>
               {logo ?            
               <img
-              className="h-16 w-16 rounded-full object-cover border border-gray-400 bg-white"
+              className="h-12 w-12 object-cover border-gray-400 bg-white"
               src={logo}
               alt="App logo"
             />
@@ -135,40 +136,9 @@ const Header = () => {
               </button>
 
               {showMenu && (
-            <div
-              className={`absolute right-0 mt-2 w-64 ${isDarkMode ? "bg-gray-700" : "bg-white"
-                } rounded-lg shadow-lg z-10`}
-            >
-              <div className="max-h-64 overflow-y-auto">
-                <div className="p-4 border-b border-gray-300">
-                  <div className="flex justify-end items-center">
-                    <Link
-                      to="/notifications"
-                      className="text-blue-500 text-xs hover:underline"
-                    >
-                      View All
-                    </Link>
-                  </div>
-                </div>
-
-                {notifications.length > 0 ? (
-                  notifications.map((notification, index) => (
-                    <div
-                      key={index}
-                      className={`p-4 ${isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"
-                        } rounded-lg cursor-pointer`}
-                    >
-                      {notification.content}
-                    </div>
-                  ))
-                ) : (
-                  <div className={`p-4 text-center text-gray-400`}>
-                    No notifications
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+                <NotificationMenu notifications={notifications} isDarkMode={isDarkMode} />
+            
+            )}
 
               </div>
 
@@ -194,3 +164,46 @@ const Header = () => {
 };
 
 export default Header;
+
+
+function NotificationMenu({ notifications, isDarkMode }) {
+  return (
+    <div
+      className={`absolute right-0 mt-2 w-64 ${isDarkMode ? 'bg-gray-700' : 'bg-white'} rounded-lg shadow-lg z-10`}
+    >
+      <div className="max-h-64 overflow-y-auto no-scrollbar">
+        <div className={`p-4 border-b border-gray-300 sticky top-0 z-10 ${isDarkMode ? 'bg-gray-700' : 'bg-white'}`}>
+          <div className="flex justify-between items-center">
+            <Link to="/notifications" className="text-teal-600 text-xs flex items-center hover:underline">
+            View all <FaAngleRight />
+            </Link>
+          </div>
+        </div>
+
+        {notifications.length > 0 ? (
+          notifications.map((notification, index) => (
+            <div
+              key={index}
+              className={`p-4 ${isDarkMode ? 'hover:bg-gray-600' : 'hover:bg-gray-100'} rounded-lg cursor-pointer`}
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <div className="text-gray-600 flex items-center text-sm">
+                    <FaBell size={20} className="mr-2" />
+                    {notification.content}
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  <FaClock className="text-xs text-gray-400 mr-1" /> {/* Clock Icon */}
+                  <span className="text-xs text-gray-400">2h ago</span> {/* Display time */}
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className={`p-4 text-center text-gray-400`}>No notifications</div>
+        )}
+      </div>
+    </div>
+  );
+}

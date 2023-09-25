@@ -163,7 +163,7 @@ const HourSelection = ({ paramsId }) => {
                     type="button"
                     className={`px-2 py-3 gap-2 w-[100px] font-semibold text-center cursor-pointer ${
                       selectedHour === hour
-                        ? "bg-indigo-600 text-white"
+                        ? "bg-teal-600 text-white"
                         : "bg-gray-100 shadow-inner hover:bg-gray-200"
                     } ${
                       isHourDisabled(hour) || hour < new Date()
@@ -230,7 +230,7 @@ const HourSelection = ({ paramsId }) => {
         leaveTo="opacity-0"
       >
         <div className="mt-4 flex justify-center">
-          <p className="border-2 border-indigo-600 rounded-md text-center px-2 py-3">
+          <p className="border-2 border-teal-600 rounded-md text-center px-2 py-3">
             <span className="font-semibold text-4xl">
               {new Intl.DateTimeFormat("en", {
                 timeStyle: "short",

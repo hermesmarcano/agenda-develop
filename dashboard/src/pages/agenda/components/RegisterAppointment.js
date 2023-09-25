@@ -14,6 +14,7 @@ import { NotificationContext } from "../../../context/NotificationContext";
 import { Store } from "react-notifications-component";
 import { AddButtonWithTitle } from "../../../components/Styled";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import './RegisterAppointment.css';
 
 const animatedComponents = makeAnimated();
 
@@ -489,6 +490,7 @@ const RegisterAppointment = ({
                             name="customer"
                             options={clients}
                           />
+                          
                         ) : (
                           <>
                             <label
@@ -739,7 +741,7 @@ const RegisterAppointment = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="submit-button flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   {isSubmitting ? (
                     <FaSpinner className="animate-spin mr-2" />
@@ -796,7 +798,8 @@ const CustomSelect = ({ label, options, ...props }) => {
       <Select
         id={props.id || props.name}
         name={props.name}
-        styles={{ color: "#222" }}
+        // styles={{ color: "#222" , backgroundColor: '#000'}}
+        className="custom-select"
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}
@@ -812,3 +815,4 @@ const CustomSelect = ({ label, options, ...props }) => {
     </div>
   );
 };
+

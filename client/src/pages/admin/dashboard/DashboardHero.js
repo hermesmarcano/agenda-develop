@@ -31,8 +31,8 @@ const DashboardHero = () => {
     }
   };
 
-  const handleFormSubmit = async (values) => {
-    // console.log(JSON.stringify(values));
+  const handleFormSubmit = (values) => {
+    console.log(JSON.stringify(values));
     try {
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
@@ -40,11 +40,11 @@ const DashboardHero = () => {
         return;
       }
 
-      const response = await instance.patch("admin", values, {
+      instance.patch("admin", values, {
         headers: {
           Authorization: token,
         },
-      });
+      }).then(res => console.log(res)).catch(error => console.log(error));
       alert("Data saved successfully");
     } catch (error) {
       console.log(error);
@@ -124,6 +124,7 @@ const DashboardHero = () => {
                   <option value="gray-600">Gray-600</option>
                   <option value="gray-700">Gray-700</option>
                   <option value="gray-800">Gray-800</option>
+                  <option value="teal-800">Teal-800</option>
                 </select>
                 <ErrorMessage
                   name="heroBgColor"

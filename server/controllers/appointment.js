@@ -2,6 +2,7 @@ const Appointment = require("../models/appointment");
 
 const createAppointment = async (req, res) => {
   try {
+    console.log(req.body);
     // const { customer, professional, service, dateTime, shopName } = req.body;
     const appointment = await Appointment.create(req.body);
     res.status(201).json({ success: true, appointment });
@@ -34,7 +35,7 @@ const getAllAppointments = async (req, res) => {
 const getAppointmentById = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id)
-      .populate("customer", "name")
+      .populate("customer", "name phone")
       .populate("professional", "name")
       .populate("service", "name price duration")
       .populate("product", "name price");

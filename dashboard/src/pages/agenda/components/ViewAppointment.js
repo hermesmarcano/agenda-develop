@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const ViewAppointment = ({ setModelState, appointmentId }) => {
   const token = localStorage.getItem("ag_app_shop_token");
   const [dateTime, setDateTime] = useState(new Date());
   const [appointmentData, setAppointmentData] = useState(null);
-
+  const {isDarkMode} = useContext(DarkModeContext);
   useEffect(() => {
     instance
       .get(`appointments/${appointmentId}`, {
@@ -27,28 +28,28 @@ const ViewAppointment = ({ setModelState, appointmentId }) => {
     <>
       <h2 className="text-2xl font-semibold mb-4">Appointment Details</h2>
       {appointmentData ? (
-        <div className="bg-white rounded-lg p-6 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto">
+        <div className={`${isDarkMode ? "bg-gray-800" : "bg-white"} rounded-lg p-6 mb-4 overflow-y-auto min-w-[350px] sm:min-w-[500px] mx-auto`}>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold mb-1">
               Customer:
             </label>
-            <p className="text-gray-900">{appointmentData.customer.name}</p>
+            <p>{appointmentData.customer.name}</p>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold mb-1">
               Professional:
             </label>
-            <p className="text-gray-900">{appointmentData.professional.name}</p>
+            <p>{appointmentData.professional.name}</p>
           </div>
           <div className="mb-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
+            <label className="block text-sm font-semibold mb-1">
               Services:
             </label>
             <div className="grid grid-cols-1 gap-2">
               {appointmentData.service.map((service) => (
                 <div key={service._id} className="flex items-center">
                   <div className="w-3 h-3 rounded-full bg-green-500 mr-2" />
-                  <span className="text-sm text-gray-900">{service.name}</span>
+                  <span className="text-sm">{service.name}</span>
                 </div>
               ))}
             </div>

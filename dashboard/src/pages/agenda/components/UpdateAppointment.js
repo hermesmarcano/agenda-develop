@@ -17,6 +17,8 @@ import { SidebarContext } from "../../../context/SidebarContext";
 import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import instance from "../../../axiosConfig/axiosConfig";
+import { DarkModeContext } from "../../../context/DarkModeContext";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, NoWidthInputDarkStyle, NoWidthInputLightStyle, SpecialInputDarkStyle, SpecialInputLightStyle } from "../../../components/Styled";
 
 const UpdateAppointment = ({
   amount,
@@ -28,6 +30,7 @@ const UpdateAppointment = ({
 }) => {
   const navigate = useNavigate(this);
   const { shopId } = useContext(SidebarContext);
+  const { isDarkMode } = useContext(DarkModeContext);
   const [dateTime, setDateTime] = useState(new Date());
   const token = localStorage.getItem("ag_app_shop_token");
   const [loading, setLoading] = React.useState(true);
@@ -380,15 +383,15 @@ const UpdateAppointment = ({
     }
   };
 
-  const [clientPhoneNumber, setClientPhoneNumber] = useState("123-456-789");
+  const clientPhoneNumber  = "123-456-789";
 
-  const openWhatsApp = (phone = clientPhoneNumber) => {
-    if (clientPhoneNumber) {
+  const openWhatsApp = (customerId = clientPhoneNumber) => {
+    const currentCustomer = clients.find(client => client._id === customerId)
       const whatsappUrl = `https://web.whatsapp.com/send?phone=${encodeURIComponent(
-        clientPhoneNumber
+        currentCustomer?.phone
       )}`;
       window.open(whatsappUrl, "_blank");
-    }
+    
   };
 
   return (
@@ -496,7 +499,7 @@ const UpdateAppointment = ({
             }
 
             return (
-              <Form className="bg-white rounded-lg px-8 py-6 mb-4 overflow-y-auto">
+              <Form className="rounded-lg px-8 py-6 mb-4 overflow-y-auto">
                 <div className="grid grid-cols-2 gap-5">
                   <div>
                     <div className="flex flex-col mb-4">
@@ -512,14 +515,14 @@ const UpdateAppointment = ({
                           <>
                             <label
                               htmlFor="name"
-                              className="block text-sm font-semibold text-gray-700 mb-2"
+                              className="block text-sm font-semibold  mb-2"
                             >
                               New Client
                             </label>
                             <div className="mb-4">
                               <label
                                 htmlFor="name"
-                                className="block text-xs font-semibold text-gray-700 mb-2"
+                                className="block text-xs font-semibold  mb-2"
                               >
                                 Name
                               </label>
@@ -539,7 +542,7 @@ const UpdateAppointment = ({
                             <div className="mb-4">
                               <label
                                 htmlFor="phone"
-                                className="block text-xs font-semibold text-gray-700 mb-2"
+                                className="block text-xs font-semibold  mb-2"
                               >
                                 Phone
                               </label>
@@ -562,7 +565,7 @@ const UpdateAppointment = ({
                       <div>
                         <button
                           type="button"
-                          className="add-customer-button w-full flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                          className="add-customer-button w-full flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                           onClick={() =>
                             setAddCustomerClicked(!addCustomerClicked)
                           }
@@ -592,7 +595,7 @@ const UpdateAppointment = ({
                       />
                       {/* <label
                         htmlFor="service"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold  mb-2"
                       >
                         Services
                       </label>
@@ -633,7 +636,7 @@ const UpdateAppointment = ({
                       />
                       {/* <label
                         htmlFor="product"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold  mb-2"
                       >
                         Products
                       </label> */}
@@ -672,7 +675,7 @@ const UpdateAppointment = ({
                     <div className="flex justify-start items-center">
                       <label
                         htmlFor="manualDuration"
-                        className={`block text-sm font-semibold text-gray-700 mb-2`}
+                        className={`block text-sm font-semibold  mb-2`}
                       >
                         Set Duration Manually
                       </label>
@@ -698,7 +701,7 @@ const UpdateAppointment = ({
                     <div className="mb-4">
                       <label
                         htmlFor="appointmentDuration"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold  mb-2"
                       >
                         Appointment Duration
                       </label>
@@ -709,26 +712,26 @@ const UpdateAppointment = ({
                             id="hours"
                             name="hours"
                             value={values.appointmentDuration.split(":")[0]}
-                            className="input-field w-1/2 sm:w-14 py-2 px-2 text-center text-gray-700 focus:outline-none"
+                            className={`${isDarkMode ? SpecialInputDarkStyle : SpecialInputLightStyle}`}
                             onChange={handleDurationChange}
                             disabled={!allowManualDuration}
                           />
-                          <span className="text-gray-600 px-2">:</span>
+                          <span className={`${isDarkMode ? "text-white" : "text-gray-600"} px-2`}>:</span>
                           <input
                             type="number"
                             id="minutes"
                             name="minutes"
                             value={values.appointmentDuration.split(":")[1]}
-                            className="input-field w-1/2 sm:w-14 py-2 px-2 text-center text-gray-700 focus:outline-none"
+                            className={`${isDarkMode ? SpecialInputDarkStyle : SpecialInputLightStyle}`}
                             onChange={handleDurationChange}
                             step="5"
                             disabled={!allowManualDuration}
                           />
                         </div>
-                        <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
+                        <div className={`${isDarkMode ? "bg-gray-600 text-white" : "bg-gray-200 text-gray-600"} px-3 py-2 w-1/2 sm:w-fit`}>
                           <span className="text-xs">HOURS</span>
                         </div>
-                        <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
+                        <div className={`${isDarkMode ? "bg-gray-600 text-white" : "bg-gray-200 text-gray-600"} px-3 py-2 w-1/2 sm:w-fit`}>
                           <span className="text-xs">MINUTES</span>
                         </div>
                       </div>
@@ -737,7 +740,7 @@ const UpdateAppointment = ({
                     <div className="mb-4">
                       <label
                         htmlFor="date"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold  mb-2"
                       >
                         Date
                       </label>
@@ -746,7 +749,7 @@ const UpdateAppointment = ({
                         id="date"
                         name="date"
                         value={values.date}
-                        className="input-field"
+                        className={`${isDarkMode ? NoWidthInputDarkStyle : NoWidthInputLightStyle}`}
                         {...getFieldProps("date")}
                       />
                       <ErrorMessage
@@ -758,7 +761,7 @@ const UpdateAppointment = ({
                     <div className="mb-4">
                       <label
                         htmlFor="time"
-                        className="block text-sm font-semibold text-gray-700 mb-2"
+                        className="block text-sm font-semibold  mb-2"
                       >
                         Time
                       </label>
@@ -767,7 +770,7 @@ const UpdateAppointment = ({
                         id="time"
                         name="time"
                         value={values.time}
-                        className="input-field"
+                        className={`${isDarkMode ? NoWidthInputDarkStyle : NoWidthInputLightStyle}`}
                         {...getFieldProps("time")}
                       />
                       <ErrorMessage
@@ -794,7 +797,7 @@ const UpdateAppointment = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="submit-button flex items-center bg-gray-800 hover:bg-gray-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="submit-button flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
                     {isSubmitting ? (
                       <FaSpinner className="animate-spin mr-2" />
@@ -821,7 +824,7 @@ const UpdateAppointment = ({
                     type="button"
                     className="whatsapp-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
                     onClick={() =>
-                      openWhatsApp(appointmentData?.customer?.number)
+                      openWhatsApp(values.customer)
                     }
                   >
                     <FaWhatsapp className="mr-1" />
@@ -909,7 +912,7 @@ const CustomSelect = ({ label, options, ...props }) => {
     <div className="mb-4">
       <label
         htmlFor={props.id || props.name}
-        className="block text-sm font-semibold text-gray-700 mb-2"
+        className="block text-sm font-semibold  mb-2"
       >
         {label}
       </label>
@@ -941,6 +944,8 @@ const CustomSelectList = ({ options, label, field, form }) => {
   const selectRef = useRef(null);
   const spanRef = useRef(null);
   const inputRef = useRef(null);
+
+  const {isDarkMode} = useContext(DarkModeContext);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -987,7 +992,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
     <>
       <label
         htmlFor={field.name}
-        className="block text-sm font-semibold text-gray-700 mb-2"
+        className="block text-sm font-semibold  mb-2"
       >
         {label}
       </label>
@@ -996,7 +1001,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
         ref={selectRef}
       >
         <BiChevronDown
-          className="absolute text-3xl top-1 right-2 border-l  border-gray-300 text-gray-300 hover:text-gray-500 transition-colors cursor-pointer"
+          className="absolute text-3xl top-1 right-2 border-l  border-gray-300  hover:text-gray-500 transition-colors cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         />
 
@@ -1012,7 +1017,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
                   <span
                     key={index}
                     ref={index === selectedOptions?.length - 1 ? spanRef : null}
-                    className="flex items-center bg-gray-100 text-gray-800 text-sm px-2 py-1 mx-1 my-1 rounded"
+                    className={`flex items-center ${isDarkMode ? "bg-gray-800 text-white" : "bg-gray-300"} text-sm px-2 py-1 mx-1 my-1 rounded`}
                   >
                     <span className="mr-1">{selectedOption?.name}</span>
                     <HiX
@@ -1027,7 +1032,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
           <input
             ref={inputRef}
             type="text"
-            className="flex-grow p-1 m-1 focus:outline-none"
+            className={`flex-grow p-1 m-1 focus:outline-none ${isDarkMode ? "bg-gray-700" : "bg-white"}`}
             style={{ minWidth: "0" }}
             placeholder={selectedOptions?.length === 0 ? `Select ${label}` : ""}
             value={searchQuery}
@@ -1038,7 +1043,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
         </div>
 
         {isOpen && (
-          <div className="absolute z-10 mt-1 bg-white border border-gray-300 rounded w-full shadow-lg">
+          <div className={`absolute z-10 mt-1 ${isDarkMode ? "bg-gray-800" : "bg-white"} rounded w-full shadow-lg overflow-auto`}>
             {options
               .filter((option) =>
                 option.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -1046,12 +1051,12 @@ const CustomSelectList = ({ options, label, field, form }) => {
               .map((option, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-200"
+                  className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-300"
                   onClick={() => toggleOption(option._id)}
                 >
                   <span>{option.name}</span>
                   {selectedOptions.includes(option._id) && (
-                    <HiCheck className="text-gray-500" />
+                    <HiCheck />
                   )}
                 </div>
               ))}

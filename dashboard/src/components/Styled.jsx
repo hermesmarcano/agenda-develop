@@ -1,5 +1,6 @@
 import { FaPlus, FaSpinner, FaTrashAlt } from "react-icons/fa";
 import { AiOutlineFileAdd, AiOutlineFileSync } from "react-icons/ai";
+import { MdOutlineEditCalendar } from "react-icons/md";
 import "./Styled.css";
 
 const AddButton = ({ onClick, disabled }) => {
@@ -29,6 +30,22 @@ const SaveButton = ({ onClick, disabled }) => {
         <FaPlus />
       </span>
       <span className="pr-2">Add</span>
+    </button>
+  );
+};
+
+const SubmitButton = ({ onClick, disabled }) => {
+  return (
+    <button
+      type="submit"
+      className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
+      onClick={onClick}
+      disabled={disabled}
+    >
+      <span className="absolute -end-full transition-all group-hover:end-4">
+        <MdOutlineEditCalendar />
+      </span>
+      <span className="pr-2">Submit</span>
     </button>
   );
 };
@@ -199,6 +216,17 @@ const DefaultInputLightStyle =
 const DefaultInputDarkStyle =
   "w-full rounded-lg bg-gray-600 outline-teal-600 p-3 text-sm";
 
+const SpecialInputLightStyle =
+  "w-1/2 sm:w-14 py-2 px-2 text-center focus:outline-none rounded-lg border-none text-gray-800 bg-white text-sm";
+const SpecialInputDarkStyle =
+  "w-1/2 sm:w-14 py-2 px-2 text-center focus:outline-none rounded-lg bg-gray-700 outline-teal-600 text-sm";
+
+const NoWidthInputLightStyle =
+  "rounded-lg border-none text-gray-800 bg-white p-3 text-sm";
+const NoWidthInputDarkStyle =
+  "rounded-lg bg-gray-600 outline-teal-600 p-3 text-sm";
+  
+
 const IconInputLightStyle =
   "w-full rounded-lg border border-gray-400 text-gray-800 bg-white p-3 pl-7 text-sm";
 const IconInputDarkStyle =
@@ -212,6 +240,7 @@ export {
   AddButton,
   AddButtonWithTitle,
   SaveButton,
+  SubmitButton,
   RemoveSelectedButton,
   RegisterButton,
   UpdateButton,
@@ -221,6 +250,10 @@ export {
   Hourglass,
   DefaultInputDarkStyle,
   DefaultInputLightStyle,
+  SpecialInputDarkStyle,
+  SpecialInputLightStyle,
+  NoWidthInputDarkStyle,
+  NoWidthInputLightStyle,
   IconInputLightStyle,
   IconInputDarkStyle,
   titleLightStyle,

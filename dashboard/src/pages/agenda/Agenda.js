@@ -283,7 +283,7 @@ const Agenda = () => {
             <div className="flex flex-col items-center justify-center h-full">
               <div className="text-3xl font-bold mb-4">
                 <AiOutlineInbox className="inline-block mr-2" />
-                No Professionals Selected
+                No Selected Professionals
               </div>
               <div className="text-gray-600 text-lg mb-8">
                 Please select professionals to show the Schedular.

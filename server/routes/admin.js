@@ -12,6 +12,7 @@ const {
   getCustomers,
   getPayments,
   getArticleById,
+  deleteShopByShopId
 } = require("../controllers/admin");
 const multer = require("multer");
 const path = require("path");
@@ -66,5 +67,6 @@ router.get("/id", auth, getAdminById);
 router.get("/customers", auth, getCustomers);
 router.get("/payments", auth, getPayments);
 router.get("/article/:id", getArticleById);
+router.delete("/shops/:id", auth, deleteShopByShopId)
 
 module.exports = router;

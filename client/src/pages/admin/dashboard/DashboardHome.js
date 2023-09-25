@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Table, Tbody, Tr, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
-import { FaStore, FaUsers, FaMoneyBillWave } from "react-icons/fa";
+import { FaStore, FaUsers, FaMoneyBillWave, FaSpinner } from "react-icons/fa";
 import Popup from "../../../components/Popup";
 import instance from "../../../axiosConfig/axiosConfig";
+import { storage } from "../../../services/firebaseStorage";
+import { deleteObject, ref } from "firebase/storage";
 
 const DashboardHome = () => {
+  const token = localStorage.getItem("ag_app_admin_token");
   const [shops, setShops] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [transactions, setTransactions] = useState(0);
@@ -17,6 +20,8 @@ const DashboardHome = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [deleted, setDeleted] = useState(true);
+  const [isDeleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,21 +93,48 @@ const DashboardHome = () => {
     };
 
     fetchData();
-  }, []);
+  }, [isDeleting]);
 
-  const handleDeleteShop = async (shopId) => {
-    const token = localStorage.getItem("ag_app_admin_token");
+  const deleteShop = async (image, id) => {
+    const desertRef = ref(storage, image);
+
     try {
-      await instance.delete(`admin/shops/${shopId}`, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      // Remove the deleted shop from the state
-      setShops((prevShops) => prevShops.filter((shop) => shop._id !== shopId));
+      await deleteObject(desertRef);
+
+      await instance.delete(`admin/shops/${id}`, {
+            headers: {
+              Authorization: token,
+            },
+          });
+
+      return true;
     } catch (error) {
-      console.error("Error:", error);
+      console.error(`Failed to delete shop with ID ${id}.`, error);
+      return false;
     }
+  };
+
+  const handleRemoveSelected = async () => {
+    setDeleted(false);
+    const deletionPromises = selectedShops.map(async (id) => {
+      const shopToDelete = shops.find((shop) => shop._id === id);
+      console.log(shopToDelete);
+      return await deleteShop(shopToDelete.profileImg, id);
+    });
+
+    const results = await Promise.all(deletionPromises);
+
+    if (results.every((result) => result === true)) {
+      setDeleted(true);
+      setDeleting(false);
+      setSelectedShops([]);
+    }
+  };
+
+
+  const handleDeleteConfirm = () => {
+    console.log(selectedShops);
+    setModelState(true);
   };
 
   const handleSelectShop = (shopId) => {
@@ -113,14 +145,6 @@ const DashboardHome = () => {
     } else {
       setSelectedShops((prevSelectedShops) => [...prevSelectedShops, shopId]);
     }
-  };
-
-  const handleDeleteSelected = async () => {
-    if (selectedShops.length === 0) return;
-    for (const shopId of selectedShops) {
-      await handleDeleteShop(shopId);
-    }
-    setSelectedShops([]);
   };
 
   const handleSelectAll = () => {
@@ -159,10 +183,6 @@ const DashboardHome = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleDeleteConfirm = () => {
-    console.log(selectedShops);
-    setModelState(true);
-  };
 
   return (
     <div>
@@ -282,8 +302,8 @@ const DashboardHome = () => {
             </Tbody>
           </Table>
           <Popup
-            isOpen={modelState}
-            onClose={() => setModelState(false)}
+            isOpen={isDeleting}
+            onClose={() => setDeleting(!isDeleting)}
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
@@ -292,9 +312,16 @@ const DashboardHome = () => {
                 <div className="ml-4 flex">
                   <button
                     className="mr-2 bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded"
-                    onClick={handleDeleteSelected}
+                    onClick={handleRemoveSelected}
                   >
-                    Delete
+                    {!deleted ? (
+                      <span className="flex items-center justify-center">
+                        <FaSpinner className="animate-spin mr-2" />
+                        Deleting...
+                      </span>
+                    ) : (
+                      "Confirm"
+                    )}
                   </button>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded"

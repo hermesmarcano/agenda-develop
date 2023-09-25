@@ -24,7 +24,7 @@ const Drawer = ({ modelState, setModelState, title, children }) => {
       <div
         className={`${
           modelState
-            ? "overflow-y-hidden ease-in duration-300 fixed text-gray-300 right-0 top-0 w-full h-screen bg-black/70 flex flex-col z-40"
+            ? "overflow-y-hidden ease-in duration-300 fixed right-0 top-0 w-full h-screen bg-black/70 flex flex-col z-40"
             : "absolute top-0 left-[100%] ease-in duration-500"
         }`}
         onClick={closeDrawer}
@@ -32,7 +32,7 @@ const Drawer = ({ modelState, setModelState, title, children }) => {
       <div
         className={`${
           modelState
-            ? `animate-drawer overflow-y-auto fixed text-gray-300 right-0 top-0 w-[90%] sm:w-[60%] md:w-[40%] h-screen bg-${
+            ? `animate-drawer overflow-y-auto fixed right-0 top-0 w-[90%] sm:w-[60%] md:w-[40%] h-screen bg-${
               isDarkMode ? "gray-700" : "white"
             } shadow-xl flex flex-col z-50 ${
                 closing ? "animate-drawer-out" : ""
@@ -46,15 +46,15 @@ const Drawer = ({ modelState, setModelState, title, children }) => {
             <div className="h-full w-full flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between px-3 py-5 border-b border-b-gray-300">
-                  <h1 className="text-lg text-black font-semibold  whitespace-nowrap">
+                  <h1 className="text-lg  font-semibold  whitespace-nowrap">
                     {title}
                   </h1>
                   <button
                     onClick={closeDrawer}
-                    className="text-xs flex items-center font-semibold text-black"
+                    className="text-sm p-3 flex items-center justify-center font-semibold rounded-full hover:bg-teal-100"
                   >
-                    CLOSE
-                    <MdClose className="mr-2" />
+                    
+                    <MdClose />
                   </button>
                 </div>
                 <div className="w-full h-full overflow-y-auto">{children}</div>

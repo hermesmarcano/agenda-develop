@@ -15,7 +15,6 @@ const createPayment = async (req, res) => {
 const getAllPayments = async (req, res) => {
   try {
     if (req.query.appt) {
-      // If 'appt' query parameter is present, retrieve payment by appointment ID
       const payment = await Payment.findOne({ appointment: req.query.appt })
         .populate("customer", "name")
         .populate("service", "name price")
@@ -26,7 +25,6 @@ const getAllPayments = async (req, res) => {
       }
       res.status(200).json({ payment });
     } else {
-      // If 'appt' query parameter is not present, retrieve all payments
       const payments = await Payment.find({ managerId: req.query.shopId })
         .populate("customer", "name")
         .populate("service", "name price")

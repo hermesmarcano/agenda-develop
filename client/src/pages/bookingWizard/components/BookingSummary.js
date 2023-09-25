@@ -39,7 +39,7 @@ const BookingSummary = ({ paramsId }) => {
     hourCycle: "h23",
   }).format(d);
   return (
-    <div className="bg-indigo-600 text-white p-8 rounded-lg shadow-md">
+    <div className="bg-teal-600 text-white p-8 rounded-lg shadow-md">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <FaUser className="mr-2 text-3xl" />

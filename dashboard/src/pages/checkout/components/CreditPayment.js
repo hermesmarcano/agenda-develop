@@ -44,9 +44,6 @@ const CreditPayment = ({
       updatedAt: new Date(),
     };
 
-    console.log(data);
-    console.log(patchData);
-
     let paymentId = "";
 
     const updatePayment = () => {
@@ -192,9 +189,14 @@ const CreditPayment = ({
           deletePayment();
         });
     };
+    
 
     if (bookingInfo.checkoutType === "updating") {
-      updatePayment();
+      if(bookingInfo.paymentId){
+        updatePayment();
+      }else{
+        makePayment();  
+      }
     } else {
       makePayment();
     }

@@ -78,20 +78,20 @@ const ProfessionalCard = ({
           <div className="flex-shrink-0">
             <FiArrowRight
               className={`h-6 w-6 text-gray-400 transition-colors ${
-                hovered ? "text-indigo-500" : ""
+                hovered ? "text-teal-500" : ""
               } ${
                 professional?._id === selectedProfessional?._id &&
-                "text-indigo-500"
+                "text-teal-500"
               }`}
             />
           </div>
           <div className="flex-1 min-w-0">
             <div
               className={`text-base font-medium text-left leading-5 text-gray-900 ${
-                hovered ? "text-indigo-600" : ""
+                hovered ? "text-teal-600" : ""
               } ${
                 professional?._id === selectedProfessional?._id &&
-                "text-indigo-600"
+                "text-teal-600"
               }`}
             >
               {professional.name}

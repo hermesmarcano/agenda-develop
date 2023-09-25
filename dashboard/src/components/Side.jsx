@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { GiPayMoney } from "react-icons/gi";
+import { TbReportMoney } from "react-icons/tb";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
@@ -61,8 +61,8 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
     },
     {
       name: "Checkout",
-      icon: <GiPayMoney size={20} className="mr-2" />,
-      icon2: <GiPayMoney size={20} />,
+      icon: <TbReportMoney size={20} className="mr-2" />,
+      icon2: <TbReportMoney size={20} />,
       link: "/checkout-appointments",
     },
     {
@@ -177,7 +177,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
               })}
             </ul>
           </div>
-          <div className="sticky inset-x-0 bottom-0 border-t border-gray-100 mb-1">
+          <div className="inset-x-0 border-t border-gray-100">
             <div className="w-full flex">
               <button
                 onClick={logout}
@@ -222,7 +222,6 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
               </span>
             </div>
 
-            {/* <div></div> */}
 
             <div className="border-t border-gray-100">
               <div className="px-2">
@@ -277,7 +276,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
             </div>
           </div>
 
-          <div className="inset-x-0 bottom-0 border-t border-gray-100 p-2">
+          <div className="mt-auto inset-x-0 bottom-0 border-t border-gray-100 p-2">
             <button
               className="group relative flex w-full min-h-[32px] justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
               onClick={() => toggleSidebar(!isSidebarOpen)}

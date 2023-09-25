@@ -20,14 +20,14 @@ function Navbar() {
         <div className="flex items-center">
           <Link
             to="/"
-            className="text-gray-800 font-bold text-lg flex items-center justify-center"
+            className="text-teal-600 font-bold text-lg flex items-center justify-center"
           >
             <img src={logo} alt={logo} className="w-9 mr-1" />
 
             {websiteTitle}
           </Link>
           <button
-            className="ml-4 md:hidden text-gray-800 focus:outline-none"
+            className="ml-4 md:hidden text-teal-600 focus:outline-none"
             onClick={toggleMenu}
           >
             <svg
@@ -57,32 +57,32 @@ function Navbar() {
         <div className={`hidden md:flex md:flex-row items-center`}>
           <Link
             to="#"
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-teal-600 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
             // onClick={()=>scrollToSection()}
           >
             Home
           </Link>
           <button
             onClick={() => animateScroll.scrollTo(650)}
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-teal-600 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           >
             Shops
           </button>
           <button
             onClick={() => animateScroll.scrollTo(1100)}
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-teal-600 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           >
             Articles
           </button>
           <button
             onClick={() => animateScroll.scrollTo(2500)}
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-teal-600 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           >
             Services
           </button>
           <Link
             to="/shops"
-            className="py-2 px-4 text-white rounded-full bg-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-white rounded-full bg-teal-600 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           >
             Book Now!
           </Link>
@@ -92,33 +92,33 @@ function Navbar() {
       <div className={`${isOpen ? "block" : "hidden"} md:hidden  py-2`}>
         <Link
           to="#"
-          className="block py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          className="block py-2 px-4 text-teal-600 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           // onClick={()=>scrollToSection()}
         >
           Home
         </Link>
         <button
           onClick={() => animateScroll.scrollTo(800)}
-          className="block w-full py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          className="block w-full py-2 px-4 text-teal-600 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           // onClick={scrollToShopSection}
         >
           Shops
         </button>
         <button
           onClick={() => animateScroll.scrollTo(1300)}
-          className="block w-full py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          className="block w-full py-2 px-4 text-teal-600 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         >
           Articles
         </button>
         <button
           onClick={() => animateScroll.scrollTo(3550)}
-          className="block w-full py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          className="block w-full py-2 px-4 text-teal-600 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         >
           Services
         </button>
         <Link
           to="/shops"
-          className="block py-2 px-4 mx-auto w-fit text-white rounded-full bg-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          className="block py-2 px-4 mx-auto w-fit text-white rounded-full bg-teal-600 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         >
           Find Shops
         </Link>

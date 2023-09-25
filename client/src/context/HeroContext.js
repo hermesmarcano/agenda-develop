@@ -7,7 +7,7 @@ const HeroContextWrapper = ({ children }) => {
   const [heroData, setHeroData] = useState({
     heroText: "Find The Right Shop for Your Need",
     heroColor: "white",
-    heroBgColor: "gray-800",
+    heroBgColor: "teal-800",
     heroStyle: "hero",
     sliderDataImgs: [
       "https://via.placeholder.com/800x300",

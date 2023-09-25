@@ -1,0 +1,42 @@
+/* custom-select.css */
+.custom-select {
+    /* Change the background color of the entire Select component */
+    background-color: #e6e6e6; /* Change this to your desired background color */
+  }
+  
+  .custom-select .select__control {
+    /* Apply styles to the control container */
+    background-color: #e6e6e6; /* Change this to your desired background color */
+  }
+  
+  .custom-select .select__indicator {
+    /* Apply styles to the indicator (arrow) */
+    color: #333; /* Change this to your desired color */
+  }
+  
+  .custom-select .select__single-value {
+    /* Apply styles to the single selected value */
+    color: #333; /* Change this to your desired color */
+  }
+  
+  .custom-select .select__menu {
+    /* Apply styles to the dropdown menu */
+    background-color: #e6e6e6; /* Change this to your desired background color */
+  }
+  
+  .custom-select .select__option {
+    /* Change the background color of the options in the dropdown */
+    background-color: #e6e6e6; /* Change this to your desired background color */
+  }
+  
+  .custom-select .select__option--is-focused {
+    /* Apply styles to the focused option in the dropdown */
+    background-color: #a0a0a0; /* Change this to your desired background color */
+  }
+  
+  .custom-select .select__option--is-selected {
+    /* Apply styles to the selected option in the dropdown */
+    background-color: #333; /* Change this to your desired background color */
+    color: #fff; /* Change the text color */
+  }
+  

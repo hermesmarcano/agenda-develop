@@ -1,31 +1,29 @@
-import React, { useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
 
   const handlePrevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    setSelectedDate(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1)
     );
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    setSelectedDate(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 1)
     );
   };
 
   const getMonthName = () => {
-    return currentDate.toLocaleString("default", {
+    return selectedDate.toLocaleString("default", {
       month: "long",
       year: "numeric",
     });
   };
 
   const getDaysInMonth = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     return daysInMonth;
   };
@@ -33,8 +31,8 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth();
     const firstDay = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
       1
     ).getDay();
     const days = [];

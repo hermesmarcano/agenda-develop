@@ -7,6 +7,7 @@ import ViewAppointment from "./ViewAppointment";
 import UpdateAppointment from "./UpdateAppointment";
 import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
+import BlockCard from "./BlockCard";
 
 const WeeklyScheduler = ({
   selectedWeekDate,
@@ -14,15 +15,21 @@ const WeeklyScheduler = ({
   startWeekDate,
   selectedProfessional,
   workingHours,
-  appointmentsList
+  appointmentsList,
+  modelState,
+  updateModelState,
+  viewModelState,
+  viewBlockingModelState,
+  setModelState,
+  setUpdateModelState,
+  setViewModelState,
+  setViewBlockingModelState,
 }) => {
   const { isDarkMode } = useContext(DarkModeContext);
-  const [modelState, setModelState] = React.useState(false);
-  const [updateModelState, setUpdateModelState] = React.useState(false);
-  const [viewModelState, setViewModelState] = React.useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
   const { dateTime, setDateTime } = useContext(DateTimeContext);
   const { setProfessionalId } = useContext(ProfessionalIdContext);
+  const [blockingPeriod, setBlockingPeriod] = React.useState(null);
 
   const timeSlotDuration = 15;
 
@@ -73,17 +80,40 @@ const WeeklyScheduler = ({
     return startOfWeek;
   };
 
-  const handleBooking = (day, time, selectedProfessional) => {
+  const handleBooking = (day, time, appointment, blockedPeriod) => {
+    if(blockedPeriod?.blocking > 0) {
+      setBlockingPeriod(blockedPeriod);
+      setViewBlockingModelState(true);
+      return;
+    }
+    if (time < new Date()) return;
     const reservationDate = new Date(day);
     reservationDate.setHours(time.getHours());
     reservationDate.setMinutes(time.getMinutes());
     setDateTime(reservationDate);
     setProfessionalId(selectedProfessional._id);
-    setModelState(true);
+    setSelectedAppointmentId(appointment ? appointment._id : "");
+
+    !appointment && setModelState(true);
+    if(appointment && time < new Date()){
+      appointment && setViewModelState(true);
+    }
+    if(appointment && time >= new Date()){
+      appointment && setUpdateModelState(true);
+    }
   };
 
   return (
     <>
+    <Popup 
+        isOpen={viewBlockingModelState}
+        onClose={() => setViewBlockingModelState(!viewBlockingModelState)}
+        children={
+          <BlockCard
+            blockingPeriod={blockingPeriod}
+          />
+        }
+      />
       <ProcessAppointment
         isOpen={modelState}
         onClose={() => setModelState(!modelState)}
@@ -117,7 +147,7 @@ const WeeklyScheduler = ({
       >
         <table className="w-full table-auto border-collapse border">
           <thead>
-            <tr className="text-gray-700">
+            <tr>
               <th className="w-16 border-teal-600"></th>
               {daysOfWeek.map((day) => (
                 <th key={day.toISOString()} className="text-center px-2 py-2">
@@ -146,22 +176,150 @@ const WeeklyScheduler = ({
                     >
                       {time.getMinutes() === 0 && timeFormat.format(time)}
                     </td>
-                    {daysOfWeek.map((day) => (
-                      <td
-                        key={`${day.toISOString()}-${time.toISOString()}`}
-                        className={`text-center ${
-                          time.getMinutes() === 0
-                            ? "border-t-2 border"
-                            : "border"
-                        } border-gray-300 px-2 min-w-[135px] ${
-                          time <= new Date() ? "stripe-bg" : "hover:bg-gray-100"
-                        }`}
-                        onClick={() =>
-                          handleBooking(day, time, selectedProfessional)
+                    {daysOfWeek.map((day, dayIndex) => {
+                      let appointmentIndex = 0;
+                      const currentTime = new Date(day);
+                      currentTime.setHours(time.getHours());
+                      currentTime.setMinutes(time.getMinutes());
+
+                      const matchingAppointmentsFirstSlot =
+                        appointmentsList.filter((appt, apptIndex) => {
+                          const isDateTimeMatch =
+                            new Date(appt.dateTime).toString() ===
+                            currentTime.toString();
+                          const isProfessionalIdMatch =
+                            appt.professional._id === selectedProfessional._id;
+                          return isDateTimeMatch && isProfessionalIdMatch;
+                        });
+
+                      const matchingAppointments = appointmentsList.filter(
+                        (appt, apptIndex) => {
+                          const apptTime = new Date(appt.dateTime);
+                          const apptEndTime = new Date(
+                            apptTime.getTime() + appt.duration * 60000
+                          );
+
+                          if (
+                            apptTime <= currentTime &&
+                            apptEndTime >= currentTime &&
+                            appt.professional._id === selectedProfessional._id
+                          )
+                            appointmentIndex = apptIndex;
+
+                          return (
+                            apptTime <= currentTime &&
+                            apptEndTime > currentTime &&
+                            appt.professional._id === selectedProfessional._id
+                          );
                         }
-                        disabled={time <= new Date()}
-                      ></td>
-                    ))}
+                      );
+
+                      const matchingBlockedPeriod = appointmentsList.filter(
+                        (appt, apptIndex) => {
+                          const apptTime = new Date(appt.dateTime);
+                          const apptEndTime = new Date(
+                            apptTime.getTime() + appt.blockingDuration * 60000
+                          );
+
+                          if (
+                            apptTime <= currentTime &&
+                            apptEndTime >= currentTime &&
+                            appt.professional._id === selectedProfessional._id
+                          )
+                            appointmentIndex = apptIndex;
+
+                          return (
+                            apptTime <= currentTime &&
+                            apptEndTime > currentTime &&
+                            appt.professional._id === selectedProfessional._id
+                          );
+                        }
+                      );
+
+                      return (
+                        <td
+                          key={`${day.toISOString()}-${currentTime.toISOString()}`}
+                          className={`p-0 text-center ${
+                            matchingAppointments.length === 0
+                              ? "border"
+                              : "border-none"
+                          } hover:cursor-crosshair ${
+                            currentTime.getMinutes() === 0
+                              ? "border-t-gray-500 border"
+                              : "border-gray-300 "
+                          } min-w-[135px] ${
+                            currentTime <= new Date()
+                              ? "stripe-bg"
+                              : "hover:bg-gray-100"
+                          }`}
+                          onClick={() =>
+                            handleBooking(
+                              day,
+                              currentTime,
+                              matchingAppointments[0],
+                              matchingBlockedPeriod[0]
+                            )
+                          }
+                        >
+                          {matchingAppointments.length > 0 && (
+                            <div
+                              key={index}
+                              className={`m-0 ${
+                                currentTime < new Date() && "opacity-50"
+                              } ${
+                                matchingBlockedPeriod.length === 0
+                                  ? dayIndex % 2 === 0
+                                    ? appointmentIndex % 2 === 0
+                                      ? "bg-teal-600"
+                                      : "bg-slate-700"
+                                    : appointmentIndex % 2 === 0
+                                    ? "bg-cyan-700"
+                                    : "bg-sky-800"
+                                  : "bg-orange-700"
+                              } z-30 h-7 px-2 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500`}
+                            >
+                              {matchingAppointmentsFirstSlot[0] ? (
+                                <>
+                                  {matchingAppointmentsFirstSlot[0].blocking &&
+                                    matchingAppointmentsFirstSlot[0]
+                                      .blockingDuration && (
+                                      <div>
+                                        Blocking Reason:{" "}
+                                        {matchingAppointmentsFirstSlot[0]
+                                          .blockingReason.length > 7
+                                          ? matchingAppointmentsFirstSlot[0].blockingReason.slice(
+                                              0,
+                                              7
+                                            ) + "..."
+                                          : matchingAppointmentsFirstSlot[0]
+                                              .blockingReason}
+                                      </div>
+                                    )}
+                                  {!matchingAppointmentsFirstSlot[0]
+                                    .blocking && (
+                                    <>
+                                      <span className="font-bold text-white mr-1 whitespace-nowrap">
+                                        {matchingAppointments[0].customer.name}
+                                      </span>
+                                      <span className="text-gray-300">
+                                        Services:
+                                      </span>
+                                      <span className="italic text-white ml-1 truncate">
+                                        {matchingAppointments[0]?.service
+                                          ?.map((s) => s.name)  
+                                          .join(", ") || ""}
+                                      </span>
+                                    </>
+                                  )}
+                                </>
+                              ) : (
+                                <div></div>
+                              )}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </React.Fragment>

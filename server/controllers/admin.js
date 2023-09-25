@@ -215,6 +215,20 @@ const getShops = async (req, res) => {
   }
 };
 
+const deleteShopByShopId = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const manager = await Manager.findById(id);
+    if (!manager) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+    await Manager.deleteOne({ _id: id });
+    console.log(manager);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 const getCustomers = async (req, res) => {
   try {
     const customers = await Customer.find({});
@@ -247,4 +261,5 @@ module.exports = {
   getCustomers,
   getPayments,
   getArticleById,
+  deleteShopByShopId
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import instance from "../../../axiosConfig/axiosConfig";
@@ -7,15 +7,32 @@ import Switch from "react-switch";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
+import DateRangePicker from "./DateRangePicker";
+import { DefaultInputDarkStyle, DefaultInputLightStyle, SubmitButton } from "../../../components/Styled";
+import { DarkModeContext } from "../../../context/DarkModeContext";
 
 const BlockSchedule = ({ setModelState }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
+  const { dateTime } = useContext(DateTimeContext);
   const [blockAllDay, setBlockAllDay] = useState(true);
   const [showFrequency, setShowFrequency] = useState(false);
-  const { dateTime } = useContext(DateTimeContext);
   const { professionalId } = useContext(ProfessionalIdContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const { shopId } = useContext(SidebarContext);
   const [loading, setLoading] = React.useState(true);
+  const [dateValues, setDateValues] = useState({
+    startDate: null,
+    startTime: null,
+    endDate: null,
+    endTime: null,
+  });
+
+  const handleDateChange = (values) => {
+    setDateValues(values);
+  };
+
+  const memoizedBlockAllDay = useMemo(() => blockAllDay, [blockAllDay]);
+
 
   const [professionals, setProfessionals] = useState([]);
   useEffect(() => {
@@ -34,10 +51,10 @@ const BlockSchedule = ({ setModelState }) => {
       });
   }, []);
 
-  const hoursArr = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
 
   const handleBlockAllDayChange = () => {
-    setBlockAllDay(!blockAllDay);
+    console.log(blockAllDay);
+    setBlockAllDay((prevBlockAllDay) => !prevBlockAllDay);
   };
 
   const handleShowFrequencyChange = () => {
@@ -46,114 +63,48 @@ const BlockSchedule = ({ setModelState }) => {
 
   const validationSchema = Yup.object({
     professional: Yup.string().required("Professional is required"),
-    startDate: Yup.date().required("Start Date is required"),
-    startTimeHour: Yup.string(),
-    startTimeMinute: Yup.string(),
-    endDate: Yup.date().required("End Date is required"),
-    endTimeHour: Yup.string(),
-    endTimeMinute: Yup.string(),
     blockingReason: Yup.string().required("Blocking Reason is required"),
   });
 
+  const calculateDurationInMinutes = (dateTimeObject) => {
+    const { startDate, startTime, endDate, endTime } = dateTimeObject;
+    console.log({ startDate, startTime, endDate, endTime });
+    const startDateTime = new Date(`${startDate}T${startTime}`);
+    const endDateTime = new Date(`${endDate}T${endTime}`);
+    const durationInMilliseconds = endDateTime - startDateTime;
+    // Calculate duration in minutes
+    const durationInMinutes = Math.floor(durationInMilliseconds / (1000 * 60));
+    return durationInMinutes;
+  }
+
   const handleSubmit = (values) => {
-    let blockingDate = new Date(values.startDate);
-    blockingDate.setHours(values.startTimeHour);
-    blockingDate.setMinutes(values.startTimeMinute);
-    let blockingEndDate = new Date(values.endDate);
-    let endOfDay = new Date(values.startDate);
-    endOfDay.setHours(18);
-    endOfDay.setMinutes(0);
-    const maxDuration = (endOfDay - blockingDate) / (1000 * 60);
-    if (values.endTimeHour && !values.blockAllDay) {
-      blockingEndDate.setHours(values.endTimeHour);
-      if (values.endTimeMinute)
-        blockingEndDate.setMinutes(values.endTimeMinute);
-    } else {
-      blockingEndDate.setHours(8);
-      blockingEndDate.setMinutes(0);
-    }
-
-    let duration = (blockingEndDate - blockingDate) / (1000 * 60);
-    const dayStart = new Date();
-    dayStart.setHours(8);
-    dayStart.setMinutes(0);
-    const dayEnd = new Date();
-    dayEnd.setHours(18);
-    dayEnd.setMinutes(0);
-    let dayHours = (dayEnd - dayStart) / (1000 * 60);
-
-    if (blockAllDay) {
-      const startingDate = new Date(values.startDate);
-      startingDate.setHours(8);
-      startingDate.setMinutes(0);
-      createAppointment(
-        startingDate,
-        600,
-        values.professional,
-        values.blockingReason
-      );
-    } else {
-      if (duration <= maxDuration) {
-        // If the duration is less than or equal to maxDuration, create a single appointment
-        createAppointment(
-          blockingDate,
-          duration,
-          values.professional,
-          values.blockingReason
-        );
-      } else {
-        // If the duration is larger than maxDuration, create multiple appointments
-        const appointments = [];
-        let currentDate = blockingDate;
-        let currentDuration = 0;
-        do {
-          if (currentDate.getDate() === blockingDate.getDate()) {
-            currentDuration = maxDuration;
-            createAppointment(
-              currentDate,
-              currentDuration,
-              values.professional,
-              values.blockingReason
-            );
-
-            currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
-            currentDate.setHours(8);
-            currentDate.setMinutes(0);
-          } else {
-            if (duration > dayHours) {
-              // If the remaining duration is larger than the available day hours
-              currentDuration = dayHours;
-
-              createAppointment(
-                currentDate,
-                currentDuration,
-                values.professional,
-                values.blockingReason
-              );
-
-              // Move to the next day at 8:00 AM
-              currentDate = new Date(
-                currentDate.getTime() + 24 * 60 * 60 * 1000
-              );
-              currentDate.setHours(8);
-              currentDate.setMinutes(0);
-            }
-          }
-
-          duration = (blockingEndDate - currentDate) / (1000 * 60);
-        } while (duration > dayHours);
-
-        currentDuration = duration;
-
-        if (currentDuration > 0) {
-          createAppointment(
-            currentDate,
-            currentDuration,
-            values.professional,
-            values.blockingReason
-          );
-        }
+    const currentProfessionalObj = professionals.find(professional => professional._id === values.professional);
+    const lastProfessionalWorkingHour = currentProfessionalObj.officeHours[currentProfessionalObj.officeHours.length-1].endHour;
+    const allDayStartBlockingDateTime = new Date(dateTime);
+    allDayStartBlockingDateTime.setMinutes(0);
+    allDayStartBlockingDateTime.setSeconds(0);
+    const allDayEndBlockingDateTime = new Date(allDayStartBlockingDateTime);
+    allDayEndBlockingDateTime.setHours(lastProfessionalWorkingHour);
+    const allDayWorkingDuration = allDayEndBlockingDateTime - allDayStartBlockingDateTime;
+    const allDayDurationInMinutes = Math.floor(allDayWorkingDuration / (1000 * 60));
+    const hours = parseInt(dateValues.startTime?.split(':')[0]);
+    const minutes = parseInt(dateValues.startTime?.split(':')[1]);
+    const startDate = new Date(dateValues.startDate);
+    startDate.setHours(hours)
+    startDate.setMinutes(minutes);
+    const duration = calculateDurationInMinutes(dateValues);
+    console.log(blockAllDay);
+    console.log(duration);
+    if(blockAllDay){
+      if(allDayDurationInMinutes <= 0){
+        alert('Day for this professional has passed!!, please select different day');
+        return;
       }
+      console.log(JSON.stringify({dateTime: allDayStartBlockingDateTime, blockingDuration: allDayDurationInMinutes, professional: values.professional, blockingReason: values.blockingReason}, null, 2));
+      createAppointment(allDayStartBlockingDateTime, allDayDurationInMinutes, values.professional, values.blockingReason)
+    }else{
+      console.log(JSON.stringify({dateTime: startDate, blockingDuration: duration, professional: values.professional, blockingReason: values.blockingReason}, null, 2));
+      createAppointment(startDate, duration, values.professional, values.blockingReason)
     }
   };
 
@@ -163,46 +114,56 @@ const BlockSchedule = ({ setModelState }) => {
     professionalId,
     blockingReason
   ) => {
-    // instance
-    //   .post(
-    //     `${instance}/appointments`,
-    //     {
-    //       professional: professionalId,
-    //       dateTime: new Date(dateTime),
-    //       managerId: shopId,
-    //       blocking: true,
-    //       blockingDuration: duration,
-    //       blockingReason: blockingReason,
-    //     },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         Authorization: token,
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     setModelState(false);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error.message);
-    //     // Handle errors
-    //   });
     console.log({
       professional: professionalId,
       dateTime: new Date(dateTime),
       managerId: shopId,
       blocking: true,
       blockingDuration: duration,
+      duration: duration,
+      blockingReason: blockingReason,
+    });
+    instance
+      .post('appointments',
+        {
+          professional: professionalId,
+          dateTime: new Date(dateTime),
+          managerId: shopId,
+          blocking: true,
+          blockingDuration: duration,
+          duration: duration,
+          blockingReason: blockingReason,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        setModelState(false);
+      })
+      .catch((error) => {
+        console.error(error.message);
+        // Handle errors
+      });
+    console.log({
+      professional: professionalId,
+      dateTime: new Date(dateTime),
+      managerId: shopId,
+      blocking: true,
+      blockingDuration: duration,
+      duration: duration,
       blockingReason: blockingReason,
     },);
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center">
         <div className="flex flex-col justify-center items-center space-x-2">
-          <FaSpinner className="animate-spin text-4xl text-blue-500" />
+          <FaSpinner className="animate-spin text-4xl text-teal-500" />
           <span className="mt-2">Loading...</span>
         </div>
       </div>
@@ -213,13 +174,7 @@ const BlockSchedule = ({ setModelState }) => {
     <Formik
       initialValues={{
         professional: professionalId,
-        blockAllDay: blockAllDay,
-        startDate: dateTime.toISOString().substring(0, 10),
-        startTimeHour: "",
-        startTimeMinute: "",
-        endDate: dateTime.toISOString().substring(0, 10),
-        endTimeHour: "",
-        endTimeMinute: "",
+        blockAllDay: memoizedBlockAllDay,
         // repetitions: "",
         // frequency: "",
         // repeat: "",
@@ -228,13 +183,19 @@ const BlockSchedule = ({ setModelState }) => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      <Form className="bg-white rounded px-8 pt-6 pb-8">
+      {({
+          isSubmitting,
+          
+        }) => {
+          
+          return(
+      <Form className="rounded px-8 pt-6 pb-8">
         <div className="grid grid-cols-1 gap-4">
           <div>
             <div>
               <label
                 htmlFor="professional"
-                className={`block text-sm text-gray-700 font-bold mb-2`}
+                className={`block text-sm  font-bold mb-2`}
               >
                 Select the professional
               </label>
@@ -242,7 +203,7 @@ const BlockSchedule = ({ setModelState }) => {
                 as="select"
                 id="professional"
                 name="professional"
-                className={`py-2 pl-8 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 w-64`}
+                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
               >
                 <option value="">Select professional</option>
                 {professionals.map((professional) => {
@@ -263,7 +224,7 @@ const BlockSchedule = ({ setModelState }) => {
               <div className="flex justify-start items-center">
                 <label
                   htmlFor="blockAllDay"
-                  className={`block text-sm text-gray-700 font-bold`}
+                  className={`block text-sm  font-bold`}
                 >
                   Block all day
                 </label>
@@ -285,10 +246,10 @@ const BlockSchedule = ({ setModelState }) => {
                 />
               </div>
             </div>
-            <div className="flex items-end mt-2 pr-3">
+            {/* <div className="flex items-end mt-2 pr-3">
               <label
                 //   htmlFor="startDate"
-                className={`block text-sm text-gray-700 font-bold mr-2`}
+                className={`block text-sm  font-bold mr-2`}
               >
                 Start
               </label>
@@ -297,7 +258,7 @@ const BlockSchedule = ({ setModelState }) => {
                   type="date"
                   id="startDate"
                   name="startDate"
-                  className={`py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500`}
+                  className={`py-2 pl-3 border-b-2 border-gray-300  focus:outline-none focus:border-blue-500`}
                 />
                 <ErrorMessage
                   name="startDate"
@@ -313,7 +274,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="startTimeHour"
                       name="startTimeHour"
-                      className={`py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500`}
+                      className={`py-2 pl-3 border-b-2 border-gray-300  focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Hour</option>
                       {hoursArr.map((hour, index) => {
@@ -336,7 +297,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="startTimeMinute"
                       name="startTimeMinute"
-                      className={`py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500`}
+                      className={`py-2 pl-3 border-b-2 border-gray-300  focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Minute</option>
                       <option value="0">00</option>
@@ -356,7 +317,7 @@ const BlockSchedule = ({ setModelState }) => {
             <div className="flex items-end">
               <label
                 // htmlFor="endDate"
-                className={`block text-sm text-gray-700 font-bold mr-4`}
+                className={`block text-sm  font-bold mr-4`}
               >
                 End
               </label>
@@ -365,7 +326,7 @@ const BlockSchedule = ({ setModelState }) => {
                   type="date"
                   id="endDate"
                   name="endDate"
-                  className={`py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500`}
+                  className={`py-2 pl-3 border-b-2 border-gray-300  focus:outline-none focus:border-blue-500`}
                 />
                 <ErrorMessage
                   name="endDate"
@@ -380,7 +341,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="endTimeHour"
                       name="endTimeHour"
-                      className={`py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500`}
+                      className={`py-2 pl-3 border-b-2 border-gray-300  focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Hour</option>
                       {hoursArr.map((hour, index) => {
@@ -402,7 +363,7 @@ const BlockSchedule = ({ setModelState }) => {
                       as="select"
                       id="endTimeMinute"
                       name="endTimeMinute"
-                      className={`py-2 pl-3 border-b-2 border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500`}
+                      className={`py-2 pl-3 border-b-2 border-gray-300  focus:outline-none focus:border-blue-500`}
                     >
                       <option value="">Minute</option>
                       <option value="0">00</option>
@@ -418,13 +379,17 @@ const BlockSchedule = ({ setModelState }) => {
                   </div>
                 </>
               )}
+            </div> */}
+            <div className="mt-2">
+            <DateRangePicker isDisabled={blockAllDay} onDateChange={handleDateChange} />
+           
             </div>
           </div>
           <div>
             {/* <div className="flex items-center my-2">
           <label
             htmlFor="repetitions"
-            className={`block text-sm text-gray-700 font-bold`}
+            className={`block text-sm  font-bold`}
           >
             Repetitions
           </label>
@@ -444,7 +409,7 @@ const BlockSchedule = ({ setModelState }) => {
                 <div>
                   <label
                     htmlFor="frequency"
-                    className={`block text-sm text-gray-700 font-bold mb-2`}
+                    className={`block text-sm  font-bold mb-2`}
                   >
                     Frequency
                   </label>
@@ -499,7 +464,7 @@ const BlockSchedule = ({ setModelState }) => {
         <div className="mt-3">
           <label
             htmlFor="blockingReason"
-            className={`block text-sm text-gray-700 font-bold mb-2`}
+            className={`block text-sm font-bold mb-2`}
           >
             Blocking Reason
           </label>
@@ -507,7 +472,7 @@ const BlockSchedule = ({ setModelState }) => {
             as="textarea"
             id="blockingReason"
             name="blockingReason"
-            className={`py-2 px-4 border border-gray-300 text-gray-700 focus:outline-none focus:border-blue-500 resize-none w-full`}
+            className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
             rows="3"
           ></Field>
           <ErrorMessage
@@ -516,17 +481,16 @@ const BlockSchedule = ({ setModelState }) => {
             className="text-red-500 text-xs mt-1"
           />
         </div>
-        <div className="flex items-center justify-between">
-          <button
-            type="submit"
-            className={`bg-gray-800 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
-          >
-            Submit
-          </button>
+        <div className="flex mt-2 items-center justify-between">
+          <SubmitButton />
         </div>
       </Form>
+          )
+      }}
     </Formik>
   );
 };
 
 export default BlockSchedule;
+
+
