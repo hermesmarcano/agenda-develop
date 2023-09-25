@@ -124,7 +124,6 @@ const DashboardHero = () => {
                   <option value="gray-600">Gray-600</option>
                   <option value="gray-700">Gray-700</option>
                   <option value="gray-800">Gray-800</option>
-                  <option value="teal-800">Teal-800</option>
                 </select>
                 <ErrorMessage
                   name="heroBgColor"
