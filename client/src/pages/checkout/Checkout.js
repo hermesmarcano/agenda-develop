@@ -281,7 +281,7 @@ const PaymentChoice = ({
         {paymentMethod && (
           <button
             onClick={confirmPayment}
-            className="mt-8 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none"
+            className="mt-8 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none"
           >
             Confirm Payment
           </button>
@@ -360,19 +360,7 @@ const PaymentSummary = ({
           </div>
         </div>
         <div>
-          <div className="mt-4">
-            <button
-              onClick={confirmPayment}
-              disabled={!paymentMethod}
-              className={`${
-                paymentMethod
-                  ? "bg-indigo-600 hover:bg-indigo-500"
-                  : "bg-indigo-400"
-              } text-white px-4 py-2 rounded-lg`}
-            >
-              Confirm Payment
-            </button>
-          </div>
+          
         </div>
       </div>
     </div>

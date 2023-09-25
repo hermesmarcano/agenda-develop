@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import CalendarBox from "../../../components/CalendarBox";
 
-const DateSelection = ({ paramsId }) => {
+const DateSelection = ({ paramsId, setHasSelectedDate }) => {
   const [selectedDate, setSelectedDate] = useState(null);
 
   useEffect(() => {
@@ -15,6 +15,7 @@ const DateSelection = ({ paramsId }) => {
       day
     );
     setSelectedDate(selected);
+    setHasSelectedDate(selected !== null)
   };
 
   return (

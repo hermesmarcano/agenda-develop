@@ -51,7 +51,7 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
         <div
           key={`day-${day}`}
           className={`flex items-center justify-center h-9 px-5 rounded-md cursor-pointer text-lg ${
-            isSelected ? "bg-indigo-600 text-white" : "hover:bg-gray-100"
+            isSelected ? "bg-teal-600 text-white" : "hover:bg-gray-100"
           }`}
           onClick={() => handleDateClick(day)}
         >

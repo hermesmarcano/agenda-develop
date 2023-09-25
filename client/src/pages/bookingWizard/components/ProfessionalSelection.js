@@ -3,7 +3,7 @@ import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi"; // Yo
 import instance from "../../../axiosConfig/axiosConfig";
 import ReactPaginate from "react-paginate";
 
-const ProfessionalSelection = ({ paramsId }) => {
+const ProfessionalSelection = ({ paramsId, setHasSelectedProfessional }) => {
   const [professionals, setProfessionals] = useState([]);
   const [selectedProfessional, setSelectedProfessional] = useState(null);
 
@@ -28,6 +28,7 @@ const ProfessionalSelection = ({ paramsId }) => {
 
   const handleSelection = (pro) => {
     setSelectedProfessional(pro);
+    setHasSelectedProfessional(pro !== null )
   };
 
   return (

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import instance from "../../axiosConfig/axiosConfig";
-import { FiArrowRightCircle } from "react-icons/fi";
+import { FaBook } from "react-icons/fa";
 import ShopFooter from "./components/shopFooter";
 
 const Shop = () => {
@@ -39,10 +39,10 @@ const Shop = () => {
         </h1>
         <div className="flex items-center justify-center space-x-4">
           <Link to={`/shops/${params.id}/wizard`}>
-            <button className="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-medium py-3 px-6 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button className="flex items-center bg-teal-600 hover:bg-teal-700 text-white text-xl font-medium py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Book Now
               <span className="ml-2">
-                <FiArrowRightCircle />
+                <FaBook />
               </span>
             </button>
           </Link>

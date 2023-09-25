@@ -3,7 +3,7 @@ import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import instance from "../../../axiosConfig/axiosConfig";
 import ReactPaginate from "react-paginate";
 
-const ServicesSelection = ({ paramsId }) => {
+const ServicesSelection = ({ paramsId, setHasSelectedService }) => {
   const [selectedServices, setSelectedServices] = useState([]);
   const [services, setServices] = useState([]);
   const perPage = 4; // Number of services per page
@@ -54,6 +54,8 @@ const ServicesSelection = ({ paramsId }) => {
       `services_${paramsId}`,
       JSON.stringify(updatedServices)
     );
+
+    setHasSelectedService(updatedServices.length > 0);
   };
 
   return (

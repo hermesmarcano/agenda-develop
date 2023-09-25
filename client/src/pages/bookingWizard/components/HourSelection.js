@@ -3,7 +3,7 @@ import instance from "../../../axiosConfig/axiosConfig";
 import { FaSpinner } from "react-icons/fa";
 import { Transition } from "@headlessui/react";
 
-const HourSelection = ({ paramsId }) => {
+const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   const [selectedHour, setSelectedHour] = useState(
     new Date(localStorage.getItem(`dateTime_${paramsId}`))
   );
@@ -18,6 +18,7 @@ const HourSelection = ({ paramsId }) => {
 
   const handleHourChange = (event) => {
     setSelectedHour(event.target.value);
+    setHasSelectedHour(event.target.value !== null)
   };
 
   useEffect(() => {

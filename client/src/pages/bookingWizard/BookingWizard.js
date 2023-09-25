@@ -1,5 +1,7 @@
 import React from "react";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
+import { FiArrowRight, FiArrowLeft } from "react-icons/fi";
+import {  FaShoppingCart } from "react-icons/fa";
 import ServicesSelection from "./components/ServicesSelection";
 import ProductsSelection from "./components/ProductsSelection";
 import ProfessionalSelection from "./components/ProfessionalSelection";
@@ -20,6 +22,11 @@ function BookingWizard() {
   const [signInPopup, setSignInPopup] = React.useState(false);
   const navigate = useNavigate();
   const params = useParams();
+  const [hasSelectedService, setHasSelectedService] = React.useState(false);
+  const [hasSelectedProfessional, setHasSelectedProfessional] =
+    React.useState(false);
+  const [hasSelectedDate, setHasSelectedDate] = React.useState(false);
+  const [hasSelectedHour, setHasSelectedHour] = React.useState(false);
 
   React.useEffect(() => {
     instance.get(`/managers/shop?urlSlug=${params.id}`).then((response) => {
@@ -148,29 +155,40 @@ function BookingWizard() {
                 bookingInfo={bookingInfo}
                 setBookingInfo={setBookingInfo}
                 paramsId={params.id}
+                setHasSelectedService={setHasSelectedService}
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
+
                   <button
-                    className="btn btn-primary js-btn-next"
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
-                    onClick={handlePrevious}
+                    onClick={() => navigate(`/shops/${params.id}`)}
                   >
                     <span className="flex items-center">
-                      <AiFillCaretLeft className="mr-2" /> Back to Shop
+                      <FiArrowLeft className="mr-2" /> Back to Shop
                     </span>
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
                   <button
-                    className="btn btn-primary js-btn-next"
+                    className={`text-white ${
+                      !hasSelectedService
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                    } transform transition-transform ${
+                      !hasSelectedService
+                        ? ""
+                        : "hover:scale-105 hover:shadow-xl"
+                    } py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
                     onClick={handleNext}
+                    disabled={!hasSelectedService}
                   >
                     <span className="flex items-center">
-                      Next <AiFillCaretRight className="ml-2" />
+                      Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
                 </div>
@@ -184,31 +202,43 @@ function BookingWizard() {
                 bookingInfo={bookingInfo}
                 setBookingInfo={setBookingInfo}
                 paramsId={params.id}
+                setHasSelectedProfessional={setHasSelectedProfessional}
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className="btn btn-primary js-btn-next"
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <AiFillCaretLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> Prev
                     </span>
                   </button>
+                  
                 </div>
                 <div className="mt-4 flex justify-end">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white ${
+                      !hasSelectedProfessional
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                    } transform transition-transform ${
+                      !hasSelectedProfessional
+                        ? ""
+                        : "hover:scale-105 hover:shadow-xl"
+                    } py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
                     onClick={handleNext}
+                    disabled={!hasSelectedProfessional}
                   >
                     <span className="flex items-center">
-                      Next <AiFillCaretRight className="ml-2" />
+                      Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
+                  
                 </div>
               </div>
             </div>
@@ -220,31 +250,42 @@ function BookingWizard() {
                 bookingInfo={bookingInfo}
                 setBookingInfo={setBookingInfo}
                 paramsId={params.id}
+                setHasSelectedDate={setHasSelectedDate}
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <AiFillCaretLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> Prev
                     </span>
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white ${
+                      !hasSelectedDate
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                    } transform transition-transform ${
+                      !hasSelectedDate
+                        ? ""
+                        : "hover:scale-105 hover:shadow-xl"
+                    } py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
                     onClick={handleNext}
+                    disabled={!hasSelectedDate}
                   >
                     <span className="flex items-center">
-                      Next <AiFillCaretRight className="ml-2" />
+                      Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
+                  
                 </div>
               </div>
             </div>
@@ -256,31 +297,42 @@ function BookingWizard() {
                 bookingInfo={bookingInfo}
                 setBookingInfo={setBookingInfo}
                 paramsId={params.id}
+                setHasSelectedHour={setHasSelectedHour}
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <AiFillCaretLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> Prev
                     </span>
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white ${
+                      !hasSelectedHour
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                    } transform transition-transform ${
+                      !hasSelectedHour
+                        ? ""
+                        : "hover:scale-105 hover:shadow-xl"
+                    } py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
                     onClick={handleNext}
+                    disabled={!hasSelectedHour}
                   >
                     <span className="flex items-center">
-                      Next <AiFillCaretRight className="ml-2" />
+                      Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
+                 
                 </div>
               </div>
             </div>
@@ -295,28 +347,30 @@ function BookingWizard() {
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <AiFillCaretLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> Prev
                     </span>
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
                     onClick={handleNext}
+                    disabled={!hasSelectedHour}
                   >
                     <span className="flex items-center">
-                      Next <AiFillCaretRight className="ml-2" />
+                      Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
+                  
                 </div>
               </div>
             </div>
@@ -332,14 +386,14 @@ function BookingWizard() {
 
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                  <button
-                    className="btn btn-primary js-btn-next"
+                <button
+                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <AiFillCaretLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> Prev
                     </span>
                   </button>
                 </div>
@@ -352,9 +406,9 @@ function BookingWizard() {
                   >
                     <button
                       onClick={proceedCheckout}
-                      className="flex items-center"
+                      className="flex items-center text-white bg-gradient-to-r from-green-600 to-green-700 hover:bg-green-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
                     >
-                      Proceed to Checkout <AiFillCaretRight className="ml-2" />
+                      Proceed to Checkout <FaShoppingCart className="ml-2" />
                     </button>
                   </button>
                 </div>
