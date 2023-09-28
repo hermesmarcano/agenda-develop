@@ -187,7 +187,7 @@ const Analytics = () => {
                     ? ` text-blue-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
-                    : `lg:w-auto text-gray-700
+                    : `lg:w-auto 
                     ${
                       isDarkMode
                         ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
@@ -223,7 +223,7 @@ const Analytics = () => {
                     ? ` text-green-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
-                    : `lg:w-auto text-gray-700
+                    : `lg:w-auto 
                     ${
                       isDarkMode
                         ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
@@ -259,7 +259,7 @@ const Analytics = () => {
                     ? ` text-yellow-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
-                    : `lg:w-auto text-gray-700
+                    : `lg:w-auto 
                     ${
                       isDarkMode
                         ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
@@ -295,7 +295,7 @@ const Analytics = () => {
                     ? ` text-red-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
-                    : `lg:w-auto text-gray-700
+                    : `lg:w-auto 
                     ${
                       isDarkMode
                         ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"

@@ -88,7 +88,7 @@ const BillsSection = () => {
     <>
       <div
         className={`shadow-md rounded-md p-6 
-    ${isDarkMode ? "bg-gray-700" : "bg-white"}`}
+    ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
       >
         <h2 className="text-lg font-bold mb-4">Pending In Debt Checkouts</h2>
         <div className="grid grid-cols-1 gap-2">

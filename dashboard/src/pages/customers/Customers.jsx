@@ -8,7 +8,12 @@ import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import instance from "../../axiosConfig/axiosConfig";
 import Drawer from "../../components/Drawer";
-import { AddButton, RemoveSelectedButton, titleDarkStyle, titleLightStyle } from "../../components/Styled";
+import {
+  AddButton,
+  RemoveSelectedButton,
+  titleDarkStyle,
+  titleLightStyle,
+} from "../../components/Styled";
 import CustomerCard from "./components/CustomerCard";
 
 const Customers = () => {
@@ -68,10 +73,11 @@ const Customers = () => {
     pagination.push(
       <button
         key={i}
-        className={`${currentPage === i
-          ? "bg-gray-200 text-gray-700"
-          : "bg-gray-100 text-gray-600"
-          } px-4 py-2 mx-1 rounded-md`}
+        className={`${
+          currentPage === i
+            ? "bg-gray-200 text-gray-700"
+            : "bg-gray-100 text-gray-600"
+        } px-4 py-2 mx-1 rounded-md`}
         onClick={() => handlePageClick(i)}
       >
         {i}
@@ -129,7 +135,6 @@ const Customers = () => {
 
   const handleCustomerActiveState = () => {};
 
-
   const handleSelectCustomer = (profId) => {
     if (selectedIds.includes(profId)) {
       const filteredIds = selectedIds.filter(
@@ -141,29 +146,28 @@ const Customers = () => {
     }
   };
 
-
   return (
     <>
-     <Drawer
-                    modelState={updateModelState}
-                    setModelState={() => setUpdateModelState(!updateModelState)}
-                    title={"Update Customer"}
-                    children={
-                      <UpdateCustomer
-                        setModelState={setUpdateModelState}
-                        customerId={selectedCustomerId}
-                      />
-                    }
-                  />
-    <div className="p-6 overflow-y-auto h-full">
-    <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
+      <Drawer
+        modelState={updateModelState}
+        setModelState={() => setUpdateModelState(!updateModelState)}
+        title={"Update Customer"}
+        children={
+          <UpdateCustomer
+            setModelState={setUpdateModelState}
+            customerId={selectedCustomerId}
+          />
+        }
+      />
+      <div className="p-6 overflow-y-auto h-full">
+        <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
             <FaUsers className="mr-2 text-xl" /> {/* Add the user tie icon */}
             <span>Customers</span>
           </div>
         </div>
-      
-      <div className="relative w-full">
+
+        <div className="relative w-full">
           <label className="sr-only" htmlFor="search">
             {" "}
             Search{" "}
@@ -175,7 +179,7 @@ const Customers = () => {
             type="search"
             placeholder="Search customers..."
             value={searchQuery}
-          onChange={handleSearchQueryChange}
+            onChange={handleSearchQueryChange}
           />
 
           <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
@@ -196,55 +200,53 @@ const Customers = () => {
             </svg>
           </span>
         </div>
-      <div className="flex items-center my-4">
+        <div className="flex items-center my-4">
+          <AddButton
+            onClick={() => {
+              setRegisterModelState(true);
+            }}
+          />
 
-        <AddButton 
-        onClick={() => {setRegisterModelState(true);}}
-        />
+          <Drawer
+            modelState={registerModelState}
+            setModelState={() => setRegisterModelState(!registerModelState)}
+            title={"Register Customer"}
+            children={
+              <RegisterCustomer setModelState={setRegisterModelState} />
+            }
+          />
 
-        <Drawer
-          modelState={registerModelState}
-          setModelState={() => setRegisterModelState(!registerModelState)}
-          title={"Register Customer"}
-          children={
-            <RegisterCustomer
-              setModelState={setRegisterModelState}
-            />
-          }
-        />
-
-
-        <RemoveSelectedButton 
-          onClick={() => setDeleting(true)}
-          disabled={selectedIds.length === 0}
-        />
-        <Popup
-          isOpen={isDeleting}
-          onClose={() => setDeleting(!isDeleting)}
-          children={
-            <div className="bg-white rounded-md p-4 flex justify-center items-center">
-              <p className="text-gray-700">
-                Are you sure you want to delete the selected items?
-              </p>
-              <div className="flex mt-4">
-                <button
-                  className="ml-2 bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded"
-                  onClick={handleRemoveSelected}
-                >
-                  Confirm
-                </button>
-                <button
-                  className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
-                  onClick={handleCancel}
-                >
-                  Cancel
-                </button>
+          <RemoveSelectedButton
+            onClick={() => setDeleting(true)}
+            disabled={selectedIds.length === 0}
+          />
+          <Popup
+            isOpen={isDeleting}
+            onClose={() => setDeleting(!isDeleting)}
+            children={
+              <div className="bg-white rounded-md p-4 flex justify-center items-center">
+                <p className="text-gray-700">
+                  Are you sure you want to delete the selected items?
+                </p>
+                <div className="flex mt-4">
+                  <button
+                    className="ml-2 bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded"
+                    onClick={handleRemoveSelected}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-            </div>
-          }
-        />
-      </div>
-      <div className="flex justify-between items-center">
+            }
+          />
+        </div>
+        <div className="flex justify-between items-center">
           <div className="mb-6">
             <label
               htmlFor="customers-per-page"
@@ -331,72 +333,76 @@ const Customers = () => {
             </button>
           </div>
         </div>
-      <div className="overflow-x-auto">
-      {view === "table" ? (
-        <table
-          className={`w-full table-auto border ${isDarkMode
-            ? "border-gray-700 divide-gray-700"
-            : "border-gray-200 divide-gray-200"
-            }`}
-        >
-          <thead>
-            <tr
-              className={`text-xs uppercase tracking-wider ${isDarkMode
-                ? "bg-gray-500 text-gray-800"
-                : "bg-gray-50 text-gray-500"
-                }`}
-            >
-              <th className="py-3 pl-4 text-left">
-                <input
-                  type="checkbox"
-                  checked={selectedIds.length === currentCustomers.length}
-                  onChange={handleSelectAll}
-                />
-              </th>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 text-left">Phone</th>
-              <th className="py-3 text-left">Payments $</th>
-              <th className="py-3 pr-6 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody
-            className={`divide-y ${isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+        <div className="overflow-x-auto">
+          {view === "table" ? (
+            <table
+              className={`w-full table-auto border ${
+                isDarkMode
+                  ? "border-gray-700 divide-gray-700"
+                  : "border-gray-200 divide-gray-200"
               }`}
-          >
-            {currentCustomers.map((customer) => (
-              <tr
-                key={customer.name}
-                className="border-b border-gray-300  text-xs"
+            >
+              <thead>
+                <tr
+                  className={`text-xs uppercase tracking-wider ${
+                    isDarkMode
+                      ? "bg-gray-500 text-gray-800"
+                      : "bg-gray-50 text-gray-500"
+                  }`}
+                >
+                  <th className="py-3 pl-4 text-left">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length === currentCustomers.length}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                  <th className="py-3 px-4 text-left">Name</th>
+                  <th className="py-3 text-left">Phone</th>
+                  <th className="py-3 text-left">Payments $</th>
+                  <th className="py-3 pr-6 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody
+                className={`divide-y ${
+                  isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+                }`}
               >
-                <td className="py-2 ps-4 text-left">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.includes(customer._id)}
-                    onChange={() => handleCheckboxChange(customer._id)}
-                  />
-                </td>
-                <td className="py-2 px-3 text-left">{customer.name}</td>
-                <td className="py-2">{customer.phone}</td>
-                <td className="py-2">{customer.payments.toFixed(2) || 0}</td>
-                <td className="py-2 pr-6 text-center">
-                  <button
-                    className="text-teal-500 hover:text-teal-700"
-                    onClick={() => {
-                      setUpdateModelState(!updateModelState);
-                      setSelectedCustomerId(customer._id);
-                    }}
+                {currentCustomers.map((customer) => (
+                  <tr
+                    key={customer.name}
+                    className="border-b border-gray-300  text-xs"
                   >
-                    <FaEdit />
-                  </button>
-                 
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        ) : (
-          <>
-            <div
+                    <td className="py-2 ps-4 text-left">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(customer._id)}
+                        onChange={() => handleCheckboxChange(customer._id)}
+                      />
+                    </td>
+                    <td className="py-2 px-3 text-left">{customer.name}</td>
+                    <td className="py-2">{customer.phone}</td>
+                    <td className="py-2">
+                      {customer.payments.toFixed(2) || 0}
+                    </td>
+                    <td className="py-2 pr-6 text-center">
+                      <button
+                        className="text-teal-500 hover:text-teal-700"
+                        onClick={() => {
+                          setUpdateModelState(!updateModelState);
+                          setSelectedCustomerId(customer._id);
+                        }}
+                      >
+                        <FaEdit />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <>
+              <div
                 className={`w-full ${
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 } mb-2 py-2 pl-4 flex justify-start items-center rounded-md shadow`}
@@ -412,7 +418,7 @@ const Customers = () => {
                 {currentCustomers.map((customer, index) => {
                   return (
                     <button
-                    key={[customer._id]}
+                      key={[customer._id]}
                       onClick={() => handleSelectCustomer(customer._id)}
                     >
                       <CustomerCard
@@ -431,47 +437,48 @@ const Customers = () => {
                   );
                 })}
               </div>
-          </>
-        )
-}
-        {customers.length === 0 && (
-          <div className="flex flex-col items-center justify-center w-full mt-4">
-            <div className="text-center">
-              <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
-              <p className="text-gray-800 text-lg mb-2">No customers found</p>
-              <p className="text-gray-500 text-sm">
-                We couldn't find any customers that match your search
-              </p>
+            </>
+          )}
+          {customers.length === 0 && (
+            <div className="flex flex-col items-center justify-center w-full mt-4">
+              <div className="text-center">
+                <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
+                <p className="text-gray-800 text-lg mb-2">No customers found</p>
+                <p className="text-gray-500 text-sm">
+                  We couldn't find any customers that match your search
+                </p>
+              </div>
             </div>
+          )}
+        </div>
+        <div className="flex justify-end mt-6">
+          <div className="flex">
+            <button
+              className={`${
+                currentPage === 1
+                  ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-300"
+              } px-4 py-2 mx-1 rounded-md`}
+              onClick={() => handlePageClick(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <FiChevronLeft />
+            </button>
+            {pagination}
+            <button
+              className={`${
+                currentPage === totalPages
+                  ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-300"
+              } px-4 py-2 mx-1 rounded-md`}
+              onClick={() => handlePageClick(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <FiChevronRight />
+            </button>
           </div>
-        )}
-      </div>
-      <div className="flex justify-end mt-6">
-        <div className="flex">
-          <button
-            className={`${currentPage === 1
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-              } px-4 py-2 mx-1 rounded-md`}
-            onClick={() => handlePageClick(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <FiChevronLeft />
-          </button>
-          {pagination}
-          <button
-            className={`${currentPage === totalPages
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-              } px-4 py-2 mx-1 rounded-md`}
-            onClick={() => handlePageClick(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <FiChevronRight />
-          </button>
         </div>
       </div>
-    </div>
     </>
   );
 };

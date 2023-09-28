@@ -26,6 +26,8 @@ import { DateTimeContext } from "../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../context/ProfessionalIdContext";
 import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
+import Drawer from "../../components/Drawer";
+import UpdateCustomer from "../customers/components/UpdateCustomer";
 
 const StepIndicator = ({ currentStep, totalSteps }) => {
   const { isDarkMode } = useContext(DarkModeContext)
@@ -34,7 +36,7 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
       {Array.from({ length: totalSteps }, (_, index) => (
         <div
           key={index}
-          className={`relative w-4 h-4 mx-1 rounded-full ${index + 1 === currentStep ? (isDarkMode ? "bg-gray-800" : "bg-teal-800") : "bg-gray-300"
+          className={`relative w-4 h-4 mx-1 rounded-full ${index + 1 === currentStep ? "bg-teal-600" : "bg-gray-300"
             }`}
         >
           {index + 1 === currentStep && (
@@ -62,11 +64,8 @@ const Checkout = () => {
     JSON.parse(localStorage.getItem("ag_app_booking_info"))
   );
   const [currentStep, setCurrentStep] = useState(1);
-  const [customerDetails, setCustomerDetails] = useState({
-    name: "",
-    phone: "",
-    birthday: "",
-  });
+
+
   const [paymentMethod, setPaymentMethod] = useState("");
   const [paymentConfirmed, setPaymentConfirmed] = useState(false);
   const [calculatorMode, setCalculatorMode] = useState(false);
@@ -84,6 +83,8 @@ const Checkout = () => {
   const [discount, setDiscount] = useState(0);
   const [discountType, setDiscountType] = useState("$");
   const [paymentId, setPaymentId] = useState("");
+  const [customerId, setCustomerId] = useState("");
+  const [customerModelState, setCustomerModelState] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("ag_app_booking_info")) {
@@ -238,9 +239,9 @@ const Checkout = () => {
     navigate("/checkout-appointments");
   };
 
-  const handleAddCustomerDetails = (details) => {
-    setCustomerDetails(details);
-    // setCurrentStep(2);
+  const handleAddCustomerDetails = () => {
+    setCustomerId(bookingInfo.customer);
+    setCustomerModelState(true);
   };
 
   const handleAddExtraService = (service) => {
@@ -333,11 +334,23 @@ const Checkout = () => {
   }
 
   return (
+    <>
+    <Drawer
+        modelState={customerModelState}
+        setModelState={() => setCustomerModelState(!customerModelState)}
+        title={"Update Customer"}
+        children={
+          <UpdateCustomer
+            setModelState={setCustomerModelState}
+            customerId={customerId}
+          />
+        }
+      />
     <div className="container mx-auto p-4 pb-8">
       <div className="flex flex-wrap">
         <div className="w-full lg:w-3/4 lg:pr-4">
           <div
-            className={`rounded shadow-lg p-8 mb-4 ${isDarkMode ? "bg-gray-500" : "bg-white"
+            className={`rounded shadow-lg p-8 mb-4 ${isDarkMode ? "bg-gray-800" : "bg-white"
               }`}
           >
             <div className="flex items-center justify-between mb-2">
@@ -364,7 +377,7 @@ const Checkout = () => {
                 <h2 className="text-xl font-bold mb-4">Services</h2>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   {/* <button
-                    className="flex flex-col items-center justify-center bg-gray-200 text-gray-800 p-4 rounded hover:bg-gray-800 hover:text-white transition-all duration-300"
+                    className="flex flex-col items-center justify-center bg-gray-200 p-4 rounded hover:bg-gray-800 hover:text-white transition-all duration-300"
                     onClick={() => setCurrentStep(1)}
                   >
                     <BsArrowLeft size={24} />
@@ -378,12 +391,12 @@ const Checkout = () => {
                           (eservice) => eservice._id === service._id
                         )
                           ? "bg-teal-600 text-gray-200"
-                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                          : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                         : extraServices.find(
                           (eservice) => eservice._id === service._id
                         )
-                          ? "bg-teal-800 text-gray-200"
-                          : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                          ? "bg-teal-600 text-gray-200"
+                          : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
                         }`}
                       onClick={() => handleAddExtraService(service)}
                     >
@@ -395,14 +408,14 @@ const Checkout = () => {
                   <button
                     className={`flex flex-col min-h-[104px] items-center justify-center p-4 rounded transition-all duration-300
                     ${isDarkMode
-                        ? `bg-gray-800 text-gray-200
+                        ? `bg-gray-700 text-gray-200
                     ${extraServices.length > 0 &&
-                        "hover:bg-gray-700 hover:text-white"
+                        "hover:bg-gray-600 hover:text-white"
                         }
                    `
                         : `bg-gray-200 text-gray-800
                       ${extraServices.length > 0 &&
-                        "hover:bg-teal-800 hover:text-white"
+                        "hover:bg-teal-600 hover:text-white"
                         }
                      `
                       }`}
@@ -435,7 +448,7 @@ const Checkout = () => {
                       .map((service, index) => (
                         <div
                           key={index}
-                          className={`flex items-center justify-between ${isDarkMode ? "bg-gray-800" : "bg-gray-200"
+                          className={`flex items-center justify-between ${isDarkMode ? "bg-gray-700" : "bg-gray-200"
                             } p-4 rounded mb-4`}
                         >
                           <div>
@@ -466,8 +479,8 @@ const Checkout = () => {
                   <button
                     className={`flex flex-col min-h-[104px] items-center justify-center p-4 rounded transition-all duration-300
                     ${isDarkMode
-                        ? `bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white`
-                        : `bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white`
+                        ? `bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-white`
+                        : `bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white`
                       }`}
                     onClick={() => setCurrentStep(1)}
                   >
@@ -482,12 +495,12 @@ const Checkout = () => {
                           (eproduct) => eproduct._id === product._id
                         )
                           ? "bg-teal-600 text-gray-200"
-                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                          : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                         : products.find(
                           (eproduct) => eproduct._id === product._id
                         )
-                          ? "bg-teal-800 text-gray-200"
-                          : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                          ? "bg-teal-600 text-gray-200"
+                          : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
                         }`}
                       onClick={() => handleAddProduct(product)}
                     >
@@ -499,8 +512,8 @@ const Checkout = () => {
                   <button
                     className={`flex flex-col min-h-[104px] items-center justify-center p-4 rounded transition-all duration-300
                     ${isDarkMode
-                        ? `bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white`
-                        : `bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white`
+                        ? `bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-white`
+                        : `bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white`
                       }`}
                     onClick={() => setCurrentStep(3)}
                   >
@@ -531,7 +544,7 @@ const Checkout = () => {
                       .map((product, index) => (
                         <div
                           key={index}
-                          className={`flex items-center justify-between ${isDarkMode ? "bg-gray-800" : "bg-gray-200"
+                          className={`flex items-center justify-between ${isDarkMode ? "bg-gray-700" : "bg-gray-200"
                             } p-4 rounded mb-4`}
                         >
                           <div>
@@ -561,8 +574,8 @@ const Checkout = () => {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <button
                     className={`flex flex-col items-center justify-center min-h-[104px] ${isDarkMode
-                      ? "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
-                      : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                      ? "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
+                      : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
                       } p-4 rounded transition-all duration-300`}
                     onClick={() => setCurrentStep(2)}
                   >
@@ -574,10 +587,10 @@ const Checkout = () => {
                     ${isDarkMode
                         ? paymentMethod === "cash"
                           ? "bg-teal-600 text-white"
-                          : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                          : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                         : paymentMethod === "cash"
                           ? "bg-teal-600 text-white"
-                          : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                          : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
                       }`}
                     onClick={() => handleChoosePaymentMethod("cash")}
                   >
@@ -588,10 +601,10 @@ const Checkout = () => {
                     className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${isDarkMode
                       ? paymentMethod === "credit"
                         ? "bg-teal-600 text-white"
-                        : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                        : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                       : paymentMethod === "credit"
                         ? "bg-teal-600 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
                       }`}
                     onClick={() => handleChoosePaymentMethod("credit")}
                   >
@@ -603,10 +616,10 @@ const Checkout = () => {
                     className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${isDarkMode
                       ? paymentMethod === "payLater"
                         ? "bg-teal-600 text-white"
-                        : "bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200"
+                        : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                       : paymentMethod === "payLater"
                         ? "bg-teal-600 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-teal-800 hover:text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
                       }`}
                     onClick={() => handleChoosePaymentMethod("payLater")}
                   >
@@ -622,14 +635,14 @@ const Checkout = () => {
                 <h2 className="text-xl font-bold mb-4">Payment Confirmation</h2>
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <button
-                    className={`${isDarkMode ? "bg-gray-800" : "bg-teal-800"} text-white px-4 py-2 rounded flex items-center justify-center`}
+                    className={`${isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-teal-600 text-gray-800"} min-h-[104px] px-4 py-2 rounded flex items-center justify-center`}
                     onClick={handlePreviousStep}
                   >
                     <IoMdArrowRoundBack className="mr-2" />
                     Go Back
                   </button>
                   <button
-                    className={`${isDarkMode ? "bg-gray-800" : "bg-teal-800"} text-white px-4 py-2 rounded flex items-center justify-center`}
+                    className={`${isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-teal-600 text-gray-800"} min-h-[104px] px-4 py-2 rounded flex items-center justify-center`}
                     // onClick={handleConfirmPayment}
                     onClick={() => {
                       if (paymentMethod === "cash") {
@@ -697,7 +710,7 @@ const Checkout = () => {
                   </div>
                   <p>Appointment has been scheduled successfully.</p>
                   <button
-                    className={`mt-4 px-4 py-2 ${isDarkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-teal-800 hocver:bg-teal-700"} text-white rounded`}
+                    className={`mt-4 px-4 py-2 ${isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-teal-600 text-gray-800"} rounded`}
                     onClick={handleCheckoutComplete}
                   >
                     Return to Home
@@ -710,14 +723,14 @@ const Checkout = () => {
 
         <div className="w-full lg:w-1/4">
           <div
-            className={` ${isDarkMode ? "bg-gray-500" : "bg-white"
+            className={` ${isDarkMode ? "bg-gray-800" : "bg-white"
               } rounded shadow-lg p-8`}
           >
             <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
             <div className="mb-4">
               {currentStep < 5 && (
                 <button
-                  className={`${isDarkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-teal-800 hover:bg-teal-700"} text-sm flex justify-center items-center text-white px-4 py-2 rounded w-full mb-4`}
+                  className={`${isDarkMode ? "bg-gray-700 hover:bg-gray-600" : "bg-gray-200 hover:bg-teal-600 text-gray-800"} text-sm flex justify-center items-center px-4 py-2 rounded w-full mb-4`}
                   onClick={handleAddCustomerDetails}
                 >
                   <FaUser className="mr-2" />
@@ -726,11 +739,11 @@ const Checkout = () => {
               )}
               <h3 className="font-semibold mb-2">Appointment Details</h3>
               <div className="flex items-center mb-2 text-sm">
-                <FiCalendar className="text-gray-800 mr-2" size={16} />
+                <FiCalendar className="mr-2" size={16} />
                 <p>Date: June 30, 2023</p>
               </div>
               <div className="flex items-center text-sm">
-                <FiClock className="text-gray-800 mr-2" size={16} />
+                <FiClock className="mr-2" size={16} />
                 <p>Time: 10:00 AM - 11:30 AM</p>
               </div>
             </div>
@@ -752,7 +765,7 @@ const Checkout = () => {
                 }, [])
                 .map((service, index) => (
                   <div key={index} className="flex items-center mb-2">
-                    <RiServiceFill className="text-gray-800 mr-2" size={16} />
+                    <RiServiceFill className="mr-2" size={16} />
                     <p>
                       {service.name}{" "}
                       {service.count > 1 ? `x${service.count}` : ""}
@@ -778,7 +791,7 @@ const Checkout = () => {
                 }, [])
                 .map((product, index) => (
                   <div key={index} className="flex items-center mb-2">
-                    <BiBasket className="text-gray-800 mr-2" size={16} />
+                    <BiBasket className="mr-2" size={16} />
                     <p>
                       {product.name}{" "}
                       {product.count > 1 ? `x${product.count}` : ""}
@@ -857,6 +870,7 @@ const Checkout = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

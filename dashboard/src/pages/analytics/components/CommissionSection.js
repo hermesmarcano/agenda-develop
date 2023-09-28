@@ -218,7 +218,7 @@ const CommissionSection = () => {
   return (
     <div
       className={`shadow-md rounded-md p-6 
-    ${isDarkMode ? "bg-gray-700" : "bg-white"}`}
+    ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
     >
       <h2 className="text-lg font-bold mb-4">Commissions</h2>
       <div
@@ -306,7 +306,7 @@ const CommissionSection = () => {
                   ).toFixed(2)}
                 </div>
                 <button
-                  className="flex items-center justify-center text-sm bg-blue-500 text-white px-4 py-2 rounded-md transition-colors hover:bg-blue-600"
+                  className="flex items-center justify-center text-sm bg-teal-600 text-white px-4 py-2 rounded-md transition-colors hover:bg-teal-500"
                   onClick={() => handleUpdateCommission(professional._id)}
                 >
                   <FaSyncAlt className="mr-2" />

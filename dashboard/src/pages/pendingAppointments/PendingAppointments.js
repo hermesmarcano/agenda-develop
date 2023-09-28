@@ -144,7 +144,7 @@ const PendingAppointments = () => {
               <div
                 className={`grid grid-cols-1 sm:grid-cols-2 rounded-lg items-center p-4 ${
                   isDarkMode
-                    ? "bg-gray-500 text-gray-200"
+                    ? "bg-gray-800 text-gray-200"
                     : "bg-gray-100 text-gray-800"
                 }`}
               >
@@ -160,7 +160,7 @@ const PendingAppointments = () => {
                     <h2 className="text-lg font-semibold">
                       {appointment.customer.name}
                     </h2>
-                    <div className="flex items-center text-gray-700">
+                    <div className="flex items-center text-gray-500">
                       <RiCalendarEventFill className="mr-1" />
                       <p className="text-sm">
                         {new Intl.DateTimeFormat(["ban", "id"]).format(
@@ -168,7 +168,7 @@ const PendingAppointments = () => {
                         )}
                       </p>
                     </div>
-                    <div className="flex items-center text-gray-700">
+                    <div className="flex items-center text-gray-500">
                       <RiTimeFill className="mr-1" />
                       <p className="text-sm">
                         {new Intl.DateTimeFormat("en", {
@@ -213,24 +213,24 @@ const PendingAppointments = () => {
             <div
               className={`h-full p-4 rounded-lg shadow-md flex flex-col ${
                 isDarkMode
-                  ? "bg-gray-500 text-gray-200"
+                  ? "bg-gray-800 text-gray-200"
                   : "bg-gray-100 text-gray-800"
               }`}
             >
               <h2 className="text-xl font-semibold mb-2">
                 {selectedAppointment.customer.name}
               </h2>
-              <p className="text-gray-700 mb-4">
+              <p className="mb-4">
                 Professional: {selectedAppointment.professional.name}
               </p>
               <div className="flex flex-col mb-4">
-                <p className="text-sm text-gray-700 mb-1">Services:</p>
+                <p className="text-sm mb-1">Services:</p>
                 {selectedAppointment.service.map((service, index) => (
                   <p
                     key={index}
-                    className="text-gray-800 flex items-center flex-wrap text-sm"
+                    className="flex items-center flex-wrap text-sm"
                   >
-                    <RiCheckboxCircleLine className="text-gray-800 mr-1" />
+                    <RiCheckboxCircleLine className="mr-1" />
                     {service.name} (
                     <span className="flex items-center">
                       {service.duration} min <FiClock className="ml-1" />
@@ -245,15 +245,15 @@ const PendingAppointments = () => {
                   {selectedAppointment.product.map((product, index) => (
                     <p
                       key={index}
-                      className="text-gray-800 flex items-center flex-wrap text-sm"
+                      className="flex items-center flex-wrap text-sm"
                     >
-                      <RiCheckboxCircleLine className="text-gray-800 mr-1" />
+                      <RiCheckboxCircleLine className="mr-1" />
                       {product.name}
                     </p>
                   ))}
                 </div>
               )}
-              <p className="text-gray-800 mb-4">
+              <p className="mb-4">
                 <RiMoneyDollarCircleLine className="text-green-500 mr-1" />
                 Price: $
                 {selectedAppointment?.product?.length > 0
@@ -284,19 +284,19 @@ const PendingAppointments = () => {
             <div
               className={`p-4 rounded-lg shadow-md h-full flex flex-col justify-center text-center items-center  ${
                 isDarkMode
-                  ? "bg-gray-500 text-gray-200"
+                  ? "bg-gray-800 text-gray-200"
                   : "bg-gray-100 text-gray-800"
               }`}
             >
-              <RiCheckboxBlankCircleLine className="text-gray-800 text-5xl mb-4" />
-              <h2 className="text-gray-800 text-3xl font-semibold mb-2">
+              <RiCheckboxBlankCircleLine className="text-gray-400 text-5xl mb-4" />
+              <h2 className="text-gray-400 text-3xl font-semibold mb-2">
                 No selected appointment
               </h2>
-              <p className="text-gray-700 text-lg">
+              <p className="text-lg">
                 Please choose an appointment to proceed.
               </p>
               <button
-                className="mt-4 px-4 py-2 bg-gray-800 text-white rounded-md shadow-md hover:bg-gray-700"
+                className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-md shadow-md hover:bg-gray-600"
                 onClick={() => navigate("/")}
               >
                 Book Now
