@@ -58,7 +58,9 @@ const DailyScheduler = ({
     hour12: false,
   });
 
-  const handleBooking = (time, professionalId, appointment, blockedPeriod) => {
+  const handleBooking = (workingHours, time, professionalId, appointment, blockedPeriod) => {
+    if(!workingHours) return;
+
     if(blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
       setViewBlockingModelState(true);
@@ -157,7 +159,23 @@ const DailyScheduler = ({
                     </td>
                     {selectedProfessionals.map((professional, proIndex) => {
                       let appointmentIndex = 0;
-
+                    
+                      const workingHours =
+                      professional?.officeHours.filter((officeHour) => {
+                        const professionalStartTime = new Date(time)
+                        professionalStartTime.setHours(officeHour.startHour);
+                        professionalStartTime.setMinutes(0);
+                        const professionalEndTime = new Date(time)
+                        professionalEndTime.setHours(officeHour.endHour);
+                        professionalEndTime.setMinutes(0);
+                            
+                        return (
+                          professionalStartTime <= time &&
+                          professionalEndTime > time
+                        );
+                        
+                      })
+                      
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
                           const isDateTimeMatch =
@@ -224,12 +242,13 @@ const DailyScheduler = ({
                               ? "border-t-gray-500 border"
                               : "border-gray-300 "
                           } min-w-[135px] ${
-                            time <= new Date()
+                            time <= new Date() || !workingHours[0]
                               ? "stripe-bg"
                               : "hover:bg-gray-100"
                           }`}
                           onClick={() =>
                             handleBooking(
+                              workingHours[0],
                               time,
                               professional._id,
                               matchingAppointments[0],

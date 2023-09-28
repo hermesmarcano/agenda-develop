@@ -80,7 +80,9 @@ const WeeklyScheduler = ({
     return startOfWeek;
   };
 
-  const handleBooking = (day, time, appointment, blockedPeriod) => {
+  const handleBooking = (workingHours, day, time, appointment, blockedPeriod) => {
+    if(!workingHours) return;
+
     if(blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
       setViewBlockingModelState(true);
@@ -182,6 +184,22 @@ const WeeklyScheduler = ({
                       currentTime.setHours(time.getHours());
                       currentTime.setMinutes(time.getMinutes());
 
+                      const workingHours =
+                      selectedProfessional?.officeHours.filter((officeHour) => {
+                        const professionalStartTime = new Date(currentTime)
+                        professionalStartTime.setHours(officeHour.startHour);
+                        professionalStartTime.setMinutes(0);
+                        const professionalEndTime = new Date(currentTime)
+                        professionalEndTime.setHours(officeHour.endHour);
+                        professionalEndTime.setMinutes(0);
+                            
+                        return (
+                          professionalStartTime <= currentTime &&
+                          professionalEndTime > currentTime
+                        );
+                        
+                      })
+
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
                           const isDateTimeMatch =
@@ -223,7 +241,7 @@ const WeeklyScheduler = ({
 
                           if (
                             apptTime <= currentTime &&
-                            apptEndTime >= currentTime &&
+                            apptEndTime > currentTime &&
                             appt.professional._id === selectedProfessional._id
                           )
                             appointmentIndex = apptIndex;
@@ -248,12 +266,13 @@ const WeeklyScheduler = ({
                               ? "border-t-gray-500 border"
                               : "border-gray-300 "
                           } min-w-[135px] ${
-                            currentTime <= new Date()
+                            currentTime <= new Date() || !workingHours[0]
                               ? "stripe-bg"
                               : "hover:bg-gray-100"
                           }`}
                           onClick={() =>
                             handleBooking(
+                              workingHours[0],
                               day,
                               currentTime,
                               matchingAppointments[0],
