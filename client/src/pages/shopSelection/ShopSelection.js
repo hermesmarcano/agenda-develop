@@ -69,8 +69,8 @@ const ShopSelection = () => {
 
   return (
     <div className="bg-gray-100 min-h-screen">
-      <div className="container mx-auto pt-10">
-        <h1 className="text-5xl font-extrabold text-center text-gray-900 mb-8">
+      <div className="container mx-auto pt-10 h-screen">
+        <h1 className="text-5xl font-extrabold mt-10 text-center text-gray-900 mb-8">
           Choose a Shop
         </h1>
         <div className="flex items-center justify-center mb-4">
@@ -79,20 +79,18 @@ const ShopSelection = () => {
             placeholder="Search shops"
             value={searchQuery}
             onChange={handleSearchQueryChange}
-            className="py-2 px-4 sm:w-64 rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="py-2 px-4 sm:w-64 rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
           />
           <FaSearch className="ml-2 text-gray-500" />
         </div>
 
         <div
-          className={`grid grid-cols-1 ${
-            currentShops.length > 1 && "sm:grid-cols-2"
-          } ${currentShops.length > 3 && "md:grid-cols-4"} gap-4`}
+          className={`flex justify-center items-center flex-wrap gap-2`}
         >
           {currentShops.map((shop, index) => (
             <div
               key={index}
-              className="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer mx-auto w-full"
+              className="max-w-sm rounded overflow-hidden shadow-lg cursor-pointer w-full"
               onClick={() => handleShopSelection(shop)}
             >
               {shop.profileImg ? (
@@ -143,7 +141,7 @@ const ShopSelection = () => {
             onClick={handlePrevClick}
             className={`${
               currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-            } bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            } bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500`}
             disabled={currentPage === 1}
           >
             Prev
@@ -155,7 +153,7 @@ const ShopSelection = () => {
               className={`
                 ${
                   currentPage === number
-                    ? "bg-indigo-600 text-white"
+                    ? "bg-teal-600 text-white"
                     : "bg-white text-gray-500 hover:bg-gray-50"
                 }
                 border border-gray-300
@@ -163,7 +161,7 @@ const ShopSelection = () => {
                 py-2 px-4
                 focus:outline-none
                 focus:ring-offset-2
-                focus:ring-indigo-500
+                focus:ring-teal-500
               `}
             >
               {number}
@@ -175,19 +173,12 @@ const ShopSelection = () => {
               currentPage === pageNumbers.length
                 ? "opacity-50 cursor-not-allowed"
                 : ""
-            } bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            } bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500`}
             disabled={currentPage === pageNumbers.length}
           >
             Next
           </button>
         </nav>
-        {selectedShop && (
-          <Link to={`/booking-start`}>
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-medium py-4 px-8 rounded-full mt-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Continue
-            </button>
-          </Link>
-        )}
       </div>
     </div>
   );

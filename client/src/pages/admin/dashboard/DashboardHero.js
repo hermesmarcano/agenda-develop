@@ -3,8 +3,10 @@ import { Formik, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaSpinner } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const DashboardHero = () => {
+  const { t } = useTranslation();
   const [heroData, setHeroData] = useState(null);
 
   useEffect(() => {
@@ -72,7 +74,7 @@ const DashboardHero = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="heroText" className="block font-medium mb-1">
-                  Hero Text
+                  {t('Hero Text')}
                 </label>
                 <Field
                   type="text"
@@ -89,7 +91,7 @@ const DashboardHero = () => {
 
               <div className="mb-4">
                 <label htmlFor="heroColor" className="block font-medium mb-1">
-                  Hero Color
+                  {t('Hero Color')}
                 </label>
                 <select
                   id="heroColor"
@@ -98,9 +100,9 @@ const DashboardHero = () => {
                   value={values.heroColor}
                   onChange={handleChange}
                 >
-                  <option value="">Select Color</option>
-                  <option value="black">Black</option>
-                  <option value="white">White</option>
+                  <option value="">{t('Select Color')}</option>
+                  <option value="black">{t('Black')}</option>
+                  <option value="white">{t('White')}</option>
                 </select>
                 <ErrorMessage
                   name="heroColor"
@@ -111,7 +113,7 @@ const DashboardHero = () => {
 
               <div className="mb-4">
                 <label htmlFor="heroBgColor" className="block font-medium mb-1">
-                  Hero Background Color
+                  {t('Hero Background Color')}
                 </label>
                 <select
                   id="heroBgColor"
@@ -120,10 +122,10 @@ const DashboardHero = () => {
                   value={values.heroBgColor}
                   onChange={handleChange}
                 >
-                  <option value="">Select Background Color</option>
-                  <option value="gray-600">Gray-600</option>
-                  <option value="gray-700">Gray-700</option>
-                  <option value="gray-800">Gray-800</option>
+                  <option value="">{t('Select Background Color')}</option>
+                  <option value="gray-600">{t('Gray Light')}</option>
+                  <option value="gray-700">{t('Gray Normal')}</option>
+                  <option value="gray-800">{t('Gray Bold')}</option>
                 </select>
                 <ErrorMessage
                   name="heroBgColor"

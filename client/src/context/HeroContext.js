@@ -1,11 +1,13 @@
 import { createContext, useState, useEffect } from "react";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const HeroContext = createContext();
 
 const HeroContextWrapper = ({ children }) => {
+  const { t } = useTranslation();
   const [heroData, setHeroData] = useState({
-    heroText: "Find The Right Shop for Your Need",
+    heroText: t('Find The Right Shop for Your Need'),
     heroColor: "white",
     heroBgColor: "teal-800",
     heroStyle: "hero",
