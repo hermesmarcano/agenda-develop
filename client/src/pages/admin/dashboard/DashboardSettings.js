@@ -56,7 +56,7 @@ const DashboardSettings = () => {
         return;
       }
 
-      if (logo !== null) {
+      if (logo === null) {
         console.log("uploading ....");
         if (values.logo === null) return;
         let imageName = v4(values.logo);
@@ -167,6 +167,7 @@ const DashboardSettings = () => {
             )
             .then((res) => {
               console.log(res.data);
+              setLogo(null)
               fetchAdminData();
             })
             .catch((error) => {
@@ -305,7 +306,7 @@ const DashboardSettings = () => {
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
               >
-                Submit
+                Save
               </button>
             </form>
           )}
