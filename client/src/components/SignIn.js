@@ -22,7 +22,7 @@ const SignIn = ({ isOpen, onClose }) => {
           .post("/customers", {
             name: name,
             phone: phone,
-            managerId: response.data._d,
+            managerId: response.data._id,
           })
           .then((response) => {
             console.log(response);
@@ -36,8 +36,6 @@ const SignIn = ({ isOpen, onClose }) => {
         console.log(error);
       });
 
-    // Implement logic to register the client
-    // Redirect to the home page
   };
   const handleSignInSubmit = (values) => {
     console.log(values);
@@ -52,8 +50,8 @@ const SignIn = ({ isOpen, onClose }) => {
         console.log(error);
       });
 
-    // Implement login logic here
   };
+
 
   return (
     <>

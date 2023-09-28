@@ -1,7 +1,7 @@
 import React from "react";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 import { FiArrowRight, FiArrowLeft } from "react-icons/fi";
-import {  FaShoppingCart } from "react-icons/fa";
+import { FaCheckCircle, FaShoppingCart } from "react-icons/fa";
 import ServicesSelection from "./components/ServicesSelection";
 import ProductsSelection from "./components/ProductsSelection";
 import ProfessionalSelection from "./components/ProfessionalSelection";
@@ -14,6 +14,8 @@ import WizardFooter from "./components/WizardFooter";
 import instance from "../../axiosConfig/axiosConfig";
 import { useNavigate, useParams } from "react-router-dom";
 import SignIn from "../../components/SignIn";
+import CustomPopup from "../../components/CustomPopup";
+import CustomerAuth from "../../components/CustomerAuth";
 
 function BookingWizard() {
   const [currentStep, setCurrentStep] = React.useState(1);
@@ -138,10 +140,110 @@ function BookingWizard() {
       setSignInPopup(true);
     }
   };
+  
+
+  const confirmBooking = async () => {
+    const professional = JSON.parse(
+      localStorage.getItem(`professional_${params.id}`)
+    );
+    const services = JSON.parse(localStorage.getItem(`services_${params.id}`));
+    
+    const servicesId = [];
+
+    services.map((service) => {
+      servicesId.push(service["_id"]);
+    });
+
+    const products = JSON.parse(localStorage.getItem(`products_${params.id}`));
+
+    console.log("products: ", products);
+
+    const productsId = [];
+
+    if (products) {
+      products.map((product) => {
+        productsId.push(product["_id"]);
+      });
+    }
+
+    const d = new Date(localStorage.getItem(`dateTime_${params.id}`));
+   
+    let duration = services.reduce(
+      (totalDuration, s) => totalDuration + s.duration,
+      0
+    );
+
+    let bookingInfo = {
+        managerId: shopId,
+        customer: "",
+        professional: professional._id,
+        service: servicesId,
+        duration: duration,
+        product: productsId,
+        dateTime: d,
+      }
+    console.log({
+      managerId: shopId,
+      customer: "",
+      professional: professional._id,
+      service: servicesId,
+      duration: duration,
+      product: productsId,
+      dateTime: d,
+    });
+    
+    if (localStorage.getItem("ag_app_customer_token")) {
+      instance
+      .get(`/customers/id`, {
+        headers: {
+          Authorization: localStorage.getItem("ag_app_customer_token"),
+        },
+      })
+      .then((response) => {
+        const customer = response.data;
+        bookingInfo = {
+            ...bookingInfo,
+            customer: customer._id,
+            dateTime: new Date(bookingInfo.dateTime),
+          }
+        console.log(bookingInfo);
+        createAppointment(bookingInfo);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+      const createAppointment = (bookingInfo) => {
+        
+        instance
+          .post("/appointments", bookingInfo, {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+          .then((response) => {
+            console.log(response.data);
+            navigate(`/shops/${params.id}/booking-completed`);
+          })
+          .catch((error) => {
+            console.error(error.message);
+          });
+      };
+
+    } else {
+      setSignInPopup(true);
+    }
+
+  };
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
-      <SignIn isOpen={signInPopup} onClose={() => setSignInPopup(false)} />
+      {/* <SignIn isOpen={signInPopup} onClose={() => setSignInPopup(false)} /> */}
+      <CustomPopup
+        isOpen={signInPopup}
+        onClose={() => setSignInPopup(false)}
+        children={<CustomerAuth shopId={shopId} setSignInPopup={setSignInPopup}/>}
+      />
       <div className="mb-auto">
         <WizardHeader />
       </div>
@@ -159,7 +261,6 @@ function BookingWizard() {
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-
                   <button
                     className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
@@ -216,10 +317,9 @@ function BookingWizard() {
                       <FiArrowLeft className="mr-2" /> Prev
                     </span>
                   </button>
-                  
                 </div>
                 <div className="mt-4 flex justify-end">
-                <button
+                  <button
                     className={`text-white ${
                       !hasSelectedProfessional
                         ? "bg-gray-400 cursor-not-allowed"
@@ -238,7 +338,6 @@ function BookingWizard() {
                       Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -254,7 +353,7 @@ function BookingWizard() {
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                <button
+                  <button
                     className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
@@ -266,15 +365,13 @@ function BookingWizard() {
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
-                <button
+                  <button
                     className={`text-white ${
                       !hasSelectedDate
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
                     } transform transition-transform ${
-                      !hasSelectedDate
-                        ? ""
-                        : "hover:scale-105 hover:shadow-xl"
+                      !hasSelectedDate ? "" : "hover:scale-105 hover:shadow-xl"
                     } py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
@@ -285,7 +382,6 @@ function BookingWizard() {
                       Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -301,7 +397,7 @@ function BookingWizard() {
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                <button
+                  <button
                     className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
@@ -313,15 +409,13 @@ function BookingWizard() {
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
-                <button
+                  <button
                     className={`text-white ${
                       !hasSelectedHour
                         ? "bg-gray-400 cursor-not-allowed"
                         : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
                     } transform transition-transform ${
-                      !hasSelectedHour
-                        ? ""
-                        : "hover:scale-105 hover:shadow-xl"
+                      !hasSelectedHour ? "" : "hover:scale-105 hover:shadow-xl"
                     } py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
@@ -332,7 +426,6 @@ function BookingWizard() {
                       Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
-                 
                 </div>
               </div>
             </div>
@@ -347,7 +440,7 @@ function BookingWizard() {
               />
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                <button
+                  <button
                     className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
@@ -359,7 +452,7 @@ function BookingWizard() {
                   </button>
                 </div>
                 <div className="mt-4 flex justify-end">
-                <button
+                  <button
                     className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
@@ -370,7 +463,6 @@ function BookingWizard() {
                       Next <FiArrowRight className="ml-2" />
                     </span>
                   </button>
-                  
                 </div>
               </div>
             </div>
@@ -386,7 +478,7 @@ function BookingWizard() {
 
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
-                <button
+                  <button
                     className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
@@ -404,11 +496,17 @@ function BookingWizard() {
                     title="Next"
                     onClick={handleNext}
                   >
-                    <button
+                    {/* <button
                       onClick={proceedCheckout}
                       className="flex items-center text-white bg-gradient-to-r from-green-600 to-green-700 hover:bg-green-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
                     >
                       Proceed to Checkout <FaShoppingCart className="ml-2" />
+                    </button> */}
+                    <button
+                      onClick={confirmBooking}
+                      className="flex items-center text-white bg-gradient-to-r from-teal-500 to-teal-600 hover:bg-teal-700 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
+                    >
+                      Confirm Booking <FaCheckCircle className="ml-2" />
                     </button>
                   </button>
                 </div>

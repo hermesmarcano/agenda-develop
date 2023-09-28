@@ -12,10 +12,12 @@ import { storage } from "../../../services/firebaseStorage";
 import ProgressBar from "../../../components/ProgressBar";
 import { Store } from "react-notifications-component";
 import { DefaultInputDarkStyle, DefaultInputLightStyle, LoadingRegisterButton } from "../../../components/Styled";
+import { ShopNameContext } from "../../../context/ShopNameContext";
 
 const RegisterService = ({ setModelState }) => {
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
+  const { shopName } = useContext(ShopNameContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const [isRegistering, setIsRegistering] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -59,7 +61,7 @@ const RegisterService = ({ setModelState }) => {
       console.log("uploading ....");
       if (values.serviceImg === null) return;
       let imageName = v4(values.serviceImg.name);
-      const fileRef = ref(storage, `services/${imageName}`);
+      const fileRef = ref(storage, `${shopName}/services/${imageName}`);
       const uploadTask = uploadBytesResumable(fileRef, values.serviceImg);
 
       uploadTask.on(

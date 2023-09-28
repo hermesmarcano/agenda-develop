@@ -1,3 +1,157 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'Exo2-Black';
+    src: url('../public/fonts/Exo2-Black.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-BlackItalic';
+    src: url('../public/fonts/Exo2-BlackItalic.woff2') format('woff2');
+    font-weight: 900;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Bold';
+    src: url('../public/fonts/Exo2-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-BoldItalic';
+    src: url('../public/fonts/Exo2-BoldItalic.woff2') format('woff2');
+    font-weight: 700;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-ExtraBold';
+    src: url('../public/fonts/Exo2-ExtraBold.woff2') format('woff2');
+    font-weight: 800;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-ExtraBoldItalic';
+    src: url('../public/fonts/Exo2-ExtraBoldItalic.woff2') format('woff2');
+    font-weight: 800;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-ExtraLight';
+    src: url('../public/fonts/Exo2-ExtraLight.woff2') format('woff2');
+    font-weight: 200;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-ExtraLightItalic';
+    src: url('../public/fonts/Exo2-ExtraLightItalic.woff2') format('woff2');
+    font-weight: 200;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Italic';
+    src: url('../public/fonts/Exo2-Italic.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Light';
+    src: url('../public/fonts/Exo2-Light.woff2') format('woff2');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-LightItalic';
+    src: url('../public/fonts/Exo2-LightItalic.woff2') format('woff2');
+    font-weight: 300;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Medium';
+    src: url('../public/fonts/Exo2-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-MediumItalic';
+    src: url('../public/fonts/Exo2-MediumItalic.woff2') format('woff2');
+    font-weight: 500;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Regular';
+    src: url('../public/fonts/Exo2-Regular.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-SemiBold';
+    src: url('../public/fonts/Exo2-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-SemiBoldItalic';
+    src: url('../public/fonts/Exo2-SemiBoldItalic.woff2') format('woff2');
+    font-weight: 600;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Thin';
+    src: url('../public/fonts/Exo2-Thin.woff2') format('woff2');
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-ThinItalic';
+    src: url('../public/fonts/Exo2-ThinItalic.woff2') format('woff2');
+    font-weight: 100;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-Italic-VariableFont_wght';
+    src: url('../public/fonts/Exo2-Italic-VariableFont_wght.woff2') format('woff2');
+    font-weight: normal;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'Exo2-VariableFont_wght';
+    src: url('../public/fonts/Exo2-VariableFont_wght.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+body {
+  margin: 0;
+  font-family: 'Exo2-Regular', sans-serif, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 const Settings = () => {
   const navigate = useNavigate();
   const { sendNotification } = useContext(NotificationContext);
-  const { setShopName } = useContext(SidebarContext);
+  const { shopName, setShopName } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [loading, setLoading] = useState(true);
@@ -145,7 +145,7 @@ const Settings = () => {
     setIsUploading(true);
     if (values.profileImg === null) return;
     let imageName = v4(values.profileImg.name);
-    const fileRef = ref(storage, `profile/${imageName}`);
+    const fileRef = ref(storage, `${shopName}/profile/${imageName}`);
     const uploadTask = uploadBytesResumable(fileRef, values.profileImg);
 
     uploadTask

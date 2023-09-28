@@ -23,9 +23,11 @@ import {
   LoadingRegisterButton,
   LoadingUpdateButton,
 } from "../../../components/Styled";
+import { ShopNameContext } from "../../../context/ShopNameContext";
 
 const UpdateService = ({ setModelState, serviceId }) => {
   const { sendNotification } = useContext(NotificationContext);
+  const { shopName } = useContext(ShopNameContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [serviceData, setServiceData] = useState(null);
@@ -86,7 +88,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
         console.log("uploading ....");
         if (values.serviceImg === null) return;
         let imageName = v4(values.serviceImg.name);
-        const fileRef = ref(storage, `services/${imageName}`);
+        const fileRef = ref(storage, `${shopName}/services/${imageName}`);
         const uploadTask = uploadBytesResumable(fileRef, values.serviceImg);
 
         uploadTask.on(

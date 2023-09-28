@@ -50,7 +50,7 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
       days.push(
         <div
           key={`day-${day}`}
-          className={`flex items-center justify-center h-9 px-5 rounded-md cursor-pointer text-lg ${
+          className={`flex items-center justify-center m-4 p-2 rounded-full cursor-pointer text-md ${
             isSelected ? "bg-teal-600 text-white" : "hover:bg-gray-100"
           }`}
           onClick={() => handleDateClick(day)}
@@ -64,7 +64,7 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
   };
 
   return (
-    <div className="w-full min-w-[210px] min-h-[275px] px-2 py-3 md:w-auto mb-3 md:mb-0 flex flex-col items-center justify-center space-y-2 rounded-lg shadow-inner bg-gray-100">
+    <div className="w-full min-w-[210px] min-h-[275px] px-2 py-3 md:w-auto mb-3 md:mb-0 flex flex-col items-center justify-center space-y-2 rounded-lg shadow-inner-lg bg-trasparent">
       <div className="flex items-center space-x-4">
         <button className="hover:text-gray-700" onClick={handlePrevMonth}>
           <IoChevronBack size={20} />

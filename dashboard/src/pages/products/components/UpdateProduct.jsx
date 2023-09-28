@@ -18,10 +18,12 @@ import { v4 } from "uuid";
 import ProgressBar from "../../../components/ProgressBar";
 import { Store } from "react-notifications-component";
 import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, LoadingRegisterButton, LoadingUpdateButton } from "../../../components/Styled";
+import { ShopNameContext } from "../../../context/ShopNameContext";
 
 const UpdateProduct = ({ setModelState, productId }) => {
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
+  const { shopName } = useContext(ShopNameContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [productData, setProductData] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false)
@@ -118,7 +120,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                 };
 
                 instance
-                  .patch(`products/${productId}`, patchData, {
+                  .patch(`${shopName}/products/${productId}`, patchData, {
                     headers: {
                       Authorization: token,
                     },

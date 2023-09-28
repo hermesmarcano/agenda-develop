@@ -14,11 +14,13 @@ import { FaSpinner } from "react-icons/fa";
 import ProgressBar from "../../../components/ProgressBar";
 import { Store } from "react-notifications-component";
 import { DefaultInputDarkStyle, DefaultInputLightStyle, LoadingRegisterButton } from "../../../components/Styled";
+import { ShopNameContext } from "../../../context/ShopNameContext";
 
 const RegisterProduct = ({ setModelState }) => {
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const { shopId } = useContext(SidebarContext);
+  const { shopName } = useContext(ShopNameContext);
   const [isRegistering, setIsRegistering] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -84,7 +86,7 @@ const RegisterProduct = ({ setModelState }) => {
       console.log("uploading ....");
       if (values.productImg === null) return;
       let imageName = v4(values.productImg.name);
-      const fileRef = ref(storage, `products/${imageName}`);
+      const fileRef = ref(storage, `${shopName}/products/${imageName}`);
       const uploadTask = uploadBytesResumable(fileRef, values.productImg);
 
       uploadTask.on(

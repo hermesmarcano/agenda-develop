@@ -25,12 +25,14 @@ import { NotificationContextWrapper } from "./context/NotificationContext";
 import { DarkModeContextWrapper } from "./context/DarkModeContext";
 import Notification from "./pages/notification/Notification";
 import { ReactNotifications } from "react-notifications-component";
+import { ShopNameContextWrapper } from "./context/ShopNameContext";
 
 function App() {
   return (
     <div className="h-screen overflow-hidden">
       <NotificationContextWrapper>
         <AlertContextWrapper>
+          <ShopNameContextWrapper>
           <DarkModeContextWrapper>
             <ViewModeContextWrapper>
               <ProfessionalIdContextWrapper>
@@ -96,6 +98,7 @@ function App() {
               </ProfessionalIdContextWrapper>
             </ViewModeContextWrapper>
           </DarkModeContextWrapper>
+          </ShopNameContextWrapper>
         </AlertContextWrapper>
       </NotificationContextWrapper>
     </div>

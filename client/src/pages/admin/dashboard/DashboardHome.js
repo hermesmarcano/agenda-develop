@@ -95,6 +95,7 @@ const DashboardHome = () => {
     fetchData();
   }, [isDeleting]);
 
+
   const deleteShop = async (image, id) => {
     const desertRef = ref(storage, image);
 
@@ -134,7 +135,7 @@ const DashboardHome = () => {
 
   const handleDeleteConfirm = () => {
     console.log(selectedShops);
-    setModelState(true);
+    setDeleting(true);
   };
 
   const handleSelectShop = (shopId) => {
@@ -157,7 +158,7 @@ const DashboardHome = () => {
   };
 
   const handleCancelDelete = () => {
-    setModelState(false);
+    setDeleting(false);
     setSelectedShops([]);
   };
 
@@ -307,7 +308,7 @@ const DashboardHome = () => {
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
-                  Are you sure you want to delete the selected shop?
+                  Are you sure you want to delete the selected shops?
                 </p>
                 <div className="ml-4 flex">
                   <button

@@ -170,7 +170,7 @@ const Register = () => {
                   console.log("uploading ....");
                   if (values.profileImg === null) return;
                   let imageName = v4(values.profileImg.name);
-                  const fileRef = ref(storage, `profile/${imageName}`);
+                  const fileRef = ref(storage, `${values.name}/profile/${imageName}`);
                   const uploadTask = uploadBytesResumable(
                     fileRef,
                     values.profileImg

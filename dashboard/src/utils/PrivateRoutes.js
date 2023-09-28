@@ -5,7 +5,6 @@ import Sidebar from "../components/Sidebar";
 import SideMenu from "../components/SideMenu.jsx";
 import Side from "../components/Side.jsx"
 import { useContext } from "react";
-import Alert from "../components/Alert";
 import { SidebarContext } from "../context/SidebarContext";
 import { AlertContext } from "../context/AlertContext";
 import { DarkModeContext } from "../context/DarkModeContext";
@@ -25,9 +24,6 @@ const PrivateRoutes = () => {
 
   return isAuthenticated ? (
     <>
-      {alertOn && (
-        <Alert type={alertMsgType} message={alertMsg} setBooked={setAlertOn} />
-      )}
       <Header />
       {/* <div className="flex mt-[72px] h-[calc(100%-50px)]"> */}
       <div className="flex h-[calc(100%-64px)]">
