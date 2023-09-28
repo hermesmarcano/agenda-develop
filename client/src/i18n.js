@@ -9,6 +9,7 @@ i18next
   .use(LanguageDetector)
   .init({
     debug: true,
-    fallbackLng: 'es',
+    fallbackLng: 'en',
+    lng: 'es',
   });
 export default i18next;
