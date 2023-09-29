@@ -15,7 +15,6 @@ import { v4 } from "uuid";
 import { ServicesContext } from "../../../context/ServicesContext";
 import { LoadingSaveButton } from "../../../components/Styled";
 import { Store } from "react-notifications-component";
-import "react-notifications-component/dist/theme.css";
 import { useTranslation } from "react-i18next";
 
 const DashboardServices = () => {

@@ -16,7 +16,6 @@ import { LogoContext } from "../../../context/LogoContext";
 import { WebsiteTitleContext } from "../../../context/WebsiteTitleContext";
 import { LoadingSaveButton } from "../../../components/Styled";
 import { Store } from "react-notifications-component";
-import "react-notifications-component/dist/theme.css";
 import { useTranslation } from "react-i18next";
 
 const DashboardSettings = () => {

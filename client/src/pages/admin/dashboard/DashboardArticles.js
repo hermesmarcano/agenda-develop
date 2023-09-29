@@ -14,7 +14,6 @@ import {
 import { v4 } from "uuid";
 import { ArticlesContext } from "../../../context/ArticlesContext";
 import { Store } from "react-notifications-component";
-import "react-notifications-component/dist/theme.css";
 import { LoadingSaveButton } from "../../../components/Styled";
 import { useTranslation } from "react-i18next";
 

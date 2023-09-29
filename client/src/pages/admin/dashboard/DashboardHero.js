@@ -5,7 +5,6 @@ import { FaSpinner } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
 import { useTranslation } from "react-i18next";
 import { Store } from "react-notifications-component";
-import "react-notifications-component/dist/theme.css";
 import { LoadingSaveButton } from "../../../components/Styled";
 
 const DashboardHero = () => {
