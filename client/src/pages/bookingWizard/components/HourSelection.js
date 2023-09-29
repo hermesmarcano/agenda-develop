@@ -1,20 +1,24 @@
 import React, { useEffect, useMemo, useState } from "react";
 import instance from "../../../axiosConfig/axiosConfig";
-import { FaSpinner, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+import { FaSpinner, FaChevronRight, FaChevronLeft } from "react-icons/fa";
 import { FiClock, FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
-import { motion, AnimatePresence } from 'framer-motion';
-
+import { motion, AnimatePresence } from "framer-motion";
 
 const HourSelection = ({ paramsId, setHasSelectedHour }) => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const [selectedHour, setSelectedHour] = useState(
     new Date(localStorage.getItem(`dateTime_${paramsId}`))
   );
   const [reservedAppts, setReservedAppts] = useState([]);
   const [workingHours, setWorkingHours] = useState([]);
-  const [loading, setLoading] = React.useState(true);
+  const [loading, setLoading] = useState(true);
   const [showCard, setShowCard] = useState(true);
+  const selectedProfessional = JSON.parse(
+    localStorage.getItem(`professional_${paramsId}`)
+  );
+
+  console.log(selectedProfessional.officeHours);
 
   useEffect(() => {
     localStorage.setItem(`dateTime_${paramsId}`, selectedHour);
@@ -22,15 +26,14 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
 
   const handleHourChange = (event) => {
     setSelectedHour(event.target.value);
-    setHasSelectedHour(event.target.value !== null)
-    setShowCard(true)
+    setHasSelectedHour(event.target.value !== null);
+    setShowCard(true);
   };
 
   useEffect(() => {
     instance
       .get(`/managers/shop?urlSlug=${paramsId}`)
       .then((response) => {
-        console.log(response.data.workingHours);
         setWorkingHours(response.data.workingHours);
         instance
           .get(`/appointments?shop=${response.data._id}`)
@@ -67,7 +70,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
         const range = [];
         const { startHour, endHour } = workingHours[i];
         for (let hour = startHour; hour <= endHour; hour++) {
-          const maxMinute = hour === endHour ? 0 : 45; 
+          const maxMinute = hour === endHour ? 0 : 45;
           for (let minute = 0; minute <= maxMinute; minute += 15) {
             let d = hour;
             let d1 = new Date(date);
@@ -97,6 +100,18 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
     }
     return arr;
   }, [date, workingHours]);
+
+  const selectedProfessionalWorkingHours = (hour) => {
+    const professionalStartTime = new Date(hour);
+    const professionalEndTime = new Date(hour);
+    selectedProfessional?.officeHours.find((officeHour) => {
+      professionalStartTime.setHours(officeHour.startHour);
+      professionalStartTime.setMinutes(0);
+      professionalEndTime.setHours(officeHour.endHour);
+      professionalEndTime.setMinutes(0);
+    });
+    return professionalStartTime <= hour && professionalEndTime > hour;
+  };
 
   const isHourDisabled = (hour) => {
     for (let i = 0; i < reservedAppts.length; i++) {
@@ -131,7 +146,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col justify-center items-center space-x-2">
           <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">{t('Loading...')}</span>
+          <span className="mt-2">{t("Loading...")}</span>
         </div>
       </div>
     );
@@ -139,23 +154,38 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
 
   return (
     <>
-      { !showCard ?
-    <div className="h-[540px] flex">
-      {hoursArrs.map((hoursRange, index) => (
-        <div key={index} className="mr-1 h-full">
-          <AccordionItem hoursRange={hoursRange} isHourDisabled={isHourDisabled} selectedHour={selectedHour} handleHourChange={handleHourChange} index={index} />
+      {!showCard ? (
+        <div className="h-[540px] flex">
+          {hoursArrs.map((hoursRange, index) => (
+            <div key={index} className="mr-1 h-full">
+              <AccordionItem
+                hoursRange={hoursRange}
+                isHourDisabled={isHourDisabled}
+                selectedHour={selectedHour}
+                handleHourChange={handleHourChange}
+                selectedProfessionalWorkingHours={
+                  selectedProfessionalWorkingHours
+                }
+                index={index}
+              />
+            </div>
+          ))}
         </div>
-      ))}
-      
-    </div>
-    :
-    <DateTimeCard date={selectedHour} setShowCard={setShowCard} /> 
-  }
+      ) : (
+        <DateTimeCard date={selectedHour} setShowCard={setShowCard} />
+      )}
     </>
   );
 };
 
-const AccordionItem = ({ hoursRange, isHourDisabled, selectedHour, handleHourChange, index }) => {
+const AccordionItem = ({
+  hoursRange,
+  isHourDisabled,
+  selectedHour,
+  handleHourChange,
+  selectedProfessionalWorkingHours,
+  index,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleAccordion = () => {
@@ -168,12 +198,16 @@ const AccordionItem = ({ hoursRange, isHourDisabled, selectedHour, handleHourCha
         onClick={toggleAccordion}
         className={`cursor-pointer h-full w-[80px] flex justify-center items-center rounded-lg ${
           isOpen
-            ? 'bg-gray-100 shadow-md'
-            : 'bg-teal-600 text-gray-100 shadow-sm'
+            ? "bg-gray-100 shadow-md"
+            : "bg-teal-600 text-gray-100 shadow-sm"
         }`}
       >
-        <span className='transform -rotate-90'>Working Hours {index+1}</span>
-        {isOpen ? <FaChevronRight className='mr-2'/> : <FaChevronLeft className='mr-2'/>}
+        <span className="transform -rotate-90">Working Hours {index + 1}</span>
+        {isOpen ? (
+          <FaChevronRight className="mr-2" />
+        ) : (
+          <FaChevronLeft className="mr-2" />
+        )}
       </div>
       <AnimatePresence>
         {isOpen && (
@@ -182,14 +216,16 @@ const AccordionItem = ({ hoursRange, isHourDisabled, selectedHour, handleHourCha
             animate="open"
             exit="collapsed"
             variants={{
-              open: { opacity: 1, height: 'auto' },
+              open: { opacity: 1, height: "auto" },
               collapsed: { opacity: 0, height: 0 },
             }}
             transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
             <div className="p-4 max-h-[540px] overflow-auto no-scrollbar flex justify-center flex-wrap">
-            {hoursRange.map((hour, index) => {
+              {hoursRange.map((hour, index) => {
+                const proNonBlokedHours =
+                  selectedProfessionalWorkingHours(hour);
                 return (
                   <button
                     key={index}
@@ -206,7 +242,7 @@ const AccordionItem = ({ hoursRange, isHourDisabled, selectedHour, handleHourCha
                     onClick={() => {
                       handleHourChange({ target: { value: hour } });
                     }}
-                    disabled={isHourDisabled(hour) || hour < new Date()}
+                    disabled={isHourDisabled(hour) || hour < new Date() || !proNonBlokedHours}
                   >
                     {hour.toLocaleTimeString([], {
                       hour: "2-digit",
@@ -225,16 +261,16 @@ const AccordionItem = ({ hoursRange, isHourDisabled, selectedHour, handleHourCha
 
 const DateTimeCard = ({ date, setShowCard }) => {
   const options = {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   };
 
-  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
-  const formattedTime = new Intl.DateTimeFormat('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
+  const formattedDate = new Intl.DateTimeFormat("en-US", options).format(date);
+  const formattedTime = new Intl.DateTimeFormat("en-US", {
+    hour: "numeric",
+    minute: "numeric",
   }).format(date);
 
   return (
