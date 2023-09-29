@@ -57,7 +57,6 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   }, []);
 
   const date = localStorage.getItem(`dateTime_${paramsId}`);
-
   const hoursArrs = useMemo(() => {
     const arr = [];
     if (workingHours && workingHours.length > 0) {
@@ -65,7 +64,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
         const range = [];
         const { startHour, endHour } = workingHours[i];
         for (let hour = startHour; hour <= endHour; hour++) {
-          const maxMinute = hour === endHour ? 0 : 45; // Maximum minutes allowed for the last hour
+          const maxMinute = hour === endHour ? 0 : 45; 
           for (let minute = 0; minute <= maxMinute; minute += 15) {
             let d = hour;
             let d1 = new Date(date);
@@ -192,7 +191,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
       </>
     );
   };
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import CalendarBox from "../../../components/CalendarBox";
 
 const DateSelection = ({ paramsId, setHasSelectedDate }) => {
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     localStorage.setItem(`dateTime_${paramsId}`, selectedDate);
@@ -10,8 +10,8 @@ const DateSelection = ({ paramsId, setHasSelectedDate }) => {
 
   const handleDateClick = (day) => {
     const selected = new Date(
-      new Date().getFullYear(),
-      new Date().getMonth(),
+      new Date(selectedDate).getFullYear(),
+      new Date(selectedDate).getMonth(),
       day
     );
     setSelectedDate(selected);

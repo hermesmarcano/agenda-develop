@@ -1,33 +1,27 @@
-import React, { useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import { useTranslation } from 'react-i18next'
 
 const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
   const { t } = useTranslation()
-  const [currentDate, setCurrentDate] = useState(new Date());
-
+  console.log(selectedDate);
   const handlePrevMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-    );
+    setSelectedDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(
-      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-    );
+    setSelectedDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() + 1, 1));
   };
 
   const getMonthName = () => {
-    return currentDate.toLocaleString("default", {
+    return selectedDate.toLocaleString("default", {
       month: "long",
       year: "numeric",
     });
   };
 
   const getDaysInMonth = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+    const year = selectedDate.getFullYear();
+    const month = selectedDate.getMonth();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     return daysInMonth;
   };
@@ -35,18 +29,16 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
   const renderCalendar = () => {
     const daysInMonth = getDaysInMonth();
     const firstDay = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth(),
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
       1
     ).getDay();
     const days = [];
 
-    // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
       days.push(<div key={`empty-${i}`} className="h-7"></div>);
     }
 
-    // Add day cells for the entire month
     for (let day = 1; day <= daysInMonth; day++) {
       const isSelected = selectedDate && selectedDate.getDate() === day;
       days.push(
