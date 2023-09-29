@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { FiPhone, FiMail, FiUser, FiCalendar, FiMapPin } from "react-icons/fi";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const CustomerRegister = ({ toggleForm, shopId }) => {
+  const { t } = useTranslation()
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
-    dob: "",
+    birthday: "",
     address: "",
   });
 
@@ -75,7 +77,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
               type="text"
               name="name"
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
-              placeholder="Full Name"
+              placeholder={t("Full Name")}
               value={formData.name}
               onChange={handleChange}
               required
@@ -89,7 +91,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
               type="tel"
               name="phone"
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
-              placeholder="Phone Number"
+              placeholder={t("Phone Number")}
               value={formData.phone}
               onChange={handleChange}
               required
@@ -103,7 +105,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
               type="email"
               name="email"
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
-              placeholder="Email (Optional)"
+              placeholder={t("Email (Optional)")}
               value={formData.email}
               onChange={handleChange}
             />
@@ -114,9 +116,9 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             </div>
             <input
               type="date"
-              name="dob"
+              name="birthday"
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
-              placeholder="Date of Birth (Optional)"
+              placeholder={t("Date of Birth (Optional)")}
               value={formData.dob}
               onChange={handleChange}
             />
@@ -129,7 +131,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
               type="text"
               name="address"
               className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
-              placeholder="Address (Optional)"
+              placeholder={t("Address (Optional)")}
               value={formData.address}
               onChange={handleChange}
             />
@@ -138,7 +140,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             type="submit"
             className="w-full bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
           >
-            Register
+            {t('Register')}
           </button>
         </form>
         <div className="text-center">
@@ -148,7 +150,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
               onClick={toggleForm}
               className="text-teal-600 hover:underline"
             >
-              Sign In here
+              {t('Sign In here')}
             </button>
           </p>
         </div>

@@ -13,12 +13,40 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { ServicesContext } from "../../../context/ServicesContext";
+import { LoadingSaveButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { useTranslation } from "react-i18next";
 
 const DashboardServices = () => {
+  const { t } = useTranslation();
   const [servicesDataArr, setServicesDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [hiddenImages, setHiddenImages] = useState([]);
   const { servicesData } = useContext(ServicesContext);
+  const [loading, setLoading] = useState(false);
+
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
 
   useEffect(() => {
     fetchAdminData();
@@ -74,6 +102,7 @@ const DashboardServices = () => {
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
@@ -134,14 +163,15 @@ const DashboardServices = () => {
         )
         .then((res) => {
           console.log(res.data);
-          alert("Data saved successfully");
+          setLoading(false);
+          notify("Update", t("Services")` Data saved successfully`, "success");
           fetchAdminData();
         })
         .catch((err) => {
-          console.log(err);
+          notify("Error", `${err.message}`, "danger");
         });
     } catch (error) {
-      console.log(error);
+      notify("Error", `${error.message}`, "danger");
     } finally {
       setSubmitting(false);
     }
@@ -155,12 +185,12 @@ const DashboardServices = () => {
         return;
       }
       const desertRef = ref(storage, servicesDataArr[index].image);
-      let updatedServicesArr = servicesDataArr
-      updatedServicesArr[index].image = null
+      let updatedServicesArr = servicesDataArr;
+      updatedServicesArr[index].image = null;
       deleteObject(desertRef)
         .then(() => {
           updatedServicesArr[index].image = null;
-          setServicesDataArr((prev) => (updatedServicesArr));
+          setServicesDataArr((prev) => updatedServicesArr);
         })
         .then(() => {
           instance
@@ -175,7 +205,7 @@ const DashboardServices = () => {
             )
             .then((res) => {
               console.log(res.data);
-              fetchAdminData()
+              fetchAdminData();
             })
             .catch((error) => {
               console.log(error);
@@ -191,7 +221,7 @@ const DashboardServices = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Reccomended Services</h1>
+      <h1 className="text-3xl font-bold mb-4">{t('Reccomended Services')}</h1>
       {dataFetched ? (
         <Formik
           initialValues={{
@@ -214,7 +244,7 @@ const DashboardServices = () => {
                         htmlFor={`title${index}`}
                         className="block font-medium mb-1"
                       >
-                        Title
+                        {t('Title')}
                       </label>
                       <input
                         type="text"
@@ -234,7 +264,7 @@ const DashboardServices = () => {
                         htmlFor={`image${index}`}
                         className="block font-medium mb-1"
                       >
-                        Image
+                        {t('Image')}
                       </label>
 
                       {servicesDataArr[index].image && (
@@ -277,13 +307,17 @@ const DashboardServices = () => {
                 }
               />
 
-              <button
+              {/* <button
                 type="submit"
                 disabled={formikProps.isSubmitting}
                 className="bg-blue-600 text-white rounded-md py-2 px-4 mt-4"
               >
                 Save
-              </button>
+              </button> */}
+              <LoadingSaveButton
+                disabled={formikProps.isSubmitting}
+                isSaving={loading}
+              />
             </form>
           )}
         </Formik>
@@ -291,7 +325,7 @@ const DashboardServices = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}

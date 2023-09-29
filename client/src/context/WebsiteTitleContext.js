@@ -1,10 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const WebsiteTitleContext = createContext();
 
 const WebsiteTitleContextWrapper = ({ children }) => {
-  const [websiteTitle, setWebsiteTitle] = useState("My Website");
+  const { t } = useTranslation();
+  const [websiteTitle, setWebsiteTitle] = useState(t("My Website"));
 
   useEffect(() => {
     fetchAdminData();

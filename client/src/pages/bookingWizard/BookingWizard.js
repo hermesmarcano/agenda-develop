@@ -13,11 +13,12 @@ import WizardHeader from "./components/WizardHeader";
 import WizardFooter from "./components/WizardFooter";
 import instance from "../../axiosConfig/axiosConfig";
 import { useNavigate, useParams } from "react-router-dom";
-import SignIn from "../../components/SignIn";
 import CustomPopup from "../../components/CustomPopup";
 import CustomerAuth from "../../components/CustomerAuth";
+import { useTranslation } from "react-i18next";
 
 function BookingWizard() {
+  const { t } = useTranslation();
   const [currentStep, setCurrentStep] = React.useState(1);
   const [bookingInfo, setBookingInfo] = React.useState([]);
   const [shopId, setShopId] = React.useState("");
@@ -48,99 +49,6 @@ function BookingWizard() {
       setCurrentStep(currentStep - 1);
     }
   };
-
-  const proceedCheckout = () => {
-    const professional = JSON.parse(
-      localStorage.getItem(`professional_${params.id}`)
-    );
-    const services = JSON.parse(localStorage.getItem(`services_${params.id}`));
-    const servicesId = [];
-    const servicesNames = [];
-    services.map((service) => {
-      servicesId.push(service["_id"]);
-    });
-    services.map((service) => {
-      servicesNames.push(service.name);
-    });
-    const products = JSON.parse(localStorage.getItem(`products_${params.id}`));
-    console.log("products: ", products);
-    const productsId = [];
-    const productsNames = [];
-    if (products) {
-      products.map((product) => {
-        productsId.push(product["_id"]);
-      });
-      products.map((product) => {
-        productsNames.push(product.name);
-      });
-    }
-    const d = new Date(localStorage.getItem(`dateTime_${params.id}`));
-    const date = new Intl.DateTimeFormat(["ban", "id"]).format(d);
-    const time = new Intl.DateTimeFormat("en", {
-      hour: "numeric",
-      minute: "numeric",
-      hourCycle: "h23",
-    }).format(d);
-    let total = 0;
-
-    const sum = services.reduce((acc, service) => {
-      return acc + service.price;
-    }, 0);
-    total = sum;
-    if (products) {
-      const sum2 = products.reduce((acc, product) => {
-        return acc + product.price;
-      }, sum);
-      console.log("sum2: ", sum2);
-      total = sum2;
-    }
-
-    let duration = services.reduce(
-      (totalDuration, s) => totalDuration + s.duration,
-      0
-    );
-
-    localStorage.setItem(
-      "bookingInfo",
-      JSON.stringify({
-        managerId: shopId,
-        customer: "",
-        professional: professional._id,
-        service: servicesId,
-        duration: duration,
-        product: productsId,
-        dateTime: d,
-        amount: total,
-      })
-    );
-    console.log({
-      managerId: shopId,
-      customer: "",
-      professional: professional._id,
-      service: servicesId,
-      duration: duration,
-      product: productsId,
-      dateTime: d,
-      amount: total,
-    });
-    localStorage.setItem(
-      "bookingDetails",
-      JSON.stringify({
-        customer: "",
-        professional: professional.name,
-        service: servicesNames,
-        product: productsNames,
-        dateTime: d,
-        amount: total,
-      })
-    );
-    if (localStorage.getItem("ag_app_customer_token")) {
-      navigate(`/shops/${params.id}/checkout`);
-    } else {
-      setSignInPopup(true);
-    }
-  };
-  
 
   const confirmBooking = async () => {
     const professional = JSON.parse(
@@ -238,7 +146,6 @@ function BookingWizard() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-200">
-      {/* <SignIn isOpen={signInPopup} onClose={() => setSignInPopup(false)} /> */}
       <CustomPopup
         isOpen={signInPopup}
         onClose={() => setSignInPopup(false)}
@@ -249,7 +156,6 @@ function BookingWizard() {
       </div>
       <StepIndicator currentStep={currentStep} />
       <div className="w-full sm:w-[700px] p-6 rounded-lg shadow-lg bg-white">
-        {/* Step Content */}
         <div className="w-full">
           {currentStep === 1 && (
             <div className="transition-opacity opacity-100 min-h-[588px] relative">
@@ -268,7 +174,7 @@ function BookingWizard() {
                     onClick={() => navigate(`/shops/${params.id}`)}
                   >
                     <span className="flex items-center">
-                      <FiArrowLeft className="mr-2" /> Back to Shop
+                      <FiArrowLeft className="mr-2" /> {t('Back to Shop')}
                     </span>
                   </button>
                 </div>
@@ -289,7 +195,7 @@ function BookingWizard() {
                     disabled={!hasSelectedService}
                   >
                     <span className="flex items-center">
-                      Next <FiArrowRight className="ml-2" />
+                      {t('Next')} <FiArrowRight className="ml-2" />
                     </span>
                   </button>
                 </div>
@@ -314,7 +220,7 @@ function BookingWizard() {
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <FiArrowLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> {t("Prev")}
                     </span>
                   </button>
                 </div>
@@ -335,7 +241,7 @@ function BookingWizard() {
                     disabled={!hasSelectedProfessional}
                   >
                     <span className="flex items-center">
-                      Next <FiArrowRight className="ml-2" />
+                      {t('Next')} <FiArrowRight className="ml-2" />
                     </span>
                   </button>
                 </div>
@@ -360,7 +266,7 @@ function BookingWizard() {
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <FiArrowLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> {t('Prev')}
                     </span>
                   </button>
                 </div>
@@ -379,7 +285,7 @@ function BookingWizard() {
                     disabled={!hasSelectedDate}
                   >
                     <span className="flex items-center">
-                      Next <FiArrowRight className="ml-2" />
+                      {t('Next')} <FiArrowRight className="ml-2" />
                     </span>
                   </button>
                 </div>
@@ -404,7 +310,7 @@ function BookingWizard() {
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <FiArrowLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> {t('Prev')}
                     </span>
                   </button>
                 </div>
@@ -423,7 +329,7 @@ function BookingWizard() {
                     disabled={!hasSelectedHour}
                   >
                     <span className="flex items-center">
-                      Next <FiArrowRight className="ml-2" />
+                      {t('Next')} <FiArrowRight className="ml-2" />
                     </span>
                   </button>
                 </div>
@@ -447,7 +353,7 @@ function BookingWizard() {
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <FiArrowLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> {t('Prev')}
                     </span>
                   </button>
                 </div>
@@ -460,7 +366,7 @@ function BookingWizard() {
                     disabled={!hasSelectedHour}
                   >
                     <span className="flex items-center">
-                      Next <FiArrowRight className="ml-2" />
+                      {t('Next')} <FiArrowRight className="ml-2" />
                     </span>
                   </button>
                 </div>
@@ -485,7 +391,7 @@ function BookingWizard() {
                     onClick={handlePrevious}
                   >
                     <span className="flex items-center">
-                      <FiArrowLeft className="mr-2" /> Prev
+                      <FiArrowLeft className="mr-2" /> {t('Prev')}
                     </span>
                   </button>
                 </div>
@@ -496,17 +402,12 @@ function BookingWizard() {
                     title="Next"
                     onClick={handleNext}
                   >
-                    {/* <button
-                      onClick={proceedCheckout}
-                      className="flex items-center text-white bg-gradient-to-r from-green-600 to-green-700 hover:bg-green-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
-                    >
-                      Proceed to Checkout <FaShoppingCart className="ml-2" />
-                    </button> */}
+
                     <button
                       onClick={confirmBooking}
-                      className="flex items-center text-white bg-gradient-to-r from-teal-500 to-teal-600 hover:bg-teal-700 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
+                      className="flex items-center text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
                     >
-                      Confirm Booking <FaCheckCircle className="ml-2" />
+                      {t('Confirm Booking')} <FaCheckCircle className="ml-2" />
                     </button>
                   </button>
                 </div>

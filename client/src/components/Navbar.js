@@ -131,6 +131,34 @@ function Navbar() {
       </div>
       {/* Mobile menu */}
       <div className={`${isOpen ? "block" : "hidden"} md:hidden  py-2`}>
+      <div>
+            <div className="flex">
+              {Object.keys(locales).map((locale) => (
+                <button
+                  key={locale}
+                  onClick={() => changeLanguage(locale)}
+                  className={`px-4 py-2 text-sm ${
+                    locale === activeLanguage
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                  }`}
+                >
+                  {locales[locale].flag}
+                </button>
+              ))}
+            </div>
+            <div>
+              {Object.keys(locales).map((locale) => (
+                <div
+                  key={locale}
+                  className={`${
+                    locale === activeLanguage ? "block" : "hidden"
+                  } text-gray-700`}
+                >
+                </div>
+              ))}
+            </div>
+          </div>
         <Link
           to="#"
           className="block py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"

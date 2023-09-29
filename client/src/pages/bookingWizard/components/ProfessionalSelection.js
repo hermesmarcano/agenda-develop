@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi"; // You can import other icons as needed
+import { FiArrowLeft, FiArrowRight } from "react-icons/fi"; // You can import other icons as needed
 import instance from "../../../axiosConfig/axiosConfig";
 import ReactPaginate from "react-paginate";
 

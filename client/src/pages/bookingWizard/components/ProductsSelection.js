@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import instance from "../../../axiosConfig/axiosConfig";
 import ReactPaginate from "react-paginate";
+import { useTranslation } from "react-i18next";
 
 const ProductsSelection = ({ paramsId }) => {
+  const { t } = useTranslation();
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [products, setProducts] = useState([]);
   const perPage = 4; // Number of services per page
@@ -138,7 +140,7 @@ const ProductsSelection = ({ paramsId }) => {
                   />
                 </svg>
               </div>
-              <p className="text-gray-500 mb-2">No available products</p>
+              <p className="text-gray-500 mb-2">{t('No available products')}</p>
             </div>
           )}
         </div>

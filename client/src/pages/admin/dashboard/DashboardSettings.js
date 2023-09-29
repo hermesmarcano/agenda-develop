@@ -14,12 +14,41 @@ import {
 import { v4 } from "uuid";
 import { LogoContext } from "../../../context/LogoContext";
 import { WebsiteTitleContext } from "../../../context/WebsiteTitleContext";
+import { LoadingSaveButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { useTranslation } from "react-i18next";
 
 const DashboardSettings = () => {
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const { websiteTitle, setWebsiteTitle } = useContext(WebsiteTitleContext);
   const { logo, setLogo } = useContext(LogoContext);
   const [isFetched, setIsFetched] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
+
   useEffect(() => {
     fetchAdminData();
   }, []);
@@ -48,6 +77,7 @@ const DashboardSettings = () => {
   };
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       console.log("submitting");
       const token = localStorage.getItem("ag_app_admin_token");
@@ -100,11 +130,16 @@ const DashboardSettings = () => {
                   })
                   .then((res) => {
                     console.log(res);
-                    alert("Data saved successfully");
+                    setLoading(false);
+                    notify(
+                      "Update",
+                      t("Settings")` Data saved successfully`,
+                      "success"
+                    );
                     fetchAdminData();
                   })
                   .catch((error) => {
-                    console.log(error);
+                    notify("Error", `${error.message}`, "danger");
                   });
               });
           }
@@ -128,12 +163,17 @@ const DashboardSettings = () => {
           })
           .then((res) => {
             console.log(res);
-            alert("Data saved successfully");
+            setLoading(false);
+                    notify(
+                      "Update",
+                      t("Settings")` Data saved successfully`,
+                      "success"
+                    );
             fetchAdminData();
           });
       }
     } catch (error) {
-      console.log(error);
+      notify("Error", `${error.message}`, "danger");
     }
 
     setSubmitting(false);
@@ -184,7 +224,7 @@ const DashboardSettings = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Settings</h1>
+      <h1 className="text-3xl font-bold mb-4">{t('Settings')}</h1>
       {isFetched ? (
         <Formik
           initialValues={{
@@ -204,7 +244,7 @@ const DashboardSettings = () => {
             <form onSubmit={formikProps.handleSubmit}>
               <div className="mb-4">
                 <label htmlFor={`username`} className="block font-medium mb-1">
-                  Username
+                  {t('Username')}
                 </label>
                 <input
                   type="text"
@@ -224,13 +264,13 @@ const DashboardSettings = () => {
                   htmlFor={`password`}
                   className="block font-medium mb-1 mt-4"
                 >
-                  Password
+                  {t('Password')}
                 </label>
                 <input
                   type="password"
                   id={`password`}
                   name={`password`}
-                  placeholder="Enter a new password"
+                  placeholder={t("Enter a new password")}
                   value={formikProps.values.password}
                   onChange={formikProps.handleChange}
                   className="border-gray-300 border rounded-md p-2 w-full"
@@ -245,7 +285,7 @@ const DashboardSettings = () => {
                   htmlFor={`websiteTitle`}
                   className="block font-medium mb-1 mt-4"
                 >
-                  Website Title
+                  {t('Website Title')}
                 </label>
                 <input
                   type="websiteTitle"
@@ -265,7 +305,7 @@ const DashboardSettings = () => {
                   htmlFor={`websiteTitle`}
                   className="block font-medium mb-1 mt-4"
                 >
-                  Logo
+                  {t('Logo')}
                 </label>
 
                 {logo && (
@@ -302,12 +342,16 @@ const DashboardSettings = () => {
                 )}
               </div>
 
-              <button
+              {/* <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Save
-              </button>
+              </button> */}
+              <LoadingSaveButton
+                disabled={formikProps.isSubmitting}
+                isSaving={loading}
+              />
             </form>
           )}
         </Formik>
@@ -315,7 +359,7 @@ const DashboardSettings = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}

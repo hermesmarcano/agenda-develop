@@ -2,8 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import instance from "../../../axiosConfig/axiosConfig";
 import { FaSpinner } from "react-icons/fa";
 import { Transition } from "@headlessui/react";
+import { useTranslation } from "react-i18next";
 
 const HourSelection = ({ paramsId, setHasSelectedHour }) => {
+  const { t } = useTranslation();
   const [selectedHour, setSelectedHour] = useState(
     new Date(localStorage.getItem(`dateTime_${paramsId}`))
   );
@@ -190,23 +192,13 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
       </>
     );
   };
-
-  const renderDivider = () => {
-    return (
-      <div className="flex items-center justify-center my-4">
-        <hr className="border-gray-300 flex-grow" />
-        {/* <span className="mx-4 text-gray-300">OR</span>
-        <hr className="border-gray-300 flex-grow" /> */}
-      </div>
-    );
-  };
-
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col justify-center items-center space-x-2">
           <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">Loading...</span>
+          <span className="mt-2">{t('Loading...')}</span>
         </div>
       </div>
     );

@@ -1,41 +1,43 @@
 import { createContext, useState, useEffect } from "react";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const ArticlesContext = createContext();
 
 const ArticlesContextWrapper = ({ children }) => {
+  const { t } = useTranslation();
   const [articlesData, setArticlesData] = useState([
     {
       _id: 1,
-      title: "The Benefits of Regular Exercise",
+      title: t("The Benefits of Regular Exercise"),
       image: "https://via.placeholder.com/600x400",
-      author: "John Smith",
-      date: "January 1, 2022",
-      content: "Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m",
+      author: t("John Smith"),
+      date: t("January 1, 2022"),
+      content: t("Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m"),
     },
     {
       _id: 2,
-      title: "The Benefits of Regular Exercise",
+      title: t("The Benefits of Regular Exercise"),
       image: "https://via.placeholder.com/600x400",
-      author: "John Smith",
-      date: "January 1, 2022",
-      content: "Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m",
+      author: t("John Smith"),
+      date: t("January 1, 2022"),
+      content: t("Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m"),
     },
     {
       _id: 3,
-      title: "The Benefits of Regular Exercise",
+      title: t("The Benefits of Regular Exercise"),
       image: "https://via.placeholder.com/600x400",
-      author: "John Smith",
-      date: "January 1, 2022",
-      content: "Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m",
+      author: t("John Smith"),
+      date: t("January 1, 2022"),
+      content: t("Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m"),
     },
     {
       _id: 4,
-      title: "The Benefits of Regular Exercise",
+      title: t("The Benefits of Regular Exercise"),
       image: "https://via.placeholder.com/600x400",
-      author: "John Smith",
-      date: "January 1, 2022",
-      content: "Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m",
+      author: t("John Smith"),
+      date: t("January 1, 2022"),
+      content: t("Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m"),
     },
   ]);
 

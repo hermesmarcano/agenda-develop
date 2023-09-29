@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { useTranslation } from 'react-i18next'
 
 const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
+  const { t } = useTranslation()
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const handlePrevMonth = () => {
@@ -75,7 +77,7 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
         </button>
       </div>
       <div className="grid grid-cols-7 gap-2 mt-2">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
+      {[t("Sun"), t("Mon"), t("Tue"), t("Wed"), t("Thu"), t("Fri"), t("Sat")].map((day, index) => (
           <div
             key={`day-${index}`}
             className="flex justify-center font-semibold text-gray-600 text-xs"

@@ -13,9 +13,37 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { Section1Context } from "../../../context/Section1Context";
+import { LoadingSaveButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { useTranslation } from "react-i18next";
 
 const DashboardSectionOne = () => {
+  const { t } = useTranslation();
   const { section1Data, setSection1Data } = useContext(Section1Context);
+  const [loading, setLoading] = useState(false);
+
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
 
   useEffect(() => {
     fetchAdminData();
@@ -59,6 +87,7 @@ const DashboardSectionOne = () => {
   };
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       console.log("submitting");
       const token = localStorage.getItem("ag_app_admin_token");
@@ -109,11 +138,16 @@ const DashboardSectionOne = () => {
                   })
                   .then((res) => {
                     console.log(res);
-                    alert("Data saved successfully");
+                    setLoading(false);
+                    notify(
+                      "Update",
+                      t("Section 1")` Data saved successfully`,
+                      "success"
+                    );
                     fetchAdminData();
                   })
                   .catch((error) => {
-                    console.log(error);
+                    notify("Error", `${error.message}`, "danger");
                   });
               });
           }
@@ -134,12 +168,17 @@ const DashboardSectionOne = () => {
           })
           .then((res) => {
             console.log(res);
-            alert("Data saved successfully");
+            setLoading(false);
+            notify(
+              "Update",
+              t("Section 1")` Data saved successfully`,
+              "success"
+            );
             fetchAdminData();
           });
       }
     } catch (error) {
-      console.log(error);
+      notify("Error", `${error.message}`, "danger");
     }
 
     setSubmitting(false);
@@ -276,12 +315,16 @@ const DashboardSectionOne = () => {
                 )}
               </div>
 
-              <button
+              {/* <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Submit
-              </button>
+              </button> */}
+              <LoadingSaveButton
+                disabled={formikProps.isSubmitting}
+                isSaving={loading}
+              />
             </form>
           )}
         </Formik>
@@ -289,7 +332,7 @@ const DashboardSectionOne = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}

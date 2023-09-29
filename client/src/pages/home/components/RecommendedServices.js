@@ -1,13 +1,15 @@
 import { useContext } from "react";
 import ServiceCard from "./ServiceCard";
 import { ServicesContext } from "../../../context/ServicesContext";
+import { useTranslation } from "react-i18next";
 
 const RecommendedServices = () => {
+  const { t } = useTranslation();
   const { servicesData } = useContext(ServicesContext);
   return (
     <div className="bg-gray-100 py-8">
       <div className="container mx-auto px-4">
-        <h2 className="text-2xl font-bold mb-4">Recommended Services</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('Recommended Services')}</h2>
         <div className="flex flex-wrap -mx-2">
           {servicesData.map((service) => (
             <div

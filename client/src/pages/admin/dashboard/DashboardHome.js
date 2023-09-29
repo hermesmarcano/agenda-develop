@@ -6,8 +6,10 @@ import Popup from "../../../components/Popup";
 import instance from "../../../axiosConfig/axiosConfig";
 import { storage } from "../../../services/firebaseStorage";
 import { deleteObject, ref } from "firebase/storage";
+import { useTranslation } from "react-i18next";
 
 const DashboardHome = () => {
+  const { t } = useTranslation();
   const token = localStorage.getItem("ag_app_admin_token");
   const [shops, setShops] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -194,7 +196,7 @@ const DashboardHome = () => {
           </div>
           <div>
             <h3 className="text-xl md:text-lg lg:text-xl mb-2">
-              Total Registered Shops
+              {t('Total Registered Shops')}
             </h3>
             <p className="text-4xl md:text-3xl lg:text-4xl">
               {shops.length || 0}
@@ -207,7 +209,7 @@ const DashboardHome = () => {
           </div>
           <div>
             <h3 className="text-xl md:text-lg lg:text-xl mb-2">
-              Total Customers
+              {t('Total Customers')}
             </h3>
             <p className="text-4xl md:text-3xl lg:text-4xl">
               {customers.length || 0}
@@ -220,7 +222,7 @@ const DashboardHome = () => {
           </div>
           <div>
             <h3 className="text-xl md:text-lg lg:text-xl mb-2">
-              Total Transactions
+              {t('Total Transactions')}
             </h3>
             <p className="text-4xl md:text-3xl lg:text-4xl">
               ${transactions.toFixed(2) || 0}
@@ -230,11 +232,11 @@ const DashboardHome = () => {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-2xl mb-4">Shops</h2>
+        <h2 className="text-2xl mb-4">{t('Shops')}</h2>
         <div className="overflow-x-auto">
           <input
             type="text"
-            placeholder="Search by shop name"
+            placeholder={t("Search by shop name")}
             className="mb-4 px-2 py-1 border border-gray-300 rounded"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -250,7 +252,7 @@ const DashboardHome = () => {
               onClick={handleDeleteConfirm}
               disabled={selectedShops.length === 0}
             >
-              Delete Selected
+              {t('Delete Selected')}
             </button>
           </div>
 
@@ -265,16 +267,16 @@ const DashboardHome = () => {
                   />
                 </th>
                 <th className="py-2 px-4 text-left bg-gray-100 font-medium text-gray-600 uppercase tracking-wider">
-                  Manager
+                  {t('Manager')}
                 </th>
                 <th className="py-2 px-4 text-left bg-gray-100 font-medium text-gray-600 uppercase tracking-wider">
-                  Shop Name
+                  {t('Shop Name')}
                 </th>
                 <th className="py-2 px-4 text-left bg-gray-100 font-medium text-gray-600 uppercase tracking-wider">
-                  Customers
+                  {t('Customers')}
                 </th>
                 <th className="py-2 px-4 text-left bg-gray-100 font-medium text-gray-600 uppercase tracking-wider">
-                  Earnings
+                  {t('Earnings')}
                 </th>
                 {/* <th className="py-2 px-4 text-left bg-gray-100"></th> */}
               </tr>
@@ -308,7 +310,7 @@ const DashboardHome = () => {
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
-                  Are you sure you want to delete the selected shops?
+                  {t('Are you sure you want to delete the selected shops?')}
                 </p>
                 <div className="ml-4 flex">
                   <button
@@ -318,17 +320,17 @@ const DashboardHome = () => {
                     {!deleted ? (
                       <span className="flex items-center justify-center">
                         <FaSpinner className="animate-spin mr-2" />
-                        Deleting...
+                        {t('Deleting...')}
                       </span>
                     ) : (
-                      "Confirm"
+                      t("Confirm")
                     )}
                   </button>
                   <button
                     className="bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleCancelDelete}
                   >
-                    Cancel
+                    {t('Cancel')}
                   </button>
                 </div>
               </div>
@@ -337,9 +339,9 @@ const DashboardHome = () => {
           <div className="flex justify-between items-center mt-4">
             <div>
               <p className="text-sm text-gray-600">
-                Showing {indexOfFirstItem + 1} to{" "}
-                {Math.min(indexOfLastItem, filteredShops.length)} of{" "}
-                {filteredShops.length} entries
+                {t('Showing')} {indexOfFirstItem + 1} {t('to')}{" "}
+                {Math.min(indexOfLastItem, filteredShops.length)} {t('of')}{" "}
+                {filteredShops.length} {t('entries')}
               </p>
             </div>
             <div className="flex items-center">
@@ -349,7 +351,7 @@ const DashboardHome = () => {
                   currentPage === 1 ? "hidden" : ""
                 } bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded-l`}
               >
-                Previous
+                {t('Previous')}
               </button>
               <div className="flex h-8 items-center mx-2">
                 {Array.from({ length: totalPages }, (_, i) => (
@@ -372,7 +374,7 @@ const DashboardHome = () => {
                   currentPage === totalPages ? "hidden" : ""
                 } bg-blue-500 hover:bg-blue-700 text-white text-sm font-semibold py-1 px-2 rounded-r`}
               >
-                Next
+                {t('Next')}
               </button>
             </div>
           </div>

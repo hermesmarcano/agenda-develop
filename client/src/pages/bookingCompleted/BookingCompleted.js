@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import instance from "../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 function BookingCompleted() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [reservedPersonName, setReservedPersonName] = useState("John Doe");
   const paymentMethod = localStorage.getItem("payment");
@@ -50,14 +52,14 @@ function BookingCompleted() {
             </svg>
 
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Booking is Completed
+              {t('Booking is Completed')}
             </h2>
           </div>
           <div className="mt-6">
             <p className="text-center text-sm text-gray-500">
-              Your booking has been confirmed.{" "}
-              {reservedPersonName && `Reserved under ${reservedPersonName}.`}{" "}
-              Payment was made with {paymentMethod}.
+              {t('Your booking has been confirmed.')}{" "}
+              {reservedPersonName && `${t('Reserved under')} ${reservedPersonName}.`}{" "}
+              {t('Payment was made with')} {paymentMethod}.
             </p>
           </div>
           <div className="mt-6">
@@ -66,7 +68,7 @@ function BookingCompleted() {
               className="w-full inline-flex justify-center rounded-full border border-transparent shadow-sm px-4 py-2 bg-teal-600 text-base font-medium text-white hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:text-sm"
               onClick={handleDoneClick}
             >
-              Done
+              {t('Done')}
             </button>
           </div>
         </div>

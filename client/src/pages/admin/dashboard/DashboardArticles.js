@@ -13,11 +13,39 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { ArticlesContext } from "../../../context/ArticlesContext";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { LoadingSaveButton } from "../../../components/Styled";
+import { useTranslation } from "react-i18next";
 
 const DashboardArticles = () => {
+  const { t } = useTranslation();
   const [articlesDataArr, setArticlesDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const { articlesData } = useContext(ArticlesContext);
+  const [loading, setLoading] = useState(false);
+
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
 
   useEffect(() => {
     fetchAdminData();
@@ -36,7 +64,7 @@ const DashboardArticles = () => {
           Authorization: token,
         },
       });
-      setArticlesDataArr(prev => response.data.admin.articlesData);
+      setArticlesDataArr((prev) => response.data.admin.articlesData);
       if (response.data.admin.articlesData.length === 0) {
         let articlesDataArr = articlesData;
         articlesDataArr.map((article) => {
@@ -76,6 +104,7 @@ const DashboardArticles = () => {
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
@@ -136,14 +165,15 @@ const DashboardArticles = () => {
         )
         .then((res) => {
           console.log(res.data);
-          alert("Data saved successfully");
-          fetchAdminData();
+          notify("Update", t("Articles")` Data saved successfully`, "success");
+          setLoading(false);
         })
         .catch((err) => {
-          console.log(err);
+          notify("Error", `${err.message}`, "danger");
+          fetchAdminData();
         });
     } catch (error) {
-      console.log(error);
+      notify("Error", `${error.message}`, "danger");
     } finally {
       setSubmitting(false);
     }
@@ -157,12 +187,12 @@ const DashboardArticles = () => {
         return;
       }
       const desertRef = ref(storage, articlesDataArr[index].image);
-      let updatedArticlesArr = articlesDataArr
-      updatedArticlesArr[index].image = null
+      let updatedArticlesArr = articlesDataArr;
+      updatedArticlesArr[index].image = null;
       deleteObject(desertRef)
         .then(() => {
           updatedArticlesArr[index].image = null;
-          setArticlesDataArr((prev) => (updatedArticlesArr));
+          setArticlesDataArr((prev) => updatedArticlesArr);
         })
         .then(() => {
           instance
@@ -177,7 +207,7 @@ const DashboardArticles = () => {
             )
             .then((res) => {
               console.log(res.data);
-              fetchAdminData()
+              fetchAdminData();
             })
             .catch((error) => {
               console.log(error);
@@ -193,7 +223,7 @@ const DashboardArticles = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Articles</h1>
+      <h1 className="text-3xl font-bold mb-4">{t('Articles')}</h1>
       {dataFetched ? (
         <Formik
           initialValues={{
@@ -219,7 +249,7 @@ const DashboardArticles = () => {
                         htmlFor={`title${index}`}
                         className="block font-medium mb-1"
                       >
-                        Title
+                        {t('Title')}
                       </label>
                       <input
                         type="text"
@@ -239,7 +269,7 @@ const DashboardArticles = () => {
                         htmlFor={`author${index}`}
                         className="block font-medium mb-1 mt-4"
                       >
-                        Author
+                        {t('Author')}
                       </label>
                       <input
                         type="text"
@@ -259,7 +289,7 @@ const DashboardArticles = () => {
                         htmlFor={`date${index}`}
                         className="block font-medium mb-1 mt-4"
                       >
-                        Date
+                        {t('Date')}
                       </label>
                       <input
                         type="text"
@@ -279,7 +309,7 @@ const DashboardArticles = () => {
                         htmlFor={`content${index}`}
                         className="block font-medium mb-1 mt-4"
                       >
-                        Content
+                        {t('Content')}
                       </label>
                       <textarea
                         id={`content${index}`}
@@ -298,7 +328,7 @@ const DashboardArticles = () => {
                         <div className="relative">
                           <img
                             src={articlesDataArr[index].image}
-                            alt={`Service ${index}`}
+                            alt={`${t('Service')} ${index}`}
                             className="w-screen rounded-md max-h-40 object-cover mt-2"
                           />
 
@@ -336,13 +366,17 @@ const DashboardArticles = () => {
                 }
               />
 
-              <button
+              {/* <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
                 disabled={formikProps.isSubmitting}
               >
                 Save
-              </button>
+              </button> */}
+              <LoadingSaveButton
+                disabled={formikProps.isSubmitting}
+                isSaving={loading}
+              />
             </form>
           )}
         </Formik>
@@ -350,7 +384,7 @@ const DashboardArticles = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}

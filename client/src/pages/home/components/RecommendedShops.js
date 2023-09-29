@@ -3,8 +3,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { ShopsContext } from "../../../context/ShopsContext";
+import { useTranslation } from "react-i18next";
 
 const RecommendedShops = () => {
+  const { t } = useTranslation();
   const { shopsData } = useContext(ShopsContext);
 
   const settings = {
@@ -42,7 +44,7 @@ const RecommendedShops = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 overflow-x-hidden">
-      <h2 className="text-2xl font-bold mb-4">Recommended Shops</h2>
+      <h2 className="text-2xl font-bold mb-4">{t('Recommended Shops')}</h2>
       <Slider {...settings}>
         {shopsData.map((shop) => (
           <div key={shop._id} className="px-2">

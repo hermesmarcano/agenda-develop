@@ -4,8 +4,10 @@ import { FaUserShield } from "react-icons/fa";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import instance from "../../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   useEffect(() => {
     // Check if it's the first time and no admins in the database
@@ -46,8 +48,8 @@ const Login = () => {
   };
 
   const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
-    password: Yup.string().required("Password is required"),
+    username: Yup.string().required(t("Username is required")),
+    password: Yup.string().required(t("Password is required")),
   });
 
   return (
@@ -56,7 +58,7 @@ const Login = () => {
         <div className="text-4xl text-center mb-8">
           <FaUserShield className="text-indigo-600 text-5xl mx-auto" />
         </div>
-        <h2 className="text-2xl text-center mb-4">Admin Login</h2>
+        <h2 className="text-2xl text-center mb-4">{t('Admin Login')}</h2>
         <Formik
           initialValues={{ username: "", password: "" }}
           validationSchema={validationSchema}
@@ -66,7 +68,7 @@ const Login = () => {
             <Form>
               <div className="mb-4">
                 <label htmlFor="username" className="block mb-2">
-                  Username
+                  {t('Username')}
                 </label>
                 <Field
                   type="text"
@@ -82,7 +84,7 @@ const Login = () => {
               </div>
               <div className="mb-4">
                 <label htmlFor="password" className="block mb-2">
-                  Password
+                  {t('Password')}
                 </label>
                 <Field
                   type="password"
@@ -102,7 +104,7 @@ const Login = () => {
                   className="bg-indigo-600 text-white py-2 px-4 rounded"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Logging in..." : "Log In"}
+                  {isSubmitting ? t("Logging in...") : t("Log In")}
                 </button>
               </div>
             </Form>

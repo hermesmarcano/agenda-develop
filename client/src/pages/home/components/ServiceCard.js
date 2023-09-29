@@ -1,6 +1,8 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 const ServiceCard = ({ service }) => {
+  const { t } = useTranslation();
   const backgroundImageUrl = service.image;
 
 const cardStyle = {
@@ -17,7 +19,7 @@ const cardStyle = {
           <h3 className="font-bold text-lg mb-2 text-white">{service.title}</h3>
           <div className="mt-4 flex justify-center">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              Start Now!
+              {t('Start Now!')}
             </button>
           </div>
         </div>

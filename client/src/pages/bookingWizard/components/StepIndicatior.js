@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   FaCheckCircle,
   FaListUl,
@@ -9,16 +10,17 @@ import {
 } from "react-icons/fa";
 
 const StepIndicator = ({ currentStep }) => {
+  const { t } = useTranslation();
   const steps = [
-    { icon: <FaListUl className="text-xl sm:text-3xl" />, text: "Services" },
-    { icon: <FaUser className="text-xl sm:text-3xl" />, text: "Professional" },
-    { icon: <FaCalendar className="text-xl sm:text-3xl" />, text: "Date" },
-    { icon: <FaClock className="text-xl sm:text-3xl" />, text: "Hour" },
+    { icon: <FaListUl className="text-xl sm:text-3xl" />, text: t("Services") },
+    { icon: <FaUser className="text-xl sm:text-3xl" />, text: t("Professional") },
+    { icon: <FaCalendar className="text-xl sm:text-3xl" />, text: t("Date") },
+    { icon: <FaClock className="text-xl sm:text-3xl" />, text: t("Hour") },
     {
       icon: <FaShoppingBag className="text-xl sm:text-3xl" />,
-      text: "Products",
+      text: t("Products"),
     },
-    { icon: <FaClipboard className="text-xl sm:text-3xl" />, text: "Summary" },
+    { icon: <FaClipboard className="text-xl sm:text-3xl" />, text: t("Summary") },
   ];
 
   return (

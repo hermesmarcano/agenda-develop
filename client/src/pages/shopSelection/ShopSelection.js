@@ -3,8 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import instance from "../../axiosConfig/axiosConfig";
 import { useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const ShopSelection = () => {
+  const { t } = useTranslation();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchQueryFromURL = searchParams.get("q");
@@ -71,12 +73,12 @@ const ShopSelection = () => {
     <div className="bg-gray-100 min-h-screen">
       <div className="container mx-auto pt-10 h-screen">
         <h1 className="text-5xl font-extrabold mt-10 text-center text-gray-900 mb-8">
-          Choose a Shop
+          {t('Choose a Shop')}
         </h1>
         <div className="flex items-center justify-center mb-4">
           <input
             type="text"
-            placeholder="Search shops"
+            placeholder={t("Search shops")}
             value={searchQuery}
             onChange={handleSearchQueryChange}
             className="py-2 px-4 sm:w-64 rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
@@ -105,7 +107,7 @@ const ShopSelection = () => {
                 <img
                   className="w-full h-40"
                   src="https://placehold.it/300x200"
-                  alt="shop name"
+                  alt={t("shop name")}
                 />
               )}
 
@@ -130,9 +132,9 @@ const ShopSelection = () => {
                 />
               </svg>
             </div>
-            <p className="text-gray-500 mb-2">No result found</p>
+            <p className="text-gray-500 mb-2">{t('No result found')}</p>
             <p className="text-gray-500">
-              Please adjust your search criteria and try again.
+              {t('Please adjust your search criteria and try again.')}
             </p>
           </div>
         )}
@@ -144,7 +146,7 @@ const ShopSelection = () => {
             } bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500`}
             disabled={currentPage === 1}
           >
-            Prev
+            {t('Prev')}
           </button>
           {pageNumbers.map((number) => (
             <button
@@ -176,7 +178,7 @@ const ShopSelection = () => {
             } bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500`}
             disabled={currentPage === pageNumbers.length}
           >
-            Next
+            {t('Next')}
           </button>
         </nav>
       </div>

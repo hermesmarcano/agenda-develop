@@ -8,8 +8,10 @@ import { RiToolsFill } from "react-icons/ri";
 import { BiStore } from "react-icons/bi";
 import { TfiLayoutMediaLeft } from "react-icons/tfi";
 import { TfiLayoutMediaRight } from "react-icons/tfi";
+import { useTranslation } from "react-i18next";
 
 function Sidebar() {
+  const { t } = useTranslation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("home");
   const [showHomeTooltip, setShowHomeTooltip] = useState(true);
@@ -35,7 +37,7 @@ function Sidebar() {
       >
         <div className="text-center mb-4">
           <Link to="/" className="text-2xl font-bold">
-            Booking App
+            {t('Booking App')}
           </Link>
         </div>
         <ul className="mt-6">
@@ -50,7 +52,7 @@ function Sidebar() {
               }`}
             >
               <FiHome className="mr-3 h-6 w-6" />
-              <span className="flex-1">Home</span>
+              <span className="flex-1">{t('Home')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -64,7 +66,7 @@ function Sidebar() {
               }`}
             >
               <GiSwordsPower className="mr-3 h-6 w-6" />
-              <span className="flex-1">Hero Section</span>
+              <span className="flex-1">{t('Hero Section')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -78,7 +80,7 @@ function Sidebar() {
               }`}
             >
               <BiStore className="mr-3 h-6 w-6" />
-              <span className="flex-1">Recommended Shops</span>
+              <span className="flex-1">{t('Recommended Shops')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -92,7 +94,7 @@ function Sidebar() {
               }`}
             >
               <RiToolsFill className="mr-3 h-6 w-6" />
-              <span className="flex-1">Recommended Services</span>
+              <span className="flex-1">{t('Recommended Services')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -106,7 +108,7 @@ function Sidebar() {
               }`}
             >
               <FaBookOpen className="mr-3 h-6 w-6" />
-              <span className="flex-1">Articles</span>
+              <span className="flex-1">{t('Articles')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -120,7 +122,7 @@ function Sidebar() {
               }`}
             >
               <TfiLayoutMediaLeft className="mr-3 h-6 w-6" />
-              <span className="flex-1">Section 1</span>
+              <span className="flex-1">{t('Section 1')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -134,7 +136,7 @@ function Sidebar() {
               }`}
             >
               <TfiLayoutMediaRight className="mr-3 h-6 w-6" />
-              <span className="flex-1">Section 2</span>
+              <span className="flex-1">{t('Section 2')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -148,7 +150,7 @@ function Sidebar() {
               }`}
             >
               <FiSettings className="mr-3 h-6 w-6" />
-              <span className="flex-1">Settings</span>
+              <span className="flex-1">{t('Settings')}</span>
             </Link>
           </li>
         </ul>
@@ -180,7 +182,7 @@ function Sidebar() {
                   <FiHome className="h-6 w-6" />
                   {showHomeTooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      Home
+                      {t('Home')}
                     </div>
                   )}
                 </div>
@@ -202,7 +204,7 @@ function Sidebar() {
                   <GiSwordsPower className="h-6 w-6" />
                   {showHeroTooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      Hero
+                      {t('Hero')}
                     </div>
                   )}
                 </div>
@@ -224,7 +226,7 @@ function Sidebar() {
                   <BiStore className="h-6 w-6" />
                   {showShopsTooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      Shops
+                      {t('Shops')}
                     </div>
                   )}
                 </div>
@@ -246,7 +248,7 @@ function Sidebar() {
                   <RiToolsFill className="h-6 w-6" />
                   {showServicesTooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      Services
+                      {t('Services')}
                     </div>
                   )}
                 </div>
@@ -268,7 +270,7 @@ function Sidebar() {
                   <FaBookOpen className="h-6 w-6" />
                   {showArticlesTooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      Articles
+                      {t('Articles')}
                     </div>
                   )}
                 </div>
@@ -290,7 +292,7 @@ function Sidebar() {
                   <TfiLayoutMediaLeft className="h-6 w-6" />
                   {showSection1Tooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      sec1
+                      {t('sec1')}
                     </div>
                   )}
                 </div>
@@ -312,7 +314,7 @@ function Sidebar() {
                   <TfiLayoutMediaRight className="h-6 w-6" />
                   {showSection2Tooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      sec2
+                      {t('sec2')}
                     </div>
                   )}
                 </div>
@@ -336,7 +338,7 @@ function Sidebar() {
                   <FiSettings className="h-6 w-6" />
                   {showSettingsTooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
-                      Settings
+                      {t('Settings')}
                     </div>
                   )}
                 </div>

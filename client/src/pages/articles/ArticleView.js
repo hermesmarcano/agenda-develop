@@ -5,8 +5,10 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import { FaSpinner } from "react-icons/fa";
 import instance from "../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const ArticleView = () => {
+  const { t } = useTranslation();
   const [article, setArticle] = useState({});
   const param = useParams();
 
@@ -33,7 +35,7 @@ const ArticleView = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t("Loading...")}</span>
           </div>
         </div>
       ) : (
@@ -43,23 +45,19 @@ const ArticleView = () => {
             className="flex items-center text-gray-600 mb-4 hover:text-gray-900 transition duration-300"
           >
             <FiArrowLeft className="mr-2" />
-            Back to Home
+            {t("Back to Home")}
           </Link>
           <div className="bg-white shadow-lg rounded-lg p-6">
-          <img
-  src={
-    process.env.REACT_APP_DEVELOPMENT === "true"
-      ? `${process.env.REACT_APP_IMAGE_URI_DEV}uploads/admin/${image}`
-      : `${process.env.REACT_APP_IMAGE_URI}uploads/admin/${image}`
-  }
-  alt="Article"
-  className="w-full mb-4 rounded-lg"
-/>
+            <img
+              src={article.image}
+              alt="Article"
+              className="w-full mb-4 rounded-lg"
+            />
 
             <div className="text-gray-500 mb-2">{date}</div>
             <h1 className="text-3xl font-bold mb-4">{title}</h1>
             <p className="text-gray-700">{content}</p>
-            <p className="text-gray-600 mt-4">By {author}</p>
+            <p className="text-gray-600 mt-4">{t('By')}{" "}{author}</p>
           </div>
         </div>
       )}

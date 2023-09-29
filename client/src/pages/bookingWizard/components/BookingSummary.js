@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   FaUser,
   FaCalendar,
@@ -7,6 +8,7 @@ import {
 } from "react-icons/fa";
 
 const BookingSummary = ({ paramsId }) => {
+  const { t } = useTranslation();
   const professional = JSON.parse(
     localStorage.getItem(`professional_${paramsId}`)
   );
@@ -52,9 +54,9 @@ const BookingSummary = ({ paramsId }) => {
         </div>
       </div>
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold mb-2">Booking Details</h2>
+        <h2 className="text-2xl font-semibold mb-2">{t('Booking Details')}</h2>
         <div className="mb-2">
-          <h3 className="text-lg font-semibold mb-1">Services:</h3>
+          <h3 className="text-lg font-semibold mb-1">{t('Services:')}</h3>
           {servicesNames.map((service, index) => (
             <div key={index} className="flex items-center">
               <FaWrench className="mr-2 text-xl" />
@@ -63,7 +65,7 @@ const BookingSummary = ({ paramsId }) => {
           ))}
         </div>
         <div className="mb-2">
-          <h3 className="text-lg font-semibold mb-1">Products:</h3>
+          <h3 className="text-lg font-semibold mb-1">{t('Products:')}</h3>
           {productsNames.map((product, index) => (
             <div key={index} className="flex items-center">
               <FaShoppingCart className="mr-2 text-xl" />

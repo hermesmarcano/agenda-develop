@@ -1,23 +1,25 @@
 import { createContext, useState, useEffect } from "react";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const ServicesContext = createContext();
 
 const ServicesContextWrapper = ({ children }) => {
+  const { t } = useTranslation();
   const [servicesData, setServicesData] = useState([
     {
       _id: 1,
-      title: "Service 1",
+      title: t("Service 1"),
       image: "https://via.placeholder.com/500x300",
     },
     {
       _id: 2,
-      title: "Service 1",
+      title: t("Service 1"),
       image: "https://via.placeholder.com/500x300",
     },
     {
       _id: 3,
-      title: "Service 1",
+      title: t("Service 1"),
       image: "https://via.placeholder.com/500x300",
     },
   ]);

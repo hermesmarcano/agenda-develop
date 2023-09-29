@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FiArrowLeft, FiArrowRight, FiCheckCircle } from "react-icons/fi";
 import instance from "../../../axiosConfig/axiosConfig";
 import ReactPaginate from "react-paginate";
+import { useTranslation } from "react-i18next";
 
 const ServicesSelection = ({ paramsId, setHasSelectedService }) => {
+  const { t } = useTranslation();
   const [selectedServices, setSelectedServices] = useState([]);
   const [services, setServices] = useState([]);
   const perPage = 4; // Number of services per page
@@ -145,7 +147,7 @@ const ServicesSelection = ({ paramsId, setHasSelectedService }) => {
                   />
                 </svg>
               </div>
-              <p className="text-gray-500 mb-2">No available services</p>
+              <p className="text-gray-500 mb-2">{t('No available services')}</p>
             </div>
           )}
         </div>

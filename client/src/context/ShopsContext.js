@@ -1,43 +1,45 @@
 import { createContext, useState, useEffect } from "react";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const ShopsContext = createContext();
 
 const ShopsContextWrapper = ({ children }) => {
+  const { t } = useTranslation();
   const [shopsData, setShopsData] = useState([
     {
       _id: 1,
-      title: "Shop 1",
+      title: t("Shop 1"),
       image: "https://via.placeholder.com/150",
       urlSlug: "#",
     },
     {
       _id: 2,
-      title: "Shop 2",
+      title: t("Shop 2"),
       image: "https://via.placeholder.com/150",
       urlSlug: "#",
     },
     {
       _id: 3,
-      title: "Shop 3",
+      title: t("Shop 3"),
       image: "https://via.placeholder.com/150",
       urlSlug: "#",
     },
     {
       _id: 4,
-      title: "Shop 4",
+      title: t("Shop 4"),
       image: "https://via.placeholder.com/150",
       urlSlug: "#",
     },
     {
       _id: 5,
-      title: "Shop 5",
+      title: t("Shop 5"),
       image: "https://via.placeholder.com/150",
       urlSlug: "#",
     },
     {
       _id: 6,
-      title: "Shop 6",
+      title: t("Shop 6"),
       image: "https://via.placeholder.com/150",
       urlSlug: "#",
     },

@@ -13,12 +13,40 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { ShopsContext } from "../../../context/ShopsContext";
+import { LoadingSaveButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { useTranslation } from "react-i18next";
 
 const DashboardShops = () => {
+  const { t } = useTranslation();
   const [shopsDataArr, setShopsDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
   const [hiddenImages, setHiddenImages] = useState([]);
   const { shopsData } = useContext(ShopsContext);
+  const [loading, setLoading] = useState(false);
+
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
 
 
   useEffect(() => {
@@ -77,6 +105,7 @@ const DashboardShops = () => {
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
@@ -138,11 +167,12 @@ const DashboardShops = () => {
         )
         .then((res) => {
           console.log(res.data);
-          alert("Data saved successfully");
+          setLoading(false);
+          notify("Update", t("Shops")` Data saved successfully`, "success");
           fetchAdminData();
         })
         .catch((err) => {
-          console.log(err);
+          notify("Error", `${err.message}`, "danger");
         });
     } catch (error) {
       console.log(error);
@@ -195,7 +225,7 @@ const DashboardShops = () => {
   };
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Reccomended Shops</h1>
+      <h1 className="text-3xl font-bold mb-4">{t('Reccomended Shops')}</h1>
       {dataFetched ? (
         <Formik
           initialValues={{
@@ -219,7 +249,7 @@ const DashboardShops = () => {
                         htmlFor={`title${index}`}
                         className="block font-medium mb-1"
                       >
-                        Title
+                        {t('Title')}
                       </label>
                       <input
                         type="text"
@@ -240,7 +270,7 @@ const DashboardShops = () => {
                         htmlFor={`image${index}`}
                         className="block font-medium mb-1 mt-4"
                       >
-                        Image
+                        {t('Image')}
                       </label>
                       {/* <ImageUpload
                         field={{
@@ -255,7 +285,7 @@ const DashboardShops = () => {
                         <div className="relative">
                           <img
                             src={shopsDataArr[index].image}
-                            alt={`Shop ${index}`}
+                            alt={`${t('Shop')} ${index}`}
                             className="w-screen rounded-md max-h-40 object-cover mt-2"
                           />
 
@@ -291,7 +321,7 @@ const DashboardShops = () => {
                         htmlFor={`urlSlug${index}`}
                         className="block font-medium mb-1 mt-4"
                       >
-                        URL Slug
+                        {t('URL Slug')}
                       </label>
                       <input
                         type="text"
@@ -312,13 +342,17 @@ const DashboardShops = () => {
                 }
               />
 
-              <button
+              {/* <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md mt-4"
                 disabled={formikProps.isSubmitting}
               >
                 Save
-              </button>
+              </button> */}
+              <LoadingSaveButton
+                disabled={formikProps.isSubmitting}
+                isSaving={loading}
+              />
             </form>
           )}
         </Formik>
@@ -326,7 +360,7 @@ const DashboardShops = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}

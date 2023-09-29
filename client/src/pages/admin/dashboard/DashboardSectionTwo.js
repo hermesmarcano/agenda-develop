@@ -13,9 +13,37 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { Section2Context } from "../../../context/Section2Context";
+import { LoadingSaveButton } from "../../../components/Styled";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { useTranslation } from "react-i18next";
 
 const DashboardSectionTwo = () => {
+  const { t } = useTranslation();
   const { section2Data, setSection2Data } = useContext(Section2Context);
+  const [loading, setLoading] = useState(false);
+
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
 
   useEffect(() => {
     fetchAdminData();
@@ -60,6 +88,7 @@ const DashboardSectionTwo = () => {
   };
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("ag_app_admin_token");
       if (!token) {
@@ -109,11 +138,16 @@ const DashboardSectionTwo = () => {
                   })
                   .then((res) => {
                     console.log(res);
-                    alert("Data saved successfully");
+                    setLoading(false);
+                    notify(
+                      "Update",
+                      t("Section 2")` Data saved successfully`,
+                      "success"
+                    );
                     fetchAdminData();
                   })
                   .catch((error) => {
-                    console.log(error);
+                    notify("Error", `${error.message}`, "danger");
                   });
               });
           }
@@ -134,12 +168,17 @@ const DashboardSectionTwo = () => {
           })
           .then((res) => {
             console.log(res);
-            alert("Data saved successfully");
+            setLoading(false);
+            notify(
+              "Update",
+              t("Section 2")` Data saved successfully`,
+              "success"
+            );
             fetchAdminData();
           });
       }
     } catch (error) {
-      console.log(error);
+      notify("Error", `${error.message}`, "danger");
     }
 
     setSubmitting(false);
@@ -189,7 +228,7 @@ const DashboardSectionTwo = () => {
 
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Section 2</h1>
+      <h1 className="text-3xl font-bold mb-4">{t('Section 2')}</h1>
       {section2Data ? (
         <Formik
           initialValues={{
@@ -207,7 +246,7 @@ const DashboardSectionTwo = () => {
             <form onSubmit={formikProps.handleSubmit}>
               <div className="mb-4">
                 <label htmlFor={`title`} className="block font-medium mb-1">
-                  Title
+                  {t('Title')}
                 </label>
                 <input
                   type="text"
@@ -227,7 +266,7 @@ const DashboardSectionTwo = () => {
                   htmlFor={`content`}
                   className="block font-medium mb-1 mt-4"
                 >
-                  Content
+                  {t('Content')}
                 </label>
                 <textarea
                   id={`content`}
@@ -277,12 +316,16 @@ const DashboardSectionTwo = () => {
                 )}
               </div>
 
-              <button
+              {/* <button
                 type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md" 
               >
                 Submit
-              </button>
+              </button> */}
+              <LoadingSaveButton
+                disabled={formikProps.isSubmitting}
+                isSaving={loading}
+              />
             </form>
           )}
         </Formik>
@@ -290,7 +333,7 @@ const DashboardSectionTwo = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}

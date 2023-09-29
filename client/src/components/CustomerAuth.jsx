@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import CustomerSignIn from './CustomerSignIn'; // Assuming you have a SignInForm component
-import CustomerRegister from './CustomerRegister'; // Assuming you have a RegisterForm component
+import CustomerSignIn from './CustomerSignIn';
+import CustomerRegister from './CustomerRegister';
 
 const CustomerAuth = ({shopId, setSignInPopup}) => {
   const [isRegistered, setIsRegistered] = useState(true);

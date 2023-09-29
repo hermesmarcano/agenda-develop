@@ -4,11 +4,36 @@ import * as Yup from "yup";
 import { FaSpinner } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
 import { useTranslation } from "react-i18next";
+import { Store } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
+import { LoadingSaveButton } from "../../../components/Styled";
 
 const DashboardHero = () => {
   const { t } = useTranslation();
   const [heroData, setHeroData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  const notify = (title, message, type) => {
+    const notification = {
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+    };
+    Store.addNotification(notification);
+  };
+  
+  const remove = () => {
+    Store.removeNotification();
+  };
+  
   useEffect(() => {
     fetchAdminData();
   }, []);
@@ -34,6 +59,7 @@ const DashboardHero = () => {
   };
 
   const handleFormSubmit = (values) => {
+    setLoading(true);
     console.log(JSON.stringify(values));
     try {
       const token = localStorage.getItem("ag_app_admin_token");
@@ -42,14 +68,18 @@ const DashboardHero = () => {
         return;
       }
 
-      instance.patch("admin", values, {
-        headers: {
-          Authorization: token,
-        },
-      }).then(res => console.log(res)).catch(error => console.log(error));
-      alert("Data saved successfully");
+      instance
+        .patch("admin", values, {
+          headers: {
+            Authorization: token,
+          },
+        })
+        .then((res) => console.log(res))
+        .catch((error) => console.log(error));
+      setLoading(false);
+      notify("Update", t("Hero")` Data saved successfully`, "success");
     } catch (error) {
-      console.log(error);
+      notify("Error", `${error.message}`, "danger");
     }
   };
 
@@ -74,7 +104,7 @@ const DashboardHero = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label htmlFor="heroText" className="block font-medium mb-1">
-                  {t('Hero Text')}
+                  {t("Hero Text")}
                 </label>
                 <Field
                   type="text"
@@ -91,7 +121,7 @@ const DashboardHero = () => {
 
               <div className="mb-4">
                 <label htmlFor="heroColor" className="block font-medium mb-1">
-                  {t('Hero Color')}
+                  {t("Hero Color")}
                 </label>
                 <select
                   id="heroColor"
@@ -100,9 +130,9 @@ const DashboardHero = () => {
                   value={values.heroColor}
                   onChange={handleChange}
                 >
-                  <option value="">{t('Select Color')}</option>
-                  <option value="black">{t('Black')}</option>
-                  <option value="white">{t('White')}</option>
+                  <option value="">{t("Select Color")}</option>
+                  <option value="black">{t("Black")}</option>
+                  <option value="white">{t("White")}</option>
                 </select>
                 <ErrorMessage
                   name="heroColor"
@@ -113,7 +143,7 @@ const DashboardHero = () => {
 
               <div className="mb-4">
                 <label htmlFor="heroBgColor" className="block font-medium mb-1">
-                  {t('Hero Background Color')}
+                  {t("Hero Background Color")}
                 </label>
                 <select
                   id="heroBgColor"
@@ -122,10 +152,10 @@ const DashboardHero = () => {
                   value={values.heroBgColor}
                   onChange={handleChange}
                 >
-                  <option value="">{t('Select Background Color')}</option>
-                  <option value="gray-600">{t('Gray Light')}</option>
-                  <option value="gray-700">{t('Gray Normal')}</option>
-                  <option value="gray-800">{t('Gray Bold')}</option>
+                  <option value="">{t("Select Background Color")}</option>
+                  <option value="gray-600">{t("Gray Light")}</option>
+                  <option value="gray-700">{t("Gray Normal")}</option>
+                  <option value="gray-800">{t("Gray Bold")}</option>
                 </select>
                 <ErrorMessage
                   name="heroBgColor"
@@ -134,12 +164,13 @@ const DashboardHero = () => {
                 />
               </div>
 
-              <button
+              {/* <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Submit
-              </button>
+              </button> */}
+              <LoadingSaveButton isSaving={loading} />
             </form>
           )}
         </Formik>
@@ -147,7 +178,7 @@ const DashboardHero = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col justify-center items-center space-x-2">
             <FaSpinner className="animate-spin text-4xl text-blue-500" />
-            <span className="mt-2">Loading...</span>
+            <span className="mt-2">{t('Loading...')}</span>
           </div>
         </div>
       )}
