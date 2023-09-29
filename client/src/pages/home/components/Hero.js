@@ -5,8 +5,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { HeroContext } from "../../../context/HeroContext";
+import { useTranslation } from "react-i18next";
 
 const Hero = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { heroData } = useContext(HeroContext);
 
@@ -56,17 +58,17 @@ const Hero = () => {
     <>
       {/* {heroData.heroStyle !== "slider" ? ( */}
       <div
-        className={`bg-${heroData.heroBgColor} flex flex-col justify-center items-center`}
+        className={`bg-${heroData?.heroBgColor || "gray-800"} flex flex-col justify-center items-center`}
         style={{ height: "calc(100vh - 56px)" }}
       >
-        <h1 className={`text-5xl text-${heroData.heroColor} font-bold mb-8`}>
-          {heroData.heroText}
+        <h1 className={`text-5xl text-${heroData?.heroColor || "gray-800"} font-bold mb-8`}>
+          {heroData?.heroText || t("Find The Right Shop for Your Need")}
         </h1>
         <div className="w-2/3 md:w-1/3 lg:w-1/4 relative">
           <input
             type="text"
             name="search"
-            placeholder="Search for a shop"
+            placeholder={t("Search for a shop")}
             className="w-full py-3 pl-3 pr-2 text-white rounded-full bg-gray-700 focus:outline-none focus:shadow-outline"
             onKeyDown={handleKeyDown}
           />

@@ -13,7 +13,11 @@ import {
 } from "firebase/storage";
 import { v4 } from "uuid";
 import { ArticlesContext } from "../../../context/ArticlesContext";
-import { Store } from "react-notifications-component";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 import { LoadingSaveButton } from "../../../components/Styled";
 import { useTranslation } from "react-i18next";
 
@@ -24,27 +28,20 @@ const DashboardArticles = () => {
   const { articlesData } = useContext(ArticlesContext);
   const [loading, setLoading] = useState(false);
 
-  const notify = (title, message, type) => {
-    const notification = {
-      title: title,
-      message: message,
-      type: type,
-      insert: "top",
-      container: "bottom-center",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: {
-        duration: 5000,
-        onScreen: true,
-      },
-    };
-    Store.addNotification(notification);
+  const createNotification = (title, message, type) => {
+    switch (type) {
+      case 'success':
+        NotificationManager.success(message, title);
+        break;
+      case 'error':
+        NotificationManager.error(message, title, 5000, () => {
+          alert('callback');
+        });
+        break;
+      default:
+        break;
+    }
   };
-  
-  const remove = () => {
-    Store.removeNotification();
-  };
-  
 
   useEffect(() => {
     fetchAdminData();
@@ -164,15 +161,15 @@ const DashboardArticles = () => {
         )
         .then((res) => {
           console.log(res.data);
-          notify("Update", t("Articles")` Data saved successfully`, "success");
+          createNotification("Update", t("Articles")+" "+t('data saved successfully'), "success");
           setLoading(false);
         })
         .catch((err) => {
-          notify("Error", `${err.message}`, "danger");
+          createNotification("Error", `${err.message}`, "error");
           fetchAdminData();
         });
     } catch (error) {
-      notify("Error", `${error.message}`, "danger");
+      createNotification("Error", `${error.message}`, "error");
     } finally {
       setSubmitting(false);
     }
@@ -221,6 +218,8 @@ const DashboardArticles = () => {
   };
 
   return (
+    <>
+    <NotificationContainer/>
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">{t('Articles')}</h1>
       {dataFetched ? (
@@ -388,6 +387,7 @@ const DashboardArticles = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

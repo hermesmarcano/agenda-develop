@@ -128,12 +128,12 @@
   "January 1, 2022": "January 1, 2022",
   "Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m": "Lorem Ipsum is Lorem Ipsum, Lorem Ipsum is aute m",
   "Image Alt Text": "Image Alt Text",
-  "shop 1": "Shop 1",
-  "shop 2": "Shop 2",
-  "shop 3": "Shop 3",
-  "shop 4": "Shop 4",
-  "shop 5": "Shop 5",
-  "shop 6": "Shop 6",
+  "Shop 1": "Shop 1",
+  "Shop 2": "Shop 2",
+  "Shop 3": "Shop 3",
+  "Shop 4": "Shop 4",
+  "Shop 5": "Shop 5",
+  "Shop 6": "Shop 6",
   "to": "to",
   "of": "of",
   "entries": "entries",
@@ -151,5 +151,8 @@
   "September": "September",
   "October": "October",
   "November": "November",
-  "December": "December"
+  "December": "December",
+  "Service": "Service",
+  "My Website": "My Website",
+  "data saved successfully": "data saved successfully"
 }

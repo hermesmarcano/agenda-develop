@@ -15,8 +15,5 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^8.0.1"
-  },
-  "dependencies": {
-    "react-notifications-component": "^4.0.1"
   }
 }

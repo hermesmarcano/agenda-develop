@@ -6,7 +6,8 @@ const HeroContext = createContext();
 
 const HeroContextWrapper = ({ children }) => {
   const { t } = useTranslation();
-  const [heroData, setHeroData] = useState({
+  const [heroData, setHeroData] = useState(null);
+  const heroDemo = {
     heroText: t('Find The Right Shop for Your Need'),
     heroColor: "white",
     heroBgColor: "teal-800",
@@ -16,7 +17,7 @@ const HeroContextWrapper = ({ children }) => {
       "https://via.placeholder.com/800x300",
       "https://via.placeholder.com/800x300",
     ],
-  });
+  }
 
   useEffect(() => {
     fetchAdminData();
@@ -25,9 +26,9 @@ const HeroContextWrapper = ({ children }) => {
   const fetchAdminData = async () => {
     try {
       const response = await instance.get("admin");
-      if (response.data.admin.heroData) {
+        console.log(response.data.admin.heroData);
         setHeroData(response.data.admin.heroData)
-      }
+
     } catch (error) {
       console.log(error);
     }

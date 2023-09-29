@@ -9,17 +9,17 @@ const ServicesContextWrapper = ({ children }) => {
   const [servicesData, setServicesData] = useState([
     {
       _id: 1,
-      title: t("Service 1"),
+      title: t("Service"),
       image: "https://via.placeholder.com/500x300",
     },
     {
       _id: 2,
-      title: t("Service 1"),
+      title: t("Service"),
       image: "https://via.placeholder.com/500x300",
     },
     {
       _id: 3,
-      title: t("Service 1"),
+      title: t("Service"),
       image: "https://via.placeholder.com/500x300",
     },
   ]);

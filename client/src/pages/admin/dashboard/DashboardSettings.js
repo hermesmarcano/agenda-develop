@@ -15,7 +15,11 @@ import { v4 } from "uuid";
 import { LogoContext } from "../../../context/LogoContext";
 import { WebsiteTitleContext } from "../../../context/WebsiteTitleContext";
 import { LoadingSaveButton } from "../../../components/Styled";
-import { Store } from "react-notifications-component";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 import { useTranslation } from "react-i18next";
 
 const DashboardSettings = () => {
@@ -26,25 +30,19 @@ const DashboardSettings = () => {
   const [isFetched, setIsFetched] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const notify = (title, message, type) => {
-    const notification = {
-      title: title,
-      message: message,
-      type: type,
-      insert: "top",
-      container: "bottom-center",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: {
-        duration: 5000,
-        onScreen: true,
-      },
-    };
-    Store.addNotification(notification);
-  };
-  
-  const remove = () => {
-    Store.removeNotification();
+  const createNotification = (title, message, type) => {
+    switch (type) {
+      case 'success':
+        NotificationManager.success(message, title);
+        break;
+      case 'error':
+        NotificationManager.error(message, title, 5000, () => {
+          alert('callback');
+        });
+        break;
+      default:
+        break;
+    }
   };
   
 
@@ -130,15 +128,15 @@ const DashboardSettings = () => {
                   .then((res) => {
                     console.log(res);
                     setLoading(false);
-                    notify(
+                    createNotification(
                       "Update",
-                      t("Settings")` Data saved successfully`,
+                      t("Settings")+" "+t('data saved successfully'),
                       "success"
                     );
                     fetchAdminData();
                   })
                   .catch((error) => {
-                    notify("Error", `${error.message}`, "danger");
+                    createNotification("Error", `${error.message}`, "error");
                   });
               });
           }
@@ -163,16 +161,16 @@ const DashboardSettings = () => {
           .then((res) => {
             console.log(res);
             setLoading(false);
-                    notify(
+                    createNotification(
                       "Update",
-                      t("Settings")` Data saved successfully`,
+                      t("Shops")+" "+t('data saved successfully'),
                       "success"
                     );
             fetchAdminData();
           });
       }
     } catch (error) {
-      notify("Error", `${error.message}`, "danger");
+      createNotification("Error", `${error.message}`, "error");
     }
 
     setSubmitting(false);
@@ -222,6 +220,8 @@ const DashboardSettings = () => {
   };
 
   return (
+    <>
+    <NotificationContainer/>
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">{t('Settings')}</h1>
       {isFetched ? (
@@ -363,6 +363,7 @@ const DashboardSettings = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

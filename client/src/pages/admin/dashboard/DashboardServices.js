@@ -14,7 +14,11 @@ import {
 import { v4 } from "uuid";
 import { ServicesContext } from "../../../context/ServicesContext";
 import { LoadingSaveButton } from "../../../components/Styled";
-import { Store } from "react-notifications-component";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 import { useTranslation } from "react-i18next";
 
 const DashboardServices = () => {
@@ -25,25 +29,19 @@ const DashboardServices = () => {
   const { servicesData } = useContext(ServicesContext);
   const [loading, setLoading] = useState(false);
 
-  const notify = (title, message, type) => {
-    const notification = {
-      title: title,
-      message: message,
-      type: type,
-      insert: "top",
-      container: "bottom-center",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: {
-        duration: 5000,
-        onScreen: true,
-      },
-    };
-    Store.addNotification(notification);
-  };
-  
-  const remove = () => {
-    Store.removeNotification();
+  const createNotification = (title, message, type) => {
+    switch (type) {
+      case 'success':
+        NotificationManager.success(message, title);
+        break;
+      case 'error':
+        NotificationManager.error(message, title, 5000, () => {
+          alert('callback');
+        });
+        break;
+      default:
+        break;
+    }
   };
   
 
@@ -163,14 +161,14 @@ const DashboardServices = () => {
         .then((res) => {
           console.log(res.data);
           setLoading(false);
-          notify("Update", t("Services")` Data saved successfully`, "success");
+          createNotification("Update", t("Services")+" "+t('data saved successfully'), "success");
           fetchAdminData();
         })
         .catch((err) => {
-          notify("Error", `${err.message}`, "danger");
+          createNotification("Error", `${err.message}`, "error");
         });
     } catch (error) {
-      notify("Error", `${error.message}`, "danger");
+      createNotification("Error", `${error.message}`, "error");
     } finally {
       setSubmitting(false);
     }
@@ -219,6 +217,8 @@ const DashboardServices = () => {
   };
 
   return (
+    <>
+    <NotificationContainer/>
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">{t('Reccomended Services')}</h1>
       {dataFetched ? (
@@ -329,6 +329,7 @@ const DashboardServices = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

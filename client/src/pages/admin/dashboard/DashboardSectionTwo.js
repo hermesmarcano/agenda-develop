@@ -14,7 +14,11 @@ import {
 import { v4 } from "uuid";
 import { Section2Context } from "../../../context/Section2Context";
 import { LoadingSaveButton } from "../../../components/Styled";
-import { Store } from "react-notifications-component";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 import { useTranslation } from "react-i18next";
 
 const DashboardSectionTwo = () => {
@@ -22,28 +26,21 @@ const DashboardSectionTwo = () => {
   const { section2Data, setSection2Data } = useContext(Section2Context);
   const [loading, setLoading] = useState(false);
 
-  const notify = (title, message, type) => {
-    const notification = {
-      title: title,
-      message: message,
-      type: type,
-      insert: "top",
-      container: "bottom-center",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: {
-        duration: 5000,
-        onScreen: true,
-      },
-    };
-    Store.addNotification(notification);
+  const createNotification = (title, message, type) => {
+    switch (type) {
+      case 'success':
+        NotificationManager.success(message, title);
+        break;
+      case 'error':
+        NotificationManager.error(message, title, 5000, () => {
+          alert('callback');
+        });
+        break;
+      default:
+        break;
+    }
   };
   
-  const remove = () => {
-    Store.removeNotification();
-  };
-  
-
   useEffect(() => {
     fetchAdminData();
   }, []);
@@ -138,15 +135,15 @@ const DashboardSectionTwo = () => {
                   .then((res) => {
                     console.log(res);
                     setLoading(false);
-                    notify(
+                    createNotification(
                       "Update",
-                      t("Section 2")` Data saved successfully`,
+                      t("Section")+" 2 "+t('data saved successfully'),
                       "success"
                     );
                     fetchAdminData();
                   })
                   .catch((error) => {
-                    notify("Error", `${error.message}`, "danger");
+                    createNotification("Error", `${error.message}`, "error");
                   });
               });
           }
@@ -168,16 +165,16 @@ const DashboardSectionTwo = () => {
           .then((res) => {
             console.log(res);
             setLoading(false);
-            notify(
+            createNotification(
               "Update",
-              t("Section 2")` Data saved successfully`,
+              t("Section")+" 2 "+t('data saved successfully'),
               "success"
             );
             fetchAdminData();
           });
       }
     } catch (error) {
-      notify("Error", `${error.message}`, "danger");
+      createNotification("Error", `${error.message}`, "error");
     }
 
     setSubmitting(false);
@@ -226,6 +223,8 @@ const DashboardSectionTwo = () => {
   };
 
   return (
+    <>
+    <NotificationContainer/>
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">{t('Section 2')}</h1>
       {section2Data ? (
@@ -337,6 +336,7 @@ const DashboardSectionTwo = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 

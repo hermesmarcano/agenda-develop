@@ -4,34 +4,35 @@ import * as Yup from "yup";
 import { FaSpinner } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
 import { useTranslation } from "react-i18next";
-import { Store } from "react-notifications-component";
 import { LoadingSaveButton } from "../../../components/Styled";
+import { useContext } from "react";
+import { HeroContext } from "../../../context/HeroContext";
+import {
+  NotificationContainer,
+  NotificationManager,
+} from 'react-notifications';
+import 'react-notifications/lib/notifications.css';
 
 const DashboardHero = () => {
   const { t } = useTranslation();
-  const [heroData, setHeroData] = useState(null);
+  const {heroData, setHeroData} = useContext(HeroContext);
   const [loading, setLoading] = useState(false);
 
-  const notify = (title, message, type) => {
-    const notification = {
-      title: title,
-      message: message,
-      type: type,
-      insert: "top",
-      container: "bottom-center",
-      animationIn: ["animated", "fadeIn"],
-      animationOut: ["animated", "fadeOut"],
-      dismiss: {
-        duration: 5000,
-        onScreen: true,
-      },
-    };
-    Store.addNotification(notification);
+  const createNotification = (title, message, type) => {
+    switch (type) {
+      case 'success':
+        NotificationManager.success(message, title);
+        break;
+      case 'error':
+        NotificationManager.error(message, title, 5000, () => {
+          alert('callback');
+        });
+        break;
+      default:
+        break;
+    }
   };
   
-  const remove = () => {
-    Store.removeNotification();
-  };
   
   useEffect(() => {
     fetchAdminData();
@@ -66,23 +67,31 @@ const DashboardHero = () => {
         console.error("Token not found");
         return;
       }
+      const patchData = {
+        heroData: values
+      }
 
       instance
-        .patch("admin", values, {
+        .patch("admin", patchData, {
           headers: {
             Authorization: token,
           },
         })
-        .then((res) => console.log(res))
+        .then((res) => {          
+          console.log(res)
+          createNotification("Update", t("Hero")+" "+t('data saved successfully'), "success");
+          setLoading(false);
+        })
         .catch((error) => console.log(error));
-      setLoading(false);
-      notify("Update", t("Hero")` Data saved successfully`, "success");
+      
     } catch (error) {
-      notify("Error", `${error.message}`, "danger");
+      createNotification("Error", `${error.message}`, "error");
     }
   };
 
   return (
+    <>
+    <NotificationContainer/>
     <div className="container mx-auto">
       <h1 className="text-3xl font-bold mb-4">Hero</h1>
       {heroData ? (
@@ -154,7 +163,7 @@ const DashboardHero = () => {
                   <option value="">{t("Select Background Color")}</option>
                   <option value="gray-600">{t("Gray Light")}</option>
                   <option value="gray-700">{t("Gray Normal")}</option>
-                  <option value="gray-800">{t("Gray Bold")}</option>
+                  <option value="gray-800">{t("Gray Dark")}</option>
                 </select>
                 <ErrorMessage
                   name="heroBgColor"
@@ -163,12 +172,6 @@ const DashboardHero = () => {
                 />
               </div>
 
-              {/* <button
-                type="submit"
-                className="bg-blue-500 text-white px-4 py-2 rounded-md"
-              >
-                Submit
-              </button> */}
               <LoadingSaveButton isSaving={loading} />
             </form>
           )}
@@ -182,6 +185,7 @@ const DashboardHero = () => {
         </div>
       )}
     </div>
+    </>
   );
 };
 
