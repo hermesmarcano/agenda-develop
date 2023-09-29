@@ -1,18 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
 import instance from "../../../axiosConfig/axiosConfig";
-import { FaSpinner } from "react-icons/fa";
-import { Transition } from "@headlessui/react";
+import { FaSpinner, FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+import { FiClock, FiX } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import { motion, AnimatePresence } from 'framer-motion';
+
 
 const HourSelection = ({ paramsId, setHasSelectedHour }) => {
-  const { t } = useTranslation();
+    const { t } = useTranslation();
   const [selectedHour, setSelectedHour] = useState(
     new Date(localStorage.getItem(`dateTime_${paramsId}`))
   );
   const [reservedAppts, setReservedAppts] = useState([]);
   const [workingHours, setWorkingHours] = useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [isOpen, setIsOpen] = useState(true);
+  const [showCard, setShowCard] = useState(true);
 
   useEffect(() => {
     localStorage.setItem(`dateTime_${paramsId}`, selectedHour);
@@ -21,6 +23,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   const handleHourChange = (event) => {
     setSelectedHour(event.target.value);
     setHasSelectedHour(event.target.value !== null)
+    setShowCard(true)
   };
 
   useEffect(() => {
@@ -123,75 +126,6 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
     return false;
   };
 
-  const renderHoursBlocks = (hoursRange, i) => {
-    const workingStartingHours = new Date();
-    workingStartingHours.setHours(workingHours[i].startHour);
-    workingStartingHours.setMinutes(0);
-    const workingStartingHoursFormated =
-      workingStartingHours.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    const workingEndingHours = new Date();
-    workingEndingHours.setHours(workingHours[i].endHour);
-    workingEndingHours.setMinutes(0);
-    const workingEndingHoursFormated = workingEndingHours.toLocaleTimeString(
-      [],
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-      }
-    );
-    return (
-      <>
-        <Transition
-          show={isOpen}
-          enter="transition-opacity duration-300"
-          enterFrom="opacity-0"
-          enterTo="opacity-100"
-          leave="transition-opacity duration-300"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Accordion>
-            <AccordionItem>
-              <div>
-                {workingStartingHoursFormated} - {workingEndingHoursFormated}
-              </div>
-              {hoursRange.map((hour, index) => {
-                return (
-                  <button
-                    key={index}
-                    type="button"
-                    className={`px-2 py-3 gap-2 w-[100px] font-semibold text-center cursor-pointer ${
-                      selectedHour === hour
-                        ? "bg-teal-600 text-white"
-                        : "bg-gray-100 shadow-inner hover:bg-gray-200"
-                    } ${
-                      isHourDisabled(hour) || hour < new Date()
-                        ? "line-through"
-                        : ""
-                    }`}
-                    onClick={() => {
-                      handleHourChange({ target: { value: hour } });
-                      setIsOpen(false);
-                    }}
-                    disabled={isHourDisabled(hour) || hour < new Date()}
-                  >
-                    {hour.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </button>
-                );
-              })}
-            </AccordionItem>
-          </Accordion>
-        </Transition>
-      </>
-    );
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -204,69 +138,120 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      {hoursArrs.map((hoursRange, i) => (
-        <div className="w-full">
-          <React.Fragment key={i}>
-            {renderHoursBlocks(hoursRange, i)}
-          </React.Fragment>
+    <>
+      { !showCard ?
+    <div className="h-[540px] flex">
+      {hoursArrs.map((hoursRange, index) => (
+        <div key={index} className="mr-1 h-full">
+          <AccordionItem hoursRange={hoursRange} isHourDisabled={isHourDisabled} selectedHour={selectedHour} handleHourChange={handleHourChange} index={index} />
         </div>
       ))}
-      <Transition
-        show={!isOpen}
-        enter="transition-opacity duration-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="transition-opacity duration-300"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
+      
+    </div>
+    :
+    <DateTimeCard date={selectedHour} setShowCard={setShowCard} /> 
+  }
+    </>
+  );
+};
+
+const AccordionItem = ({ hoursRange, isHourDisabled, selectedHour, handleHourChange, index }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleAccordion = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div className="mb-4 flex h-full">
+      <div
+        onClick={toggleAccordion}
+        className={`cursor-pointer h-full w-[80px] flex justify-center items-center rounded-lg ${
+          isOpen
+            ? 'bg-gray-100 shadow-md'
+            : 'bg-teal-600 text-gray-100 shadow-sm'
+        }`}
       >
-        <div className="mt-4 flex justify-center">
-          <p className="border-2 border-teal-600 rounded-md text-center px-2 py-3">
-            <span className="font-semibold text-4xl">
-              {new Intl.DateTimeFormat("en", {
-                timeStyle: "short",
-                hour12: true,
-              }).format(selectedHour)}
-            </span>
-          </p>
-        </div>
-      </Transition>
+        <span className='transform -rotate-90'>Working Hours {index+1}</span>
+        {isOpen ? <FaChevronRight className='mr-2'/> : <FaChevronLeft className='mr-2'/>}
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial="collapsed"
+            animate="open"
+            exit="collapsed"
+            variants={{
+              open: { opacity: 1, height: 'auto' },
+              collapsed: { opacity: 0, height: 0 },
+            }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 max-h-[540px] overflow-auto no-scrollbar flex justify-center flex-wrap">
+            {hoursRange.map((hour, index) => {
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    className={`px-2 py-3 gap-2 w-[100px] font-semibold text-center cursor-pointer ${
+                      selectedHour === hour
+                        ? "bg-teal-600 text-white"
+                        : "bg-white shadow-inner hover:bg-gray-200"
+                    } ${
+                      isHourDisabled(hour) || hour < new Date()
+                        ? "line-through"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      handleHourChange({ target: { value: hour } });
+                    }}
+                    disabled={isHourDisabled(hour) || hour < new Date()}
+                  >
+                    {hour.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+const DateTimeCard = ({ date, setShowCard }) => {
+  const options = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+
+  const formattedDate = new Intl.DateTimeFormat('en-US', options).format(date);
+  const formattedTime = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(date);
+
+  return (
+    <div className="bg-teal-600 rounded-lg shadow-md p-4 relative">
+      <button
+        className="absolute top-0 right-0 p-2 text-gray-300 hover:text-red-500"
+        onClick={() => setShowCard(false)}
+      >
+        <FiX />
+      </button>
+      <div className="text-3xl font-semibold mb-4">
+        <FiClock className="inline-block mr-2" />
+        {formattedTime}
+      </div>
+      <div className="text-gray-300">{formattedDate}</div>
     </div>
   );
 };
 
 export default HourSelection;
-
-const Accordion = ({ children }) => {
-  return <div className="w-full">{children}</div>;
-};
-
-const AccordionItem = ({ children }) => {
-  const [expanded, setExpanded] = useState(false);
-
-  const toggleExpansion = () => {
-    setExpanded(!expanded);
-  };
-
-  return (
-    <div className="w-full rounded-lg shadow-md bg-gray-100 mb-4">
-      <div className="p-4">
-        <button
-          onClick={toggleExpansion}
-          className="w-full p-0 border-none outline-none text-left cursor-pointer flex items-center"
-        >
-          {expanded ? (
-            <span className="mr-2">▼</span>
-          ) : (
-            <span className="mr-2">►</span>
-          )}
-          {children[0]}
-        </button>
-      </div>
-      <div className={`p-4 ${expanded ? "block" : "hidden"}`}>
-        {children[1]}
-      </div>
-    </div>
-  );
-};
