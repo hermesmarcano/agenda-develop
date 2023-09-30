@@ -22,7 +22,6 @@ const BookingSummary = ({ paramsId }) => {
     servicesNames.push(service.name);
   });
   const products = JSON.parse(localStorage.getItem(`products_${paramsId}`));
-  console.log("products: ", products);
   const productsId = [];
   const productsNames = [];
   if (products) {

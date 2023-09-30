@@ -14,11 +14,9 @@ const ServicesSelection = ({ paramsId, setHasSelectedService }) => {
 
   useEffect(() => {
     instance.get(`/managers/shop?urlSlug=${paramsId}`).then((response) => {
-      console.log(response.data);
       instance
         .get(`/services/shop?shopId=${response.data._id}`)
         .then((response) => {
-          console.log(response.data.services);
           setServices(response.data.services);
         });
     });

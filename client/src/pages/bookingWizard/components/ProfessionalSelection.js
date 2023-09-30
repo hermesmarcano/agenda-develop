@@ -9,11 +9,9 @@ const ProfessionalSelection = ({ paramsId, setHasSelectedProfessional }) => {
 
   useEffect(() => {
     instance.get(`/managers/shop?urlSlug=${paramsId}`).then((response) => {
-      console.log(response.data);
       instance
         .get(`/professionals/shop?shopId=${response.data._id}`)
         .then((response) => {
-          console.log(response.data.data);
           setProfessionals(response.data.data);
         });
     });

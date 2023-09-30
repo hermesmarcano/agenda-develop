@@ -13,12 +13,10 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   const [reservedAppts, setReservedAppts] = useState([]);
   const [workingHours, setWorkingHours] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showCard, setShowCard] = useState(true);
+  const [showCard, setShowCard] = useState(false);
   const selectedProfessional = JSON.parse(
     localStorage.getItem(`professional_${paramsId}`)
   );
-
-  console.log(selectedProfessional.officeHours);
 
   useEffect(() => {
     localStorage.setItem(`dateTime_${paramsId}`, selectedHour);
@@ -101,16 +99,19 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
     return arr;
   }, [date, workingHours]);
 
-  const selectedProfessionalWorkingHours = (hour) => {
+  const selectedProfessionalWorkingHours = (hour, index) => {
     const professionalStartTime = new Date(hour);
     const professionalEndTime = new Date(hour);
-    selectedProfessional?.officeHours.find((officeHour) => {
-      professionalStartTime.setHours(officeHour.startHour);
-      professionalStartTime.setMinutes(0);
-      professionalEndTime.setHours(officeHour.endHour);
-      professionalEndTime.setMinutes(0);
-    });
-    return professionalStartTime <= hour && professionalEndTime > hour;
+
+    professionalStartTime.setHours(
+      selectedProfessional?.officeHours[index]?.startHour
+    );
+    professionalStartTime.setMinutes(0);
+    professionalEndTime.setHours(
+      selectedProfessional?.officeHours[index]?.endHour
+    );
+    professionalEndTime.setMinutes(0);
+    return hour >= professionalStartTime && hour < professionalEndTime;
   };
 
   const isHourDisabled = (hour) => {
@@ -223,26 +224,34 @@ const AccordionItem = ({
             className="overflow-hidden"
           >
             <div className="p-4 max-h-[540px] overflow-auto no-scrollbar flex justify-center flex-wrap">
-              {hoursRange.map((hour, index) => {
-                const proNonBlokedHours =
-                  selectedProfessionalWorkingHours(hour);
+              {hoursRange.map((hour, ind) => {
+                const proNonBlokedHours = selectedProfessionalWorkingHours(
+                  hour,
+                  index
+                );
                 return (
                   <button
-                    key={index}
+                    key={ind}
                     type="button"
                     className={`px-2 py-3 gap-2 w-[100px] font-semibold text-center cursor-pointer ${
                       selectedHour === hour
                         ? "bg-teal-600 text-white"
                         : "bg-white shadow-inner hover:bg-gray-200"
                     } ${
-                      isHourDisabled(hour) || hour < new Date() || proNonBlokedHours
+                      isHourDisabled(hour) ||
+                      hour < new Date() ||
+                      !proNonBlokedHours
                         ? "line-through"
                         : ""
                     }`}
                     onClick={() => {
                       handleHourChange({ target: { value: hour } });
                     }}
-                    disabled={isHourDisabled(hour) || hour < new Date() || proNonBlokedHours}
+                    disabled={
+                      isHourDisabled(hour) ||
+                      hour < new Date() ||
+                      !proNonBlokedHours
+                    }
                   >
                     {hour.toLocaleTimeString([], {
                       hour: "2-digit",

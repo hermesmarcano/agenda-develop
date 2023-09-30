@@ -14,18 +14,15 @@ const ProductsSelection = ({ paramsId }) => {
 
   useEffect(() => {
     instance.get(`/managers/shop?urlSlug=${paramsId}`).then((response) => {
-      console.log(response.data);
       instance
         .get(`/products/shop?shopId=${response.data._id}`)
         .then((response) => {
-          console.log(response.data.products);
           setProducts(response.data.products);
         });
     });
   }, []);
 
   useEffect(() => {
-    console.log(selectedProducts);
     localStorage.setItem(
       `products_${paramsId}`,
       JSON.stringify(selectedProducts)

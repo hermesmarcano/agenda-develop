@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 
 const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
   const { t } = useTranslation()
-  console.log(selectedDate);
   const handlePrevMonth = () => {
     setSelectedDate(prevDate => new Date(prevDate.getFullYear(), prevDate.getMonth() - 1, 1));
   };
