@@ -235,14 +235,14 @@ const AccordionItem = ({
                         ? "bg-teal-600 text-white"
                         : "bg-white shadow-inner hover:bg-gray-200"
                     } ${
-                      isHourDisabled(hour) || hour < new Date() || !proNonBlokedHours
+                      isHourDisabled(hour) || hour < new Date() || proNonBlokedHours
                         ? "line-through"
                         : ""
                     }`}
                     onClick={() => {
                       handleHourChange({ target: { value: hour } });
                     }}
-                    disabled={isHourDisabled(hour) || hour < new Date() || !proNonBlokedHours}
+                    disabled={isHourDisabled(hour) || hour < new Date() || proNonBlokedHours}
                   >
                     {hour.toLocaleTimeString([], {
                       hour: "2-digit",
