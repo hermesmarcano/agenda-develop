@@ -28,7 +28,7 @@ const ProfessionalSelection = ({ paramsId, setHasSelectedProfessional }) => {
 
   const handleSelection = (pro) => {
     setSelectedProfessional(pro);
-    setHasSelectedProfessional(pro !== null )
+    setHasSelectedProfessional(pro !== null);
   };
 
   return (
@@ -105,7 +105,22 @@ const ProfessionalCard = ({
                 "text-gray-700"
               }`}
             >
-              {professional.description}
+              {/* {professional.description} */}
+              {professional.officeHours &&
+                professional.officeHours?.length > 0 &&
+                professional.officeHours?.map((officeHour) => {
+                  return (
+                    <span className="block" key={officeHour._id}>
+                      {new Intl.DateTimeFormat("en", {
+                        timeStyle: "short",
+                      }).format(new Date().setHours(officeHour?.startHour, 0)) +
+                        " - " +
+                        new Intl.DateTimeFormat("en", {
+                          timeStyle: "short",
+                        }).format(new Date().setHours(officeHour?.endHour, 0))}
+                    </span>
+                  );
+                })}
             </div>
           </div>
         </div>
