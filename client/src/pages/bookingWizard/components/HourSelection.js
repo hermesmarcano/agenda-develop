@@ -235,7 +235,7 @@ const AccordionItem = ({
                         ? "bg-teal-600 text-white"
                         : "bg-white shadow-inner hover:bg-gray-200"
                     } ${
-                      isHourDisabled(hour) || hour < new Date()
+                      isHourDisabled(hour) || hour < new Date() || !proNonBlokedHours
                         ? "line-through"
                         : ""
                     }`}
