@@ -18,9 +18,13 @@ const Header = () => {
   const { notifications, unreadCount, updateNotificationsSeen } =
     useContext(NotificationContext);
 
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    setActiveLanguage(lang);
+  const changeLanguage = () => {
+    activeLanguage === "en"
+      ? i18n.changeLanguage("es")
+      : i18n.changeLanguage("en");
+    activeLanguage === "en" ? setActiveLanguage("es") : setActiveLanguage("en");
+    // i18n.changeLanguage(lang);
+    // setActiveLanguage(lang);
   };
 
   const locales = {
@@ -87,7 +91,7 @@ const Header = () => {
 
           <div className="flex flex-1 items-center justify-between gap-8 sm:justify-end">
             <div className="flex gap-4">
-              <div>
+              {/* <div>
                 <div className="flex">
                   {Object.keys(locales).map((locale) => (
                     <button
@@ -113,7 +117,17 @@ const Header = () => {
                     ></div>
                   ))}
                 </div>
-              </div>
+              </div> */}
+
+              <button
+                className={`block shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
+                  isDarkMode ? "bg-teal-600" : "bg-white"
+                }`}
+                onClick={() => changeLanguage()}
+              >
+                <span className="sr-only">{t("Language")}</span>
+                {activeLanguage === "en" ? "ES" : "EN"}
+              </button>
 
               {/* <button
                 className={`block shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
