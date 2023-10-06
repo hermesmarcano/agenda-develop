@@ -90,7 +90,7 @@ const Login = () => {
                           ? "border-red-500"
                           : "border-gray-300"
                       } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                      placeholder="Email address"
+                      placeholder={t("Email address")}
                     />
                   </div>
                   {errors.email && touched.email ? (
