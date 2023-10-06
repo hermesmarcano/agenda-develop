@@ -5,6 +5,7 @@ import { BsBackspace } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import instance from "../../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const Calculator = ({
   isOpen,
@@ -18,6 +19,7 @@ const Calculator = ({
   clients,
   dateTime,
 }) => {
+  const { t } = useTranslation();
   const [amountReceived, setAmountReceived] = useState("");
   const navigate = useNavigate();
   const { isDarkMode } = useContext(DarkModeContext);
@@ -55,7 +57,7 @@ const Calculator = ({
         updatedAt: new Date(),
       };
 
-            
+
       let paymentId = "";
 
       const updatePayment = () => {
@@ -209,10 +211,10 @@ const Calculator = ({
       };
 
       if (bookingInfo.checkoutType === "updating") {
-        if(bookingInfo.paymentId){
+        if (bookingInfo.paymentId) {
           updatePayment();
-        }else{
-          makePayment();  
+        } else {
+          makePayment();
         }
       } else {
         makePayment();
@@ -257,9 +259,8 @@ const Calculator = ({
           className={`fixed inset-0 flex z-20 justify-center items-center overflow-y-auto bg-black bg-opacity-25`}
         >
           <div
-            className={`bg-${
-              isDarkMode ? "gray-800" : "white"
-            } rounded-lg p-4 w-full sm:max-w-sm`}
+            className={`bg-${isDarkMode ? "gray-800" : "white"
+              } rounded-lg p-4 w-full sm:max-w-sm`}
           >
             <div className="flex items-center mb-4">
               <span
@@ -269,19 +270,17 @@ const Calculator = ({
               </span>
               <input
                 type="text"
-                placeholder="Enter amount received"
-                className={`flex-1 border-2 h-10 border-gray-300 rounded-r-md p-2 shadow-sm focus:outline-none focus:border-blue-500 ${
-                  isDarkMode ? "bg-gray-500" : "bg-gray-50"
-                }`}
+                placeholder={t("Enter amount received")}
+                className={`flex-1 border-2 h-10 border-gray-300 rounded-r-md p-2 shadow-sm focus:outline-none focus:border-blue-500 ${isDarkMode ? "bg-gray-500" : "bg-gray-50"
+                  }`}
                 value={amountReceived}
                 onChange={handleInputChange}
               />
             </div>
 
             <div
-              className={`flex items-center mb-4 ${
-                isDarkMode ? "bg-gray-700" : "bg-gray-300"
-              } rounded-md`}
+              className={`flex items-center mb-4 ${isDarkMode ? "bg-gray-700" : "bg-gray-300"
+                } rounded-md`}
             >
               <span
                 className={`inline-flex h-10 items-center px-3 rounded-l-md border-2 border-r-0 border-gray-300 bg-gray-50 text-gray-500`}
@@ -298,25 +297,23 @@ const Calculator = ({
 
             <div className="flex justify-end">
               <button
-                className={`${
-                  isDarkMode
-                    ? "bg-green-700 hover:bg-green-800"
-                    : "bg-green-500 hover:bg-green-600"
-                } text-white mr-2 mb-2 py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
+                className={`${isDarkMode
+                  ? "bg-green-700 hover:bg-green-800"
+                  : "bg-green-500 hover:bg-green-600"
+                  } text-white mr-2 mb-2 py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
                 onClick={handleCalculateChange}
               >
-                Calculate Change
+                {t('Calculate Change')}
               </button>
             </div>
 
             {change > 0 && (
               <div className="mb-4">
                 <p
-                  className={`text-${
-                    isDarkMode ? "gray-300" : "gray-700"
-                  } font-semibold`}
+                  className={`text-${isDarkMode ? "gray-300" : "gray-700"
+                    } font-semibold`}
                 >
-                  Change: ${change}
+                  {t('Change')}: ${change}
                 </p>
               </div>
             )}
@@ -326,22 +323,20 @@ const Calculator = ({
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0, "."].map((value) => (
                 <button
                   key={value}
-                  className={`${
-                    isDarkMode
-                      ? "bg-gray-600 hover:bg-gray-700 text-white"
-                      : "bg-gray-200 hover:bg-gray-300"
-                  } text-gray-700 py-2 px-2 rounded-md text-sm`}
+                  className={`${isDarkMode
+                    ? "bg-gray-600 hover:bg-gray-700 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                    } text-gray-700 py-2 px-2 rounded-md text-sm`}
                   onClick={() => handleButtonClick(value)}
                 >
                   {value}
                 </button>
               ))}
               <button
-                className={`${
-                  isDarkMode
-                    ? "bg-gray-600 hover:bg-gray-700 text-white"
-                    : "bg-gray-200 hover:bg-gray-300"
-                } flex justify-center items-center text-gray-700 py-2 px-4 rounded-md text-sm`}
+                className={`${isDarkMode
+                  ? "bg-gray-600 hover:bg-gray-700 text-white"
+                  : "bg-gray-200 hover:bg-gray-300"
+                  } flex justify-center items-center text-gray-700 py-2 px-4 rounded-md text-sm`}
                 onClick={handleClear}
               >
                 <BsBackspace />
@@ -350,29 +345,27 @@ const Calculator = ({
 
             <div className="flex justify-end mt-4">
               <button
-                className={`${
-                  isDarkMode
-                    ? "bg-gray-600 hover:bg-gray-700"
-                    : "bg-gray-500 hover:bg-gray-600"
-                } text-white mr-2 py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
+                className={`${isDarkMode
+                  ? "bg-gray-600 hover:bg-gray-700"
+                  : "bg-gray-500 hover:bg-gray-600"
+                  } text-white mr-2 py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
                 onClick={handleCancel}
               >
                 <FiX className="mr-2" />
-                Cancel
+                {t('Cancel')}
               </button>
               <button
-                className={`${
-                  amountReceived - totalPrice < 0
-                    ? "bg-red-400"
-                    : isDarkMode
+                className={`${amountReceived - totalPrice < 0
+                  ? "bg-red-400"
+                  : isDarkMode
                     ? "bg-green-700"
                     : "bg-green-500 hover:bg-green-600"
-                } text-white py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
+                  } text-white py-2 px-4 rounded-md flex items-center font-semibold text-sm`}
                 onClick={handleConfirm}
                 disabled={amountReceived - totalPrice < 0}
               >
                 <FiCheck className="mr-2" />
-                Confirm Payment
+                {t('Confirm Payment')}
               </button>
             </div>
           </div>

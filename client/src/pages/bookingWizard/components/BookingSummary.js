@@ -6,6 +6,7 @@ import {
   FaWrench,
   FaShoppingCart,
 } from "react-icons/fa";
+import i18next from 'i18next';
 
 const BookingSummary = ({ paramsId }) => {
   const { t } = useTranslation();
@@ -32,13 +33,25 @@ const BookingSummary = ({ paramsId }) => {
       productsNames.push(product.name);
     });
   }
+
   const d = new Date(localStorage.getItem(`dateTime_${paramsId}`));
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
+
+  function formatDate(date, language) {
+    const dateFormats = {
+      en: { hour: "number", minute: "numeric", hourCycle: "h23" },
+      es: { hour: "number", minute: "numeric", hourCycle: "h23" },
+    };
+
+    return new Intl.DateTimeFormat(language, dateFormats[language]).format(
+      date
+    );
+  }
   const date = new Intl.DateTimeFormat(["ban", "id"]).format(d);
-  const time = new Intl.DateTimeFormat("en", {
-    hour: "numeric",
-    minute: "numeric",
-    hourCycle: "h23",
-  }).format(d);
+  const time = formatDate(getCurrentLanguage(), d)
 
   return (
     <div className="bg-teal-600 text-white p-8 rounded-lg shadow-md">

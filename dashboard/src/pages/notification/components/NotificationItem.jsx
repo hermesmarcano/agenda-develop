@@ -3,7 +3,7 @@ import { DarkModeContext } from "../../../context/DarkModeContext";
 import "./NotificationItem.css";
 
 const NotificationItem = ({ notification, onDelete }) => {
-  const { _id, content, date } = notification;
+  const { content } = notification;
   const { isDarkMode } = useContext(DarkModeContext);
 
   return (

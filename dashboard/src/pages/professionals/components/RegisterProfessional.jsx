@@ -7,10 +7,17 @@ import { TiPlus } from "react-icons/ti";
 import instance from "../../../axiosConfig/axiosConfig";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import { DefaultInputDarkStyle, DefaultInputLightStyle, RegisterButton } from "../../../components/Styled";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  RegisterButton,
+} from "../../../components/Styled";
 import { Store } from "react-notifications-component";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const RegisterProfessional = ({ setModelState, workingHours }) => {
+  const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
@@ -20,10 +27,10 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
       title: title,
       message: message,
       type: type,
-      insert: 'top',
-      container: 'bottom-center',
-      animationIn: ['animated', 'fadeIn'],
-      animationOut: ['animated', 'fadeOut'],
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
       dismiss: {
         duration: 5000,
         onScreen: true,
@@ -37,31 +44,31 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
   };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Required"),
+    name: Yup.string().required(t("Required")),
     officeHours: Yup.array()
       .of(
         Yup.object().shape({
           startHour: Yup.number()
-            .required("Start hour is required")
+            .required(t("Start hour is required"))
             .test(
               "startHour",
-              "Start hour must be less than end hour",
+              t("Start hour must be less than end hour"),
               function (value) {
                 return value < this.parent.endHour;
               }
             ),
           endHour: Yup.number()
-            .required("End hour is required")
+            .required(t("End hour is required"))
             .test(
               "endHour",
-              "End hour must be greater than start hour",
+              t("End hour must be greater than start hour"),
               function (value) {
                 return value > this.parent.startHour;
               }
             ),
         })
       )
-      .test("noOverlap", "Working hours cannot overlap", function (value) {
+      .test("noOverlap", t("Working hours cannot overlap"), function (value) {
         let isValid = true;
         for (let i = 0; i < value.length; i++) {
           for (let j = i + 1; j < value.length; j++) {
@@ -88,6 +95,10 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
       }),
     description: Yup.string().required("Required"),
   });
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   return (
     <div
@@ -118,10 +129,16 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   Authorization: localStorage.getItem("ag_app_shop_token"),
                 },
               });
-              notify("New Professional", `New Professional "${values.name}" has registered`, "success")
+              notify(
+                t("New Professional"),
+                `${t("New Professional")} "${values.name}" ${t(
+                  "has registered"
+                )}`,
+                "success"
+              );
               sendNotification(
-                "New Professional - " +
-                  new Intl.DateTimeFormat("en-GB", {
+                `${t("New Professional")} - ` +
+                  new Intl.DateTimeFormat(getCurrentLanguage(), {
                     day: "2-digit",
                     month: "2-digit",
                     year: "numeric",
@@ -130,7 +147,11 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                   }).format(new Date())
               );
             } catch (e) {
-              notify("Error", `Some of the data has already been registered before`, "danger");
+              notify(
+                t("Error"),
+                t(`Some of the data has already been registered before`),
+                "danger"
+              );
             }
           };
 
@@ -147,7 +168,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
             let range = [];
             for (let i = period.startHour; i <= period.endHour; i++) {
               const hour = i <= 12 ? i : i - 12;
-              const periodLabel = i < 12 ? "AM" : "PM";
+              const periodLabel = i < 12 ? t("AM") : t("PM");
               range.push(
                 <option key={i} value={i}>
                   {hour}:00 {periodLabel}
@@ -170,14 +191,16 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                     isDarkMode ? "white" : "gray-700"
                   } font-bold mb-2`}
                 >
-                  Name
+                  {t("Name")}
                 </label>
                 <Field
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Professional Name"
-                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
+                  placeholder={t("Professional Name")}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 />
                 <ErrorMessage
                   name="name"
@@ -194,7 +217,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                         isDarkMode ? "white" : "gray-700"
                       } font-bold mb-2`}
                     >
-                      Office Hours
+                      {t("Office Hours")}
                     </label>
                     {formikProps.values.officeHours.map((officeHour, index) => (
                       <div key={index} className="flex items-center space-x-2">
@@ -204,7 +227,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                               htmlFor={`officeHours[${index}].startHour`}
                               className="sr-only"
                             >
-                              Start Hour
+                              {t("Start Hour")}
                             </label>
                             <Field
                               id={`officeHours[${index}].startHour`}
@@ -221,7 +244,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                                 !isDarkMode ? "white" : "gray-500"
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
-                              <option value="">Start hour</option>
+                              <option value="">{t("Start hour")}</option>
                               {hoursOptions[index]}
                             </Field>
                             <ErrorMessage
@@ -235,7 +258,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                               htmlFor={`officeHours[${index}].endHour`}
                               className="sr-only"
                             >
-                              End Hour
+                              {t("End Hour")}
                             </label>
                             <Field
                               id={`officeHours[${index}].endHour`}
@@ -252,7 +275,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                                 !isDarkMode ? "white" : "gray-500"
                               } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                             >
-                              <option value="">End hour</option>
+                              <option value="">{t("End hour")}</option>
                               {hoursOptions[index]}
                             </Field>
                             <ErrorMessage
@@ -270,7 +293,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                               onClick={() => remove(index)}
                             >
                               <RiCloseCircleLine className="mr-1" />
-                              Remove
+                              {t("Remove")}
                             </button>
                           </div>
                         )}
@@ -285,7 +308,7 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                           onClick={() => push({ startHour: 0, endHour: 0 })}
                         >
                           <TiPlus className="mr-1" />
-                          Add Office Hour
+                          {t("Add Office Hour")}
                         </button>
                       )}
                     </div>
@@ -304,14 +327,16 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                     isDarkMode ? "white" : "gray-700"
                   } font-bold mb-2`}
                 >
-                  Description
+                  {t("Description")}
                 </label>
                 <Field
                   as="textarea"
                   id="description"
                   name="description"
-                  placeholder="Short Description ..."
-                  className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
+                  placeholder={t('"Short Description ..."')}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
                 />
                 <ErrorMessage
                   name="description"

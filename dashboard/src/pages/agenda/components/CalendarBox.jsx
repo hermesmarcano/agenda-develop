@@ -1,7 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
 const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
-
+  const { t } = useTranslation();
   const handlePrevMonth = () => {
     setSelectedDate(
       new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1, 1)
@@ -47,7 +48,9 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
         <div
           key={`day-${day}`}
           className={`flex items-center justify-center h-7 px-3 rounded cursor-pointer text-sm ${
-            isSelected ? "bg-teal-100 text-gray-800 font-bold" : "hover:bg-gray-200 text-white hover:text-gray-800"
+            isSelected
+              ? "bg-teal-100 text-gray-800 font-bold"
+              : "hover:bg-gray-200 text-white hover:text-gray-800"
           }`}
           onClick={() => handleDateClick(day)}
         >
@@ -65,7 +68,9 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
         <button className="hover:text-gray-700" onClick={handlePrevMonth}>
           <IoChevronBack size={20} />
         </button>
-        <h2 className="font-semibold" style={{fontSize: "15px"}}>{getMonthName()}</h2>
+        <h2 className="font-semibold" style={{ fontSize: "15px" }}>
+          {getMonthName()}
+        </h2>
         <button className="hover:text-gray-700" onClick={handleNextMonth}>
           <IoChevronForward size={20} />
         </button>
@@ -75,43 +80,43 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Sun
+          {t("Sun")}
         </div>
         <div
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Mon
+          {t("Mon")}
         </div>
         <div
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Tue
+          {t("Tue")}
         </div>
         <div
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Wed
+          {t("Wed")}
         </div>
         <div
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Thu
+          {t("Thu")}
         </div>
         <div
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Fri
+          {t("Fri")}
         </div>
         <div
           className="flex justify-center underline font-bold text-white"
           style={{ fontSize: "0.65rem" }}
         >
-          Sat
+          {t("Sat")}
         </div>
         {renderCalendar()}
       </div>

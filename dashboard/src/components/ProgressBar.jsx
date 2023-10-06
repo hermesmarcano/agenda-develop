@@ -1,11 +1,14 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { FaSpinner } from "react-icons/fa";
 
 const ProgressBar = ({ progress }) => {
+  const { t } = useTranslation();
+
   return (
     <div>
       <span id="ProgressLabel" className="sr-only">
-        Loading
+        {t('Loading')}
       </span>
 
       <span

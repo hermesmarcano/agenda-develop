@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { FaSpinner, FaTrash } from "react-icons/fa";
-import { IoSettingsSharp } from "react-icons/io5"
+import { IoSettingsSharp } from "react-icons/io5";
 import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
@@ -19,12 +19,23 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { v4 } from "uuid";
-import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, LoadingUploadButton, UpdateButton, titleDarkStyle, titleLightStyle } from "../../components/Styled";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  Hourglass,
+  LoadingUploadButton,
+  UpdateButton,
+  titleDarkStyle,
+  titleLightStyle,
+} from "../../components/Styled";
 import { Store } from "react-notifications-component";
 import ProgressBar from "../../components/ProgressBar";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const Settings = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { sendNotification } = useContext(NotificationContext);
   const { shopName, setShopName } = useContext(SidebarContext);
@@ -38,7 +49,7 @@ const Settings = () => {
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     const hour12 = hour % 12 || 12;
-    const period = hour < 12 ? "AM" : "PM";
+    const period = hour < 12 ? t("AM") : t("PM");
     hoursOptions.push(
       <option key={hour} value={hour}>
         {hour12}:00 {period}
@@ -46,16 +57,15 @@ const Settings = () => {
     );
   }
 
-
   const notify = (title, message, type) => {
     Store.addNotification({
       title: title,
       message: message,
       type: type,
-      insert: 'top',
-      container: 'bottom-center',
-      animationIn: ['animated', 'fadeIn'],
-      animationOut: ['animated', 'fadeOut'],
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
       dismiss: {
         duration: 5000,
         onScreen: true,
@@ -83,7 +93,6 @@ const Settings = () => {
   }, []);
 
   const handleSubmit = (values, { resetForm }) => {
-    // Code to save the changes made to the settings
     let data = {
       shopName: values.shopName,
       name: values.name,
@@ -103,10 +112,18 @@ const Settings = () => {
       })
       .then((response) => {
         setShopName(response.data.shopName);
-        notify("Update", `Shop "${values.name}" info has been updated`, "success")
+        notify(
+          t("Update"),
+          `${t("Shop")} "${values.name}" ${t("info has been updated")}`,
+          "success"
+        );
       })
       .catch((error) => {
-        notify("Error", `Some of the data has already been registered before`, "danger");
+        notify(
+          t("Error"),
+          t(`Some of the data has already been registered before`),
+          "danger"
+        );
       });
   };
 
@@ -139,6 +156,10 @@ const Settings = () => {
         console.log(error);
       });
   };
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   const uploadProfileImg = (values, { resetForm }) => {
     console.log("uploading ....");
@@ -180,10 +201,14 @@ const Settings = () => {
                   },
                 })
                 .then((res) => {
-                  notify("Update", `Shop image has been updated`, "success")
+                  notify(
+                    t("Update"),
+                    t(`Shop image has been updated`),
+                    "success"
+                  );
                   sendNotification(
-                    "Profile Image updated - " +
-                      new Intl.DateTimeFormat("en-GB", {
+                    `${t("Profile Image updated")} - ` +
+                      new Intl.DateTimeFormat(getCurrentLanguage(), {
                         day: "2-digit",
                         month: "2-digit",
                         year: "numeric",
@@ -192,11 +217,14 @@ const Settings = () => {
                       }).format(new Date())
                   );
                   navigate(0);
-                })
-                setIsUploading(false)
-                .catch((error) => {
-                  notify("Error", `Some of the data has already been registered before`, "danger");
                 });
+              setIsUploading(false).catch((error) => {
+                notify(
+                  t("Error"),
+                  t(`Some of the data has already been registered before`),
+                  "danger"
+                );
+              });
             });
         }
       )
@@ -215,11 +243,11 @@ const Settings = () => {
   return (
     <div className="flex w-full flex-col h-full p-6">
       <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
-          <div className="flex items-center justify-center">
-            <IoSettingsSharp className="mr-2 text-xl" />
-            <span>Dashboard Settings</span>
-          </div>
+        <div className="flex items-center justify-center">
+          <IoSettingsSharp className="mr-2 text-xl" />
+          <span>{t("Dashboard Settings")}</span>
         </div>
+      </div>
       <div className="grid grid-cols-2 gap-6">
         <div>
           <Formik
@@ -236,19 +264,19 @@ const Settings = () => {
                 .of(
                   Yup.object().shape({
                     startHour: Yup.number()
-                      .required("Start hour is required")
+                      .required(t("Start hour is required"))
                       .test(
                         "startHour",
-                        "Start hour must be less than end hour",
+                        t("Start hour must be less than end hour"),
                         function (value) {
                           return value < this.parent.endHour;
                         }
                       ),
                     endHour: Yup.number()
-                      .required("End hour is required")
+                      .required(t("End hour is required"))
                       .test(
                         "endHour",
-                        "End hour must be greater than start hour",
+                        t("End hour must be greater than start hour"),
                         function (value) {
                           return value > this.parent.startHour;
                         }
@@ -257,7 +285,7 @@ const Settings = () => {
                 )
                 .test(
                   "noOverlap",
-                  "Working hours cannot overlap",
+                  t("Working hours cannot overlap"),
                   function (value) {
                     let isValid = true;
                     for (let i = 0; i < value.length; i++) {
@@ -299,14 +327,17 @@ const Settings = () => {
                     htmlFor="shop-name"
                     className="block text-lg font-semibold mb-2"
                   >
-                    Shop Name:
+                    {t("Shop Name")}:
                   </label>
                   <Field
                     type="text"
                     id="shop-name"
                     name="shopName"
-                    className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                
+                    className={`${
+                      isDarkMode
+                        ? DefaultInputDarkStyle
+                        : DefaultInputLightStyle
+                    }`}
                   />
                 </div>
                 <div className="mb-6">
@@ -314,14 +345,17 @@ const Settings = () => {
                     htmlFor="manager-name"
                     className="block text-lg font-semibold mb-2"
                   >
-                    Manager Name:
+                    {t("Manager Name")}:
                   </label>
                   <Field
                     type="text"
                     id="manager-name"
                     name="name"
-                    className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                
+                    className={`${
+                      isDarkMode
+                        ? DefaultInputDarkStyle
+                        : DefaultInputLightStyle
+                    }`}
                   />
                 </div>
 
@@ -329,7 +363,7 @@ const Settings = () => {
                   htmlFor="discount-value"
                   className="block text-lg font-semibold mb-2"
                 >
-                  Working Hours:
+                  {t("Working Hours")}:
                 </label>
                 <FieldArray name="workingHours">
                   {({ remove, push }) => (
@@ -346,7 +380,7 @@ const Settings = () => {
                                   htmlFor={`workingHours[${index}].startHour`}
                                   className="sr-only"
                                 >
-                                  Start Hour
+                                  {t("Start Hour")}
                                 </label>
                                 <Field
                                   id={`workingHours[${index}].startHour`}
@@ -365,7 +399,9 @@ const Settings = () => {
                                       : "bg-white text-gray-800"
                                   }`}
                                 >
-                                  <option value="">Select start hour</option>
+                                  <option value="">
+                                    {t("Select start hour")}
+                                  </option>
                                   {hoursOptions}
                                 </Field>
                                 <ErrorMessage
@@ -379,7 +415,7 @@ const Settings = () => {
                                   htmlFor={`workingHours[${index}].endHour`}
                                   className="sr-only"
                                 >
-                                  End Hour
+                                  {t("End Hour")}
                                 </label>
                                 <Field
                                   id={`workingHours[${index}].endHour`}
@@ -398,7 +434,9 @@ const Settings = () => {
                                       : "bg-white text-gray-800"
                                   }`}
                                 >
-                                  <option value="">Select end hour</option>
+                                  <option value="">
+                                    {t("Select end hour")}
+                                  </option>
                                   {hoursOptions}
                                 </Field>
                                 <ErrorMessage
@@ -416,7 +454,7 @@ const Settings = () => {
                                   onClick={() => remove(index)}
                                 >
                                   <RiCloseCircleLine className="mr-1" />
-                                  Remove
+                                  {t("Remove")}
                                 </button>
                               </div>
                             )}
@@ -431,7 +469,7 @@ const Settings = () => {
                             onClick={() => push({ startHour: 0, endHour: 0 })}
                           >
                             <TiPlus className="mr-1" />
-                            Add Working Hour
+                            {t("Add Working Hour")}
                           </button>
                         )}
                       </div>
@@ -440,16 +478,14 @@ const Settings = () => {
                 </FieldArray>
 
                 <div className="flex items-center justify-end">
-                  <UpdateButton 
-                    disabled={formikProps.isSubmitting}
-                  />
+                  <UpdateButton disabled={formikProps.isSubmitting} />
                 </div>
               </Form>
             )}
           </Formik>
         </div>
         <div>
-          <h2 className="text-2xl font-semibold mb-4">Profile Image</h2>
+          <h2 className="text-2xl font-semibold mb-4">{t("Profile Image")}</h2>
           {shopData.profileImg ? (
             <div className="relative">
               <img
@@ -477,14 +513,14 @@ const Settings = () => {
                 <Form>
                   <Field name="profileImg" component={ImageUpload} />
                   <div className="mt-2">
-                  <LoadingUploadButton
+                    <LoadingUploadButton
                       disabled={isSubmitting}
                       isUploading={isUploading}
-                  />
+                    />
                   </div>
                   <div className="my-4">
-              <ProgressBar progress={uploadProgress} />
-            </div>
+                    <ProgressBar progress={uploadProgress} />
+                  </div>
                 </Form>
               )}
             </Formik>

@@ -18,7 +18,17 @@ import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import instance from "../../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import { DefaultInputDarkStyle, DefaultInputLightStyle, NoWidthInputDarkStyle, NoWidthInputLightStyle, SpecialInputDarkStyle, SpecialInputLightStyle } from "../../../components/Styled";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  NoWidthInputDarkStyle,
+  NoWidthInputLightStyle,
+  SpecialInputDarkStyle,
+  SpecialInputLightStyle,
+} from "../../../components/Styled";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
+import { Store } from "react-notifications-component";
 
 const UpdateAppointment = ({
   amount,
@@ -28,6 +38,7 @@ const UpdateAppointment = ({
   setModelState,
   appointmentId,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate(this);
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
@@ -41,9 +52,28 @@ const UpdateAppointment = ({
   const [addCustomerClicked, setAddCustomerClicked] = useState(false);
   const [allowManualDuration, setAllowManualDuration] = useState(true);
   const [appointmentData, setAppointmentData] = useState(null);
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
   const { sendNotification } = useContext(NotificationContext);
+
+  const notify = (title, message, type) => {
+    Store.addNotification({
+      title: title,
+      message: message,
+      type: type,
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
+      dismiss: {
+        duration: 5000,
+        onScreen: true,
+      },
+      onNotificationRemoval: () => this.remove(),
+    });
+  };
+
+  const remove = () => {
+    Store.removeNotification({});
+  };
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -112,20 +142,18 @@ const UpdateAppointment = ({
       });
   }, [shopId, appointmentId]);
 
-  // Rest of your component code
-
   const validationSchema = Yup.object().shape({
     // customer: Yup.string().required("Customer is required"),
-    professional: Yup.string().required("Professional is required"),
+    professional: Yup.string().required(t("Professional is required")),
     service: Yup.array()
       .test(
         "at-least-one",
-        "At least one service selection is required",
+        t("At least one service selection is required"),
         function (value) {
           return value && value.length > 0;
         }
       )
-      .of(Yup.string().required("A service name is required")),
+      .of(Yup.string().required(t("A service name is required"))),
     // dateTime: Yup.string().required("Start time is required"),
   });
 
@@ -151,8 +179,8 @@ const UpdateAppointment = ({
     const hours = Math.floor(timeInMinutes / 60);
     const minutes = timeInMinutes % 60;
     const timeLabel = `${
-      hours > 0 ? `${hours} hour${hours > 1 ? "s" : ""}` : ""
-    } ${minutes} min`;
+      hours > 0 ? `${hours} ${t("hour")}${hours > 1 ? "s" : ""}` : ""
+    } ${minutes} ${t("min")}`;
     timeOptions.push({ value: timeInMinutes, label: timeLabel });
   }
 
@@ -179,6 +207,10 @@ const UpdateAppointment = ({
 
     return { totalPrice, totalDuration };
   };
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     values.dateTime = dateTime;
@@ -217,6 +249,8 @@ const UpdateAppointment = ({
         status: "updating",
       };
 
+      const customerName = clients.find((client) => client._id === customer);
+
       instance
         .patch(`appointments/${appointmentId}`, patchData, {
           headers: {
@@ -228,14 +262,17 @@ const UpdateAppointment = ({
           setSubmitting(false);
           resetForm();
           setModelState(false);
-          setAlertMsg(
-            "Appointment has been rescheduled, go to checkout to process payment"
+          notify(
+            t("Update Reservation"),
+            `${t("Reservation for customer")} ${customerName.name} ${t(
+              "has been updated, go to checkout to process payment"
+            )}`,
+            "success"
           );
-          setAlertMsgType("success");
-          setAlertOn(true);
+
           sendNotification(
             "Reservation Updated - " +
-              new Intl.DateTimeFormat("en-GB", {
+              new Intl.DateTimeFormat(getCurrentLanguage(), {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
@@ -245,8 +282,7 @@ const UpdateAppointment = ({
           );
         })
         .catch((error) => {
-          console.error(error.message);
-          // Handle errors
+          notify(t("Error"), error.message, "danger");
         });
     };
 
@@ -383,15 +419,14 @@ const UpdateAppointment = ({
     }
   };
 
-  const clientPhoneNumber  = "123-456-789";
+  const clientPhoneNumber = "123-456-789";
 
   const openWhatsApp = (customerId = clientPhoneNumber) => {
-    const currentCustomer = clients.find(client => client._id === customerId)
-      const whatsappUrl = `https://web.whatsapp.com/send?phone=${encodeURIComponent(
-        currentCustomer?.phone
-      )}`;
-      window.open(whatsappUrl, "_blank");
-    
+    const currentCustomer = clients.find((client) => client._id === customerId);
+    const whatsappUrl = `https://web.whatsapp.com/send?phone=${encodeURIComponent(
+      currentCustomer?.phone
+    )}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -506,7 +541,7 @@ const UpdateAppointment = ({
                       <div>
                         {!addCustomerClicked ? (
                           <CustomSelect
-                            label="Client"
+                            label={t("Customer")}
                             id="customer"
                             name="customer"
                             options={clients}
@@ -517,14 +552,14 @@ const UpdateAppointment = ({
                               htmlFor="name"
                               className="block text-sm font-semibold  mb-2"
                             >
-                              New Client
+                              {t("New Client")}
                             </label>
                             <div className="mb-4">
                               <label
                                 htmlFor="name"
                                 className="block text-xs font-semibold  mb-2"
                               >
-                                Name
+                                {t("Name")}
                               </label>
                               <input
                                 type="text"
@@ -544,7 +579,7 @@ const UpdateAppointment = ({
                                 htmlFor="phone"
                                 className="block text-xs font-semibold  mb-2"
                               >
-                                Phone
+                                {t("Phone")}
                               </label>
                               <input
                                 type="text"
@@ -573,10 +608,10 @@ const UpdateAppointment = ({
                           {!addCustomerClicked ? (
                             <>
                               <FaPlus className="mr-2" />
-                              Add Customer
+                              {t("Add Customer")}
                             </>
                           ) : (
-                            "Select Customer"
+                            t("Select Customer")
                           )}
                         </button>
                       </div>
@@ -585,7 +620,7 @@ const UpdateAppointment = ({
                     <div className="mb-4">
                       <Field
                         name="service"
-                        label="Service"
+                        label={t("Service")}
                         component={CustomSelectList}
                         options={services}
                         selectedOptions={values.service}
@@ -626,7 +661,7 @@ const UpdateAppointment = ({
                     <div className="mb-4">
                       <Field
                         name="product"
-                        label="Product"
+                        label={t("Product")}
                         component={CustomSelectList}
                         options={products}
                         selectedOptions={values.product}
@@ -667,7 +702,7 @@ const UpdateAppointment = ({
 
                   <div>
                     <CustomSelect
-                      label="Professional"
+                      label={t("Professional")}
                       id="professional"
                       name="professional"
                       options={professionals}
@@ -677,7 +712,7 @@ const UpdateAppointment = ({
                         htmlFor="manualDuration"
                         className={`block text-sm font-semibold  mb-2`}
                       >
-                        Set Duration Manually
+                        {t("Set Duration Manually")}
                       </label>
                       <Switch
                         id="manualDuration"
@@ -703,7 +738,7 @@ const UpdateAppointment = ({
                         htmlFor="appointmentDuration"
                         className="block text-sm font-semibold  mb-2"
                       >
-                        Appointment Duration
+                        {t("Appointment Duration")}
                       </label>
                       <div className="flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden">
                         <div className="flex items-center w-full">
@@ -712,27 +747,53 @@ const UpdateAppointment = ({
                             id="hours"
                             name="hours"
                             value={values.appointmentDuration.split(":")[0]}
-                            className={`${isDarkMode ? SpecialInputDarkStyle : SpecialInputLightStyle}`}
+                            className={`${
+                              isDarkMode
+                                ? SpecialInputDarkStyle
+                                : SpecialInputLightStyle
+                            }`}
                             onChange={handleDurationChange}
                             disabled={!allowManualDuration}
                           />
-                          <span className={`${isDarkMode ? "text-white" : "text-gray-600"} px-2`}>:</span>
+                          <span
+                            className={`${
+                              isDarkMode ? "text-white" : "text-gray-600"
+                            } px-2`}
+                          >
+                            :
+                          </span>
                           <input
                             type="number"
                             id="minutes"
                             name="minutes"
                             value={values.appointmentDuration.split(":")[1]}
-                            className={`${isDarkMode ? SpecialInputDarkStyle : SpecialInputLightStyle}`}
+                            className={`${
+                              isDarkMode
+                                ? SpecialInputDarkStyle
+                                : SpecialInputLightStyle
+                            }`}
                             onChange={handleDurationChange}
                             step="5"
                             disabled={!allowManualDuration}
                           />
                         </div>
-                        <div className={`${isDarkMode ? "bg-gray-600 text-white" : "bg-gray-200 text-gray-600"} px-3 py-2 w-1/2 sm:w-fit`}>
-                          <span className="text-xs">HOURS</span>
+                        <div
+                          className={`${
+                            isDarkMode
+                              ? "bg-gray-600 text-white"
+                              : "bg-gray-200 text-gray-600"
+                          } px-3 py-2 w-1/2 sm:w-fit`}
+                        >
+                          <span className="text-xs">{t("HOURS")}</span>
                         </div>
-                        <div className={`${isDarkMode ? "bg-gray-600 text-white" : "bg-gray-200 text-gray-600"} px-3 py-2 w-1/2 sm:w-fit`}>
-                          <span className="text-xs">MINUTES</span>
+                        <div
+                          className={`${
+                            isDarkMode
+                              ? "bg-gray-600 text-white"
+                              : "bg-gray-200 text-gray-600"
+                          } px-3 py-2 w-1/2 sm:w-fit`}
+                        >
+                          <span className="text-xs">{t("MINUTES")}</span>
                         </div>
                       </div>
                     </div>
@@ -742,14 +803,18 @@ const UpdateAppointment = ({
                         htmlFor="date"
                         className="block text-sm font-semibold  mb-2"
                       >
-                        Date
+                        {t("Date")}
                       </label>
                       <input
                         type="date"
                         id="date"
                         name="date"
                         value={values.date}
-                        className={`${isDarkMode ? NoWidthInputDarkStyle : NoWidthInputLightStyle}`}
+                        className={`${
+                          isDarkMode
+                            ? NoWidthInputDarkStyle
+                            : NoWidthInputLightStyle
+                        }`}
                         {...getFieldProps("date")}
                       />
                       <ErrorMessage
@@ -763,14 +828,18 @@ const UpdateAppointment = ({
                         htmlFor="time"
                         className="block text-sm font-semibold  mb-2"
                       >
-                        Time
+                        {t("Time")}
                       </label>
                       <input
                         type="time"
                         id="time"
                         name="time"
                         value={values.time}
-                        className={`${isDarkMode ? NoWidthInputDarkStyle : NoWidthInputLightStyle}`}
+                        className={`${
+                          isDarkMode
+                            ? NoWidthInputDarkStyle
+                            : NoWidthInputLightStyle
+                        }`}
                         {...getFieldProps("time")}
                       />
                       <ErrorMessage
@@ -804,7 +873,7 @@ const UpdateAppointment = ({
                     ) : (
                       <FaRedo className="mr-2" />
                     )}
-                    Update
+                    {t("Update")}
                   </button>
                   <button
                     type="button"
@@ -817,18 +886,16 @@ const UpdateAppointment = ({
                     ) : (
                       <FaCreditCard className="mr-2" />
                     )}
-                    Checkout
+                    {t("Checkout")}
                   </button>
                   {/* WhatsApp Button */}
                   <button
                     type="button"
                     className="whatsapp-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
-                    onClick={() =>
-                      openWhatsApp(values.customer)
-                    }
+                    onClick={() => openWhatsApp(values.customer)}
                   >
                     <FaWhatsapp className="mr-1" />
-                    WA
+                    {t("WA")}
                   </button>
                 </div>
               </Form>
@@ -897,6 +964,7 @@ const UpdateAppointment = ({
 export default UpdateAppointment;
 
 const CustomSelect = ({ label, options, ...props }) => {
+  const { t } = useTranslation();
   const [field, meta, helpers] = useField(props);
 
   const handleChange = (selectedOption) => {
@@ -923,7 +991,7 @@ const CustomSelect = ({ label, options, ...props }) => {
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}
-        placeholder={`Select ${label}`}
+        placeholder={`${t("Select")} ${label}`}
         isClearable
         {...props}
       />
@@ -937,6 +1005,7 @@ const CustomSelect = ({ label, options, ...props }) => {
 };
 
 const CustomSelectList = ({ options, label, field, form }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedOptions, setSelectedOptions] = useState(field.value || []);
@@ -945,7 +1014,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
   const spanRef = useRef(null);
   const inputRef = useRef(null);
 
-  const {isDarkMode} = useContext(DarkModeContext);
+  const { isDarkMode } = useContext(DarkModeContext);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -990,10 +1059,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
 
   return (
     <>
-      <label
-        htmlFor={field.name}
-        className="block text-sm font-semibold  mb-2"
-      >
+      <label htmlFor={field.name} className="block text-sm font-semibold  mb-2">
         {label}
       </label>
       <div
@@ -1017,7 +1083,9 @@ const CustomSelectList = ({ options, label, field, form }) => {
                   <span
                     key={index}
                     ref={index === selectedOptions?.length - 1 ? spanRef : null}
-                    className={`flex items-center ${isDarkMode ? "bg-gray-800 text-white" : "bg-gray-300"} text-sm px-2 py-1 mx-1 my-1 rounded`}
+                    className={`flex items-center ${
+                      isDarkMode ? "bg-gray-800 text-white" : "bg-gray-300"
+                    } text-sm px-2 py-1 mx-1 my-1 rounded`}
                   >
                     <span className="mr-1">{selectedOption?.name}</span>
                     <HiX
@@ -1032,9 +1100,13 @@ const CustomSelectList = ({ options, label, field, form }) => {
           <input
             ref={inputRef}
             type="text"
-            className={`flex-grow p-1 m-1 focus:outline-none ${isDarkMode ? "bg-gray-700" : "bg-white"}`}
+            className={`flex-grow p-1 m-1 focus:outline-none ${
+              isDarkMode ? "bg-gray-700" : "bg-white"
+            }`}
             style={{ minWidth: "0" }}
-            placeholder={selectedOptions?.length === 0 ? `Select ${label}` : ""}
+            placeholder={
+              selectedOptions?.length === 0 ? `${t("Select")} ${label}` : ""
+            }
             value={searchQuery}
             onChange={handleSearch}
             onFocus={() => setIsOpen(!isOpen)}
@@ -1043,7 +1115,11 @@ const CustomSelectList = ({ options, label, field, form }) => {
         </div>
 
         {isOpen && (
-          <div className={`absolute z-10 mt-1 ${isDarkMode ? "bg-gray-800" : "bg-white"} rounded w-full shadow-lg overflow-auto`}>
+          <div
+            className={`absolute z-10 mt-1 ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } rounded w-full shadow-lg overflow-auto`}
+          >
             {options
               .filter((option) =>
                 option.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -1055,9 +1131,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
                   onClick={() => toggleOption(option._id)}
                 >
                   <span>{option.name}</span>
-                  {selectedOptions.includes(option._id) && (
-                    <HiCheck />
-                  )}
+                  {selectedOptions.includes(option._id) && <HiCheck />}
                 </div>
               ))}
           </div>

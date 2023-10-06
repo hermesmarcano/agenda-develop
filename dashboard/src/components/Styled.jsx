@@ -2,8 +2,10 @@ import { FaPlus, FaSpinner, FaTrashAlt } from "react-icons/fa";
 import { AiOutlineFileAdd, AiOutlineFileSync } from "react-icons/ai";
 import { MdOutlineEditCalendar } from "react-icons/md";
 import "./Styled.css";
+import { useTranslation } from "react-i18next";
 
 const AddButton = ({ onClick, disabled }) => {
+  const { t } = useTranslation();
   return (
     <button
       className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
@@ -13,12 +15,13 @@ const AddButton = ({ onClick, disabled }) => {
       <span className="absolute -end-full transition-all group-hover:end-4">
         <FaPlus />
       </span>
-      <span className="pr-2">Add</span>
+      <span className="pr-2">{t("Add")}</span>
     </button>
   );
 };
 
 const SaveButton = ({ onClick, disabled }) => {
+  const { t } = useTranslation();
   return (
     <button
       type="submit"
@@ -29,12 +32,13 @@ const SaveButton = ({ onClick, disabled }) => {
       <span className="absolute -end-full transition-all group-hover:end-4">
         <FaPlus />
       </span>
-      <span className="pr-2">Add</span>
+      <span className="pr-2">{t("Add")}</span>
     </button>
   );
 };
 
 const SubmitButton = ({ onClick, disabled }) => {
+  const { t } = useTranslation();
   return (
     <button
       type="submit"
@@ -45,7 +49,7 @@ const SubmitButton = ({ onClick, disabled }) => {
       <span className="absolute -end-full transition-all group-hover:end-4">
         <MdOutlineEditCalendar />
       </span>
-      <span className="pr-2">Submit</span>
+      <span className="pr-2">{t("Submit")}</span>
     </button>
   );
 };
@@ -65,8 +69,8 @@ const AddButtonWithTitle = ({ onClick, disabled, children }) => {
   );
 };
 
-
 const RemoveSelectedButton = ({ onClick, disabled }) => {
+  const { t } = useTranslation();
   return (
     <button
       className={`mx-1 group relative inline-flex items-center overflow-hidden rounded ${
@@ -82,12 +86,13 @@ const RemoveSelectedButton = ({ onClick, disabled }) => {
           <FaTrashAlt />
         </span>
       )}
-      <span className="pr-2">Remove Selected</span>
+      <span className="pr-2">{t("Remove Selected")}</span>
     </button>
   );
 };
 
 const RegisterButton = ({ onClick, disabled }) => {
+  const { t } = useTranslation();
   return (
     <button
       className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
@@ -98,12 +103,13 @@ const RegisterButton = ({ onClick, disabled }) => {
       <span className="absolute -end-full transition-all group-hover:end-4">
         <AiOutlineFileAdd />
       </span>
-      <span className="pr-2">Register</span>
+      <span className="pr-2">{t("Register")}</span>
     </button>
   );
 };
 
 const UpdateButton = ({ onClick, disabled }) => {
+  const { t } = useTranslation();
   return (
     <button
       className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
@@ -114,12 +120,13 @@ const UpdateButton = ({ onClick, disabled }) => {
       <span className="absolute -end-full transition-all group-hover:end-4">
         <AiOutlineFileSync />
       </span>
-      <span className="pr-2">Update</span>
+      <span className="pr-2">{t("Update")}</span>
     </button>
   );
 };
 
 const LoadingRegisterButton = ({ onClick, disabled, isRegistering }) => {
+  const { t } = useTranslation();
   return (
     <button
       className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
@@ -130,22 +137,22 @@ const LoadingRegisterButton = ({ onClick, disabled, isRegistering }) => {
       {isRegistering ? (
         <span className="flex items-center justify-center">
           <FaSpinner className="animate-spin mr-2" />
-          Registering...
+          {t("Registering...")}
         </span>
       ) : (
         <>
           <span className="absolute -end-full transition-all group-hover:end-4">
             <AiOutlineFileAdd />
           </span>
-          <span className="pr-2">Register</span>
+          <span className="pr-2">{t("Register")}</span>
         </>
       )}
     </button>
   );
 };
 
-
 const LoadingUpdateButton = ({ onClick, disabled, isUpdating }) => {
+  const { t } = useTranslation();
   return (
     <button
       className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
@@ -156,14 +163,14 @@ const LoadingUpdateButton = ({ onClick, disabled, isUpdating }) => {
       {isUpdating ? (
         <span className="flex items-center justify-center">
           <FaSpinner className="animate-spin mr-2" />
-          Updating...
+          {t("Updating...")}
         </span>
       ) : (
         <>
           <span className="absolute -end-full transition-all group-hover:end-4">
-          <AiOutlineFileSync />
+            <AiOutlineFileSync />
           </span>
-          <span className="pr-2">Update</span>
+          <span className="pr-2">{t("Update")}</span>
         </>
       )}
     </button>
@@ -171,6 +178,7 @@ const LoadingUpdateButton = ({ onClick, disabled, isUpdating }) => {
 };
 
 const LoadingUploadButton = ({ onClick, disabled, isUploading }) => {
+  const { t } = useTranslation();
   return (
     <button
       className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
@@ -181,14 +189,14 @@ const LoadingUploadButton = ({ onClick, disabled, isUploading }) => {
       {isUploading ? (
         <span className="flex items-center justify-center">
           <FaSpinner className="animate-spin mr-2" />
-          uploading...
+          {t("Uploading...")}
         </span>
       ) : (
         <>
           <span className="absolute -end-full transition-all group-hover:end-4">
             <AiOutlineFileAdd />
           </span>
-          <span className="pr-2">Upload</span>
+          <span className="pr-2">{t("Upload")}</span>
         </>
       )}
     </button>
@@ -225,7 +233,6 @@ const NoWidthInputLightStyle =
   "rounded-lg border-none text-gray-800 bg-white p-3 text-sm";
 const NoWidthInputDarkStyle =
   "rounded-lg bg-gray-600 outline-teal-600 p-3 text-sm";
-  
 
 const IconInputLightStyle =
   "w-full rounded-lg border border-gray-400 text-gray-800 bg-white p-3 pl-7 text-sm";

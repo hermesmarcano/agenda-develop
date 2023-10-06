@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import instance from "../../../axiosConfig/axiosConfig";
 import { useContext } from "react";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const CreditPayment = ({
   isOpen,
@@ -16,6 +17,7 @@ const CreditPayment = ({
   clients,
   dateTime,
 }) => {
+  const { t } = useTranslation();
   const token = localStorage.getItem("ag_app_shop_token");
   const navigate = useNavigate();
   const { isDarkMode } = useContext(DarkModeContext);
@@ -189,13 +191,13 @@ const CreditPayment = ({
           deletePayment();
         });
     };
-    
+
 
     if (bookingInfo.checkoutType === "updating") {
-      if(bookingInfo.paymentId){
+      if (bookingInfo.paymentId) {
         updatePayment();
-      }else{
-        makePayment();  
+      } else {
+        makePayment();
       }
     } else {
       makePayment();
@@ -214,43 +216,43 @@ const CreditPayment = ({
             className={`w-96 my-auto mx-auto rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"
               }`}
           >
-              <div
-                className={`rounded-md shadow-md p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"
-                  }`}
-              >
-                <PaymentWaiting />
-                <div className="flex justify-between items-center mt-4">
-                  <span
-                    className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-700"
-                      }`}
-                  >
-                    Amount to Pay:
-                  </span>
-                  <span className="text-green-500 font-semibold">
-                    {totalPrice} USD
-                  </span>
-                </div>
-                <button
-                  onClick={handleConfirm}
-                  className={`w-full mt-4 ${isDarkMode
-                    ? "bg-gray-700 hover:bg-gray-600"
-                    : "bg-teal-800 hover:bg-teal-700"
-                    } text-white py-2 px-4 rounded-md font-semibold text-sm`}
+            <div
+              className={`rounded-md shadow-md p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"
+                }`}
+            >
+              <PaymentWaiting />
+              <div className="flex justify-between items-center mt-4">
+                <span
+                  className={`font-semibold ${isDarkMode ? "text-white" : "text-gray-700"
+                    }`}
                 >
-                  {/* Pay Now */}
-                  Confirm Payment
-                </button>
-                <button
-                  className={`w-full mt-2 ${isDarkMode
-                    ? "bg-gray-600 hover:bg-gray-500"
-                    : "bg-gray-500 hover:bg-gray-600"
-                    } text-white py-2 px-4 rounded-md flex items-center justify-center font-semibold text-sm`}
-                  onClick={handleCancel}
-                >
-                  <FiX className="h-5 w-5 mr-2" />
-                  Cancel
-                </button>
+                  {t('Amount to Pay')}:
+                </span>
+                <span className="text-green-500 font-semibold">
+                  {totalPrice} {t('USD')}
+                </span>
               </div>
+              <button
+                onClick={handleConfirm}
+                className={`w-full mt-4 ${isDarkMode
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-teal-800 hover:bg-teal-700"
+                  } text-white py-2 px-4 rounded-md font-semibold text-sm`}
+              >
+                {/* Pay Now */}
+                {t('Confirm Payment')}
+              </button>
+              <button
+                className={`w-full mt-2 ${isDarkMode
+                  ? "bg-gray-600 hover:bg-gray-500"
+                  : "bg-gray-500 hover:bg-gray-600"
+                  } text-white py-2 px-4 rounded-md flex items-center justify-center font-semibold text-sm`}
+                onClick={handleCancel}
+              >
+                <FiX className="h-5 w-5 mr-2" />
+                {t('Cancel')}
+              </button>
+            </div>
           </div>
         </div>
       )}

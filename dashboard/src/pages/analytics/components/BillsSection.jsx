@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import instance from "../../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const BillsSection = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const [pendingAppointments, setPendingAppointments] = useState([]);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -90,10 +92,12 @@ const BillsSection = () => {
         className={`shadow-md rounded-md p-6 
     ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
       >
-        <h2 className="text-lg font-bold mb-4">Pending In Debt Checkouts</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {t("Pending In Debt Checkouts")}
+        </h2>
         <div className="grid grid-cols-1 gap-2">
           {currentAppointments.length === 0 ? (
-            <p className="text-gray-500">No In Debt checkouts.</p>
+            <p className="text-gray-500">{t("No In Debt checkouts.")}</p>
           ) : (
             currentAppointments.map((checkout) => (
               <div
@@ -130,7 +134,7 @@ const BillsSection = () => {
                   className="flex items-center text-blue-500"
                 >
                   <MdAttachMoney size={24} className="mr-2" />
-                  Checkout
+                  {t("Checkout")}
                 </button>
               </div>
             ))

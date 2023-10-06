@@ -15,10 +15,11 @@ import {
   RegisterButton,
 } from "../../../components/Styled";
 import { Store } from "react-notifications-component";
+import i18next from "i18next";
+import { useTranslation } from "react-i18next";
 
 const RegisterCustomer = ({ setModelState }) => {
-  const { setAlertOn, setAlertMsg, setAlertMsgType } =
-    React.useContext(AlertContext);
+  const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
@@ -53,9 +54,9 @@ const RegisterCustomer = ({ setModelState }) => {
   };
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required("Name is required"),
-    phone: Yup.string().required("Phone is required"),
-    email: Yup.string().email("Invalid email format"),
+    name: Yup.string().required(t("Name is required")),
+    phone: Yup.string().required(t("Phone is required")),
+    email: Yup.string().email(t("Invalid email format")),
     birthday: Yup.date().nullable(),
     address: Yup.string(),
   });
@@ -79,6 +80,10 @@ const RegisterCustomer = ({ setModelState }) => {
       postData.address = values.address;
     }
 
+    function getCurrentLanguage() {
+      return i18next.language || "en";
+    }
+
     const fetchRequest = async () => {
       try {
         const response = await instance.post("customers/", postData, {
@@ -88,13 +93,13 @@ const RegisterCustomer = ({ setModelState }) => {
           },
         });
         notify(
-          "New Customer",
-          `New Customer "${values.name}" has registered`,
+          t("New Customer"),
+          `${t("New Customer")} "${values.name}" ${t("has registered")}`,
           "success"
         );
         sendNotification(
-          "New Customer - " +
-            new Intl.DateTimeFormat("en-GB", {
+          `${t("New Customer")} - ` +
+            new Intl.DateTimeFormat(getCurrentLanguage(), {
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
@@ -104,8 +109,8 @@ const RegisterCustomer = ({ setModelState }) => {
         );
       } catch (e) {
         notify(
-          "Error",
-          `Some of the data has already been registered before`,
+          t("Error"),
+          t(`Some of the data has already been registered before`),
           "danger"
         );
       }
@@ -130,10 +135,10 @@ const RegisterCustomer = ({ setModelState }) => {
       >
         {({ isSubmitting }) => (
           <Form
-          className={`bg-${
-            isDarkMode ? "gray-800" : "white"
-          } rounded px-8 pt-6 pb-8 mb-4`}
-        >
+            className={`bg-${
+              isDarkMode ? "gray-800" : "white"
+            } rounded px-8 pt-6 pb-8 mb-4`}
+          >
             <div className="mb-4">
               <label
                 htmlFor="name"
@@ -141,7 +146,7 @@ const RegisterCustomer = ({ setModelState }) => {
                   isDarkMode ? "white" : "gray-700"
                 } font-bold mb-2`}
               >
-                Name
+                {t("Name")}
               </label>
               <Field
                 type="text"
@@ -165,15 +170,17 @@ const RegisterCustomer = ({ setModelState }) => {
                   isDarkMode ? "white" : "gray-700"
                 } font-bold mb-2`}
               >
-                Phone
+                {t("Phone")}
               </label>
               <Field
                 type="tel"
                 id="phone"
                 name="phone"
                 placeholder="123-456-7890"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
+                className={`${
+                  isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                }`}
+              />
               <ErrorMessage
                 name="phone"
                 component="p"
@@ -187,15 +194,18 @@ const RegisterCustomer = ({ setModelState }) => {
                   isDarkMode ? "white" : "gray-700"
                 } font-bold mb-2`}
               >
-                Email <span className="text-xs text-gray-400">(optional)</span>
+                {t("Email")}{" "}
+                <span className="text-xs text-gray-400">({t("optional")})</span>
               </label>
               <Field
                 type="email"
                 id="email"
                 name="email"
-                placeholder="example@example.com"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
+                placeholder={t("example@example.com")}
+                className={`${
+                  isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                }`}
+              />
               <ErrorMessage
                 name="email"
                 component="p"
@@ -209,16 +219,18 @@ const RegisterCustomer = ({ setModelState }) => {
                   isDarkMode ? "white" : "gray-700"
                 } font-bold mb-2`}
               >
-                Birthday{" "}
-                <span className="text-xs text-gray-400">(optional)</span>
+                {t("Birthday")}{" "}
+                <span className="text-xs text-gray-400">({t("optional")})</span>
               </label>
               <div className="relative">
                 <Field
                   type="date"
                   id="birthday"
                   name="birthday"
-                  className={`${isDarkMode ? IconInputDarkStyle : IconInputLightStyle}`}
-                  />
+                  className={`${
+                    isDarkMode ? IconInputDarkStyle : IconInputLightStyle
+                  }`}
+                />
                 <FaBirthdayCake className="absolute left-2 top-3 text-gray-400" />
               </div>
               <ErrorMessage
@@ -234,17 +246,19 @@ const RegisterCustomer = ({ setModelState }) => {
                   isDarkMode ? "white" : "gray-700"
                 } font-bold mb-2`}
               >
-                Address{" "}
-                <span className="text-xs text-gray-400">(optional)</span>
+                {t("Address")}{" "}
+                <span className="text-xs text-gray-400">({t("optional")})</span>
               </label>
               <div className="relative">
                 <Field
                   type="text"
                   id="address"
                   name="address"
-                  placeholder="123 Main St"
-                  className={`${isDarkMode ? IconInputDarkStyle : IconInputLightStyle}`}
-                  />
+                  placeholder={t("123 Main St")}
+                  className={`${
+                    isDarkMode ? IconInputDarkStyle : IconInputLightStyle
+                  }`}
+                />
                 <FaAddressCard className="absolute left-2 top-3 text-gray-400" />
               </div>
               <ErrorMessage

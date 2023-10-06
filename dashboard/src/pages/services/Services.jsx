@@ -17,8 +17,10 @@ import {
   titleLightStyle,
 } from "../../components/Styled";
 import ServiceCard from "./components/ServiceCard";
+import { useTranslation } from "react-i18next";
 
 const Services = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [servicesPerPage, setServicesPerPage] = useState(10);
@@ -123,7 +125,7 @@ const Services = () => {
 
       return true;
     } catch (error) {
-      console.error(`Failed to delete service with ID ${id}.`, error);
+      console.error(error);
       return false;
     }
   };
@@ -166,7 +168,7 @@ const Services = () => {
       <Drawer
         modelState={updateModelState}
         setModelState={() => setUpdateModelState(!updateModelState)}
-        title={"Update Service"}
+        title={t("Update Service")}
         children={
           <UpdateService
             setModelState={setUpdateModelState}
@@ -178,26 +180,26 @@ const Services = () => {
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
             <FaTags className="mr-2 text-xl" />
-            <span>Services</span>
+            <span>{t("Services")}</span>
           </div>
         </div>
         <div className="relative w-full">
           <label className="sr-only" htmlFor="search">
             {" "}
-            Search{" "}
+            {t("Search")}{" "}
           </label>
 
           <input
             className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
             id="search"
             type="search"
-            placeholder="Search service..."
+            placeholder={t("Search service...")}
             value={searchQuery}
             onChange={handleSearchQueryChange}
           />
 
           <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
-            <span className="sr-only">Search</span>
+            <span className="sr-only">{t("Search")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
@@ -237,7 +239,7 @@ const Services = () => {
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
-                  Are you sure you want to delete the selected items?
+                  {t("Are you sure you want to delete the selected items?")}
                 </p>
                 <div className="flex mt-4">
                   <button
@@ -247,17 +249,17 @@ const Services = () => {
                     {!deleted ? (
                       <span className="flex items-center justify-center">
                         <FaSpinner className="animate-spin mr-2" />
-                        Deleting...
+                        {t("Deleting...")}
                       </span>
                     ) : (
-                      "Confirm"
+                      t("Confirm")
                     )}
                   </button>
                   <button
                     className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleCancel}
                   >
-                    Cancel
+                    {t("Cancel")}
                   </button>
                 </div>
               </div>
@@ -270,7 +272,7 @@ const Services = () => {
               htmlFor="services-per-page"
               className="mr-4 font-medium text-sm"
             >
-              Show:
+              {t("Show")}:
             </label>
             <select
               id="services-per-page"
@@ -290,7 +292,7 @@ const Services = () => {
               {`${firstServiceIndex + 1}-${Math.min(
                 lastServiceIndex,
                 filteredServices.length
-              )} of ${filteredServices.length}`}
+              )} ${t("of")} ${filteredServices.length}`}
             </span>
           </div>
           <div className="flex rounded shadow">
@@ -372,11 +374,10 @@ const Services = () => {
                     <input type="checkbox" onChange={handleSelectAll} />
                   </th>
                   <th className="py-3 px-4 text-left">#</th>
-                  <th className="py-3 px-4 text-left">Name</th>
-                  {/* <th className="py-3 px-4 text-left">Speciality</th> */}
-                  <th className="py-3 px-4 text-left">Price</th>
-                  <th className="py-3 px-4 text-left">Duration</th>
-                  <th className="py-3 px-4 text-center">Actions</th>
+                  <th className="py-3 px-4 text-left">{t("Name")}</th>
+                  <th className="py-3 px-4 text-left">{t("Price")}</th>
+                  <th className="py-3 px-4 text-left">{t("Duration")}</th>
+                  <th className="py-3 px-4 text-center">{t("Actions")}</th>
                 </tr>
               </thead>
               <tbody
@@ -398,7 +399,6 @@ const Services = () => {
                     </td>
                     <td className="py-2 px-4">{index + 1}</td>
                     <td className="py-2 px-4">{service.name}</td>
-                    {/* <td className="py-2 px-4">{service.speciality}</td> */}
                     <td className="py-2 px-4">{service.price}</td>
                     <td className="py-2 px-4">{service.duration}</td>
                     <td className="py-2 text-center pr-4">
@@ -423,7 +423,7 @@ const Services = () => {
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 } mb-2 py-2 pl-4 flex justify-start items-center rounded-md shadow`}
               >
-                <label className="font-semibold mr-2">Select All</label>
+                <label className="font-semibold mr-2">{t("Select All")}</label>
                 <input
                   type="checkbox"
                   checked={selectedIds.length === currentServices.length}
@@ -457,9 +457,11 @@ const Services = () => {
             <div className="flex flex-col items-center justify-center w-full mt-4">
               <div className="text-center">
                 <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
-                <p className="text-gray-800 text-lg mb-2">No services found</p>
+                <p className="text-gray-800 text-lg mb-2">
+                  {t("No services found")}
+                </p>
                 <p className="text-gray-500 text-sm">
-                  We couldn't find any services that match your search
+                  {t("We couldn't find any services that match your search")}
                 </p>
               </div>
             </div>

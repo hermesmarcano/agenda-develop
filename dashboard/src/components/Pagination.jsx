@@ -16,7 +16,7 @@ const Pagination = ({ itemsPerPage, totalItems, onPageChange }) => {
 
   const renderPageButtons = () => {
     const visiblePageButtons = [];
-    const maxVisibleButtons = 4; // Maximum number of visible buttons
+    const maxVisibleButtons = 4;
 
     let start = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
     let end = Math.min(start + maxVisibleButtons - 1, totalPages);
@@ -29,11 +29,10 @@ const Pagination = ({ itemsPerPage, totalItems, onPageChange }) => {
       visiblePageButtons.push(
         <button
           key={page}
-          className={`${
-            currentPage === page
+          className={`${currentPage === page
               ? "bg-gray-300 text-gray-700"
               : "bg-gray-100 text-gray-600"
-          } px-4 py-2 mx-1 rounded-md h-[40px]`}
+            } px-4 py-2 mx-1 rounded-md h-[40px]`}
           onClick={() => handlePageChange(page)}
         >
           {page}
@@ -49,11 +48,10 @@ const Pagination = ({ itemsPerPage, totalItems, onPageChange }) => {
       {totalPages > 1 && (
         <nav className="flex flex-wrap items-center justify-center">
           <button
-            className={`px-4 py-2 mx-1 rounded-md h-[40px] ${
-              currentPage === 1
+            className={`px-4 py-2 mx-1 rounded-md h-[40px] ${currentPage === 1
                 ? "bg-gray-100 text-gray-700  cursor-not-allowed"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-            }`}
+              }`}
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -99,11 +97,10 @@ const Pagination = ({ itemsPerPage, totalItems, onPageChange }) => {
           )}
 
           <button
-            className={`px-4 py-2 mx-1 rounded-md h-[40px] ${
-              currentPage === totalPages
+            className={`px-4 py-2 mx-1 rounded-md h-[40px] ${currentPage === totalPages
                 ? "bg-gray-100 text-gray-700  cursor-not-allowed"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-            }`}
+              }`}
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
           >

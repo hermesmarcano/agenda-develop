@@ -7,9 +7,19 @@ import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import { FaBirthdayCake, FaAddressCard } from "react-icons/fa"; // Import React Icons
 import { Store } from "react-notifications-component";
-import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, IconInputDarkStyle, IconInputLightStyle, UpdateButton } from "../../../components/Styled";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  Hourglass,
+  IconInputDarkStyle,
+  IconInputLightStyle,
+  UpdateButton,
+} from "../../../components/Styled";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const UpdateCustomer = ({ setModelState, customerId }) => {
+  const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const [customerData, setCustomerData] = useState(null);
@@ -55,9 +65,9 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
   const { shopId } = useContext(SidebarContext);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().required("Name is required"),
-    phone: Yup.string().required("Phone is required"),
-    email: Yup.string().email("Invalid email format"),
+    name: Yup.string().required(t("Name is required")),
+    phone: Yup.string().required(t("Phone is required")),
+    email: Yup.string().email(t("Invalid email format")),
     birthday: Yup.date().nullable(),
     address: Yup.string(),
   });
@@ -72,6 +82,10 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
       managerId: shopId,
     };
 
+    function getCurrentLanguage() {
+      return i18next.language || "en";
+    }
+
     const fetchRequest = async () => {
       try {
         const response = await instance.patch(
@@ -85,13 +99,13 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
           }
         );
         notify(
-          "Update",
-          `Customer "${values.name}" info has been updated`,
+          t("Update"),
+          `${t("Customer")} "${values.name}" ${t("info has been updated")}`,
           "success"
         );
         sendNotification(
-          "Customer updated - " +
-            new Intl.DateTimeFormat("en-GB", {
+          `${t("Customer updated")} - ` +
+            new Intl.DateTimeFormat(getCurrentLanguage(), {
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
@@ -101,8 +115,8 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
         );
       } catch (e) {
         notify(
-          "Error",
-          `Some of the data has already been registered before`,
+          t("Error"),
+          t(`Some of the data has already been registered before`),
           "danger"
         );
       }
@@ -141,10 +155,10 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
       >
         {({ isSubmitting }) => (
           <Form
-          className={`bg-${
-            isDarkMode ? "gray-800" : "white"
-          } rounded px-8 pt-6 pb-8 mb-4`}
-        >
+            className={`bg-${
+              isDarkMode ? "gray-800" : "white"
+            } rounded px-8 pt-6 pb-8 mb-4`}
+          >
             <div className="mb-4">
               <label
                 htmlFor="name"
@@ -152,15 +166,17 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
                   isDarkMode ? "white" : "gray-700"
                 }`}
               >
-                Name
+                {t("Name")}
               </label>
               <Field
                 type="text"
                 id="name"
                 name="name"
                 placeholder="John Doe"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
+                className={`${
+                  isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                }`}
+              />
               <ErrorMessage
                 name="name"
                 component="p"
@@ -174,15 +190,17 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
                   isDarkMode ? "white" : "gray-700"
                 }`}
               >
-                Phone
+                {t("Phone")}
               </label>
               <Field
                 type="tel"
                 id="phone"
                 name="phone"
                 placeholder="123-456-7890"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
+                className={`${
+                  isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                }`}
+              />
               <ErrorMessage
                 name="phone"
                 component="p"
@@ -196,15 +214,18 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
                   isDarkMode ? "white" : "gray-700"
                 }`}
               >
-                Email <span className="text-xs text-gray-400">(optional)</span>
+                {t("Email")}{" "}
+                <span className="text-xs text-gray-400">({t("optional")})</span>
               </label>
               <Field
                 type="email"
                 id="email"
                 name="email"
-                placeholder="example@example.com"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
+                placeholder={t("example@example.com")}
+                className={`${
+                  isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                }`}
+              />
               <ErrorMessage
                 name="email"
                 component="p"
@@ -218,16 +239,18 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
                   isDarkMode ? "white" : "gray-700"
                 }`}
               >
-                Birthday{" "}
-                <span className="text-xs text-gray-400">(optional)</span>
+                {t("Birthday")}{" "}
+                <span className="text-xs text-gray-400">({t("optional")})</span>
               </label>
               <div className="relative">
                 <Field
                   type="date"
                   id="birthday"
                   name="birthday"
-                  className={`${isDarkMode ? IconInputDarkStyle : IconInputLightStyle}`}
-                  />
+                  className={`${
+                    isDarkMode ? IconInputDarkStyle : IconInputLightStyle
+                  }`}
+                />
                 <FaBirthdayCake className="absolute left-2 top-3 text-gray-400" />
               </div>
               <ErrorMessage
@@ -243,16 +266,18 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
                   isDarkMode ? "white" : "gray-700"
                 }`}
               >
-                Address{" "}
-                <span className="text-xs text-gray-400">(optional)</span>
+                {t("Address")}{" "}
+                <span className="text-xs text-gray-400">({t("optional")})</span>
               </label>
               <div className="relative">
                 <Field
                   type="text"
                   id="address"
                   name="address"
-                  placeholder="123 Main St"
-                  className={`${isDarkMode ? IconInputDarkStyle : IconInputLightStyle}`}
+                  placeholder={t("123 Main St")}
+                  className={`${
+                    isDarkMode ? IconInputDarkStyle : IconInputLightStyle
+                  }`}
                 />
                 <FaAddressCard className="absolute left-2 top-3 text-gray-400" />
               </div>
@@ -263,8 +288,8 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
               />
             </div>
             <div className="flex items-center justify-end mt-8">
-                <UpdateButton disabled={isSubmitting} />
-              </div>
+              <UpdateButton disabled={isSubmitting} />
+            </div>
           </Form>
         )}
       </Formik>

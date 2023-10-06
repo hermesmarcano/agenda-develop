@@ -8,6 +8,8 @@ import UpdateAppointment from "./UpdateAppointment";
 import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
 import BlockCard from "./BlockCard";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const WeeklyScheduler = ({
   selectedWeekDate,
@@ -25,6 +27,7 @@ const WeeklyScheduler = ({
   setViewModelState,
   setViewBlockingModelState,
 }) => {
+  const { t } = useTranslation();
   const { isDarkMode } = useContext(DarkModeContext);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
   const { dateTime, setDateTime } = useContext(DateTimeContext);
@@ -80,10 +83,20 @@ const WeeklyScheduler = ({
     return startOfWeek;
   };
 
-  const handleBooking = (workingHours, day, time, appointment, blockedPeriod) => {
-    if(!workingHours) return;
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
-    if(blockedPeriod?.blocking > 0) {
+  const handleBooking = (
+    workingHours,
+    day,
+    time,
+    appointment,
+    blockedPeriod
+  ) => {
+    if (!workingHours) return;
+
+    if (blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
       setViewBlockingModelState(true);
       return;
@@ -97,24 +110,20 @@ const WeeklyScheduler = ({
     setSelectedAppointmentId(appointment ? appointment._id : "");
 
     !appointment && setModelState(true);
-    if(appointment && time < new Date()){
+    if (appointment && time < new Date()) {
       appointment && setViewModelState(true);
     }
-    if(appointment && time >= new Date()){
+    if (appointment && time >= new Date()) {
       appointment && setUpdateModelState(true);
     }
   };
 
   return (
     <>
-    <Popup 
+      <Popup
         isOpen={viewBlockingModelState}
         onClose={() => setViewBlockingModelState(!viewBlockingModelState)}
-        children={
-          <BlockCard
-            blockingPeriod={blockingPeriod}
-          />
-        }
+        children={<BlockCard blockingPeriod={blockingPeriod} />}
       />
       <ProcessAppointment
         isOpen={modelState}
@@ -153,7 +162,9 @@ const WeeklyScheduler = ({
               <th className="w-16 border-teal-600"></th>
               {daysOfWeek.map((day) => (
                 <th key={day.toISOString()} className="text-center px-2 py-2">
-                  {day.toLocaleDateString(undefined, { weekday: "long" })}
+                  {day.toLocaleDateString(getCurrentLanguage(), {
+                    weekday: "long",
+                  })}
                 </th>
               ))}
             </tr>
@@ -185,20 +196,23 @@ const WeeklyScheduler = ({
                       currentTime.setMinutes(time.getMinutes());
 
                       const workingHours =
-                      selectedProfessional?.officeHours.filter((officeHour) => {
-                        const professionalStartTime = new Date(currentTime)
-                        professionalStartTime.setHours(officeHour.startHour);
-                        professionalStartTime.setMinutes(0);
-                        const professionalEndTime = new Date(currentTime)
-                        professionalEndTime.setHours(officeHour.endHour);
-                        professionalEndTime.setMinutes(0);
-                            
-                        return (
-                          professionalStartTime <= currentTime &&
-                          professionalEndTime > currentTime
+                        selectedProfessional?.officeHours.filter(
+                          (officeHour) => {
+                            const professionalStartTime = new Date(currentTime);
+                            professionalStartTime.setHours(
+                              officeHour.startHour
+                            );
+                            professionalStartTime.setMinutes(0);
+                            const professionalEndTime = new Date(currentTime);
+                            professionalEndTime.setHours(officeHour.endHour);
+                            professionalEndTime.setMinutes(0);
+
+                            return (
+                              professionalStartTime <= currentTime &&
+                              professionalEndTime > currentTime
+                            );
+                          }
                         );
-                        
-                      })
 
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
@@ -303,7 +317,7 @@ const WeeklyScheduler = ({
                                     matchingAppointmentsFirstSlot[0]
                                       .blockingDuration && (
                                       <div>
-                                        Blocking Reason:{" "}
+                                        {t("Blocking Reason")}:{" "}
                                         {matchingAppointmentsFirstSlot[0]
                                           .blockingReason.length > 7
                                           ? matchingAppointmentsFirstSlot[0].blockingReason.slice(
@@ -321,11 +335,11 @@ const WeeklyScheduler = ({
                                         {matchingAppointments[0].customer.name}
                                       </span>
                                       <span className="text-gray-300">
-                                        Services:
+                                        {t("Services")}:
                                       </span>
                                       <span className="italic text-white ml-1 truncate">
                                         {matchingAppointments[0]?.service
-                                          ?.map((s) => s.name)  
+                                          ?.map((s) => s.name)
                                           .join(", ") || ""}
                                       </span>
                                     </>

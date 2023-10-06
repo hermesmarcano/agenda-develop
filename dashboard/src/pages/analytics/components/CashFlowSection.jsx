@@ -18,8 +18,11 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import instance from "../../../axiosConfig/axiosConfig";
 import { SaveButton } from "../../../components/Styled";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const CashFlowSection = () => {
+  const { t } = useTranslation();
   const [customers, setCustomers] = useState([]);
   const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -35,6 +38,10 @@ const CashFlowSection = () => {
   const [transactionsPerPage, setTransactionsPerPage] = useState(5);
   const [expenses, setExpenses] = useState([]);
   const { isDarkMode } = useContext(DarkModeContext);
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   useEffect(() => {
     instance
@@ -287,7 +294,7 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
-          <h2 className="text-lg font-bold mb-4">Earnings</h2>
+          <h2 className="text-lg font-bold mb-4">{t("Earnings")}</h2>
           <div
             className={`flex flex-col sm:flex-row items-center justify-between rounded-lg p-4
           ${isDarkMode ? "bg-gray-900" : "bg-gray-100"}
@@ -298,12 +305,12 @@ const CashFlowSection = () => {
                 ${totalEarningsLast30Days.toFixed(2)}
               </div>
               <div className="text-lg font-semibold text-gray-500">
-                Last 30 days
+                {t("Last 30 days")}
               </div>
             </div>
             <div className="flex flex-col items-end">
               <div className="text-lg font-semibold text-gray-500">
-                Total Earnings
+                {t("Total Earnings")}
               </div>
               <div className="text-2xl font-bold text-blue-500">
                 ${totalEarnings.toFixed(2)}
@@ -316,12 +323,14 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
-          <h2 className="text-lg font-bold mb-4">Total Customers</h2>
+          <h2 className="text-lg font-bold mb-4">{t("Total Customers")}</h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-green-500">
               {customers.length}
             </div>
-            <div className="text-lg font-semibold text-gray-500">All time</div>
+            <div className="text-lg font-semibold text-gray-500">
+              {t("All time")}
+            </div>
           </div>
         </div>
         <div
@@ -329,12 +338,14 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
-          <h2 className="text-lg font-bold mb-4">Total Sold Products</h2>
+          <h2 className="text-lg font-bold mb-4">{t("Total Sold Products")}</h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-red-500">
               {totalSoldProducts}
             </div>
-            <div className="text-lg font-semibold text-gray-500">All time</div>
+            <div className="text-lg font-semibold text-gray-500">
+              {t("All time")}
+            </div>
           </div>
         </div>
         <div
@@ -342,13 +353,15 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
         >
-          <h2 className="text-lg font-bold mb-4">Reserved Appointments</h2>
+          <h2 className="text-lg font-bold mb-4">
+            {t("Reserved Appointments")}
+          </h2>
           <div className="flex items-center justify-between">
             <div className="text-4xl font-bold text-purple-500">
               {nextSevenDaysAppointments.length}
             </div>
             <div className="text-lg font-semibold text-gray-500">
-              Next 7 days
+              {t("Next 7 days")}
             </div>
           </div>
         </div>
@@ -359,7 +372,9 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
       >
-        <h2 className="text-lg font-bold mb-4">Earnings/Expenses Per Day</h2>
+        <h2 className="text-lg font-bold mb-4">
+          {t("Earnings/Expenses Per Day")}
+        </h2>
         <div className="chart-container">
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dataByDay}>
@@ -391,7 +406,9 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
           >
-            <h2 className="text-lg font-bold mb-4">Earnings by Service</h2>
+            <h2 className="text-lg font-bold mb-4">
+              {t("Earnings by Service")}
+            </h2>
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={dataByService}>
@@ -411,7 +428,9 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
           >
-            <h2 className="text-lg font-bold mb-4">Earnings by Professional</h2>
+            <h2 className="text-lg font-bold mb-4">
+              {t("Earnings by Professional")}
+            </h2>
             <div className="chart-container">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={dataByProfessional}>
@@ -432,7 +451,7 @@ const CashFlowSection = () => {
         `}
       >
         <div className="flex justify-between items-center">
-          <h2 className="text-lg font-bold">Transactions</h2>
+          <h2 className="text-lg font-bold">{t("Transactions")}</h2>
         </div>
         <div className="mt-8">
           <div className="overflow-x-auto">
@@ -447,14 +466,14 @@ const CashFlowSection = () => {
                       : "bg-gray-50 text-gray-500"
                   }`}
                 >
-                  <th className="px-4 py-2">ID</th>
-                  <th className="px-4 py-2">Customer</th>
-                  <th className="px-4 py-2">Professional</th>
-                  <th className="px-4 py-2">Service</th>
-                  <th className="px-4 py-2">Product</th>
-                  <th>Method</th>
+                  <th className="px-4 py-2">{t("ID")}</th>
+                  <th className="px-4 py-2">{t("Customer")}</th>
+                  <th className="px-4 py-2">{t("Professional")}</th>
+                  <th className="px-4 py-2">{t("Service")}</th>
+                  <th className="px-4 py-2">{t("Product")}</th>
+                  <th>{t("Method")}</th>
                   <th>Date</th>
-                  <th className="px-4 py-2">Amount Paid</th>
+                  <th className="px-4 py-2">{t("Amount Paid")}</th>
                 </tr>
               </thead>
               <tbody
@@ -542,7 +561,7 @@ const CashFlowSection = () => {
                       <div className="flex flex-col items-center justify-center w-full mt-8">
                         <RiShoppingCartLine size={96} color="#CBD5E0" />
                         <p className="mt-8 text-gray-500 text-xl font-medium">
-                          No transactions yet.
+                          {t("No transactions yet.")}
                         </p>
                       </div>
                     </td>
@@ -568,7 +587,7 @@ const CashFlowSection = () => {
         ${isDarkMode ? "bg-gray-800" : "bg-white"}
         `}
       >
-        <h2 className="text-lg font-bold mb-4">Expenses</h2>
+        <h2 className="text-lg font-bold mb-4">{t("Expenses")}</h2>
         <Formik
           initialValues={{
             name: "",
@@ -601,7 +620,7 @@ const CashFlowSection = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block mb-2 font-medium" htmlFor="name">
-                    Name
+                    {t("Name")}
                   </label>
                   <Field
                     type="text"
@@ -622,7 +641,7 @@ const CashFlowSection = () => {
                     className="block mb-2 font-medium"
                     htmlFor="description"
                   >
-                    Description
+                    {t("Description")}
                   </label>
                   <Field
                     type="text"
@@ -640,7 +659,7 @@ const CashFlowSection = () => {
                 </div>
                 <div>
                   <label className="block mb-2 font-medium" htmlFor="value">
-                    Value
+                    {t("Value")}
                   </label>
                   <Field
                     type="number"
@@ -658,7 +677,7 @@ const CashFlowSection = () => {
                 </div>
                 <div>
                   <label className="block mb-2 font-medium" htmlFor="date">
-                    Date
+                    {t("Date")}
                   </label>
                   <Field
                     type="date"
@@ -667,6 +686,7 @@ const CashFlowSection = () => {
                     className={`w-full p-2 border border-gray-300 rounded-lg ${
                       isDarkMode ? "bg-gray-500" : "bg-gray-100"
                     }`}
+                    locale={getCurrentLanguage()}
                   />
                   <ErrorMessage
                     name="date"
@@ -676,9 +696,7 @@ const CashFlowSection = () => {
                 </div>
               </div>
               <div className="mt-4">
-                    <SaveButton 
-                       disabled={isSubmitting}       
-                    />
+                <SaveButton disabled={isSubmitting} />
               </div>
             </Form>
           )}

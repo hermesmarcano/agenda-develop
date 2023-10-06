@@ -15,8 +15,10 @@ import {
   titleLightStyle,
 } from "../../components/Styled";
 import CustomerCard from "./components/CustomerCard";
+import { useTranslation } from "react-i18next";
 
 const Customers = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [customersPerPage, setCustomersPerPage] = useState(10);
@@ -90,10 +92,8 @@ const Customers = () => {
   const handleCheckboxChange = (id) => {
     setSelectedIds((prevSelectedIds) => {
       if (prevSelectedIds.includes(id)) {
-        // ID already exists, remove it from the array
         return prevSelectedIds.filter((selectedId) => selectedId !== id);
       } else {
-        // ID doesn't exist, add it to the array
         return [...prevSelectedIds, id];
       }
     });
@@ -101,10 +101,8 @@ const Customers = () => {
 
   const handleSelectAll = () => {
     if (selectedIds.length === currentCustomers.length) {
-      // All IDs are selected, deselect all IDs
       setSelectedIds([]);
     } else {
-      // Not all IDs are selected, select all IDs
       const allIds = currentCustomers.map((customer) => customer._id);
       setSelectedIds(allIds);
     }
@@ -119,12 +117,10 @@ const Customers = () => {
           },
         })
         .then((response) => {
-          // Handle successful deletion
           setDeleting(false);
         })
         .catch((error) => {
-          // Handle error
-          console.error(`Failed to delete customer with ID ${id}.`, error);
+          console.error(error);
         });
     });
   };
@@ -151,7 +147,7 @@ const Customers = () => {
       <Drawer
         modelState={updateModelState}
         setModelState={() => setUpdateModelState(!updateModelState)}
-        title={"Update Customer"}
+        title={t("Update Customer")}
         children={
           <UpdateCustomer
             setModelState={setUpdateModelState}
@@ -162,28 +158,28 @@ const Customers = () => {
       <div className="p-6 overflow-y-auto h-full">
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
-            <FaUsers className="mr-2 text-xl" /> {/* Add the user tie icon */}
-            <span>Customers</span>
+            <FaUsers className="mr-2 text-xl" />
+            <span>{t("Customers")}</span>
           </div>
         </div>
 
         <div className="relative w-full">
           <label className="sr-only" htmlFor="search">
             {" "}
-            Search{" "}
+            {t("Search")}{" "}
           </label>
 
           <input
             className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
             id="search"
             type="search"
-            placeholder="Search customers..."
+            placeholder={t("Search customers...")}
             value={searchQuery}
             onChange={handleSearchQueryChange}
           />
 
           <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
-            <span className="sr-only">Search</span>
+            <span className="sr-only">{t("Search")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
@@ -210,7 +206,7 @@ const Customers = () => {
           <Drawer
             modelState={registerModelState}
             setModelState={() => setRegisterModelState(!registerModelState)}
-            title={"Register Customer"}
+            title={t("Register Customer")}
             children={
               <RegisterCustomer setModelState={setRegisterModelState} />
             }
@@ -226,20 +222,20 @@ const Customers = () => {
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
-                  Are you sure you want to delete the selected items?
+                  {t("Are you sure you want to delete the selected items?")}
                 </p>
                 <div className="flex mt-4">
                   <button
                     className="ml-2 bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleRemoveSelected}
                   >
-                    Confirm
+                    {t("Confirm")}
                   </button>
                   <button
                     className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleCancel}
                   >
-                    Cancel
+                    {t("Cancel")}
                   </button>
                 </div>
               </div>
@@ -252,7 +248,7 @@ const Customers = () => {
               htmlFor="customers-per-page"
               className="mr-4 font-medium text-sm"
             >
-              Show:
+              {t("Show")}:
             </label>
             <select
               id="customers-per-page"
@@ -272,7 +268,7 @@ const Customers = () => {
               {`${firstCustomerIndex + 1}-${Math.min(
                 lastCustomerIndex,
                 filteredCustomers.length
-              )} of ${filteredCustomers.length}`}
+              )} ${t("of")} ${filteredCustomers.length}`}
             </span>
           </div>
           <div className="flex rounded shadow">
@@ -357,10 +353,12 @@ const Customers = () => {
                       onChange={handleSelectAll}
                     />
                   </th>
-                  <th className="py-3 px-4 text-left">Name</th>
-                  <th className="py-3 text-left">Phone</th>
-                  <th className="py-3 text-left">Payments $</th>
-                  <th className="py-3 pr-6 text-center">Actions</th>
+                  <th className="py-3 px-4 text-left">{t("Name")}</th>
+                  <th className="py-3 text-left">{t("Phone")}</th>
+                  <th className="py-3 text-left">
+                    {t("Payments")} {t("$")}
+                  </th>
+                  <th className="py-3 pr-6 text-center">{t("Actions")}</th>
                 </tr>
               </thead>
               <tbody
@@ -407,7 +405,7 @@ const Customers = () => {
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 } mb-2 py-2 pl-4 flex justify-start items-center rounded-md shadow`}
               >
-                <label className="font-semibold mr-2">Select All</label>
+                <label className="font-semibold mr-2">{t("Select All")}</label>
                 <input
                   type="checkbox"
                   checked={selectedIds.length === currentCustomers.length}
@@ -443,9 +441,11 @@ const Customers = () => {
             <div className="flex flex-col items-center justify-center w-full mt-4">
               <div className="text-center">
                 <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
-                <p className="text-gray-800 text-lg mb-2">No customers found</p>
+                <p className="text-gray-800 text-lg mb-2">
+                  {t("No customers found")}
+                </p>
                 <p className="text-gray-500 text-sm">
-                  We couldn't find any customers that match your search
+                  {t("We couldn't find any customers that match your search")}
                 </p>
               </div>
             </div>

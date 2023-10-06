@@ -11,10 +11,17 @@ import instance from "../../axiosConfig/axiosConfig";
 import Drawer from "../../components/Drawer";
 import { storage } from "../../services/firebaseStorage";
 import { deleteObject, ref } from "firebase/storage";
-import { AddButton, RemoveSelectedButton, titleDarkStyle, titleLightStyle } from "../../components/Styled";
+import {
+  AddButton,
+  RemoveSelectedButton,
+  titleDarkStyle,
+  titleLightStyle,
+} from "../../components/Styled";
 import ProductCard from "./components/ProductCard";
+import { useTranslation } from "react-i18next";
 
 const Products = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [productsPerPage, setProductsPerPage] = useState(10);
@@ -119,7 +126,7 @@ const Products = () => {
 
       return true;
     } catch (error) {
-      console.error(`Failed to delete product with ID ${id}.`, error);
+      console.error(error);
       return false;
     }
   };
@@ -162,7 +169,7 @@ const Products = () => {
       <Drawer
         modelState={updateModelState}
         setModelState={() => setUpdateModelState(!updateModelState)}
-        title={"Update Product"}
+        title={t("Update Product")}
         children={
           <UpdateProduct
             setModelState={setUpdateModelState}
@@ -174,26 +181,26 @@ const Products = () => {
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
             <FaShoppingBag className="mr-2 text-xl" />
-            <span>Products</span>
+            <span>{t("Products")}</span>
           </div>
         </div>
         <div className="relative w-full">
           <label className="sr-only" htmlFor="search">
             {" "}
-            Search{" "}
+            {t("Search")}{" "}
           </label>
 
           <input
             className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
             id="search"
             type="search"
-            placeholder="Search product..."
+            placeholder={t("Search product...")}
             value={searchQuery}
             onChange={handleSearchQueryChange}
           />
 
           <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
-            <span className="sr-only">Search</span>
+            <span className="sr-only">{t("Search")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
@@ -213,13 +220,11 @@ const Products = () => {
 
         <div className="flex items-center my-4">
           <div className="flex items-center my-4">
-          <AddButton 
-            onClick={() => setRegisterModelState(true)}
-            />
+            <AddButton onClick={() => setRegisterModelState(true)} />
             <Drawer
               modelState={registerModelState}
               setModelState={() => setRegisterModelState(!registerModelState)}
-              title={"Register Product"}
+              title={t("Register Product")}
               children={
                 <RegisterProduct setModelState={setRegisterModelState} />
               }
@@ -235,7 +240,7 @@ const Products = () => {
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
-                  Are you sure you want to delete the selected items?
+                  {t("Are you sure you want to delete the selected items?")}
                 </p>
                 <div className="flex mt-4">
                   <button
@@ -245,17 +250,17 @@ const Products = () => {
                     {!deleted ? (
                       <span className="flex items-center justify-center">
                         <FaSpinner className="animate-spin mr-2" />
-                        Deleting...
+                        {t("Deleting...")}
                       </span>
                     ) : (
-                      "Confirm"
+                      t("Confirm")
                     )}
                   </button>
                   <button
                     className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleCancel}
                   >
-                    Cancel
+                    {t("Cancel")}
                   </button>
                 </div>
               </div>
@@ -268,7 +273,7 @@ const Products = () => {
               htmlFor="products-per-page"
               className="mr-4 font-medium text-sm"
             >
-              Show:
+              {t("Show")}:
             </label>
             <select
               id="products-per-page"
@@ -288,7 +293,7 @@ const Products = () => {
               {`${firstProductIndex + 1}-${Math.min(
                 lastProductIndex,
                 filteredProducts.length
-              )} of ${filteredProducts.length}`}
+              )} ${t("of")} ${filteredProducts.length}`}
             </span>
           </div>
           <div className="flex rounded shadow">
@@ -350,72 +355,76 @@ const Products = () => {
           </div>
         </div>
         <div className="overflow-x-auto">
-        {view === "table" ? (
-          <table
-            className={`w-full table-auto border ${
-              isDarkMode
-                ? "border-gray-700 divide-gray-700"
-                : "border-gray-200 divide-gray-200"
-            }`}
-          >
-            <thead>
-              <tr
-                className={`text-xs uppercase tracking-wider ${
-                  isDarkMode
-                    ? "bg-gray-500 text-gray-800"
-                    : "bg-gray-50 text-gray-500"
-                }`}
-              >
-                <th className="py-3 pl-4 text-start">
-                  <input type="checkbox" onChange={handleSelectAll} />
-                </th>
-                <th className="py-3 px-4 text-left">#</th>
-                <th className="py-3 text-left">Name</th>
-                <th className="py-3 pr-6 text-left">Speciality</th>
-                <th className="py-3 pr-6 text-left">Price R$</th>
-                <th className="py-3 pr-6 text-left">Cost BRL</th>
-                <th className="py-3 pr-6 text-left">Stock</th>
-                <th className="py-3 pr-6 text-center">Actions</th>
-              </tr>
-            </thead>
-            <tbody
-              className={`divide-y ${
-                isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+          {view === "table" ? (
+            <table
+              className={`w-full table-auto border ${
+                isDarkMode
+                  ? "border-gray-700 divide-gray-700"
+                  : "border-gray-200 divide-gray-200"
               }`}
             >
-              {currentProducts.map((product, index) => (
+              <thead>
                 <tr
-                  key={product.name}
-                  className="border-b border-gray-300 text-xs"
+                  className={`text-xs uppercase tracking-wider ${
+                    isDarkMode
+                      ? "bg-gray-500 text-gray-800"
+                      : "bg-gray-50 text-gray-500"
+                  }`}
                 >
-                  <td className="py-2 pl-4 text-start">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(product._id)}
-                      onChange={() => handleCheckboxChange(product._id)}
-                    />
-                  </td>
-                  <td className="py-2 px-3 text-left">{index + 1}</td>
-                  <td className="py-2 text-left">{product.name}</td>
-                  <td className="py-2 text-left">{product.speciality}</td>
-                  <td className="py-2 text-left">{product.price}</td>
-                  <td className="py-2 text-left">{product.costBRL}</td>
-                  <td className="py-2 text-left">{product.stock}</td>
-                  <td className="py-2 text-center pe-2">
-                    <button
-                      className="text-teal-500 hover:text-teal-700"
-                      onClick={() => {
-                        setUpdateModelState(!updateModelState);
-                        setSelectedProductId(product._id);
-                      }}
-                    >
-                      <FaEdit />
-                    </button>
-                  </td>
+                  <th className="py-3 pl-4 text-start">
+                    <input type="checkbox" onChange={handleSelectAll} />
+                  </th>
+                  <th className="py-3 px-4 text-left">#</th>
+                  <th className="py-3 text-left">{t("Name")}</th>
+                  <th className="py-3 pr-6 text-left">{t("Speciality")}</th>
+                  <th className="py-3 pr-6 text-left">
+                    {t("Price")} {t("$")}
+                  </th>
+                  <th className="py-3 pr-6 text-left">
+                    {t("Cost")} {t("BRL")}
+                  </th>
+                  <th className="py-3 pr-6 text-left">{t("Stock")}</th>
+                  <th className="py-3 pr-6 text-center">{t("Actions")}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody
+                className={`divide-y ${
+                  isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+                }`}
+              >
+                {currentProducts.map((product, index) => (
+                  <tr
+                    key={product.name}
+                    className="border-b border-gray-300 text-xs"
+                  >
+                    <td className="py-2 pl-4 text-start">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(product._id)}
+                        onChange={() => handleCheckboxChange(product._id)}
+                      />
+                    </td>
+                    <td className="py-2 px-3 text-left">{index + 1}</td>
+                    <td className="py-2 text-left">{product.name}</td>
+                    <td className="py-2 text-left">{product.speciality}</td>
+                    <td className="py-2 text-left">{product.price}</td>
+                    <td className="py-2 text-left">{product.costBRL}</td>
+                    <td className="py-2 text-left">{product.stock}</td>
+                    <td className="py-2 text-center pe-2">
+                      <button
+                        className="text-teal-500 hover:text-teal-700"
+                        onClick={() => {
+                          setUpdateModelState(!updateModelState);
+                          setSelectedProductId(product._id);
+                        }}
+                      >
+                        <FaEdit />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
             <>
               <div
@@ -423,7 +432,7 @@ const Products = () => {
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 } mb-2 py-2 pl-4 flex justify-start items-center rounded-md shadow`}
               >
-                <label className="font-semibold mr-2">Select All</label>
+                <label className="font-semibold mr-2">{t("Select All")}</label>
                 <input
                   type="checkbox"
                   checked={selectedIds.length === currentProducts.length}
@@ -457,9 +466,11 @@ const Products = () => {
             <div className="flex flex-col items-center justify-center w-full mt-4">
               <div className="text-center">
                 <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
-                <p className="text-gray-800 text-lg mb-2">No products found</p>
+                <p className="text-gray-800 text-lg mb-2">
+                  {t("No products found")}
+                </p>
                 <p className="text-gray-500 text-sm">
-                  We couldn't find any products that match your search
+                  {t("We couldn't find any products that match your search")}
                 </p>
               </div>
             </div>

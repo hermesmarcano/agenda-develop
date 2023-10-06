@@ -13,8 +13,10 @@ import { DarkModeContext } from "../../context/DarkModeContext";
 import instance from "../../axiosConfig/axiosConfig";
 import { titleDarkStyle, titleLightStyle } from "../../components/Styled";
 import { FaChartLine } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const Analytics = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const [totalEarnings, setTotalEarnings] = useState(0);
@@ -172,31 +174,28 @@ const Analytics = () => {
   return (
     <div className="flex w-full flex-col h-full p-6">
       <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
-          <div className="flex items-center justify-center">
-            <FaChartLine className="mr-2 text-xl" />
-            <span>Analytics</span>
-          </div>
+        <div className="flex items-center justify-center">
+          <FaChartLine className="mr-2 text-xl" />
+          <span>{t('Analytics')}</span>
         </div>
+      </div>
       <div className="flex w-full flex-col gap- h-full overflow-y-auto p-6">
         <div className="flex justify-between mb-4">
           <div className="grid grid-cols-4 gap-1 mx-auto">
             <div>
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${
-                  currentSection === 1
+                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 1
                     ? ` text-blue-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto 
-                    ${
-                      isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
-                        : " hover:bg-gray-300 focus:bg-gray-300 "
+                    ${isDarkMode
+                      ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
+                      : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
-                } focus:outline-none focus:text-blue-500 hover:text-blue-500 px-2 ${
-                  currentSection !== 1 && "hover:rounded-md"
-                }
+                  } focus:outline-none focus:text-blue-500 hover:text-blue-500 px-2 ${currentSection !== 1 && "hover:rounded-md"
+                  }
                 `}
                 onClick={() => setCurrentSection(1)}
               >
@@ -205,34 +204,30 @@ const Analytics = () => {
                     <TiTicket className="w-5 h-5" />
                   </span>
                   <span
-                    className={`${
-                      currentSection === 1 ? "animate-drop" : "opacity-100"
-                    }`}
+                    className={`${currentSection === 1 ? "animate-drop" : "opacity-100"
+                      }`}
                   >
-                    Tickets
+                    {t('Tickets')}
                   </span>
                 </span>
               </button>
-              
+
             </div>
 
             <div>
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${
-                  currentSection === 2
+                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 2
                     ? ` text-green-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto 
-                    ${
-                      isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
-                        : " hover:bg-gray-300 focus:bg-gray-300 "
+                    ${isDarkMode
+                      ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
+                      : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
-                } focus:outline-none focus:text-green-500 hover:text-green-500 px-2 ${
-                  currentSection !== 2 && "hover:rounded-md"
-                }
+                  } focus:outline-none focus:text-green-500 hover:text-green-500 px-2 ${currentSection !== 2 && "hover:rounded-md"
+                  }
                 `}
                 onClick={() => setCurrentSection(2)}
               >
@@ -241,34 +236,30 @@ const Analytics = () => {
                     <IoMdCash className="w-5 h-5" />
                   </span>
                   <span
-                    className={`${
-                      currentSection === 2 ? "animate-drop" : "opacity-100"
-                    }`}
+                    className={`${currentSection === 2 ? "animate-drop" : "opacity-100"
+                      }`}
                   >
-                    Cash Flow
+                    {t('Cash Flow')}
                   </span>
                 </span>
               </button>
-              
+
             </div>
 
             <div>
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${
-                  currentSection === 3
+                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 3
                     ? ` text-yellow-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto 
-                    ${
-                      isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
-                        : " hover:bg-gray-300 focus:bg-gray-300 "
+                    ${isDarkMode
+                      ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
+                      : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
-                } focus:outline-none focus:text-yellow-500 hover:text-yellow-500 px-2 ${
-                  currentSection !== 3 && "hover:rounded-md"
-                }
+                  } focus:outline-none focus:text-yellow-500 hover:text-yellow-500 px-2 ${currentSection !== 3 && "hover:rounded-md"
+                  }
                 `}
                 onClick={() => setCurrentSection(3)}
               >
@@ -277,34 +268,30 @@ const Analytics = () => {
                     <BsCreditCard className="w-5 h-5" />
                   </span>
                   <span
-                    className={`${
-                      currentSection === 3 ? "animate-drop" : "opacity-100"
-                    }`}
+                    className={`${currentSection === 3 ? "animate-drop" : "opacity-100"
+                      }`}
                   >
-                    Commission
+                    {t('Commission')}
                   </span>
                 </span>
               </button>
-              
+
             </div>
 
             <div>
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${
-                  currentSection === 4
+                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 4
                     ? ` text-red-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
                     : `lg:w-auto 
-                    ${
-                      isDarkMode
-                        ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
-                        : " hover:bg-gray-300 focus:bg-gray-300 "
+                    ${isDarkMode
+                      ? " hover:bg-gray-700 focus:bg-gray-700 text-gray-50"
+                      : " hover:bg-gray-300 focus:bg-gray-300 "
                     }
                     `
-                } focus:outline-none focus:text-red-500 hover:text-red-500 px-2 ${
-                  currentSection !== 4 && "hover:rounded-md"
-                }
+                  } focus:outline-none focus:text-red-500 hover:text-red-500 px-2 ${currentSection !== 4 && "hover:rounded-md"
+                  }
                 `}
                 onClick={() => setCurrentSection(4)}
               >
@@ -313,15 +300,14 @@ const Analytics = () => {
                     <AiOutlineDollarCircle className="w-5 h-5" />
                   </span>
                   <span
-                    className={`${
-                      currentSection === 4 ? "animate-drop" : "opacity-100"
-                    }`}
+                    className={`${currentSection === 4 ? "animate-drop" : "opacity-100"
+                      }`}
                   >
-                    Bills
+                    {t('Bills')}
                   </span>
                 </span>
               </button>
-              
+
             </div>
           </div>
         </div>

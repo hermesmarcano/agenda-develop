@@ -6,20 +6,11 @@ import SideMenu from "../components/SideMenu.jsx";
 import Side from "../components/Side.jsx"
 import { useContext } from "react";
 import { SidebarContext } from "../context/SidebarContext";
-import { AlertContext } from "../context/AlertContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 
 const PrivateRoutes = () => {
   const isAuthenticated = !!localStorage.getItem("ag_app_shop_token");
   const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
-  const {
-    alertOn,
-    setAlertOn,
-    alertMsg,
-    setAlertMsg,
-    alertMsgType,
-    setAlertMsgType,
-  } = useContext(AlertContext);
   const { isDarkMode } = useContext(DarkModeContext);
 
   return isAuthenticated ? (
@@ -38,7 +29,7 @@ const PrivateRoutes = () => {
             }
           `}
         >
-        {/* <div
+          {/* <div
           className={`bg-gray-200
          flex-1
           ${isDarkMode

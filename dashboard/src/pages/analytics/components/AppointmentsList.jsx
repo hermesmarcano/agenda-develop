@@ -21,8 +21,11 @@ import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import instance from "../../../axiosConfig/axiosConfig";
 import { RemoveSelectedButton } from "../../../components/Styled";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const AppointmentsList = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,6 +40,10 @@ const AppointmentsList = () => {
   useEffect(() => {
     fetchAppointmentData();
   }, [isDeleting]);
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   const fetchAppointmentData = () =>
     instance
@@ -87,10 +94,11 @@ const AppointmentsList = () => {
     pagination.push(
       <button
         key={i}
-        className={`${currentPage === i
-          ? "bg-gray-200 text-gray-700"
-          : "bg-gray-100 text-gray-600"
-          } px-4 py-2 mx-1 rounded-md`}
+        className={`${
+          currentPage === i
+            ? "bg-gray-200 text-gray-700"
+            : "bg-gray-100 text-gray-600"
+        } px-4 py-2 mx-1 rounded-md`}
         onClick={() => handlePageClick(i)}
       >
         {i}
@@ -198,20 +206,20 @@ const AppointmentsList = () => {
       <div className="relative w-full">
         <label className="sr-only" htmlFor="search">
           {" "}
-          Search{" "}
+          {t("Search")}{" "}
         </label>
 
         <input
           className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
           id="search"
           type="search"
-          placeholder="Search service..."
+          placeholder={t("Search service...")}
           value={searchQuery}
           onChange={handleSearchQueryChange}
         />
 
         <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
-          <span className="sr-only">Search</span>
+          <span className="sr-only">{t("Search")}</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-4 w-4"
@@ -239,20 +247,20 @@ const AppointmentsList = () => {
           children={
             <div className="bg-white rounded-md p-4 flex justify-center items-center ">
               <p className="text-gray-700">
-                Are you sure you want to delete the selected items?
+                {t("Are you sure you want to delete the selected items?")}
               </p>
               <div className="flex mt-4">
                 <button
                   className="ml-2 bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded"
                   onClick={handleRemoveSelected}
                 >
-                  Confirm
+                  {t("Confirm")}
                 </button>
                 <button
                   className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
                   onClick={handleCancel}
                 >
-                  Cancel
+                  {t("Cancel")}
                 </button>
               </div>
             </div>
@@ -261,14 +269,15 @@ const AppointmentsList = () => {
       </div>
       <div className="mb-6">
         <label htmlFor="clients-per-page" className="mr-4 font-medium text-sm">
-          Show:
+          {t("Show")}:
         </label>
         <select
           id="clients-per-page"
-          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${isDarkMode
-            ? "bg-gray-500 text-gray-800"
-            : "bg-gray-50 text-gray-500"
-            }`}
+          className={`border border-gray-300 rounded px-2 py-1 mr-4 text-sm ${
+            isDarkMode
+              ? "bg-gray-500 text-gray-800"
+              : "bg-gray-50 text-gray-500"
+          }`}
           value={appointmentsPerPage}
           onChange={handleAppointmentsPerPageChange}
         >
@@ -285,17 +294,19 @@ const AppointmentsList = () => {
       </div>
       <div className="overflow-x-auto">
         <table
-          className={`w-full table-auto border ${isDarkMode
-            ? "border-gray-700 divide-gray-700"
-            : "border-gray-200 divide-gray-200"
-            }`}
+          className={`w-full table-auto border ${
+            isDarkMode
+              ? "border-gray-700 divide-gray-700"
+              : "border-gray-200 divide-gray-200"
+          }`}
         >
           <thead>
             <tr
-              className={`text-xs uppercase tracking-wider ${isDarkMode
-                ? "bg-gray-500 text-gray-800"
-                : "bg-gray-50 text-gray-500"
-                }`}
+              className={`text-xs uppercase tracking-wider ${
+                isDarkMode
+                  ? "bg-gray-500 text-gray-800"
+                  : "bg-gray-50 text-gray-500"
+              }`}
             >
               <th className="py-3 pl-3">
                 <input
@@ -304,18 +315,19 @@ const AppointmentsList = () => {
                   onChange={handleSelectAll}
                 />
               </th>
-              <th className="py-3 pl-2 text-left">Client</th>
-              <th className="py-3 text-left">Resbonsible</th>
-              <th className="py-3 text-left">Services</th>
-              <th className="py-3 pr-6 text-left">Time</th>
-              <th className="py-3 pr-6 text-left">Date</th>
-              <th className="py-3 px-6 text-left">Payment status</th>
-              <th className="py-3 pr-6 text-right">Action</th>
+              <th className="py-3 pl-2 text-left">{t("Client")}</th>
+              <th className="py-3 text-left">{t("Resbonsible")}</th>
+              <th className="py-3 text-left">{t("Services")}</th>
+              <th className="py-3 pr-6 text-left">{t("Time")}</th>
+              <th className="py-3 pr-6 text-left">{t("Date")}</th>
+              <th className="py-3 px-6 text-left">{t("Payment status")}</th>
+              <th className="py-3 pr-6 text-right">{t("Actions")}</th>
             </tr>
           </thead>
           <tbody
-            className={`divide-y ${isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
-              }`}
+            className={`divide-y ${
+              isDarkMode ? "bg-gray-700 text-gray-200" : "bg-white"
+            }`}
           >
             {currentAppointments.map((appointment) => (
               <tr
@@ -337,7 +349,7 @@ const AppointmentsList = () => {
                   ))}
                 </td>
                 <td className="py-2">
-                  {new Intl.DateTimeFormat("en", {
+                  {new Intl.DateTimeFormat(getCurrentLanguage(), {
                     timeStyle: "short",
                   }).format(new Date(appointment.dateTime))}
                 </td>
@@ -383,10 +395,10 @@ const AppointmentsList = () => {
             <div className="text-center">
               <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
               <p className="text-gray-800 text-lg mb-2">
-                No appointments found
+                {t("No appointments found")}
               </p>
               <p className="text-gray-500 text-sm">
-                We couldn't find any appointments that match your search
+                {t("We couldn't find any appointments that match your search")}
               </p>
             </div>
           </div>
@@ -395,10 +407,11 @@ const AppointmentsList = () => {
       <div className="flex justify-center mt-6">
         <div className="flex">
           <button
-            className={`${currentPage === 1
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-              } px-4 py-2 mx-1 rounded-md`}
+            className={`${
+              currentPage === 1
+                ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-300"
+            } px-4 py-2 mx-1 rounded-md`}
             onClick={() => handlePageClick(currentPage - 1)}
             disabled={currentPage === 1}
           >
@@ -406,10 +419,11 @@ const AppointmentsList = () => {
           </button>
           {pagination}
           <button
-            className={`${currentPage === totalPages
-              ? "bg-gray-300 text-gray-700 cursor-not-allowed"
-              : "bg-gray-100 text-gray-600 hover:bg-gray-300"
-              } px-4 py-2 mx-1 rounded-md`}
+            className={`${
+              currentPage === totalPages
+                ? "bg-gray-300 text-gray-700 cursor-not-allowed"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-300"
+            } px-4 py-2 mx-1 rounded-md`}
             onClick={() => handlePageClick(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
@@ -428,31 +442,36 @@ const AppointmentButton = ({
   setUpdateModelState,
   renderActionIcon,
 }) => {
+  const { t } = useTranslation();
   const isDisabled = new Date(appointment.dateTime) <= new Date();
   const { isDarkMode } = useContext(DarkModeContext);
 
   return (
     <td className="py-2 pr-2 flex items-center justify-end">
       <div
-        className={`flex items-center space-x-2 ${isDisabled ? "cursor-default" : "cursor-pointer"
-          } relative`}
+        className={`flex items-center space-x-2 ${
+          isDisabled ? "cursor-default" : "cursor-pointer"
+        } relative`}
       >
         <button
-          className={`px-2 py-1 ${!isDisabled
-            ? `${isDarkMode
-              ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
-              : "text-teal-800 bg-teal-500 hover:bg-teal-600"
-            }`
-            : `${isDarkMode
-              ? "text-gray-800 bg-gray-600"
-              : "text-gray-500 bg-gray-100"
-            }
+          className={`px-2 py-1 ${
+            !isDisabled
+              ? `${
+                  isDarkMode
+                    ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
+                    : "text-teal-800 bg-teal-500 hover:bg-teal-600"
+                }`
+              : `${
+                  isDarkMode
+                    ? "text-gray-800 bg-gray-600"
+                    : "text-gray-500 bg-gray-100"
+                }
               `
-            } rounded-md focus:outline-none focus:ring focus:ring-blue-300 flex items-center`}
+          } rounded-md focus:outline-none focus:ring focus:ring-blue-300 flex items-center`}
           onClick={() => setUpdateModelState(true)}
           disabled={isDisabled}
         >
-          <span className="mr-1">Update</span>
+          <span className="mr-1">{t("Update")}</span>
           {renderActionIcon(appointment.status)}
         </button>
       </div>

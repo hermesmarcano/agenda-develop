@@ -9,6 +9,7 @@ import { DateTimeContext } from "../../../context/DateTimeContext";
 import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
 import { FaUserCircle } from "react-icons/fa";
 import BlockCard from "./BlockCard";
+import { useTranslation } from "react-i18next";
 const DailyScheduler = ({
   date,
   onTimeSlotSelect,
@@ -24,6 +25,7 @@ const DailyScheduler = ({
   setViewModelState,
   setViewBlockingModelState,
 }) => {
+  const { t } = useTranslation();
   const { isDarkMode } = useContext(DarkModeContext);
   const { dateTime, setDateTime } = useContext(DateTimeContext);
   const { setProfessionalId } = useContext(ProfessionalIdContext);
@@ -58,10 +60,16 @@ const DailyScheduler = ({
     hour12: false,
   });
 
-  const handleBooking = (workingHours, time, professionalId, appointment, blockedPeriod) => {
-    if(!workingHours) return;
+  const handleBooking = (
+    workingHours,
+    time,
+    professionalId,
+    appointment,
+    blockedPeriod
+  ) => {
+    if (!workingHours) return;
 
-    if(blockedPeriod?.blocking > 0) {
+    if (blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
       setViewBlockingModelState(true);
       return;
@@ -73,24 +81,20 @@ const DailyScheduler = ({
     setSelectedAppointmentId(appointment ? appointment._id : "");
 
     !appointment && setModelState(true);
-    if(appointment && time < new Date()){
+    if (appointment && time < new Date()) {
       appointment && setViewModelState(true);
     }
-    if(appointment && time >= new Date()){
+    if (appointment && time >= new Date()) {
       appointment && setUpdateModelState(true);
     }
   };
 
   return (
     <>
-      <Popup 
+      <Popup
         isOpen={viewBlockingModelState}
         onClose={() => setViewBlockingModelState(!viewBlockingModelState)}
-        children={
-          <BlockCard
-            blockingPeriod={blockingPeriod}
-          />
-        }
+        children={<BlockCard blockingPeriod={blockingPeriod} />}
       />
       <ProcessAppointment
         isOpen={modelState}
@@ -159,23 +163,23 @@ const DailyScheduler = ({
                     </td>
                     {selectedProfessionals.map((professional, proIndex) => {
                       let appointmentIndex = 0;
-                    
-                      const workingHours =
-                      professional?.officeHours.filter((officeHour) => {
-                        const professionalStartTime = new Date(time)
-                        professionalStartTime.setHours(officeHour.startHour);
-                        professionalStartTime.setMinutes(0);
-                        const professionalEndTime = new Date(time)
-                        professionalEndTime.setHours(officeHour.endHour);
-                        professionalEndTime.setMinutes(0);
-                            
-                        return (
-                          professionalStartTime <= time &&
-                          professionalEndTime > time
-                        );
-                        
-                      })
-                      
+
+                      const workingHours = professional?.officeHours.filter(
+                        (officeHour) => {
+                          const professionalStartTime = new Date(time);
+                          professionalStartTime.setHours(officeHour.startHour);
+                          professionalStartTime.setMinutes(0);
+                          const professionalEndTime = new Date(time);
+                          professionalEndTime.setHours(officeHour.endHour);
+                          professionalEndTime.setMinutes(0);
+
+                          return (
+                            professionalStartTime <= time &&
+                            professionalEndTime > time
+                          );
+                        }
+                      );
+
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
                           const isDateTimeMatch =
@@ -259,20 +263,18 @@ const DailyScheduler = ({
                           {matchingAppointments.length > 0 && (
                             <div
                               key={index}
-                              className={`m-0 ${time < new Date() && "opacity-50"} ${
-                                matchingBlockedPeriod.length === 0 ? (
-                                proIndex % 2 === 0
-                                  ? appointmentIndex % 2 === 0
-                                    ? "bg-teal-600"
-                                    : "bg-slate-700"
-                                  : appointmentIndex % 2 === 0
-                                  ? "bg-cyan-700"
-                                  : "bg-sky-800"
-                                )
-                                :
-                                (
-                                  "bg-orange-700"
-                                )
+                              className={`m-0 ${
+                                time < new Date() && "opacity-50"
+                              } ${
+                                matchingBlockedPeriod.length === 0
+                                  ? proIndex % 2 === 0
+                                    ? appointmentIndex % 2 === 0
+                                      ? "bg-teal-600"
+                                      : "bg-slate-700"
+                                    : appointmentIndex % 2 === 0
+                                    ? "bg-cyan-700"
+                                    : "bg-sky-800"
+                                  : "bg-orange-700"
                               } z-30 h-7 px-2 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500`}
                             >
                               {matchingAppointmentsFirstSlot[0] ? (
@@ -299,7 +301,7 @@ const DailyScheduler = ({
                                         {matchingAppointments[0].customer.name}
                                       </span>
                                       <span className="text-gray-300">
-                                        Services:
+                                        {t("Services")}:
                                       </span>
                                       <span className="italic text-white ml-1 truncate">
                                         {matchingAppointments[0]?.service

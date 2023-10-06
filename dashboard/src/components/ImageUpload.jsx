@@ -1,13 +1,15 @@
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const ImageUpload = ({ field, form, ...props }) => {
+  const { t } = useTranslation();
   const handleChange = (event) => {
     const file = event.currentTarget.files[0];
     form.setFieldValue(field.name, file);
   };
 
   const hasError = form.touched[field.name] && form.errors[field.name];
-  const value = field.value || form.values[field.name]; // Use field.value as the image value if present, otherwise fallback to form.values
+  const value = field.value || form.values[field.name];
 
   return (
     <div className="mt-2">
@@ -32,7 +34,7 @@ const ImageUpload = ({ field, form, ...props }) => {
             <div className="text-center">
               <FaCloudUploadAlt className="mx-auto h-12 w-12 text-gray-400" />
               <p className="mt-1 text-sm text-gray-600">
-                Click or drag a file to upload
+                {t('Click or drag a file to upload')}
               </p>
             </div>
           )}

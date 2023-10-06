@@ -3,6 +3,7 @@ import { FiX } from "react-icons/fi";
 import { FaCheckCircle, FaClock } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const PayLater = ({
   isOpen,
@@ -13,6 +14,7 @@ const PayLater = ({
   handleConfirmPayment,
   bookingInfo,
 }) => {
+  const { t } = useTranslation();
   const token = localStorage.getItem("ag_app_shop_token");
   const { isDarkMode } = useContext(DarkModeContext);
 
@@ -61,42 +63,42 @@ const PayLater = ({
             className={`w-96 my-auto mx-auto rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"
               }`}
           >
-              <div
-                className={`rounded-md shadow-md p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"
-                  }`}
-              >
-                <PaymentWaiting />
-                <div className="flex justify-between items-center mt-4">
-                  <span
-                    className={` ${isDarkMode ? "text-gray-100" : "text-gray-700"
-                      } font-semibold`}
-                  >
-                    Amount:
-                  </span>
-                  <span className="text-green-500 font-semibold">
-                    {totalPrice} USD
-                  </span>
-                </div>
-                <button
-                  onClick={handleConfirm}
-                  className={`w-full mt-4 ${isDarkMode
-                    ? "bg-gray-700 hover:bg-gray-600"
-                    : "bg-teal-800 hover:bg-teal-700"
-                    } text-white py-2 px-4 rounded-md font-semibold text-sm`}
+            <div
+              className={`rounded-md shadow-md p-6 ${isDarkMode ? "bg-gray-800" : "bg-white"
+                }`}
+            >
+              <PaymentWaiting />
+              <div className="flex justify-between items-center mt-4">
+                <span
+                  className={` ${isDarkMode ? "text-gray-100" : "text-gray-700"
+                    } font-semibold`}
                 >
-                  Confirm Paying Later
-                </button>
-                <button
-                  className={`w-full mt-2 ${isDarkMode
-                    ? "bg-gray-600 hover:bg-gray-500"
-                    : "bg-gray-500 hover:bg-gray-600"
-                    } text-white py-2 px-4 rounded-md flex items-center justify-center font-semibold text-sm`}
-                  onClick={handleCancel}
-                >
-                  <FiX className="h-5 w-5 mr-2" />
-                  Cancel
-                </button>
+                  {t('Amount')}:
+                </span>
+                <span className="text-green-500 font-semibold">
+                  {totalPrice} {t('USD')}
+                </span>
               </div>
+              <button
+                onClick={handleConfirm}
+                className={`w-full mt-4 ${isDarkMode
+                  ? "bg-gray-700 hover:bg-gray-600"
+                  : "bg-teal-800 hover:bg-teal-700"
+                  } text-white py-2 px-4 rounded-md font-semibold text-sm`}
+              >
+                {t('Confirm Paying Later')}
+              </button>
+              <button
+                className={`w-full mt-2 ${isDarkMode
+                  ? "bg-gray-600 hover:bg-gray-500"
+                  : "bg-gray-500 hover:bg-gray-600"
+                  } text-white py-2 px-4 rounded-md flex items-center justify-center font-semibold text-sm`}
+                onClick={handleCancel}
+              >
+                <FiX className="h-5 w-5 mr-2" />
+                {t('Cancel')}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -109,6 +111,7 @@ export default PayLater;
 const PaymentWaiting = () => {
   const { isDarkMode } = useContext(DarkModeContext);
   const [isConfirmed, setIsConfirmed] = React.useState(false);
+  const { t } = useTranslation();
 
   return (
     <div className="flex justify-center items-center">
@@ -122,7 +125,7 @@ const PaymentWaiting = () => {
               className={`text-xl font-semibold ${isDarkMode ? "text-green-300" : "text-green-500"
                 }`}
             >
-              Payment Confirmed
+              {t('Payment Confirmed')}
             </h1>
             <FaCheckCircle
               className={`text-4xl mr-4 ${isDarkMode ? "text-green-300" : "text-green-500"
@@ -139,7 +142,7 @@ const PaymentWaiting = () => {
               className={`text-xl font-semibold ${isDarkMode ? "text-gray-300" : "text-black"
                 }`}
             >
-              Paying Later
+              {t('Paying Later')}
             </h1>
           </>
         )}

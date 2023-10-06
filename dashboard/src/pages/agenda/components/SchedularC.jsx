@@ -6,6 +6,7 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { ViewModeContext } from "../../../context/ViewModeContext";
 import { SidebarContext } from "../../../context/SidebarContext";
 import instance from "../../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const SchedulerC = ({
   date,
@@ -16,6 +17,7 @@ const SchedulerC = ({
   selectedProfessional,
   selectedProfessionals,
 }) => {
+  const { t } = useTranslation();
   const { viewMode, setViewMode } = useContext(ViewModeContext);
   const [selectedTime, setSelectedTime] = useState(null);
 
@@ -105,14 +107,17 @@ const SchedulerC = ({
     onSelectedWeekDateChange(nextWeekDate);
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date, language) => {
     const options = {
       weekday: "long",
       year: "numeric",
       month: "short",
       day: "numeric",
     };
-    return date.toLocaleDateString(undefined, options);
+
+    const locale = language === "es" ? "es-ES" : "en-US";
+
+    return date.toLocaleDateString(locale, options);
   };
 
   return (
@@ -162,24 +167,20 @@ const SchedulerC = ({
           <button
             onClick={() => handleViewChange("daily")}
             className={`p-2 rounded ${
-              viewMode === "daily"
-                ? "bg-teal-600 text-white"
-                : ""
+              viewMode === "daily" ? "bg-teal-600 text-white" : ""
             }`}
           >
             <FaCalendarDay className="inline-block mr-2" />
-            Daily View
+            {t("Daily View")}
           </button>
           <button
             onClick={() => handleViewChange("weekly")}
             className={`p-2 rounded ${
-              viewMode === "weekly"
-                ? "bg-teal-600 text-white"
-                : ""
+              viewMode === "weekly" ? "bg-teal-600 text-white" : ""
             }`}
           >
             <FaCalendarWeek className="inline-block mr-2" />
-            Weekly View
+            {t("Weekly View")}
           </button>
         </div>
       </div>

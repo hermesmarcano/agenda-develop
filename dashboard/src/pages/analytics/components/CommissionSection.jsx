@@ -5,8 +5,10 @@ import { startOfWeek } from "date-fns";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import instance from "../../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const CommissionSection = () => {
+  const { t } = useTranslation();
   const [professionals, setProfessionals] = useState([]);
   const [totalSoldProducts, setTotalSoldProducts] = useState(0);
   const [totalEarnings, setTotalEarnings] = useState(0);
@@ -148,9 +150,9 @@ const CommissionSection = () => {
     const total = professionals.reduce((acc, professional) => {
       const professionalEarnings =
         professional.servicesEarnings *
-          (professional.commissionPercentServices / 100) +
+        (professional.commissionPercentServices / 100) +
         professional.productsEarnings *
-          (professional.commissionPercentProducts / 100);
+        (professional.commissionPercentProducts / 100);
 
       return acc + professionalEarnings;
     }, 0);
@@ -188,7 +190,7 @@ const CommissionSection = () => {
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col justify-center items-center space-x-2">
           <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">Loading...</span>
+          <span className="mt-2">{t('Loading...')}</span>
         </div>
       </div>
     );
@@ -211,7 +213,7 @@ const CommissionSection = () => {
           Authorization: localStorage.getItem("ag_app_shop_token"),
         },
       })
-      .then((response) => {})
+      .then((response) => { })
       .catch((error) => console.error(error));
   };
 
@@ -220,11 +222,10 @@ const CommissionSection = () => {
       className={`shadow-md rounded-md p-6 
     ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
     >
-      <h2 className="text-lg font-bold mb-4">Commissions</h2>
+      <h2 className="text-lg font-bold mb-4">{t('Commissions')}</h2>
       <div
-        className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${
-          isDarkMode ? "bg-gray-900" : "bg-gray-100"
-        }`}
+        className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-100"
+          }`}
       >
         <div className="flex items-center">
           <MdMonetizationOn size={24} className="mr-2 text-blue-500" />
@@ -233,27 +234,26 @@ const CommissionSection = () => {
               ${totalCommission.toFixed(2)}
             </div>
             <div className="text-sm font-semibold text-gray-500">
-              Total Commissions
+              {t('Total Commissions')}
             </div>
           </div>
         </div>
         <div className="text-sm font-semibold text-gray-500">
-          All professionals
+          {t('All professionals')}
         </div>
       </div>
       <div className="mt-8">
         {professionals.length === 0 ? (
           <p className="text-gray-500">
-            No earnings have been generated this week.
+            {t('No earnings have been generated this week.')}
           </p>
         ) : (
           <ul className="space-y-4">
             {professionals.map((professional) => (
               <li
                 key={professional._id}
-                className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${
-                  isDarkMode ? "bg-gray-900" : "bg-gray-100"
-                }`}
+                className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-100"
+                  }`}
               >
                 <div>
                   <div className="mr-2 font-bold">{professional.name}</div>
@@ -262,14 +262,13 @@ const CommissionSection = () => {
                       htmlFor={`commissionInputServices_${professional._id}`}
                       className="mr-2"
                     >
-                      Commission for Services:
+                      {t('Commission for Services')}:
                     </label>
                     <input
                       type="number"
                       id={`commissionInputServices_${professional._id}`} // Use professional's _id to make the ID unique
-                      className={`border rounded-md px-2 py-1 w-20 my-1 ${
-                        isDarkMode ? "bg-gray-500" : "bg-gray-100"
-                      }`}
+                      className={`border rounded-md px-2 py-1 w-20 my-1 ${isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                        }`}
                       value={professional.commissionPercentServices}
                       onChange={(e) =>
                         handleCommissionChange(e, professional._id, "services")
@@ -282,14 +281,13 @@ const CommissionSection = () => {
                       htmlFor={`commissionInputProducts_${professional._id}`}
                       className="mr-2"
                     >
-                      Commission for Products:
+                      {t('Commission for Products')}:
                     </label>
                     <input
                       type="number"
                       id={`commissionInputProducts_${professional._id}`} // Use professional's _id to make the ID unique
-                      className={`border rounded-md px-2 py-1 w-20 my-1 ${
-                        isDarkMode ? "bg-gray-500" : "bg-gray-100"
-                      }`}
+                      className={`border rounded-md px-2 py-1 w-20 my-1 ${isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                        }`}
                       value={professional.commissionPercentProducts}
                       onChange={(e) =>
                         handleCommissionChange(e, professional._id, "products")
@@ -299,7 +297,7 @@ const CommissionSection = () => {
                   </div>
                 </div>
                 <div className="text-sm font-semibold text-gray-500">
-                  Total: $
+                  {t('Total')}: $
                   {(
                     professional.servicesEarnings +
                     professional.productsEarnings
@@ -310,7 +308,7 @@ const CommissionSection = () => {
                   onClick={() => handleUpdateCommission(professional._id)}
                 >
                   <FaSyncAlt className="mr-2" />
-                  Update
+                  {t('Update')}
                 </button>
               </li>
             ))}

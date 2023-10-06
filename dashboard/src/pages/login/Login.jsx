@@ -5,21 +5,23 @@ import { Link } from "react-router-dom";
 import { FaEnvelope, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import instance from "../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [registered, setRegistered] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().required("Required"),
+    email: Yup.string().email(t("Invalid email")).required(t("Required")),
+    password: Yup.string().required(t("Required")),
   });
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
+          {t("Sign in to your account")}
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{" "}
@@ -27,7 +29,7 @@ const Login = () => {
             to="/register"
             className="font-medium text-indigo-600 hover:text-indigo-500"
           >
-            create a new account
+            {t("create a new account")}
           </Link>
         </p>
       </div>
@@ -49,7 +51,7 @@ const Login = () => {
                     setRegistered(() => true);
                   } else {
                     setRegistered(() => false);
-                    setErrorMessage("Invalid email or password");
+                    setErrorMessage(t("Invalid email or password"));
                   }
                   return response.data;
                 })
@@ -69,7 +71,7 @@ const Login = () => {
               <Form className="space-y-6">
                 <div>
                   <label htmlFor="email" className="sr-only">
-                    Email address
+                    {t("Email address")}
                   </label>
                   <div className="relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -83,10 +85,11 @@ const Login = () => {
                       name="email"
                       type="email"
                       autoComplete="email"
-                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${errors.email && touched.email
+                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${
+                        errors.email && touched.email
                           ? "border-red-500"
                           : "border-gray-300"
-                        } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                       placeholder="Email address"
                     />
                   </div>
@@ -99,7 +102,7 @@ const Login = () => {
 
                 <div>
                   <label htmlFor="password" className="sr-only">
-                    Password
+                    {t("Password")}
                   </label>
                   <div className="relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -113,11 +116,12 @@ const Login = () => {
                       name="password"
                       type={showPassword ? "text" : "password"}
                       autoComplete="new-password"
-                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${errors.password && touched.password
+                      className={`appearance-none rounded-md block w-full px-3 py-2 border ${
+                        errors.password && touched.password
                           ? "border-red-500"
                           : "border-gray-300"
-                        } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                      placeholder="Password"
+                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                      placeholder={t("Password")}
                     />
                     <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
                       <button
@@ -150,7 +154,7 @@ const Login = () => {
                     type="submit"
                     className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded  text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-300"
                   >
-                    Sign in
+                    {t("Sign in")}
                   </button>
                 </div>
               </Form>
@@ -161,7 +165,7 @@ const Login = () => {
               to="/forgot-password"
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
-              Forgot your password?
+              {t("Forgot your password?")}
             </Link>
           </p>
         </div>

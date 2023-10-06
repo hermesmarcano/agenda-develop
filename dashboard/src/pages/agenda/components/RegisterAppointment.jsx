@@ -14,7 +14,9 @@ import { NotificationContext } from "../../../context/NotificationContext";
 import { Store } from "react-notifications-component";
 import { AddButtonWithTitle } from "../../../components/Styled";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import './RegisterAppointment.css';
+import "./RegisterAppointment.css";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const animatedComponents = makeAnimated();
 
@@ -29,12 +31,12 @@ const RegisterAppointment = ({
   setAddCustomerClicked,
   setModelState,
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate(this);
   const { isDarkMode } = useContext(DarkModeContext);
   const { shopId } = useContext(SidebarContext);
   const { dateTime } = useContext(DateTimeContext);
   const token = localStorage.getItem("ag_app_shop_token");
-  const [duration, setDuration] = useState(0);
   const { professionalId } = useContext(ProfessionalIdContext);
   const [loading, setLoading] = React.useState(true);
   const [professionals, setProfessionals] = useState([]);
@@ -95,16 +97,16 @@ const RegisterAppointment = ({
 
   const validationSchema = Yup.object().shape({
     // customer: Yup.string().required("Customer is required"),
-    professional: Yup.string().required("Professional is required"),
+    professional: Yup.string().required(t("Professional is required")),
     service: Yup.array()
       .test(
         "at-least-one",
-        "At least one service selection is required",
+        t("At least one service selection is required"),
         function (value) {
           return value && value.length > 0;
         }
       )
-      .of(Yup.string().required("A service name is required")),
+      .of(Yup.string().required(t("A service name is required"))),
     // dateTime: Yup.string().required("Start time is required"),
   });
 
@@ -154,6 +156,10 @@ const RegisterAppointment = ({
       totalDuration = parseInt(hours) * 60 + parseInt(minutes);
     }
 
+    function getCurrentLanguage() {
+      return i18next.language || "en";
+    }
+
     const createAppointment = (customer) => {
       let apptData = {
         customer: customer,
@@ -163,7 +169,6 @@ const RegisterAppointment = ({
         dateTime: new Date(dateTime),
         managerId: shopId,
       };
-
 
       const customerName = clients.find((client) => client._id === customer);
 
@@ -182,14 +187,16 @@ const RegisterAppointment = ({
           resetForm();
           setModelState(false);
           notify(
-            "New Reservation",
-            `Reservation for customer ${customerName.name} has been scheduled, go to checkout to process payment`,
+            t("New Reservation"),
+            `${t("Reservation for customer")} ${customerName.name} ${t(
+              "has been scheduled, go to checkout to process payment"
+            )}`,
             "success"
           );
 
           sendNotification(
             "New Reservation - " +
-              new Intl.DateTimeFormat("en-GB", {
+              new Intl.DateTimeFormat(getCurrentLanguage(), {
                 day: "2-digit",
                 month: "2-digit",
                 year: "numeric",
@@ -199,7 +206,7 @@ const RegisterAppointment = ({
           );
         })
         .catch((error) => {
-          notify("Error", error.message, "danger");
+          notify(t("Error"), error.message, "danger");
         });
     };
 
@@ -294,7 +301,6 @@ const RegisterAppointment = ({
         })
         .catch((error) => {
           console.error(error.message);
-          // Handle errors
         });
     };
 
@@ -340,33 +346,23 @@ const RegisterAppointment = ({
           professional: professionalId,
           service: [],
           dateTime: "",
-          date: dateTime.toISOString().split("T")[0], // Set initial date value
-          time: dateTime.toTimeString().slice(0, 5), // Set initial time value
+          date: dateTime.toISOString().split("T")[0],
+          time: dateTime.toTimeString().slice(0, 5),
           // callTime: "",
           appointmentDuration: "00:00",
         }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({
-          isSubmitting,
-          values,
-          getFieldProps,
-          handleChange,
-          handleBlur,
-          setFieldValue,
-        }) => {
+        {({ isSubmitting, values, getFieldProps, handleChange }) => {
           function calculateTotalDuration(valueService, services) {
             let totalDuration = 0;
 
-            // Iterate over each service ID in `value.service`
             valueService.forEach((serviceId) => {
-              // Find the service in `services` array with matching ID
               const service = services.find(
                 (service) => service._id === serviceId
               );
 
-              // If the service is found, add its duration to the total duration
               if (service) {
                 totalDuration += service.duration;
               }
@@ -485,26 +481,25 @@ const RegisterAppointment = ({
                       <div>
                         {!addCustomerClicked ? (
                           <CustomSelect
-                            label="Client"
+                            label={t("Customer")}
                             id="customer"
                             name="customer"
                             options={clients}
                           />
-                          
                         ) : (
                           <>
                             <label
                               htmlFor="name"
                               className="block text-sm font-semibold mb-2"
                             >
-                              New Client
+                              {t("New Client")}
                             </label>
                             <div className="mb-4">
                               <label
                                 htmlFor="name"
                                 className="block text-xs font-semibold mb-2"
                               >
-                                Name
+                                {t("Name")}
                               </label>
                               <input
                                 type="text"
@@ -526,7 +521,7 @@ const RegisterAppointment = ({
                                 htmlFor="phone"
                                 className="block text-xs font-semibold mb-2"
                               >
-                                Phone
+                                {t("Phone")}
                               </label>
                               <input
                                 type="text"
@@ -553,9 +548,9 @@ const RegisterAppointment = ({
                           }
                         >
                           {!addCustomerClicked ? (
-                            <>Add Customer</>
+                            <>{t("Add Customer")}</>
                           ) : (
-                            "Select Customer"
+                            t("Select Customer")
                           )}
                         </AddButtonWithTitle>
                       </div>
@@ -566,7 +561,7 @@ const RegisterAppointment = ({
                         htmlFor="service"
                         className="block text-sm font-semibold mb-2"
                       >
-                        Services
+                        {t("Services")}
                       </label>
                       <Select
                         id="service"
@@ -589,7 +584,7 @@ const RegisterAppointment = ({
                           handleServicesChange(selectedOptions)
                         }
                         components={animatedComponents}
-                        placeholder="Select services"
+                        placeholder={t("Select services")}
                         isClearable
                       />
                       <ErrorMessage
@@ -602,7 +597,7 @@ const RegisterAppointment = ({
 
                   <div>
                     <CustomSelect
-                      label="Professional"
+                      label={t("Professional")}
                       id="professional"
                       name="professional"
                       options={professionals}
@@ -612,7 +607,7 @@ const RegisterAppointment = ({
                         htmlFor="manualDuration"
                         className={`block text-sm font-semibold mb-2`}
                       >
-                        Set Duration Manually
+                        {t("Set Duration Manually")}
                       </label>
                       <Switch
                         id="manualDuration"
@@ -638,7 +633,7 @@ const RegisterAppointment = ({
                         htmlFor="appointmentDuration"
                         className="block text-sm font-semibold mb-2"
                       >
-                        Appointment Duration
+                        {t("Appointment Duration")}
                       </label>
                       <div
                         className={`flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden  ${
@@ -678,10 +673,10 @@ const RegisterAppointment = ({
                           />
                         </div>
                         <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
-                          <span className="text-xs">HOURS</span>
+                          <span className="text-xs">{t("HOURS")}</span>
                         </div>
                         <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
-                          <span className="text-xs">MINUTES</span>
+                          <span className="text-xs">{t("MINUTES")}</span>
                         </div>
                       </div>
                     </div>
@@ -691,7 +686,7 @@ const RegisterAppointment = ({
                         htmlFor="date"
                         className="block text-sm font-semibold mb-2"
                       >
-                        Date
+                        {t("Date")}
                       </label>
                       <input
                         type="date"
@@ -715,7 +710,7 @@ const RegisterAppointment = ({
                         htmlFor="time"
                         className="block text-sm font-semibold mb-2"
                       >
-                        Time
+                        {t("Time")}
                       </label>
                       <input
                         type="time"
@@ -748,7 +743,7 @@ const RegisterAppointment = ({
                   ) : (
                     <FaCheck className="mr-2" />
                   )}
-                  Book Now
+                  {t("Book Now")}
                 </button>
                 <button
                   type="button"
@@ -761,7 +756,7 @@ const RegisterAppointment = ({
                   ) : (
                     <FaCreditCard className="mr-2" />
                   )}
-                  Checkout
+                  {t("Checkout")}
                 </button>
               </div>
             </Form>
@@ -775,7 +770,7 @@ const RegisterAppointment = ({
 export default RegisterAppointment;
 
 const CustomSelect = ({ label, options, ...props }) => {
-  const { isDarkMode } = useContext(DarkModeContext);
+  const { t } = useTranslation();
   const [field, meta, helpers] = useField(props);
 
   const handleChange = (selectedOption) => {
@@ -798,12 +793,11 @@ const CustomSelect = ({ label, options, ...props }) => {
       <Select
         id={props.id || props.name}
         name={props.name}
-        // styles={{ color: "#222" , backgroundColor: '#000'}}
         className="custom-select"
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}
-        placeholder={`Select ${label}`}
+        placeholder={`${t("Select")} ${label}`}
         isClearable
         {...props}
       />
@@ -815,4 +809,3 @@ const CustomSelect = ({ label, options, ...props }) => {
     </div>
   );
 };
-

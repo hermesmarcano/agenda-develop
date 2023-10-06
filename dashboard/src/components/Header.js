@@ -5,8 +5,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { NotificationContext } from "../context/NotificationContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 import instance from "../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
 
 function Header() {
+  const { t } = useTranslation()
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { notifications, unreadCount, updateNotificationsSeen } =
@@ -89,7 +91,7 @@ function Header() {
                       to="/notifications"
                       className="text-blue-500 text-xs hover:underline"
                     >
-                      View All
+                      {t('View All')}
                     </Link>
                   </div>
                 </div>
@@ -106,7 +108,7 @@ function Header() {
                   ))
                 ) : (
                   <div className={`p-4 text-center text-gray-400`}>
-                    No notifications
+                    {t('No notifications')}
                   </div>
                 )}
               </div>
@@ -120,7 +122,7 @@ function Header() {
             aria-haspopup="true"
             onClick={toggleMenu}
           >
-            <span className="sr-only">Open user menu</span>
+            <span className="sr-only">{t('Open user menu')}</span>
             <FaUser className={`w-6 h-6 text-gray-400`} />
           </button>
           {isMenuOpen && (

@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import { FaEdit, FaUser } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const ProfessionalCard = ({
   professional,
@@ -8,12 +10,18 @@ const ProfessionalCard = ({
   setUpdateModelState,
   setSelectiedProfessionalId,
 }) => {
+  const { t } = useTranslation();
   const { isDarkMode } = useContext(DarkModeContext);
   const MAX_CHARACTERS = 109;
 
   function truncateText(text, limit) {
     return text.length > limit ? `${text.slice(0, limit)}...` : text;
   }
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
+
   return (
     <div
       className={`w-64 h-64 border-b-4 border-teal-500 ${
@@ -47,17 +55,17 @@ const ProfessionalCard = ({
       </div>
       <div className="mt-2">
         <div className="mb-2">
-          <strong>Office Hours:</strong>
+          <strong>{t("Office Hours")}:</strong>
           {professional.officeHours &&
             professional.officeHours?.length > 0 &&
             professional.officeHours?.map((officeHour) => {
               return (
                 <p key={officeHour._id}>
-                  {new Intl.DateTimeFormat("en", {
+                  {new Intl.DateTimeFormat(getCurrentLanguage(), {
                     timeStyle: "short",
                   }).format(new Date().setHours(officeHour?.startHour, 0)) +
                     " - " +
-                    new Intl.DateTimeFormat("en", {
+                    new Intl.DateTimeFormat(getCurrentLanguage(), {
                       timeStyle: "short",
                     }).format(new Date().setHours(officeHour?.endHour, 0))}
                 </p>
@@ -65,7 +73,7 @@ const ProfessionalCard = ({
             })}
         </div>
         <div className="mb-2">
-          <strong>Description:</strong>
+          <strong>{t("Description")}:</strong>
           <p
             className="text-xs"
             style={{

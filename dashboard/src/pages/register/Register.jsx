@@ -17,19 +17,20 @@ import { RiCloseCircleLine } from "react-icons/ri";
 import { TiPlus } from "react-icons/ti";
 import ImageUpload from "../../components/ImageUpload";
 import instance from "../../axiosConfig/axiosConfig";
-import { AlertContext } from "../../context/AlertContext";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 } from "uuid";
 import { storage } from "../../services/firebaseStorage";
-import ReactNotification, { Store } from "react-notifications-component";
+import { Store } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
+import { useTranslation } from "react-i18next";
 
 const Register = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     const hour12 = hour % 12 || 12;
-    const period = hour < 12 ? "AM" : "PM";
+    const period = hour < 12 ? t("AM") : t("PM");
     hoursOptions.push(
       <option key={hour} value={hour}>
         {hour12}:00 {period}
@@ -62,38 +63,38 @@ const Register = () => {
   };
 
   const RegisterSchema = Yup.object().shape({
-    name: Yup.string().required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
+    name: Yup.string().required(t("Required")),
+    email: Yup.string().email(t("Invalid email")).required(t("Required")),
     password: Yup.string()
-      .required("Required")
-      .min(6, "Password must be at least 6 characters"),
+      .required(t("Required"))
+      .min(6, t("Password must be at least 6 characters")),
     confirmPassword: Yup.string()
-      .required("Required")
-      .oneOf([Yup.ref("password")], "Passwords must match"),
-    shopName: Yup.string().required("Shop Name is required"),
+      .required(t("Required"))
+      .oneOf([Yup.ref("password")], t("Passwords must match")),
+    shopName: Yup.string().required(t("Shop Name is required")),
     urlSlug: Yup.string()
-      .required("URL Slug is required")
+      .required(t("URL Slug is required"))
       .matches(
         /^[a-zA-Z0-9-_.]+$/,
-        "URL Slug can only contain alphanumeric characters, '-', '_', or '.'"
+        t("URL Slug can only contain alphanumeric characters, '-', '_', or '.'")
       ),
     workingHours: Yup.array()
       .of(
         Yup.object().shape({
           startHour: Yup.number()
-            .required("Start hour is required")
+            .required(t("Start hour is required"))
             .test(
               "startHour",
-              "Start hour must be less than end hour",
+              t("Start hour must be less than end hour"),
               function (value) {
                 return value < this.parent.endHour;
               }
             ),
           endHour: Yup.number()
-            .required("End hour is required")
+            .required(t("End hour is required"))
             .test(
               "endHour",
-              "End hour must be greater than start hour",
+              t("End hour must be greater than start hour"),
               function (value) {
                 return value > this.parent.startHour;
               }
@@ -109,7 +110,6 @@ const Register = () => {
             const startHourB = value[j].startHour;
             const endHourB = value[j].endHour;
 
-            // Check if there is any overlap between the two periods
             if (
               (startHourA <= startHourB && startHourB < endHourA) ||
               (startHourA < endHourB && endHourB <= endHourA) ||
@@ -126,7 +126,7 @@ const Register = () => {
         }
         return isValid;
       }),
-    profileImg: Yup.mixed().required("Profile image is required"),
+    profileImg: Yup.mixed().required(t("Profile image is required")),
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -137,15 +137,15 @@ const Register = () => {
       <div className="flex flex-col justify-center min-h-screen">
         <div className="sm:mx-auto sm:w-full">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Create a new account
+            {t("Create a new account")}
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Already have an account?{" "}
+            {t("Already have an account?")}{" "}
             <Link
               to="/login"
               className="font-medium text-indigo-600 hover:text-indigo-500"
             >
-              Sign in
+              {t("Sign in")}
             </Link>
           </p>
         </div>
@@ -170,7 +170,10 @@ const Register = () => {
                   console.log("uploading ....");
                   if (values.profileImg === null) return;
                   let imageName = v4(values.profileImg.name);
-                  const fileRef = ref(storage, `${values.name}/profile/${imageName}`);
+                  const fileRef = ref(
+                    storage,
+                    `${values.name}/profile/${imageName}`
+                  );
                   const uploadTask = uploadBytesResumable(
                     fileRef,
                     values.profileImg
@@ -216,8 +219,10 @@ const Register = () => {
                           console.log(updateResponse);
 
                           notify(
-                            "New Shop",
-                            `New Shop "${values.shopName}" has been registered`,
+                            t("New Shop"),
+                            `${t("New Shop")} "${values.shopName}" ${t(
+                              "has been registered"
+                            )}`,
                             "success"
                           );
                           navigate("/login");
@@ -236,7 +241,7 @@ const Register = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                       <label htmlFor="name" className="sr-only">
-                        Name
+                        {t("Name")}
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -255,7 +260,7 @@ const Register = () => {
                               ? "border-red-500"
                               : "border-gray-300"
                           } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                          placeholder="Name"
+                          placeholder={t("Name")}
                         />
                       </div>
                       {formikProps.errors.name && formikProps.touched.name ? (
@@ -267,7 +272,7 @@ const Register = () => {
 
                     <div>
                       <label htmlFor="email" className="sr-only">
-                        Email address
+                        {t("Email address")}
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -287,7 +292,7 @@ const Register = () => {
                               ? "border-red-500"
                               : "border-gray-300"
                           } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                          placeholder="Email address"
+                          placeholder={t("Email address")}
                         />
                       </div>
                       {formikProps.errors.email && formikProps.touched.email ? (
@@ -297,14 +302,14 @@ const Register = () => {
                       ) : null}
                       {!registered ? (
                         <div className="mt-2 text-sm text-red-500">
-                          This email has been registered before
+                          {t("This email has been registered before")}
                         </div>
                       ) : null}
                     </div>
 
                     <div>
                       <label htmlFor="password" className="sr-only">
-                        Password
+                        {t("Password")}
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -324,7 +329,7 @@ const Register = () => {
                               ? "border-red-500"
                               : "border-gray-300"
                           } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                          placeholder="Password"
+                          placeholder={t("Password")}
                         />
                         <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
                           <button
@@ -349,7 +354,7 @@ const Register = () => {
                     </div>
                     <div>
                       <label htmlFor="confirmPassword" className="sr-only">
-                        Confirm Password
+                        {t("Confirm Password")}
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -369,7 +374,7 @@ const Register = () => {
                               ? "border-red-500"
                               : "border-gray-300"
                           } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                          placeholder="Confirm Password"
+                          placeholder={t("Confirm Password")}
                         />
                         <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
                           <button
@@ -396,7 +401,7 @@ const Register = () => {
                     </div>
                     <div>
                       <label htmlFor="shopName" className="sr-only">
-                        Shop Name
+                        {t("Shop Name")}
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -416,7 +421,7 @@ const Register = () => {
                               ? "border-red-500"
                               : "border-gray-300"
                           } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                          placeholder="Shop Name"
+                          placeholder={t("Shop Name")}
                         />
                       </div>
                       {formikProps.errors.shopName &&
@@ -428,7 +433,7 @@ const Register = () => {
                     </div>
                     <div>
                       <label htmlFor="urlSlug" className="sr-only">
-                        URL Slug
+                        {t("URL Slug")}
                       </label>
                       <div className="relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
@@ -448,7 +453,7 @@ const Register = () => {
                               ? "border-red-500"
                               : "border-gray-300"
                           } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                          placeholder="URL Sulg"
+                          placeholder={t("URL Sulg")}
                         />
                       </div>
                       {formikProps.errors.urlSlug &&
@@ -474,7 +479,7 @@ const Register = () => {
                                     htmlFor={`workingHours[${index}].startHour`}
                                     className="sr-only"
                                   >
-                                    Start Hour
+                                    {t("Start Hour")}
                                   </label>
                                   <Field
                                     id={`workingHours[${index}].startHour`}
@@ -489,7 +494,9 @@ const Register = () => {
                                         : "border-gray-300"
                                     } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                                   >
-                                    <option value="">Select start hour</option>
+                                    <option value="">
+                                      {t("Select start hour")}
+                                    </option>
                                     {hoursOptions}
                                   </Field>
                                   <ErrorMessage
@@ -504,7 +511,7 @@ const Register = () => {
                                     htmlFor={`workingHours[${index}].endHour`}
                                     className="sr-only"
                                   >
-                                    End Hour
+                                    {t("End Hour")}
                                   </label>
                                   <Field
                                     id={`workingHours[${index}].endHour`}
@@ -519,7 +526,9 @@ const Register = () => {
                                         : "border-gray-300"
                                     } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
                                   >
-                                    <option value="">Select end hour</option>
+                                    <option value="">
+                                      {t("Select end hour")}
+                                    </option>
                                     {hoursOptions}
                                   </Field>
                                   <ErrorMessage
@@ -536,7 +545,7 @@ const Register = () => {
                                       onClick={() => remove(index)}
                                     >
                                       <RiCloseCircleLine className="mr-1" />
-                                      Remove
+                                      {t("Remove")}
                                     </button>
                                   </div>
                                 )}
@@ -553,7 +562,7 @@ const Register = () => {
                                 }
                               >
                                 <TiPlus className="mr-1" />
-                                Add Working Hour
+                                {t("Add Working Hour")}
                               </button>
                             )}
                           </div>
@@ -584,10 +593,10 @@ const Register = () => {
                       {isRegistering ? (
                         <span className="flex items-center justify-center">
                           <FaSpinner className="animate-spin mr-2" />
-                          Registering...
+                          {t("Registering...")}
                         </span>
                       ) : (
-                        "Register"
+                        t("Register")
                       )}
                     </button>
                   </div>

@@ -15,8 +15,11 @@ import {
   titleLightStyle,
 } from "../../components/Styled";
 import ProfessionalCard from "./components/ProfessionalCard";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const Professionals = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const [searchQuery, setSearchQuery] = useState("");
   const [professionalsPerPage, setProfessionalsPerPage] = useState(10);
@@ -133,7 +136,7 @@ const Professionals = () => {
           setDeleting(false);
         })
         .catch((error) => {
-          console.error(`Failed to delete professional with ID ${id}.`, error);
+          console.error(error);
         });
     });
   };
@@ -155,12 +158,16 @@ const Professionals = () => {
     }
   };
 
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
+
   return (
     <>
       <Drawer
         modelState={updateModelState}
         setModelState={setUpdateModelState}
-        title={"Update Professional"}
+        title={t("Update Professional")}
         children={
           <UpdateProfessional
             setModelState={setUpdateModelState}
@@ -173,26 +180,26 @@ const Professionals = () => {
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
             <FaUserTie className="mr-2 text-xl" />
-            <span>Professionals</span>
+            <span>{t("Professionals")}</span>
           </div>
         </div>
         <div className="relative w-full">
           <label className="sr-only" htmlFor="search">
             {" "}
-            Search{" "}
+            {t("Search")}{" "}
           </label>
 
           <input
             className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
             id="search"
             type="search"
-            placeholder="Search professional..."
+            placeholder={t("Search professional...")}
             value={searchQuery}
             onChange={handleSearchQueryChange}
           />
 
           <span className="absolute end-1 top-1/2 -translate-y-1/2 rounded-md bg-gray-100 p-2 text-gray-600 transition hover:text-gray-700">
-            <span className="sr-only">Search</span>
+            <span className="sr-only">{t("Search")}</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-4 w-4"
@@ -232,20 +239,20 @@ const Professionals = () => {
             children={
               <div className="bg-white rounded-md p-4 flex justify-center items-center">
                 <p className="text-gray-700">
-                  Are you sure you want to delete the selected items?
+                  {t("Are you sure you want to delete the selected items?")}
                 </p>
                 <div className="flex mt-4">
                   <button
                     className="ml-2 bg-red-500 hover:bg-red-700 text-white text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleRemoveSelected}
                   >
-                    Confirm
+                    {t("Confirm")}
                   </button>
                   <button
                     className="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold py-2 px-4 rounded"
                     onClick={handleCancel}
                   >
-                    Cancel
+                    {t("Cancel")}
                   </button>
                 </div>
               </div>
@@ -258,7 +265,7 @@ const Professionals = () => {
               htmlFor="clients-per-page"
               className="mr-4 font-medium text-sm"
             >
-              Show:
+              {t("Show")}:
             </label>
             <select
               id="clients-per-page"
@@ -278,7 +285,7 @@ const Professionals = () => {
               {`${firstProfessionalIndex + 1}-${Math.min(
                 lastProfessionalIndex,
                 filteredProfessionals.length
-              )} of ${filteredProfessionals.length}`}
+              )} ${t("of")} ${filteredProfessionals.length}`}
             </span>
           </div>
           <div className="flex rounded shadow">
@@ -365,10 +372,12 @@ const Professionals = () => {
                       onChange={handleSelectAll}
                     />
                   </th>
-                  <th className="py-3 pl-2 text-left">Name</th>
-                  <th className="py-3 px-4 text-center">Office Hours</th>
-                  <th className="py-3 pl-2 pr-6 text-left">Description</th>
-                  <th className="py-3 pr-6 text-center">Actions</th>
+                  <th className="py-3 pl-2 text-left">{t("Name")}</th>
+                  <th className="py-3 px-4 text-center">{t("Office Hours")}</th>
+                  <th className="py-3 pl-2 pr-6 text-left">
+                    {t("Description")}
+                  </th>
+                  <th className="py-3 pr-6 text-center">{t("Actions")}</th>
                 </tr>
               </thead>
               <tbody
@@ -395,13 +404,13 @@ const Professionals = () => {
                         professional.officeHours?.map((officeHour) => {
                           return (
                             <span className="block" key={officeHour._id}>
-                              {new Intl.DateTimeFormat("en", {
+                              {new Intl.DateTimeFormat(getCurrentLanguage(), {
                                 timeStyle: "short",
                               }).format(
                                 new Date().setHours(officeHour?.startHour, 0)
                               ) +
                                 " - " +
-                                new Intl.DateTimeFormat("en", {
+                                new Intl.DateTimeFormat(getCurrentLanguage(), {
                                   timeStyle: "short",
                                 }).format(
                                   new Date().setHours(officeHour?.endHour, 0)
@@ -433,7 +442,7 @@ const Professionals = () => {
                   isDarkMode ? "bg-gray-800" : "bg-white"
                 } mb-2 py-2 pl-4 flex justify-start items-center rounded-md shadow`}
               >
-                <label className="font-semibold mr-2">Select All</label>
+                <label className="font-semibold mr-2">{t("Select All")}</label>
                 <input
                   type="checkbox"
                   checked={selectedIds.length === currentProfessionals.length}
@@ -470,10 +479,12 @@ const Professionals = () => {
               <div className="text-center">
                 <FaSearch className="mx-auto text-gray-500 text-5xl mb-4" />
                 <p className="text-gray-800 text-lg mb-2">
-                  No professionals found
+                  {t("No professionals found")}
                 </p>
                 <p className="text-gray-500 text-sm">
-                  We couldn't find any professionals that match your search
+                  {t(
+                    "We couldn't find any professionals that match your search"
+                  )}
                 </p>
               </div>
             </div>

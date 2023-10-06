@@ -24,8 +24,11 @@ import {
   LoadingUpdateButton,
 } from "../../../components/Styled";
 import { ShopNameContext } from "../../../context/ShopNameContext";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const UpdateService = ({ setModelState, serviceId }) => {
+  const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { shopName } = useContext(ShopNameContext);
   const { isDarkMode } = useContext(DarkModeContext);
@@ -71,10 +74,14 @@ const UpdateService = ({ setModelState, serviceId }) => {
   }, []);
 
   const validationSchema = Yup.object({
-    name: Yup.string(),
-    price: Yup.number(),
-    duration: Yup.string(),
+    name: Yup.string().required(t("required")),
+    price: Yup.number().required(t("required")),
+    duration: Yup.string().required(t("required")),
   });
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
@@ -129,13 +136,15 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     console.log(res);
                     setServiceData((prev) => ({ ...prev, patchData }));
                     notify(
-                      "Update",
-                      `"Service ${values.name}" has been updated`,
+                      t("Update"),
+                      `${t("Service")} ${values.name}" ${t(
+                        "has been updated"
+                      )}`,
                       "success"
                     );
                     sendNotification(
-                      "Service updated - " +
-                        new Intl.DateTimeFormat("en-GB", {
+                      `${t("Service updated")} - ` +
+                        new Intl.DateTimeFormat(getCurrentLanguage(), {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
@@ -148,8 +157,8 @@ const UpdateService = ({ setModelState, serviceId }) => {
                   })
                   .catch((error) => {
                     notify(
-                      "Error",
-                      `Some of the data has already been registered before`,
+                      t("Error"),
+                      t(`Some of the data has already been registered before`),
                       "danger"
                     );
                   });
@@ -174,13 +183,13 @@ const UpdateService = ({ setModelState, serviceId }) => {
             console.log(res);
             setServiceData((prev) => ({ ...prev, patchData }));
             notify(
-              "Update",
-              `"Service ${values.name}" has been updated`,
+              t("Update"),
+              `${t("Service")} ${values.name}" ${t("has been updated")}`,
               "success"
             );
             sendNotification(
-              "Service updated - " +
-                new Intl.DateTimeFormat("en-GB", {
+              `${t("Service updated")} - ` +
+                new Intl.DateTimeFormat(getCurrentLanguage(), {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
@@ -194,8 +203,8 @@ const UpdateService = ({ setModelState, serviceId }) => {
           })
           .catch((error) => {
             notify(
-              "Error",
-              `Some of the data has already been registered before`,
+              t("Error"),
+              t(`Some of the data has already been registered before`),
               "danger"
             );
           });
@@ -270,13 +279,13 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     isDarkMode ? "white" : "gray-700"
                   }`}
                 >
-                  Name
+                  {t("Name")}
                 </label>
                 <Field
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Enter the new name of the service"
+                  placeholder={t("Enter the new name of the service")}
                   className={`${
                     isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
                   }`}
@@ -294,7 +303,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     isDarkMode ? "white" : "gray-700"
                   }`}
                 >
-                  Price
+                  {t("Price")}
                 </label>
                 <Field
                   type="number"
@@ -318,7 +327,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     isDarkMode ? "white" : "gray-700"
                   }`}
                 >
-                  Duration
+                  {t("Duration")}
                 </label>
                 <Field
                   name="duration"
@@ -327,19 +336,19 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
                   }`}
                 >
-                  <option value="">Select Duration</option>
-                  <option value="5">5 min</option>
-                  <option value="10">10 min</option>
-                  <option value="15">15 min</option>
-                  <option value="20">20 min</option>
-                  <option value="25">25 min</option>
-                  <option value="30">30 min</option>
-                  <option value="35">35 min</option>
-                  <option value="40">40 min</option>
-                  <option value="45">45 min</option>
-                  <option value="50">50 min</option>
-                  <option value="55">55 min</option>
-                  <option value="60">1 h</option>
+                  <option value="">{t("Select Duration")}</option>
+                  <option value="5">5 {t("min")}</option>
+                  <option value="10">10 {t("min")}</option>
+                  <option value="15">15 {t("min")}</option>
+                  <option value="20">20 {t("min")}</option>
+                  <option value="25">25 {t("min")}</option>
+                  <option value="30">30 {t("min")}</option>
+                  <option value="35">35 {t("min")}</option>
+                  <option value="40">40 {t("min")}</option>
+                  <option value="45">45 {t("min")}</option>
+                  <option value="50">50 {t("min")}</option>
+                  <option value="55">55 {t("min")}</option>
+                  <option value="60">1 {t("hour")}</option>
                 </Field>
                 <ErrorMessage
                   name="duration"
@@ -354,7 +363,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                     isDarkMode ? "white" : "gray-700"
                   }`}
                 >
-                  Image
+                  {t("Image")}
                 </label>
                 {serviceData.serviceImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items-center justify-center">

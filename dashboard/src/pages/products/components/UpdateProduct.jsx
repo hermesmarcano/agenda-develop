@@ -2,9 +2,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import ImageUpload from "../../../components/ImageUpload";
-import { FaSpinner, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import instance from "../../../axiosConfig/axiosConfig";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import { storage } from "../../../services/firebaseStorage";
@@ -17,16 +16,25 @@ import {
 import { v4 } from "uuid";
 import ProgressBar from "../../../components/ProgressBar";
 import { Store } from "react-notifications-component";
-import { DefaultInputDarkStyle, DefaultInputLightStyle, Hourglass, LoadingRegisterButton, LoadingUpdateButton } from "../../../components/Styled";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  Hourglass,
+  LoadingRegisterButton,
+  LoadingUpdateButton,
+} from "../../../components/Styled";
 import { ShopNameContext } from "../../../context/ShopNameContext";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const UpdateProduct = ({ setModelState, productId }) => {
+  const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { isDarkMode } = useContext(DarkModeContext);
   const { shopName } = useContext(ShopNameContext);
   const token = localStorage.getItem("ag_app_shop_token");
   const [productData, setProductData] = useState(null);
-  const [isUpdating, setIsUpdating] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const notify = (title, message, type) => {
@@ -34,10 +42,10 @@ const UpdateProduct = ({ setModelState, productId }) => {
       title: title,
       message: message,
       type: type,
-      insert: 'top',
-      container: 'bottom-center',
-      animationIn: ['animated', 'fadeIn'],
-      animationOut: ['animated', 'fadeOut'],
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
       dismiss: {
         duration: 5000,
         onScreen: true,
@@ -66,18 +74,22 @@ const UpdateProduct = ({ setModelState, productId }) => {
   }, []);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string(),
-    speciality: Yup.string(),
-    costBRL: Yup.number().positive("Cost must be a positive number"),
-    price: Yup.number().positive("Price must be a positive number"),
+    name: Yup.string().required(t("required")),
+    speciality: Yup.string().required(t("required")),
+    costBRL: Yup.number().positive(t("Cost must be a positive number")),
+    price: Yup.number().positive(t("Price must be a positive number")),
     stock: Yup.number()
-      .integer("Stock must be an integer")
-      .min(0, "Stock must be a non-negative number"),
+      .integer(t("Stock must be an integer"))
+      .min(0, t("Stock must be a non-negative number")),
   });
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
-      setIsUpdating(true)
+      setIsUpdating(true);
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
         console.error("Token not found");
@@ -96,7 +108,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
             let progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log(progress);
-            setUploadProgress(progress)
+            setUploadProgress(progress);
           },
           (error) => {
             console.log("error");
@@ -127,10 +139,16 @@ const UpdateProduct = ({ setModelState, productId }) => {
                   })
                   .then((res) => {
                     console.log(res);
-                    notify("Update", `"Product ${values.name}" has been updated`, "success")
+                    notify(
+                      t("Update"),
+                      `${t("Product")} ${values.name}" ${t(
+                        "has been updated"
+                      )}`,
+                      "success"
+                    );
                     sendNotification(
-                      "Product updated - " +
-                        new Intl.DateTimeFormat("en-GB", {
+                      `${t("Product updated")} - ` +
+                        new Intl.DateTimeFormat(getCurrentLanguage(), {
                           day: "2-digit",
                           month: "2-digit",
                           year: "numeric",
@@ -142,7 +160,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     setModelState(false);
                   })
                   .catch((error) => {
-                    notify("Error", `Some of the data has already been registered before`, "danger");
+                    notify(
+                      t("Error"),
+                      t(`Some of the data has already been registered before`),
+                      "danger"
+                    );
                   });
               });
           }
@@ -164,10 +186,14 @@ const UpdateProduct = ({ setModelState, productId }) => {
           })
           .then((res) => {
             console.log(res);
-            notify("Update", `"Product ${values.name}" has been updated`, "success")
+            notify(
+              t("Update"),
+              `${t("Product")} ${values.name}" ${t("has been updated")}`,
+              "success"
+            );
             sendNotification(
               "Product updated - " +
-                new Intl.DateTimeFormat("en-GB", {
+                new Intl.DateTimeFormat(getCurrentLanguage(), {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric",
@@ -181,7 +207,11 @@ const UpdateProduct = ({ setModelState, productId }) => {
           });
       }
     } catch (error) {
-      notify("Error", `Some of the data has already been registered before`, "danger");
+      notify(
+        t("Error"),
+        t(`Some of the data has already been registered before`),
+        "danger"
+      );
     }
 
     setSubmitting(false);
@@ -239,9 +269,10 @@ const UpdateProduct = ({ setModelState, productId }) => {
         >
           {(formikProps) => (
             <Form
-            className={`bg-${isDarkMode ? "gray-700" : "white"
+              className={`bg-${
+                isDarkMode ? "gray-700" : "white"
               } rounded px-8 pt-6 pb-8 mb-4 overflow-y-auto text-left`}
-          >
+            >
               <div className="mb-4">
                 <label
                   htmlFor="name"
@@ -249,13 +280,13 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     isDarkMode ? "text-white" : "text-gray-700"
                   } font-bold mb-2`}
                 >
-                  Name
+                  {t("Name")}
                 </label>
                 <Field
                   type="text"
                   id="name"
                   name="name"
-                  placeholder="Enter the new name of the product"
+                  placeholder={t("Enter the new name of the product")}
                   className={`${
                     isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
                   }`}
@@ -273,13 +304,13 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     isDarkMode ? "text-white" : "text-gray-700"
                   } font-bold mb-2`}
                 >
-                  Speciality
+                  {t("Speciality")}
                 </label>
                 <Field
                   type="text"
                   id="speciality"
                   name="speciality"
-                  placeholder="Enter the speciality of the product"
+                  placeholder={t("Enter the speciality of the product")}
                   className={`${
                     isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
                   }`}
@@ -298,7 +329,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                       isDarkMode ? "text-white" : "text-gray-700"
                     } font-bold mb-2`}
                   >
-                    Cost (BRL)
+                    {t("Cost")} ({t("BRL")})
                   </label>
                   <Field
                     type="number"
@@ -306,7 +337,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     name="costBRL"
                     placeholder="0.00"
                     className={`${
-                      isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                      isDarkMode
+                        ? DefaultInputDarkStyle
+                        : DefaultInputLightStyle
                     }`}
                   />
                   <ErrorMessage
@@ -322,7 +355,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                       isDarkMode ? "text-white" : "text-gray-700"
                     } font-bold mb-2`}
                   >
-                    Price
+                    {t("Price")}
                   </label>
                   <Field
                     type="number"
@@ -330,7 +363,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     name="price"
                     placeholder="0.00"
                     className={`${
-                      isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                      isDarkMode
+                        ? DefaultInputDarkStyle
+                        : DefaultInputLightStyle
                     }`}
                   />
                   <ErrorMessage
@@ -346,7 +381,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                       isDarkMode ? "text-white" : "text-gray-700"
                     } font-bold mb-2`}
                   >
-                    Stock
+                    {t("Stock")}
                   </label>
                   <Field
                     type="number"
@@ -354,7 +389,9 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     name="stock"
                     placeholder="0"
                     className={`${
-                      isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                      isDarkMode
+                        ? DefaultInputDarkStyle
+                        : DefaultInputLightStyle
                     }`}
                   />
                   <ErrorMessage
@@ -372,7 +409,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                     isDarkMode ? "text-white" : "text-gray-700"
                   } font-bold mb-2`}
                 >
-                  Image
+                  {t("Image")}
                 </label>
                 {productData.productImg ? (
                   <div className="relative h-40 border-2 border-dashed rounded-md flex items center justify-center">
@@ -410,7 +447,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
               </div>
 
               <div className="flex items-center justify-end mt-8">
-              <LoadingUpdateButton
+                <LoadingUpdateButton
                   disabled={formikProps.isSubmitting}
                   isUpdating={isUpdating}
                 />

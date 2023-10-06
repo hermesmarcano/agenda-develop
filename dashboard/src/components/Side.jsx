@@ -13,8 +13,10 @@ import {
   BsPersonGear,
 } from "react-icons/bs";
 import { AiOutlineSetting, AiOutlineTags } from "react-icons/ai";
+import { useTranslation } from "react-i18next";
 
 const Side = ({ isSidebarOpen, toggleSidebar }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [activeTab, setActiveTab] = useState("Agenda");
@@ -24,49 +26,49 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const tabs = [
     {
-      name: "Agenda",
+      name: t("Agenda"),
       icon: <IoCalendarOutline size={20} className="mr-2" />,
       icon2: <IoCalendarOutline size={20} />,
       link: "/",
     },
     {
-      name: "Customers",
+      name: t("Customers"),
       icon: <HiOutlineUsers size={20} className="mr-2" />,
       icon2: <HiOutlineUsers size={20} />,
       link: "/customers",
     },
     {
-      name: "Professionals",
+      name: t("Professionals"),
       icon: <BsPersonGear size={20} className="mr-2" />,
       icon2: <BsPersonGear size={20} />,
       link: "/professionals",
     },
     {
-      name: "Services",
+      name: t("Services"),
       icon: <AiOutlineTags size={20} className="mr-2" />,
       icon2: <AiOutlineTags size={20} />,
       link: "/services",
     },
     {
-      name: "Products",
+      name: t("Products"),
       icon: <HiOutlineShoppingBag size={20} className="mr-2" />,
       icon2: <HiOutlineShoppingBag size={20} />,
       link: "/products",
     },
     {
-      name: "Analytics",
+      name: t("Analytics"),
       icon: <BsGraphUpArrow size={20} className="mr-2" />,
       icon2: <BsGraphUpArrow size={20} />,
       link: "/analytics",
     },
     {
-      name: "Checkout",
+      name: t("Checkout"),
       icon: <TbReportMoney size={20} className="mr-2" />,
       icon2: <TbReportMoney size={20} />,
       link: "/checkout-appointments",
     },
     {
-      name: "Settings",
+      name: t("Settings"),
       icon: <AiOutlineSetting size={20} className="mr-2" />,
       icon2: <AiOutlineSetting size={20} />,
       link: "/Settings",
@@ -198,7 +200,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
                   />
                 </svg>
 
-                <span className="ml-2">Logout</span>
+                <span className="ml-2">{t("Logout")}</span>
               </button>
               <button
                 className="flex justify-center items-center rounded-lg text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-teal-100 hover:text-gray-700 w-[25%]"
@@ -214,14 +216,9 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
           <div className="flex flex-col justify-between items-center">
             <div className="flex items-center justify-center p-2">
               <span className="grid place-content-center rounded-lg bg-gray-100 text-xs text-gray-600 p-1">
-                <img
-                  className="object-cover"
-                  src={myShopImg}
-                  alt="Shop logo"
-                />
+                <img className="object-cover" src={myShopImg} alt="Shop logo" />
               </span>
             </div>
-
 
             <div className="border-t border-gray-100">
               <div className="px-2">
@@ -276,14 +273,14 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
             </div>
           </div>
 
-          <div className="mt-auto inset-x-0 bottom-0 border-t border-gray-100 p-2">
+          <div className="mt-auto inset-x-0 border-t border-gray-100 p-2">
             <button
               className="group relative flex w-full min-h-[32px] justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
               onClick={() => toggleSidebar(!isSidebarOpen)}
             >
               {isSidebarOpen ? <BsArrowBarLeft /> : <BsArrowBarRight />}
               <span className="absolute start-full z-30 top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white opacity-0 group-hover:opacity-100">
-                Expand
+                {t("Expand")}
               </span>
             </button>
             <button
@@ -306,7 +303,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
               </svg>
 
               <span className="absolute start-full z-30 top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white opacity-0 group-hover:opacity-100">
-                Logout
+                {t("Logout")}
               </span>
             </button>
           </div>

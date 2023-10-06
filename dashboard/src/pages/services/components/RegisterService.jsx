@@ -11,15 +11,22 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../../../services/firebaseStorage";
 import ProgressBar from "../../../components/ProgressBar";
 import { Store } from "react-notifications-component";
-import { DefaultInputDarkStyle, DefaultInputLightStyle, LoadingRegisterButton } from "../../../components/Styled";
+import {
+  DefaultInputDarkStyle,
+  DefaultInputLightStyle,
+  LoadingRegisterButton,
+} from "../../../components/Styled";
 import { ShopNameContext } from "../../../context/ShopNameContext";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const RegisterService = ({ setModelState }) => {
+  const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
   const { shopName } = useContext(ShopNameContext);
   const { isDarkMode } = useContext(DarkModeContext);
-  const [isRegistering, setIsRegistering] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const notify = (title, message, type) => {
@@ -27,10 +34,10 @@ const RegisterService = ({ setModelState }) => {
       title: title,
       message: message,
       type: type,
-      insert: 'top',
-      container: 'bottom-center',
-      animationIn: ['animated', 'fadeIn'],
-      animationOut: ['animated', 'fadeOut'],
+      insert: "top",
+      container: "bottom-center",
+      animationIn: ["animated", "fadeIn"],
+      animationOut: ["animated", "fadeOut"],
       dismiss: {
         duration: 5000,
         onScreen: true,
@@ -44,15 +51,19 @@ const RegisterService = ({ setModelState }) => {
   };
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Required"),
-    price: Yup.number().required("Required"),
-    duration: Yup.string().required("Duration is required"),
-    serviceImg: Yup.mixed().required("Service Picture is required"),
+    name: Yup.string().required(t("Required")),
+    price: Yup.number().required(t("Required")),
+    duration: Yup.string().required(t("Duration is required")),
+    serviceImg: Yup.mixed().required(t("Service Picture is required")),
   });
+
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
-      setIsRegistering(true)
+      setIsRegistering(true);
       const token = localStorage.getItem("ag_app_shop_token");
       if (!token) {
         console.error("Token not found");
@@ -100,22 +111,32 @@ const RegisterService = ({ setModelState }) => {
                   },
                 })
                 .then((res) => {
-                  notify("New Service", `New Service "${values.name}" has been registered`, "success")
+                  notify(
+                    t("New Service"),
+                    `${t("New Service")} "${values.name}" ${t(
+                      "has been registered"
+                    )}`,
+                    "success"
+                  );
                   sendNotification(
-                    "New Service - " +
-                    new Intl.DateTimeFormat("en-GB", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    }).format(new Date())
+                    `${t("New Service")} - ` +
+                      new Intl.DateTimeFormat(getCurrentLanguage(), {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }).format(new Date())
                   );
                   setIsRegistering(false);
                   setModelState(false);
                 })
                 .catch((error) => {
-                  notify("Error", `Some of the data has already been registered before`, "danger");
+                  notify(
+                    t("Error"),
+                    t(`Some of the data has already been registered before`),
+                    "danger"
+                  );
                 });
             });
         }
@@ -125,7 +146,6 @@ const RegisterService = ({ setModelState }) => {
     }
 
     setSubmitting(false);
-
   };
 
   return (
@@ -146,123 +166,133 @@ const RegisterService = ({ setModelState }) => {
       >
         {(formikProps) => (
           <Form
-          className={`bg-${
-            isDarkMode ? "gray-800" : "white"
-          } rounded px-8 pt-6 pb-8 mb-4`}
-        >
+            className={`bg-${
+              isDarkMode ? "gray-800" : "white"
+            } rounded px-8 pt-6 pb-8 mb-4`}
+          >
             <div className="w-full">
-            <div className="mb-4">
-              <label
-                htmlFor="name"
-                className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
+              <div className="mb-4">
+                <label
+                  htmlFor="name"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
                   }`}
-              >
-                Name
-              </label>
-              <Field
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Enter the name of the service"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
-              <ErrorMessage
-                name="name"
-                component="p"
-                className="text-red-500 text-xs italic"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="price"
-                className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
-                  }`}
-              >
-                Price
-              </label>
-              <Field
-                type="number"
-                id="price"
-                name="price"
-                placeholder="0.00"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
-                />
-              <ErrorMessage
-                name="price"
-                component="p"
-                className="text-red-500 text-xs italic"
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="duration"
-                className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
-                  }`}
-              >
-                Duration
-              </label>
-              <Field
-                name="duration"
-                as="select"
-                className={`${isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle}`}
                 >
-                <option value="">Select Duration</option>
-                <option value="5">5 min</option>
-                <option value="10">10 min</option>
-                <option value="15">15 min</option>
-                <option value="20">20 min</option>
-                <option value="25">25 min</option>
-                <option value="30">30 min</option>
-                <option value="35">35 min</option>
-                <option value="40">40 min</option>
-                <option value="45">45 min</option>
-                <option value="50">50 min</option>
-                <option value="55">55 min</option>
-                <option value="60">1 h</option>
-              </Field>
-              <ErrorMessage
-                name="duration"
-                component="p"
-                className="text-red-500 text-xs italic"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label
-                htmlFor="serviceImg"
-                className={`block text-sm font-bold mb-2 text-${isDarkMode ? "white" : "gray-700"
+                  {t("Name")}
+                </label>
+                <Field
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder={t("Enter the name of the service")}
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
                   }`}
-              >
-                Image
-              </label>
-              <ImageUpload
-                field={{
-                  name: `serviceImg`,
-                  value: formikProps.values.serviceImg,
-                  onChange: (file) =>
-                    formikProps.setFieldValue(`serviceImg`, file),
-                  onBlur: formikProps.handleBlur,
-                }}
-                form={formikProps}
-              />
-            </div>
+                />
+                <ErrorMessage
+                  name="name"
+                  component="p"
+                  className="text-red-500 text-xs italic"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="price"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
+                >
+                  {t("Price")}
+                </label>
+                <Field
+                  type="number"
+                  id="price"
+                  name="price"
+                  placeholder="0.00"
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
+                />
+                <ErrorMessage
+                  name="price"
+                  component="p"
+                  className="text-red-500 text-xs italic"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="duration"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
+                >
+                  {t("Duration")}
+                </label>
+                <Field
+                  name="duration"
+                  as="select"
+                  className={`${
+                    isDarkMode ? DefaultInputDarkStyle : DefaultInputLightStyle
+                  }`}
+                >
+                  <option value="">{t("Select Duration")}</option>
+                  <option value="5">5 {t("min")}</option>
+                  <option value="10">10 {t("min")}</option>
+                  <option value="15">15 {t("min")}</option>
+                  <option value="20">20 {t("min")}</option>
+                  <option value="25">25 {t("min")}</option>
+                  <option value="30">30 {t("min")}</option>
+                  <option value="35">35 {t("min")}</option>
+                  <option value="40">40 {t("min")}</option>
+                  <option value="45">45 {t("min")}</option>
+                  <option value="50">50 {t("min")}</option>
+                  <option value="55">55 {t("min")}</option>
+                  <option value="60">1 {t("hour")}</option>
+                </Field>
+                <ErrorMessage
+                  name="duration"
+                  component="p"
+                  className="text-red-500 text-xs italic"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  htmlFor="serviceImg"
+                  className={`block text-sm font-bold mb-2 text-${
+                    isDarkMode ? "white" : "gray-700"
+                  }`}
+                >
+                  {t("Image")}
+                </label>
+                <ImageUpload
+                  field={{
+                    name: `serviceImg`,
+                    value: formikProps.values.serviceImg,
+                    onChange: (file) =>
+                      formikProps.setFieldValue(`serviceImg`, file),
+                    onBlur: formikProps.handleBlur,
+                  }}
+                  form={formikProps}
+                />
+              </div>
             </div>
 
-           <div className="w-full mt-auto">
-            <hr className="mb-3"/>
+            <div className="w-full mt-auto">
+              <hr className="mb-3" />
 
-           <div className="mb-4">
-              <ProgressBar progress={uploadProgress} />
-            </div>
+              <div className="mb-4">
+                <ProgressBar progress={uploadProgress} />
+              </div>
 
-            <div className="flex items-center justify-end mt-8">
-              <LoadingRegisterButton 
-                 disabled={formikProps.isSubmitting}
-                 isRegistering={isRegistering}
-              />
+              <div className="flex items-center justify-end mt-8">
+                <LoadingRegisterButton
+                  disabled={formikProps.isSubmitting}
+                  isRegistering={isRegistering}
+                />
+              </div>
             </div>
-           </div>
           </Form>
         )}
       </Formik>

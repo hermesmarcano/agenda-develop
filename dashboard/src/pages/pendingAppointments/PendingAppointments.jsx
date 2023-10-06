@@ -12,8 +12,11 @@ import { FiClock } from "react-icons/fi";
 import { SidebarContext } from "../../context/SidebarContext";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import instance from "../../axiosConfig/axiosConfig";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const PendingAppointments = () => {
+  const { t } = useTranslation();
   const { shopId } = useContext(SidebarContext);
   const [pendingAppointments, setPendingAppointments] = useState([]);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -55,11 +58,9 @@ const PendingAppointments = () => {
         console.log(error);
       });
 
-  // const currentAppointments = pendingAppointments.slice(firstIndex, lastIndex);
-
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    setSelectedAppointment(null); // Reset selected appointment on page change
+    setSelectedAppointment(null);
 
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -72,7 +73,6 @@ const PendingAppointments = () => {
   };
 
   const handleCheckout = () => {
-    // Perform checkout logic here
     selectedAppointment.status === "pending"
       ? localStorage.setItem(
           "ag_app_booking_info",
@@ -123,11 +123,14 @@ const PendingAppointments = () => {
     navigate("/checkout");
   };
 
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
+
   return (
-    // In the return statement
     <div className="p-4 flex flex-col lg:flex-row">
       <div className="lg:w-3/4 pr-5">
-        <h1 className="text-xl font-bold mb-6">Pending Appointments</h1>
+        <h1 className="text-xl font-bold mb-6">{t("Pending Appointments")}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {currentAppointments.map((appointment) => (
             <div
@@ -171,7 +174,7 @@ const PendingAppointments = () => {
                     <div className="flex items-center text-gray-500">
                       <RiTimeFill className="mr-1" />
                       <p className="text-sm">
-                        {new Intl.DateTimeFormat("en", {
+                        {new Intl.DateTimeFormat(getCurrentLanguage(), {
                           timeStyle: "short",
                         }).format(new Date(appointment.dateTime))}
                       </p>
@@ -221,10 +224,10 @@ const PendingAppointments = () => {
                 {selectedAppointment.customer.name}
               </h2>
               <p className="mb-4">
-                Professional: {selectedAppointment.professional.name}
+                {t("Professional")}: {selectedAppointment.professional.name}
               </p>
               <div className="flex flex-col mb-4">
-                <p className="text-sm mb-1">Services:</p>
+                <p className="text-sm mb-1">{t("Services")}:</p>
                 {selectedAppointment.service.map((service, index) => (
                   <p
                     key={index}
@@ -233,7 +236,7 @@ const PendingAppointments = () => {
                     <RiCheckboxCircleLine className="mr-1" />
                     {service.name} (
                     <span className="flex items-center">
-                      {service.duration} min <FiClock className="ml-1" />
+                      {service.duration} {t("min")} <FiClock className="ml-1" />
                     </span>
                     )
                   </p>
@@ -241,7 +244,7 @@ const PendingAppointments = () => {
               </div>
               {selectedAppointment?.product?.length > 0 && (
                 <div className="flex flex-col mb-4">
-                  <p className="text-sm text-gray-600 mb-1">products:</p>
+                  <p className="text-sm text-gray-600 mb-1">{t("Products")}:</p>
                   {selectedAppointment.product.map((product, index) => (
                     <p
                       key={index}
@@ -255,7 +258,7 @@ const PendingAppointments = () => {
               )}
               <p className="mb-4">
                 <RiMoneyDollarCircleLine className="text-green-500 mr-1" />
-                Price: $
+                {t("Price")}: {t("$")}
                 {selectedAppointment?.product?.length > 0
                   ? (
                       selectedAppointment.service.reduce(
@@ -275,7 +278,7 @@ const PendingAppointments = () => {
                 className="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md mt-auto"
                 onClick={handleCheckout}
               >
-                Proceed to Checkout
+                {t("Proceed to Checkout")}
               </button>
             </div>
           </div>
@@ -290,16 +293,16 @@ const PendingAppointments = () => {
             >
               <RiCheckboxBlankCircleLine className="text-gray-400 text-5xl mb-4" />
               <h2 className="text-gray-400 text-3xl font-semibold mb-2">
-                No selected appointment
+                {t("No selected appointment")}
               </h2>
               <p className="text-lg">
-                Please choose an appointment to proceed.
+                {t("Please choose an appointment to proceed.")}
               </p>
               <button
                 className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-md shadow-md hover:bg-gray-600"
                 onClick={() => navigate("/")}
               >
-                Book Now
+                {t("Book Now")}
               </button>
             </div>
           </div>
@@ -327,7 +330,7 @@ function Pagination({ itemsPerPage, totalItems, onPageChange }) {
 
   const renderPageButtons = () => {
     const visiblePageButtons = [];
-    const maxVisibleButtons = 4; // Maximum number of visible buttons
+    const maxVisibleButtons = 4;
 
     let start = Math.max(1, currentPage - Math.floor(maxVisibleButtons / 2));
     let end = Math.min(start + maxVisibleButtons - 1, totalPages);

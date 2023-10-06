@@ -10,8 +10,10 @@ import CalendarBox from "./components/CalendarBox";
 import { Hourglass } from "../../components/Styled";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import SchedulerC from "./components/SchedularC";
+import { useTranslation } from "react-i18next";
 
 const Agenda = () => {
+  const { t } = useTranslation();
   const { shopName, shopId } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
 
@@ -186,7 +188,7 @@ const Agenda = () => {
           >
             {viewMode === "daily" ? (
               <>
-                <label className="mb-1 font-bold">Select Professionals:</label>
+                <label className="mb-1 font-bold">{t('Select Professionals')}:</label>
                 <div>
                   <div className="flex items-center">
                     <input
@@ -208,7 +210,7 @@ const Agenda = () => {
                             <FaCircle className="w-3 h-3 text-green-600" />
                           )}
                       </div>
-                      Select All
+                      {t('Select All')}
                     </label>
                   </div>
                   {professionals.map((professional) => (
@@ -243,7 +245,7 @@ const Agenda = () => {
               </>
             ) : (
               <>
-                <label className="mb-1 font-bold">Select Professional:</label>
+                <label className="mb-1 font-bold">{t('Select Professional')}:</label>
                 <div>
                   {professionals.map((professional) => (
                     <div
@@ -283,10 +285,10 @@ const Agenda = () => {
             <div className="flex flex-col items-center justify-center h-full">
               <div className="text-3xl font-bold mb-4">
                 <AiOutlineInbox className="inline-block mr-2" />
-                No Selected Professionals
+                {t('No Selected Professionals')}
               </div>
               <div className="text-gray-600 text-lg mb-8">
-                Please select professionals to show the Schedular.
+                {t('Please select professionals to show the Schedular.')}
               </div>
               <HiEmojiSad className="text-6xl text-gray-500" />
             </div>

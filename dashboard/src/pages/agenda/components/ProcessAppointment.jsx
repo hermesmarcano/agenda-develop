@@ -4,9 +4,11 @@ import RegisterAppointment from "./RegisterAppointment";
 import instance from "../../../axiosConfig/axiosConfig";
 import { SidebarContext } from "../../../context/SidebarContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
+import { useTranslation } from "react-i18next";
 
 const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
-  const {isDarkMode} = useContext(DarkModeContext);
+  const { t } = useTranslation();
+  const { isDarkMode } = useContext(DarkModeContext);
   const [activeTab, setActiveTab] = useState("appointment");
   const [bookingInfo, setBookingInfo] = useState({});
   const [amount, setAmount] = useState(0);
@@ -37,13 +39,19 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
   return (
     <>
       {isOpen && (
-        <div className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto`}>
+        <div
+          className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto`}
+        >
           <div className="flex items-center justify-center min-h-screen">
             <div
               className="fixed inset-0 bg-gray-500 opacity-75"
               onClick={onClose}
             ></div>
-            <div className={`rounded-lg overflow-hidden shadow-xl relative w-11/12 md:w-1/2 lg:w-2/3  ${isDarkMode? "bg-gray-800" : "bg-white"}`}>
+            <div
+              className={`rounded-lg overflow-hidden shadow-xl relative w-11/12 md:w-1/2 lg:w-2/3  ${
+                isDarkMode ? "bg-gray-800" : "bg-white"
+              }`}
+            >
               <button
                 className="absolute top-0 right-0 m-3 text-gray-600 hover:text-gray-800 focus:outline-none"
                 onClick={onClose}
@@ -73,7 +81,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                             }`}
                             onClick={() => handleTabChange("appointment")}
                           >
-                            New Appointment
+                            {t("New Appointment")}
                           </div>
                           <div
                             className={`px-4 py-2 cursor-pointer ${
@@ -83,7 +91,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                             }`}
                             onClick={() => handleTabChange("blockSchedule")}
                           >
-                            Block Schedule
+                            {t("Block Schedule")}
                           </div>
                         </div>
                         {activeTab === "appointment" ? (
