@@ -1,3 +1,4 @@
+import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 
@@ -15,8 +16,12 @@ const CalendarBox = ({ selectedDate, setSelectedDate, handleDateClick }) => {
     );
   };
 
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
+
   const getMonthName = () => {
-    return selectedDate.toLocaleString("default", {
+    return selectedDate.toLocaleString(getCurrentLanguage(), {
       month: "long",
       year: "numeric",
     });

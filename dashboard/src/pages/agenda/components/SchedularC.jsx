@@ -7,6 +7,7 @@ import { ViewModeContext } from "../../../context/ViewModeContext";
 import { SidebarContext } from "../../../context/SidebarContext";
 import instance from "../../../axiosConfig/axiosConfig";
 import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 
 const SchedulerC = ({
   date,
@@ -107,6 +108,10 @@ const SchedulerC = ({
     onSelectedWeekDateChange(nextWeekDate);
   };
 
+  function getCurrentLanguage() {
+    return i18next.language || "en";
+  }
+
   const formatDate = (date, language) => {
     const options = {
       weekday: "long",
@@ -132,7 +137,9 @@ const SchedulerC = ({
               >
                 <IoIosArrowBack />
               </button>
-              <h2 className="font-semibold text-sm">{formatDate(date)}</h2>
+              <h2 className="font-semibold text-sm">
+                {formatDate(date, getCurrentLanguage())}
+              </h2>
               <button
                 className="px-2 py-1 rounded-md text-sm"
                 onClick={handleNextDate}
