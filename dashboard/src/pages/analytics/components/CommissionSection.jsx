@@ -152,23 +152,23 @@ const CommissionSection = () => {
     const total = professionals.reduce((acc, professional) => {
       const professionalEarnings =
         professional.servicesEarnings *
-          (professional.commissionPercentServices / 100) +
+          (1 - professional.commissionPercentServices / 100) +
         professional.productsEarnings *
-          (professional.commissionPercentProducts / 100);
+          (1 - professional.commissionPercentProducts / 100);
 
       return acc + professionalEarnings;
     }, 0);
     const totalServices = professionals.reduce((acc, professional) => {
       const professionalServicesEarnings =
         professional.servicesEarnings *
-        (professional.commissionPercentServices / 100);
+        (1 - professional.commissionPercentServices / 100);
 
       return acc + professionalServicesEarnings;
     }, 0);
     const totalProducts = professionals.reduce((acc, professional) => {
       const professionalProductsEarnings =
         professional.productsEarnings *
-        (professional.commissionPercentProducts / 100);
+        (1 - professional.commissionPercentProducts / 100);
 
       return acc + professionalProductsEarnings;
     }, 0);
@@ -360,7 +360,10 @@ const CommissionSection = () => {
                       <span className="ml-2 mr-1">$</span>
                       <span className="block border rounded p-1 font-bold">
                         {professional.servicesEarnings &&
-                          parseInt(professional.servicesEarnings).toFixed(2)}
+                          parseInt(
+                            professional.servicesEarnings *
+                              (professional.commissionPercentServices / 100)
+                          ).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -389,18 +392,29 @@ const CommissionSection = () => {
                         }
                       />
                       <span className="ml-2 mr-1">$</span>
-                      <span className="block border rounded p-1 font-bold">
-                        {professional.productsEarnings &&
-                          parseInt(professional.productsEarnings).toFixed(2)}
-                      </span>
+                      {professional.productsEarnings ? (
+                        <span className="block border rounded p-1 font-bold">
+                          {professional.productsEarnings &&
+                            parseInt(
+                              professional.productsEarnings *
+                                (professional.commissionPercentProducts / 100)
+                            ).toFixed(2)}
+                        </span>
+                      ) : (
+                        <span className="block border rounded p-1 font-bold">
+                          00.00
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
                 <div className="font-semibold text-gray-500">
                   {t("Total")}: $
                   {(
-                    professional.servicesEarnings +
-                    professional.productsEarnings
+                    professional.servicesEarnings *
+                      (professional.commissionPercentServices / 100) +
+                    professional.productsEarnings *
+                      (professional.commissionPercentProducts / 100)
                   ).toFixed(2)}
                 </div>
                 <button
