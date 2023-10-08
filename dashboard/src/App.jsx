@@ -60,7 +60,7 @@ function App() {
   return (
     <div className="h-screen overflow-hidden">
       <Helmet>
-        <title>{title}</title>
+        <title>{title} - Dashboard</title>
         <link rel="icon" type="image/png" href={logo} />
       </Helmet>
       <NotificationContextWrapper>
