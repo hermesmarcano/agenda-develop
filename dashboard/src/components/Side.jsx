@@ -136,9 +136,9 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`h-[calc(100%-40px)] z-10 shadow-lg fixed left-0 ${
+      className={`h-[calc(100%-72px)] z-10 shadow-lg fixed left-0 ${
         isDarkMode ? "bg-gray-800" : "bg-white"
-      } overflow-y-auto transition-all duration-300 
+      } overflow-y-auto transition-all duration-300 flex flex-col justify-between 
       ${isSidebarOpen ? "w-[190px]" : "w-16 ease-in"}
       `}
     >
@@ -179,7 +179,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
               })}
             </ul>
           </div>
-          <div className="inset-x-0 border-t border-gray-100">
+          <div className="inset-x-0 absolute bottom-0 border-t border-gray-100">
             <div className="w-full flex">
               <button
                 onClick={logout}

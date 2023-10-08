@@ -17,7 +17,7 @@ const PrivateRoutes = () => {
     <>
       <Header />
       {/* <div className="flex mt-[72px] h-[calc(100%-50px)]"> */}
-      <div className="flex h-[calc(100%-64px)]">
+      <div className="flex h-[calc(100%-72px)]">
         <Side isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         {/* <SideMenu/> */}
         <div
