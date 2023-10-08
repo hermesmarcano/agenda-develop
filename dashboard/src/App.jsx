@@ -28,6 +28,7 @@ import { ReactNotifications } from "react-notifications-component";
 import { ShopNameContextWrapper } from "./context/ShopNameContext";
 import { useEffect, useState } from "react";
 import instance from "./axiosConfig/axiosConfig";
+import LogoutOnTokenExpiration from "./services/logoutTokenExpiration";
 
 function App() {
   const [logo, setLogo] = useState("");
@@ -73,6 +74,7 @@ function App() {
                     <SidebarContextWrapper>
                       <BrowserRouter>
                         <ReactNotifications />
+                        <LogoutOnTokenExpiration />
                         <Routes>
                           <Route element={<PrivateRoutes />}>
                             <Route path="/" exact element={<Agenda />} />
