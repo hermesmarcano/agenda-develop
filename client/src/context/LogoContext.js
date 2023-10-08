@@ -16,8 +16,8 @@ const LogoContextWrapper = ({ children }) => {
 
       if (response.data.admin.logo) {
         setLogo((prev) => (response.data.admin.logo))
-        if(response.data.admin.logo === null || response.data.admin.logo === ""){
-          setLogo((prev) => ({...prev, image: "https://via.placeholder.com/50"}))
+        if (response.data.admin.logo === null || response.data.admin.logo === "") {
+          setLogo("https://via.placeholder.com/50")
         }
       }
     } catch (error) {

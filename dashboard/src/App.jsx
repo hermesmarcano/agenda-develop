@@ -1,4 +1,4 @@
-import "./App.css";
+import { Helmet } from "react-helmet";
 import { HashRouter, BrowserRouter, Route, Routes } from "react-router-dom";
 import Agenda from "./pages/agenda/Agenda";
 import Customers from "./pages/customers/Customers";
@@ -26,78 +26,115 @@ import { DarkModeContextWrapper } from "./context/DarkModeContext";
 import Notification from "./pages/notification/Notification";
 import { ReactNotifications } from "react-notifications-component";
 import { ShopNameContextWrapper } from "./context/ShopNameContext";
+import { useEffect, useState } from "react";
+import instance from "./axiosConfig/axiosConfig";
 
 function App() {
+  const [logo, setLogo] = useState("");
+  const [title, setTitle] = useState("");
+
+  useEffect(() => {
+    fetchAdminData();
+  }, []);
+
+  const fetchAdminData = async () => {
+    try {
+      const response = await instance.get("admin");
+
+      if (response.data.admin.logo) {
+        setLogo((prev) => response.data.admin.logo);
+        setTitle((prev) => response.data.admin.websiteTitle);
+        if (
+          response.data.admin.logo === null ||
+          response.data.admin.logo === ""
+        ) {
+          setLogo("https://via.placeholder.com/50");
+          setTitle("Agenda");
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="h-screen overflow-hidden">
+      <Helmet>
+        <title>{title}</title>
+        <link rel="icon" type="image/png" href={logo} />
+      </Helmet>
       <NotificationContextWrapper>
         <AlertContextWrapper>
           <ShopNameContextWrapper>
-          <DarkModeContextWrapper>
-            <ViewModeContextWrapper>
-              <ProfessionalIdContextWrapper>
-                <DateTimeContextWrapper>
-                  <SidebarContextWrapper>
-                    <BrowserRouter>
-                    <ReactNotifications />
-                      <Routes>
-                        <Route element={<PrivateRoutes />}>
-                          <Route path="/" exact element={<Agenda />} />
-                          <Route path="/agenda" exact element={<Agenda />} />
-                          <Route path="/customers" element={<Customers />} />
+            <DarkModeContextWrapper>
+              <ViewModeContextWrapper>
+                <ProfessionalIdContextWrapper>
+                  <DateTimeContextWrapper>
+                    <SidebarContextWrapper>
+                      <BrowserRouter>
+                        <ReactNotifications />
+                        <Routes>
+                          <Route element={<PrivateRoutes />}>
+                            <Route path="/" exact element={<Agenda />} />
+                            <Route path="/agenda" exact element={<Agenda />} />
+                            <Route path="/customers" element={<Customers />} />
+                            <Route
+                              path="/professionals"
+                              element={<Professionals />}
+                            />
+                            <Route path="/products" element={<Products />} />
+                            <Route path="/services" element={<Services />} />
+                            <Route path="/analytics" element={<Analytics />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route
+                              path="/checkout-appointments"
+                              element={<PendingAppointments />}
+                            />
+                            <Route
+                              path="/checkout"
+                              exact
+                              element={<Checkout />}
+                            />
+                            <Route
+                              path="/notifications"
+                              exact
+                              element={<Notification />}
+                            />
+                          </Route>
                           <Route
-                            path="/professionals"
-                            element={<Professionals />}
-                          />
-                          <Route path="/products" element={<Products />} />
-                          <Route path="/services" element={<Services />} />
-                          <Route path="/analytics" element={<Analytics />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route
-                            path="/checkout-appointments"
-                            element={<PendingAppointments />}
-                          />
-                          <Route
-                            path="/checkout"
+                            path="/register"
                             exact
-                            element={<Checkout />}
+                            element={<Register />}
+                          />
+                          <Route path="/login" exact element={<Login />} />
+                          <Route
+                            path="/forgot-password"
+                            exact
+                            element={<ForgotPassword />}
                           />
                           <Route
-                            path="/notifications"
+                            path="/check-email"
                             exact
-                            element={<Notification />}
+                            element={<CheckEmail />}
                           />
-                        </Route>
-                        <Route path="/register" exact element={<Register />} />
-                        <Route path="/login" exact element={<Login />} />
-                        <Route
-                          path="/forgot-password"
-                          exact
-                          element={<ForgotPassword />}
-                        />
-                        <Route
-                          path="/check-email"
-                          exact
-                          element={<CheckEmail />}
-                        />
-                        <Route
-                          path="/reset-password"
-                          exact
-                          element={<PasswordReset />}
-                        />
-                        <Route
-                          path="/reset-password/:token"
-                          exact
-                          element={<PasswordReset />}
-                        />
-                        <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </BrowserRouter>
-                  </SidebarContextWrapper>
-                </DateTimeContextWrapper>
-              </ProfessionalIdContextWrapper>
-            </ViewModeContextWrapper>
-          </DarkModeContextWrapper>
+                          <Route
+                            path="/reset-password"
+                            exact
+                            element={<PasswordReset />}
+                          />
+                          <Route
+                            path="/reset-password/:token"
+                            exact
+                            element={<PasswordReset />}
+                          />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </BrowserRouter>
+                    </SidebarContextWrapper>
+                  </DateTimeContextWrapper>
+                </ProfessionalIdContextWrapper>
+              </ViewModeContextWrapper>
+            </DarkModeContextWrapper>
           </ShopNameContextWrapper>
         </AlertContextWrapper>
       </NotificationContextWrapper>

@@ -341,8 +341,8 @@ const Checkout = () => {
 
   function formatDate(date, language) {
     const dateFormats = {
-      en: { hour: "number", minute: "numeric", hourCycle: "h23" },
-      es: { hour: "number", minute: "numeric", hourCycle: "h23" },
+      en: { hour: "2-digit", minute: "numeric", hourCycle: "h23" },
+      es: { hour: "2-digit", minute: "numeric", hourCycle: "h23" },
     };
 
     return new Intl.DateTimeFormat(language, dateFormats[language]).format(
@@ -350,8 +350,12 @@ const Checkout = () => {
     );
   }
   const reservationDate = new Date(bookingInfo.dateTime);
-  const date = new Intl.DateTimeFormat(["ban", "id"]).format(reservationDate);
-  const time = formatDate(getCurrentLanguage(), reservationDate);
+  const date = new Intl.DateTimeFormat(getCurrentLanguage(), {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(reservationDate);
+  const time = formatDate(reservationDate, getCurrentLanguage());
 
   return (
     <>

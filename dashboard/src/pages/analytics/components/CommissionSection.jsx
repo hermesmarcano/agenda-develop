@@ -15,6 +15,8 @@ const CommissionSection = () => {
   const [totalServicesEarnings, setTotalServicesEarnings] = useState(0);
   const [totalProductsEarnings, setTotalProductsEarnings] = useState(0);
   const [totalCommission, setTotalCommission] = useState(0);
+  const [servicesTotalCommission, setServicesTotalCommission] = useState(0);
+  const [productsTotalCommission, setProductsTotalCommission] = useState(0);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [initialDataLoaded, setInitialDataLoaded] = useState(false);
   const { shopId } = useContext(SidebarContext);
@@ -40,10 +42,10 @@ const CommissionSection = () => {
   const setDefaultCommissions = () => {
     const updatedProfessionals = professionals.map((professional) => {
       if (!professional.commissionPercentServices) {
-        professional.commissionPercentServices = 10; // Set default commission for services (10%)
+        professional.commissionPercentServices = 10;
       }
       if (!professional.commissionPercentProducts) {
-        professional.commissionPercentProducts = 5; // Set default commission for products (5%)
+        professional.commissionPercentProducts = 5;
       }
       return professional;
     });
@@ -150,13 +152,29 @@ const CommissionSection = () => {
     const total = professionals.reduce((acc, professional) => {
       const professionalEarnings =
         professional.servicesEarnings *
-        (professional.commissionPercentServices / 100) +
+          (professional.commissionPercentServices / 100) +
         professional.productsEarnings *
-        (professional.commissionPercentProducts / 100);
+          (professional.commissionPercentProducts / 100);
 
       return acc + professionalEarnings;
     }, 0);
+    const totalServices = professionals.reduce((acc, professional) => {
+      const professionalServicesEarnings =
+        professional.servicesEarnings *
+        (professional.commissionPercentServices / 100);
+
+      return acc + professionalServicesEarnings;
+    }, 0);
+    const totalProducts = professionals.reduce((acc, professional) => {
+      const professionalProductsEarnings =
+        professional.productsEarnings *
+        (professional.commissionPercentProducts / 100);
+
+      return acc + professionalProductsEarnings;
+    }, 0);
     setTotalCommission(total);
+    setServicesTotalCommission(totalServices);
+    setProductsTotalCommission(totalProducts);
   };
 
   // Watch for changes in relevant state values and calculate total commission
@@ -190,7 +208,7 @@ const CommissionSection = () => {
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col justify-center items-center space-x-2">
           <FaSpinner className="animate-spin text-4xl text-blue-500" />
-          <span className="mt-2">{t('Loading...')}</span>
+          <span className="mt-2">{t("Loading...")}</span>
         </div>
       </div>
     );
@@ -213,7 +231,7 @@ const CommissionSection = () => {
           Authorization: localStorage.getItem("ag_app_shop_token"),
         },
       })
-      .then((response) => { })
+      .then((response) => {})
       .catch((error) => console.error(error));
   };
 
@@ -222,82 +240,164 @@ const CommissionSection = () => {
       className={`shadow-md rounded-md p-6 
     ${isDarkMode ? "bg-gray-800" : "bg-white"}`}
     >
-      <h2 className="text-lg font-bold mb-4">{t('Commissions')}</h2>
+      <h2 className="text-lg font-bold mb-4">{t("Commissions")}</h2>
       <div
-        className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-100"
-          }`}
+        className={`rounded-lg p-4 ${
+          isDarkMode ? "bg-gray-900" : "bg-gray-100"
+        }`}
       >
-        <div className="flex items-center">
-          <MdMonetizationOn size={24} className="mr-2 text-blue-500" />
-          <div className="flex flex-wrap">
-            <div className="text-xl font-bold text-blue-500 mr-2">
-              ${totalCommission.toFixed(2)}
-            </div>
-            <div className="text-sm font-semibold text-gray-500">
-              {t('Total Commissions')}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <div className="flex justify-between items-center flex-wrap">
+              <div className="text-lg font-semibold text-gray-500">
+                {t("Total Earnings")}
+              </div>
+              <div className="flex items-center text-xl font-bold text-blue-500">
+                <MdMonetizationOn size={24} className="ml-2 text-blue-500" />
+                {(totalServicesEarnings + totalProductsEarnings).toFixed(2)}
+              </div>
             </div>
           </div>
         </div>
-        <div className="text-sm font-semibold text-gray-500">
-          {t('All professionals')}
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="flex justify-between items-center flex-wrap">
+              <div className="font-semibold text-gray-500">
+                {t("Total Services")}
+              </div>
+              <div className="flex items-center text-xl font-bold text-orange-500">
+                <MdMonetizationOn size={24} className="ml-2 text-orange-500" />
+                {totalServicesEarnings.toFixed(2)}
+              </div>
+            </div>
+            <div className="flex justify-between items-center flex-wrap">
+              <div className="font-semibold text-gray-500">
+                {t("Total Products")}
+              </div>
+              <div className="flex items-center text-xl font-bold text-orange-500">
+                <MdMonetizationOn size={24} className="ml-2 text-orange-500" />
+                {totalProductsEarnings.toFixed(2)}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between items-center flex-wrap">
+              <div className="font-semibold text-gray-500">
+                {t("Services Shop Earnings")}
+              </div>
+              <div className="flex items-center text-xl font-bold text-green-500">
+                <MdMonetizationOn size={24} className="ml-2 text-green-500" />
+                {servicesTotalCommission.toFixed(2)}
+              </div>
+            </div>
+            <div className="flex justify-between items-center flex-wrap">
+              <div className="font-semibold text-gray-500">
+                {t("Products Shop Earnings")}
+              </div>
+              <div className="flex items-center text-xl font-bold text-green-500">
+                <MdMonetizationOn size={24} className="ml-2 text-green-500" />
+                {productsTotalCommission.toFixed(2)}
+              </div>
+            </div>
+            <div className="flex justify-between items-center flex-wrap">
+              <div className="font-semibold text-gray-500">
+                {t("Total Shop Earnings")}
+              </div>
+              <div className="flex items-center text-xl font-bold text-green-500">
+                <MdMonetizationOn size={24} className="ml-2 text-green-500" />
+                {totalCommission.toFixed(2)}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div className="text-right text-sm font-semibold text-gray-500">
+          {t("All professionals")}
         </div>
       </div>
       <div className="mt-8">
         {professionals.length === 0 ? (
           <p className="text-gray-500">
-            {t('No earnings have been generated this week.')}
+            {t("No earnings have been generated this week.")}
           </p>
         ) : (
           <ul className="space-y-4">
             {professionals.map((professional) => (
               <li
                 key={professional._id}
-                className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-100"
-                  }`}
+                className={`flex flex-wrap items-center justify-between rounded-lg p-4 ${
+                  isDarkMode ? "bg-gray-900" : "bg-gray-100"
+                }`}
               >
                 <div>
                   <div className="mr-2 font-bold">{professional.name}</div>
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     <label
                       htmlFor={`commissionInputServices_${professional._id}`}
                       className="mr-2"
                     >
-                      {t('Commission for Services')}:
+                      {t("Commission for Services")}:
                     </label>
-                    <input
-                      type="number"
-                      id={`commissionInputServices_${professional._id}`} // Use professional's _id to make the ID unique
-                      className={`border rounded-md px-2 py-1 w-20 my-1 ${isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                    <div className="flex items-center">
+                      <span className="mr-1">%</span>
+                      <input
+                        type="number"
+                        id={`commissionInputServices_${professional._id}`} // Use professional's _id to make the ID unique
+                        className={`border rounded-md px-2 py-1 w-20 my-1 ${
+                          isDarkMode ? "bg-gray-500" : "bg-gray-100"
                         }`}
-                      value={professional.commissionPercentServices}
-                      onChange={(e) =>
-                        handleCommissionChange(e, professional._id, "services")
-                      }
-                    />
-                    <span className="ml-2">%</span>
+                        value={professional.commissionPercentServices}
+                        onChange={(e) =>
+                          handleCommissionChange(
+                            e,
+                            professional._id,
+                            "services"
+                          )
+                        }
+                      />
+                      <span className="ml-2 mr-1">$</span>
+                      <span className="block border rounded p-1 font-bold">
+                        {professional.servicesEarnings &&
+                          parseInt(professional.servicesEarnings).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center justify-between">
                     <label
                       htmlFor={`commissionInputProducts_${professional._id}`}
                       className="mr-2"
                     >
-                      {t('Commission for Products')}:
+                      {t("Commission for Products")}:
                     </label>
-                    <input
-                      type="number"
-                      id={`commissionInputProducts_${professional._id}`} // Use professional's _id to make the ID unique
-                      className={`border rounded-md px-2 py-1 w-20 my-1 ${isDarkMode ? "bg-gray-500" : "bg-gray-100"
+                    <div className="flex items-center">
+                      <span className="mr-1">%</span>
+                      <input
+                        type="number"
+                        id={`commissionInputProducts_${professional._id}`} // Use professional's _id to make the ID unique
+                        className={`border rounded-md px-2 py-1 w-20 my-1 ${
+                          isDarkMode ? "bg-gray-500" : "bg-gray-100"
                         }`}
-                      value={professional.commissionPercentProducts}
-                      onChange={(e) =>
-                        handleCommissionChange(e, professional._id, "products")
-                      }
-                    />
-                    <span className="ml-2">%</span>
+                        value={professional.commissionPercentProducts}
+                        onChange={(e) =>
+                          handleCommissionChange(
+                            e,
+                            professional._id,
+                            "products"
+                          )
+                        }
+                      />
+                      <span className="ml-2 mr-1">$</span>
+                      <span className="block border rounded p-1 font-bold">
+                        {professional.productsEarnings &&
+                          parseInt(professional.productsEarnings).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="text-sm font-semibold text-gray-500">
-                  {t('Total')}: $
+                <div className="font-semibold text-gray-500">
+                  {t("Total")}: $
                   {(
                     professional.servicesEarnings +
                     professional.productsEarnings
@@ -308,7 +408,7 @@ const CommissionSection = () => {
                   onClick={() => handleUpdateCommission(professional._id)}
                 >
                   <FaSyncAlt className="mr-2" />
-                  {t('Update')}
+                  {t("Update")}
                 </button>
               </li>
             ))}
