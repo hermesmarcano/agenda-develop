@@ -137,14 +137,9 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
                 "success"
               );
               sendNotification(
-                `${t("New Professional")} - ` +
-                  new Intl.DateTimeFormat(getCurrentLanguage(), {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }).format(new Date())
+                `${t("New Professional")} "${values.name}" ${t(
+                  "has registered"
+                )}`
               );
             } catch (e) {
               notify(

@@ -274,5 +274,8 @@
   "Profile Image": "Imagen de perfil",
   "HOURS": "HORAS",
   "MINUTES": "MINUTOS",
-  "Select services": "Seleccionar servicios"
+  "Select services": "Seleccionar servicios",
+  "Notifications Update": "Actualización de Notificaciones",
+  "Notification has been deleted": "La notificación ha sido eliminada",
+  "Reservation Updated for": "Reserva actualizada para"
 }

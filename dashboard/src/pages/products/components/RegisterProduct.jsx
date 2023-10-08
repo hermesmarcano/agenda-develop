@@ -140,14 +140,9 @@ const RegisterProduct = ({ setModelState }) => {
                     "success"
                   );
                   sendNotification(
-                    "New Product - " +
-                      new Intl.DateTimeFormat(getCurrentLanguage(), {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }).format(new Date())
+                    `${t("New Product")} "${values.name}" ${t(
+                      "has been registered"
+                    )}`
                   );
                   setIsRegistering(false);
                   setModelState(false);

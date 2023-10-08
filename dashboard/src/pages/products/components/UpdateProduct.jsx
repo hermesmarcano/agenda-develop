@@ -147,14 +147,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
                       "success"
                     );
                     sendNotification(
-                      `${t("Product updated")} - ` +
-                        new Intl.DateTimeFormat(getCurrentLanguage(), {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }).format(new Date())
+                      `${t("Product")} ${values.name}" ${t("has been updated")}`
                     );
                     setIsUpdating(false);
                     setModelState(false);
@@ -192,14 +185,7 @@ const UpdateProduct = ({ setModelState, productId }) => {
               "success"
             );
             sendNotification(
-              "Product updated - " +
-                new Intl.DateTimeFormat(getCurrentLanguage(), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }).format(new Date())
+              `${t("Product")} ${values.name}" ${t("has been updated")}`
             );
             setUploadProgress(100);
             setIsUpdating(false);

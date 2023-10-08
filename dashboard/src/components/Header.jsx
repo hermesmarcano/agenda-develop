@@ -221,6 +221,46 @@ export default Header;
 
 function NotificationMenu({ notifications, isDarkMode }) {
   const { t } = useTranslation();
+  function calculateTimeDifference(startDate) {
+    const currentTime = new Date();
+    const timeDifferenceMillis = currentTime - startDate;
+
+    const minutesPassed = Math.floor(timeDifferenceMillis / (60 * 1000));
+
+    if (minutesPassed < 60) {
+      return (
+        <>
+          <span>{minutesPassed}</span>
+          <span>m</span>
+        </>
+      );
+    }
+
+    const hoursPassed = Math.floor(minutesPassed / 60);
+
+    if (hoursPassed < 24) {
+      return (
+        <>
+          <span>{hoursPassed}</span>
+          <span>h</span>
+        </>
+      );
+    }
+
+    const daysPassed = Math.floor(hoursPassed / 24);
+
+    if (daysPassed < 7) {
+      return (
+        <>
+          <span>{daysPassed}</span>
+          <span>d</span>
+        </>
+      );
+    }
+
+    return "7 d";
+  }
+
   return (
     <div
       className={`absolute right-0 mt-2 w-64 ${
@@ -258,9 +298,12 @@ function NotificationMenu({ notifications, isDarkMode }) {
                     {notification.content}
                   </div>
                 </div>
-                <div className="flex items-center">
+                <div className="flex justify-center items-center">
                   <FaClock className="text-xs text-gray-400 mr-1" />{" "}
-                  <span className="text-xs text-gray-400">2h ago</span>{" "}
+                  <span className="flex items-center text-xxs text-gray-400">
+                    {notification.createdAt &&
+                      calculateTimeDifference(new Date(notification.createdAt))}
+                  </span>
                 </div>
               </div>
             </div>

@@ -184,14 +184,9 @@ const UpdateProfessional = ({
                 "success"
               );
               sendNotification(
-                `${t("Professional updated")} - ` +
-                  new Intl.DateTimeFormat(getCurrentLanguage(), {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  }).format(new Date())
+                `${t("Professional")} "${values.name}" ${t(
+                  "info has been updated"
+                )}`
               );
             } catch (e) {
               notify(

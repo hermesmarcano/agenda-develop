@@ -98,14 +98,7 @@ const RegisterCustomer = ({ setModelState }) => {
           "success"
         );
         sendNotification(
-          `${t("New Customer")} - ` +
-            new Intl.DateTimeFormat(getCurrentLanguage(), {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }).format(new Date())
+          `${t("New Customer")} "${values.name}" ${t("has registered")}`
         );
       } catch (e) {
         notify(

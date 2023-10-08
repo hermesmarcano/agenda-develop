@@ -274,5 +274,8 @@
   "Profile Image": "Profile Image",
   "HOURS": "HOURS",
   "MINUTES": "MINUTES",
-  "Select services": "Select services"
+  "Select services": "Select services",
+  "Notifications Update": "Notifications Update",
+  "Notification has been deleted": "Notification has been deleted",
+  "Reservation Updated for": "Reservation Updated for"
 }

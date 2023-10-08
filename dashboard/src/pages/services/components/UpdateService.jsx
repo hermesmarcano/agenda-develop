@@ -143,14 +143,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
                       "success"
                     );
                     sendNotification(
-                      `${t("Service updated")} - ` +
-                        new Intl.DateTimeFormat(getCurrentLanguage(), {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }).format(new Date())
+                      `${t("Service")} ${values.name}" ${t("has been updated")}`
                     );
                     setIsUpdating(false);
                     setModelState(false);
@@ -188,14 +181,7 @@ const UpdateService = ({ setModelState, serviceId }) => {
               "success"
             );
             sendNotification(
-              `${t("Service updated")} - ` +
-                new Intl.DateTimeFormat(getCurrentLanguage(), {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                }).format(new Date())
+              `${t("Service")} ${values.name}" ${t("has been updated")}`
             );
             setUploadProgress(100);
             setIsUpdating(false);

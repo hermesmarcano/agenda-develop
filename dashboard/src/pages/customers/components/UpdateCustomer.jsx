@@ -104,14 +104,7 @@ const UpdateCustomer = ({ setModelState, customerId }) => {
           "success"
         );
         sendNotification(
-          `${t("Customer updated")} - ` +
-            new Intl.DateTimeFormat(getCurrentLanguage(), {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            }).format(new Date())
+          `${t("Customer")} "${values.name}" ${t("info has been updated")}`
         );
       } catch (e) {
         notify(

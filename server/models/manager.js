@@ -17,6 +17,10 @@ const expensesSchema = new mongoose.Schema({
 const notificationSchema = new mongoose.Schema({
   content: String,
   isRead: Boolean,
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 const ManagerSchema = new Schema(
