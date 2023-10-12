@@ -21,6 +21,7 @@
   - [Manager's Dashboard App](#managers-dashboard-app)
 - [Running the Application](#running-the-application)
 - [Additional Notes](#additional-notes)
+- [License](#license)
 
 ## Introduction
 
@@ -182,3 +183,37 @@ If the dependencies were not installed correctly, follow these additional steps:
    ```bash
    npm install -g npm@latest
    ```
+
+## License
+
+Ibrahim M. Badr Custom Proprietary License
+
+1. Grant of License:
+Subject to the terms and conditions of this license, Ibrahim M. Badr ("Licensor") grants to a non-exclusive, non-transferable, revocable license to use the software code (the "Code") solely for the purpose of operating an e-commerce website and selling products through the website.
+
+2. Usage Rights:
+Licensee is authorized to use the Code to operate and maintain the e-commerce website. Licensee may not use the Code for any purpose other than operating the e-commerce website.
+
+3. Code Ownership:
+Licensor retains all ownership and intellectual property rights to the Code. This license does not transfer any ownership or intellectual property rights to Licensee.
+
+4. Code Modifications:
+Licensee shall not modify, adapt, translate, reverse engineer, decompile, disassemble, or create derivative works based on the Code without the prior written consent of Licensor. Licensee may request permission for modifications by contacting Licensor at ibrahim M. Badr.
+
+5. Prohibition of Code Sale:
+Licensee is expressly prohibited from selling, licensing, leasing, or sublicensing the Code to any third party. The Code may not be sold, offered for sale, or included in any product or service intended for commercial distribution.
+
+6. Attribution:
+Licensee agrees to provide proper attribution to Licensor as the original creator of the Code on the website or within the website's documentation.
+
+7. Termination:
+This license is effective until terminated. Licensor may terminate this license at any time if Licensee breaches any of its terms. Upon termination, Licensee shall cease using the Code.
+
+8. Governing Law:
+This license shall be governed by and construed in accordance with the laws of International Sale of Goods (CISG), without regard to its conflict of law principles.
+
+9. Entire Agreement:
+This License constitutes the entire agreement between the parties with respect to the Code and supersedes all prior or contemporaneous understandings regarding the Code.
+
+10. Contact Information:
+For questions or concerns regarding this License or requests for modifications, please reach me through ibrahimbdr@outlook.com.
