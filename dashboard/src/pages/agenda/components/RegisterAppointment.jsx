@@ -14,7 +14,6 @@ import { NotificationContext } from "../../../context/NotificationContext";
 import { Store } from "react-notifications-component";
 import { AddButtonWithTitle } from "../../../components/Styled";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import "./RegisterAppointment.css";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
@@ -557,9 +556,8 @@ const RegisterAppointment = ({
                       <Select
                         id="service"
                         name="service"
-                        className={`input-field  ${
-                          isDarkMode ? "bg-gray-700" : "bg-white"
-                        }`}
+                        className={isDarkMode && "my-react-select-container"}
+                        classNamePrefix={isDarkMode && "my-react-select"}
                         options={services.map((service) => ({
                           value: service._id,
                           label: service.name,
@@ -627,7 +625,7 @@ const RegisterAppointment = ({
                         {t("Appointment Duration")}
                       </label>
                       <div
-                        className={`flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden  ${
+                        className={`flex flex-wrap sm:flex-nowrap items-center rounded-lg ${!isDarkMode && "border border-gray-300"} overflow-hidden  ${
                           isDarkMode ? "bg-gray-700" : "bg-white"
                         }`}
                       >
@@ -663,10 +661,22 @@ const RegisterAppointment = ({
                             disabled={!allowManualDuration}
                           />
                         </div>
-                        <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
+                        <div
+                          className={`${
+                            isDarkMode
+                              ? "bg-gray-600 text-white"
+                              : "bg-gray-200 text-gray-600"
+                          } px-3 py-2 w-1/2 sm:w-fit`}
+                        >
                           <span className="text-xs">{t("HOURS")}</span>
                         </div>
-                        <div className="bg-gray-200 text-gray-600 px-3 py-2 w-1/2 sm:w-fit">
+                        <div
+                          className={`${
+                            isDarkMode
+                              ? "bg-gray-600 text-white"
+                              : "bg-gray-200 text-gray-600"
+                          } px-3 py-2 w-1/2 sm:w-fit`}
+                        >
                           <span className="text-xs">{t("MINUTES")}</span>
                         </div>
                       </div>
@@ -761,6 +771,7 @@ const RegisterAppointment = ({
 export default RegisterAppointment;
 
 const CustomSelect = ({ label, options, ...props }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
   const { t } = useTranslation();
   const [field, meta, helpers] = useField(props);
 
@@ -784,7 +795,8 @@ const CustomSelect = ({ label, options, ...props }) => {
       <Select
         id={props.id || props.name}
         name={props.name}
-        className="custom-select"
+        className={isDarkMode && "my-react-select-container"}
+        classNamePrefix={isDarkMode && "my-react-select"}
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}

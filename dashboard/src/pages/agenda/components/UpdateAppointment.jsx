@@ -37,6 +37,8 @@ const UpdateAppointment = ({
   setAmount,
   setModelState,
   appointmentId,
+  isOpen, 
+  onClose,
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate(this);
@@ -424,6 +426,20 @@ const UpdateAppointment = ({
 
   return (
     <>
+    {isOpen && (
+      <div
+        className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto`}
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <div
+            className="fixed inset-0 bg-gray-500 opacity-75"
+            onClick={onClose}
+          ></div>
+          <div
+            className={`rounded-lg overflow-hidden shadow-xl relative w-11/12 md:w-1/2 lg:w-2/3  ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            }`}
+          >
       {appointmentData ? (
         <Formik
           initialValues={{
@@ -527,7 +543,7 @@ const UpdateAppointment = ({
             }
 
             return (
-              <Form className="rounded-lg px-8 py-6 mb-4 overflow-y-auto">
+              <Form className={`rounded-lg px-8 py-6 mb-4 overflow-y-auto `}>
                 <div className="grid grid-cols-2 gap-5">
                   <div>
                     <div className="flex flex-col mb-4">
@@ -733,7 +749,11 @@ const UpdateAppointment = ({
                       >
                         {t("Appointment Duration")}
                       </label>
-                      <div className="flex flex-wrap sm:flex-nowrap items-center rounded-lg border border-gray-300 overflow-hidden">
+                      <div className={`flex flex-wrap sm:flex-nowrap items-center ${!isDarkMode && "border border-gray-300"} rounded-lg ${
+                            isDarkMode
+                              && "bg-gray-700"
+                              
+                          } overflow-hidden`}>
                         <div className="flex items-center w-full">
                           <input
                             type="number"
@@ -950,6 +970,10 @@ const UpdateAppointment = ({
           </div>
         </div>
       )}
+      </div>
+      </div>
+    </div>
+  )}
     </>
   );
 };
@@ -957,6 +981,7 @@ const UpdateAppointment = ({
 export default UpdateAppointment;
 
 const CustomSelect = ({ label, options, ...props }) => {
+  const { isDarkMode } = useContext(DarkModeContext);
   const { t } = useTranslation();
   const [field, meta, helpers] = useField(props);
 
@@ -980,7 +1005,8 @@ const CustomSelect = ({ label, options, ...props }) => {
       <Select
         id={props.id || props.name}
         name={props.name}
-        className="input-field"
+        className={isDarkMode && "my-react-select-container"}
+        classNamePrefix={isDarkMode && "my-react-select"}
         options={formattedOptions}
         value={formattedOptions.find((option) => option.value === field.value)}
         onChange={handleChange}
@@ -1056,7 +1082,9 @@ const CustomSelectList = ({ options, label, field, form }) => {
         {label}
       </label>
       <div
-        className="relative border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-800 pr-2 "
+        className={`relative ${!isDarkMode && "border border-gray-300"}  ${
+          isDarkMode ? "bg-gray-700" : "bg-white"
+        } rounded focus:outline-none focus:ring-2 focus:ring-gray-700 pr-2 `}
         ref={selectRef}
       >
         <BiChevronDown
@@ -1109,8 +1137,8 @@ const CustomSelectList = ({ options, label, field, form }) => {
 
         {isOpen && (
           <div
-            className={`absolute z-10 mt-1 ${
-              isDarkMode ? "bg-gray-800" : "bg-white"
+            className={`absolute z-10 mt-1 border border-gray-600 ${
+              isDarkMode ? "bg-gray-700" : "bg-white"
             } rounded w-full shadow-lg overflow-auto`}
           >
             {options
@@ -1120,7 +1148,7 @@ const CustomSelectList = ({ options, label, field, form }) => {
               .map((option, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between px-4 py-2 cursor-pointer hover:bg-gray-300"
+                  className={`flex items-center justify-between px-4 py-2 cursor-pointer ${isDarkMode ? "hover:bg-gray-500" : "bg-gray-300"} `}
                   onClick={() => toggleOption(option._id)}
                 >
                   <span>{option.name}</span>

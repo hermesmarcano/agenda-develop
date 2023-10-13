@@ -23,10 +23,13 @@ import { storage } from "../../services/firebaseStorage";
 import { Store } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { useTranslation } from "react-i18next";
+import TermsConditions from "./components/TermsConditions";
 
 const Register = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [modelState, setModelState] = useState(false);
+
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     const hour12 = hour % 12 || 12;
@@ -127,6 +130,7 @@ const Register = () => {
         return isValid;
       }),
     profileImg: Yup.mixed().required(t("Profile image is required")),
+    agreeToTerms: Yup.boolean().oneOf([true], t("You must agree to the terms and conditions")),
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -134,6 +138,10 @@ const Register = () => {
 
   return (
     <div className="h-screen bg-gray-50 py-11 sm:px-6 lg:px-8 overflow-auto">
+      <TermsConditions
+        isOpen={modelState}
+        onClose={() => setModelState(!modelState)}
+      />
       <div className="flex flex-col justify-center min-h-screen">
         <div className="sm:mx-auto sm:w-full">
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -162,6 +170,7 @@ const Register = () => {
                 urlSlug: "",
                 workingHours: [{ startHour: 0, endHour: 0 }],
                 profileImg: null,
+                agreeToTerms: false,
               }}
               validationSchema={RegisterSchema}
               onSubmit={(values, { setSubmitting }) => {
@@ -581,6 +590,32 @@ const Register = () => {
                     }}
                     form={formikProps}
                   />
+
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="agreeToTerms"
+                      name="agreeToTerms"
+                      checked={formikProps.values.agreeToTerms}
+                      onChange={() => {formikProps.setFieldValue("agreeToTerms", !formikProps.values.agreeToTerms)}}
+                      className="form-checkbox h-5 w-5 text-teal-600 transition duration-150 ease-in-out"
+                    />
+                    <label htmlFor="agreeToTerms" className="text-gray-700 text-sm ml-2">
+                      {t("I agree to the")}{" "}
+                      <button
+                        type="button"
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={() => setModelState(!modelState)}
+                      >
+                        {t("terms and conditions")}
+                      </button>
+                    </label>
+                  </div>
+                    <ErrorMessage
+                      name={`agreeToTerms`}
+                      component="div"
+                      className="mt-2 text-sm text-red-500"
+                    />
 
                   <div>
                     <button

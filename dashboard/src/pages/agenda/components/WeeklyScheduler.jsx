@@ -141,15 +141,11 @@ const WeeklyScheduler = ({
           />
         }
       />
-      <Popup
+      <UpdateAppointment
         isOpen={updateModelState}
         onClose={() => setUpdateModelState(!updateModelState)}
-        children={
-          <UpdateAppointment
-            setModelState={setUpdateModelState}
-            appointmentId={selectedAppointmentId}
-          />
-        }
+        setModelState={setUpdateModelState}
+        appointmentId={selectedAppointmentId}
       />
       <div
         className={`p-4 overflow-x-auto mt-2 rounded-md shadow ${
