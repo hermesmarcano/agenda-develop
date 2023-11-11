@@ -42,16 +42,16 @@ const BookingSummary = ({ paramsId }) => {
 
   function formatDate(date, language) {
     const dateFormats = {
-      en: { hour: "number", minute: "numeric", hourCycle: "h23" },
-      es: { hour: "number", minute: "numeric", hourCycle: "h23" },
-    };
+      en: { hour: "2-digit", minute: "numeric", hourCycle: "h23" },
+      es: { hour: "2-digit", minute: "numeric", hourCycle: "h23" },
+    };    
 
     return new Intl.DateTimeFormat(language, dateFormats[language]).format(
       date
     );
   }
   const date = new Intl.DateTimeFormat(["ban", "id"]).format(d);
-  const time = formatDate(getCurrentLanguage(), d)
+  const time = formatDate(d, getCurrentLanguage())
 
   return (
     <div className="bg-teal-600 text-white p-8 rounded-lg shadow-md">
