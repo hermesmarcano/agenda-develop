@@ -61,7 +61,7 @@ const Hero = () => {
         className={`bg-${heroData?.heroBgColor || "gray-800"} flex flex-col justify-center items-center`}
         style={{ height: "calc(100vh - 56px)" }}
       >
-        <h1 className={`text-5xl text-white bg-${heroData?.heroColor || "gray-800"} font-bold mb-8`}>
+        <h1 className={`text-5xl text-white bg-${"gray-800" || "gray-800"} font-bold mb-8`}>
           {heroData?.heroText || t("Find The Right Shop for Your Need")}
         </h1>
         <div className="w-2/3 md:w-1/3 lg:w-1/4 relative">

@@ -9,6 +9,11 @@ const {
   checkAdmin,
   uploadImg,
   getShops,
+  getPlans,
+  getBusinessPlan,
+  getProfessionalPlan,
+  getPersonalPlan,
+  getExclusivePlan,
   getCustomers,
   getPayments,
   getArticleById,
@@ -22,7 +27,6 @@ const Admin = require("../models/admin");
 
 const auth = require("../auth/auth3");
 
-// Set up storage for multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const { fieldname } = req.body;
@@ -39,7 +43,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter for multer
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -48,7 +51,6 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Create multer instance
 const upload = multer({ storage, fileFilter });
 
 router.post("/", createAdmin);
@@ -65,6 +67,11 @@ router.get("/shops", auth, getShops);
 router.get("/", getAdmin);
 router.get("/id", auth, getAdminById);
 router.get("/customers", auth, getCustomers);
+router.get("/plans", getPlans);
+router.get("/plans/business", getBusinessPlan);
+router.get("/plans/professional", getProfessionalPlan);
+router.get("/plans/personal", getPersonalPlan);
+router.get("/plans/exclusive", getExclusivePlan);
 router.get("/payments", auth, getPayments);
 router.get("/article/:id", getArticleById);
 router.delete("/shops/:id", auth, deleteShopByShopId)

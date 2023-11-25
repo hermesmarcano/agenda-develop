@@ -11,7 +11,11 @@ const createAdmin = async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Hash the password before saving to database
+    const existingAdmin = await Admin.findOne();
+    if (existingAdmin) {
+      return res.status(400).json({ message: "An admin already exists" });
+    }
+
     const admin = new Admin({
       username,
       password,
@@ -53,9 +57,7 @@ const loginAdmin = async (req, res) => {
 const updateAdmin = (req, res) => {
   const { password, ...updateData } = req.body;
 
-  // Check if password exists in the sent data
   if (password) {
-    // Hash the password
     const hash = bcrypt.hashSync(password, 10);
     updateData.password = hash;
     console.log(updateData.password);
@@ -133,6 +135,87 @@ const getAdminById = (req, res) => {
     });
 };
 
+const getPlans = (req, res) => {
+  Admin.findOne(
+    {},
+    {
+      'plans._id': 0,
+    }
+  )
+    .exec()
+    .then((admin) => {
+      if (!admin) {
+        return res.status(404).json({ error: "Plans not found" });
+      }
+
+      res.json({ admin });
+    })
+    .catch((err) => {
+      console.error("Error fetching plan:", err);
+      res.status(500).json({ error: "Failed to fetch plans" });
+    });
+};
+
+const getBusinessPlan = (req, res) => {
+  Admin.findOne({}, { 'plans.business': 1 })
+    .exec()
+    .then((admin) => {
+      if (!admin) {
+        return res.status(404).json({ error: "Business plan not found" });
+      }
+      res.json({ admin });
+    })
+    .catch((err) => {
+      console.error("Error fetching business plan:", err);
+      res.status(500).json({ error: "Failed to fetch business plan" });
+    });
+};
+
+const getProfessionalPlan = (req, res) => {
+  Admin.findOne({}, { 'plans.professional': 1 })
+    .exec()
+    .then((admin) => {
+      if (!admin) {
+        return res.status(404).json({ error: "Professional plan not found" });
+      }
+      res.json({ admin });
+    })
+    .catch((err) => {
+      console.error("Error fetching professional plan:", err);
+      res.status(500).json({ error: "Failed to fetch professional plan" });
+    });
+};
+
+const getPersonalPlan = (req, res) => {
+  Admin.findOne({}, { 'plans.personal': 1 })
+    .exec()
+    .then((admin) => {
+      if (!admin) {
+        return res.status(404).json({ error: "Personal plan not found" });
+      }
+      res.json({ admin });
+    })
+    .catch((err) => {
+      console.error("Error fetching personal plan:", err);
+      res.status(500).json({ error: "Failed to fetch personal plan" });
+    });
+};
+
+const getExclusivePlan = (req, res) => {
+  Admin.findOne({}, { 'plans.exclusive': 1 })
+    .exec()
+    .then((admin) => {
+      if (!admin) {
+        return res.status(404).json({ error: "Exclusive plan not found" });
+      }
+      res.json({ admin });
+    })
+    .catch((err) => {
+      console.error("Error fetching exclusive plan:", err);
+      res.status(500).json({ error: "Failed to fetch exclusive plan" });
+    });
+};
+
 const getArticleById = async (req, res) => {
   const { id } = req.params;
 
@@ -165,21 +248,8 @@ const checkAdmin = (req, res) => {
     });
 };
 
-// const uploadImg = (req, res) => {
-//   try {
-//     console.log("existingImg", req.body.existingImg);
-//     // Image upload successful, respond with the filename
-//     res.json({ filename: req.file.filename });
-//   } catch (error) {
-//     // Error occurred during upload
-//     console.error(error);
-//     res.status(500).json({ error: "Failed to upload image." });
-//   }
-// };
-
 const uploadImg = async (req, res) => {
   try {
-    // Check if the image exists with the sent filename
     console.log("existingImg: " + req.body.existingImg);
     const existingPath = path.join(
       __dirname,
@@ -188,16 +258,13 @@ const uploadImg = async (req, res) => {
     );
     console.log("path exists", existingPath);
     if (fs.existsSync(existingPath)) {
-      // Image exists, delete it
       console.log("image exists");
       fs.unlinkSync(existingPath);
     }
 
-    // Image upload successful, respond with the new filename
     console.log("file: " + req.file);
     res.json({ filename: req.file.filename });
   } catch (error) {
-    // Error occurred during upload
     console.error(error);
     res.status(500).json({ error: "Failed to upload image." });
   }
@@ -255,6 +322,11 @@ module.exports = {
   updateAdmin,
   getAdmin,
   getAdminById,
+  getPlans,
+  getBusinessPlan,
+  getProfessionalPlan,
+  getPersonalPlan,
+  getExclusivePlan,
   checkAdmin,
   uploadImg,
   getShops,

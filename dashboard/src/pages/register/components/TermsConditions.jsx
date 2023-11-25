@@ -10,7 +10,7 @@ const TermsConditions = ({ isOpen, onClose }) => {
     <>
       {isOpen && (
         <div
-          className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] max-h-[70%] my-auto rounded mx-auto`}
+          className={`fixed z-10 inset-0 max-w-[950px] h-full rounded mx-auto`}
         >
           <div className="flex items-center justify-center min-h-screen">
             <div
@@ -18,7 +18,7 @@ const TermsConditions = ({ isOpen, onClose }) => {
               onClick={onClose}
             ></div>
             <div
-              className={`rounded-lg shadow-xl p-3 overflow-auto relative w-11/12 md:w-1/2 lg:w-2/3  ${
+              className={`rounded-lg overflow-y-auto max-h-[700px] shadow-xl p-3 overflow-auto relative w-11/12 md:w-1/2 lg:w-2/3  ${
                 isDarkMode ? "bg-gray-800" : "bg-white"
               }`}
             >

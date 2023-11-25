@@ -19,7 +19,10 @@ const Shop = () => {
   }, []);
 
 const handleStartBooking = () => {
-  localStorage.clear();
+  localStorage.removeItem(`services_${params.id}`);
+  localStorage.removeItem(`professional_${params.id}`);
+  localStorage.removeItem(`dateTime_${params.id}`);
+  localStorage.removeItem(`products_${params.id}`);
   navigate(`/shops/${params.id}/wizard`)
 }
 

@@ -23,6 +23,15 @@ const notificationSchema = new mongoose.Schema({
   }
 });
 
+const planSchema = new mongoose.Schema({
+  professionals: Number,
+  customers: Number,
+  agenda: Boolean,
+  businessAdmin: Boolean,
+  whatsappIntegration: Boolean,
+  appointmentReminders: Boolean,
+});
+
 const ManagerSchema = new Schema(
   {
     name: {
@@ -59,6 +68,10 @@ const ManagerSchema = new Schema(
       },
     },
     workingHours: [workingHoursSchema],
+    selectedDays: {
+      type: [String],
+      enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    },
     expenses: [expensesSchema],
     resetToken: {
       type: String,
@@ -73,7 +86,13 @@ const ManagerSchema = new Schema(
     isActive: {
       type: Boolean,
       default: false
-    }
+    },
+    subscription: {
+      type: String,
+      enum: ['pusiness', 'professional', 'personal', 'exclusive'],
+      default: 'personal'
+    },
+    plan: planSchema
   },
   { timestamps: true }
 );

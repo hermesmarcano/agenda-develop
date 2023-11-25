@@ -21,6 +21,53 @@ const servicesSchema = new mongoose.Schema({
   image: String,
 });
 
+const plansSchema = new mongoose.Schema({
+  business: {
+    type: Object,
+    default: {
+      professionals: 10,
+      customers: 50000,
+      agenda: true,
+      businessAdmin: true,
+      whatsAppIntegration: true,
+      appointmentReminders: true
+    }
+  },
+  professional: {
+    type: Object,
+    default: {
+      professionals: 5,
+      customers: 600,
+      agenda: true,
+      businessAdmin: true,
+      whatsAppIntegration: true,
+      appointmentReminders: false
+    }
+  },
+  personal: {
+    type: Object,
+    default: {
+      professionals: 1,
+      customers: 250,
+      agenda: true,
+      businessAdmin: true,
+      whatsAppIntegration: false,
+      appointmentReminders: false
+    }
+  },
+  exclusive: {
+    type: String,
+    default: {
+      professionals: 50000,
+      customers: 50000,
+      agenda: true,
+      businessAdmin: true,
+      whatsAppIntegration: true,
+      appointmentReminders: true
+    }
+  }
+});
+
 const AdminSchema = new Schema(
   {
     username: {
@@ -91,6 +138,7 @@ const AdminSchema = new Schema(
       enum: ["Admin"],
       unique: true,
     },
+    plans: plansSchema
   },
   { timestamps: true }
 );

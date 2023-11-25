@@ -1,10 +1,10 @@
 import { Helmet } from "react-helmet";
-import { HashRouter, BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Agenda from "./pages/agenda/Agenda";
 import Customers from "./pages/customers/Customers";
 import Login from "./pages/login/Login";
 import Professionals from "./pages/professionals/Professionals";
-import Register from "./pages/register/Register";
+import Register from "./pages/register/Register2";
 import Products from "./pages/products/Products";
 import Services from "./pages/services/Services";
 import Analytics from "./pages/analytics/Analytics";

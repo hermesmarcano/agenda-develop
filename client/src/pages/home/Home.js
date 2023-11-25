@@ -7,8 +7,11 @@ import PhotoText from "./components/PhotoText";
 import RecommendedServices from "./components/RecommendedServices";
 import Footer from "./components/Footer";
 import PhotoTextReversed from "./components/PhotoTextReversed";
+import Subscription from "./components/Subscription";
 
 function Home() {
+
+
   return (
     <div>
       <Navbar />
@@ -18,6 +21,7 @@ function Home() {
       <PhotoText />
       <PhotoTextReversed />
       <RecommendedServices />
+      <Subscription />
       <Footer />
     </div>
   );
