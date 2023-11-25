@@ -97,7 +97,7 @@ export function SubscriptionCard({ plan }) {
         </ul>
       </div>
       <div className="mt-12 p-0 flex justify-center items-center cursor-pointer">
-        <Link to={`${process.env.REACT_APP_DASHBOARD_DEV}register`} className="w-full py-2 px-20 text-center bg-white font-semibold text-black hover:scale-[1.02] focus:scale-[1.02] active:scale-100 rounded-md">
+        <Link to={`${process.env.REACT_APP_DASHBOARD_DEV}`} className="w-full py-2 px-20 text-center bg-white font-semibold text-black hover:scale-[1.02] focus:scale-[1.02] active:scale-100 rounded-md">
           Register
         </Link>
       </div>
