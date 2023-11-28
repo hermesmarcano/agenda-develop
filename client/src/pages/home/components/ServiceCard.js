@@ -18,7 +18,7 @@ const cardStyle = {
         <div className="p-4 bg-black bg-opacity-60 h-full flex flex-col justify-end">
           <h3 className="font-bold text-lg mb-2 text-white">{service.title}</h3>
           <div className="mt-4 flex justify-center">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <button className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
               {t('Start Now!')}
             </button>
           </div>

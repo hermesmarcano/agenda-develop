@@ -4,6 +4,8 @@ import { animateScroll } from "react-scroll";
 import { WebsiteTitleContext } from "../context/WebsiteTitleContext";
 import { LogoContext } from "../context/LogoContext";
 import { useTranslation } from "react-i18next";
+import en from "../assets/united-kingdom.png"
+import es from "../assets/spain.png"
 
 function Navbar() {
   const { t, i18n } = useTranslation();
@@ -18,8 +20,8 @@ function Navbar() {
   };
 
   const locales = {
-    en: { title: "English", flag: "🇬🇧" },
-    es: { title: "Español", flag: "🇪🇸" },
+    en: { title: "English", flag: <img src={en} className="w-5" alt="English" />  },
+    es: { title: "Español", flag: <img src={es} className="w-5" alt="Spanish" /> },
   };
 
   const toggleMenu = () => {
@@ -27,8 +29,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="mx-auto px-4 py-2 max-w-screen-lg flex items-center justify-between">
+    <nav className="bg-gray-400 fixed top-0 w-full z-40 bg-opacity-50 backdrop-blur-md shadow-2xl">
+      <div className="mx-auto px-4 py-2 max-w-screen-2xl flex items-center justify-between">
         <div className="flex items-center">
           <Link
             to="/"
@@ -68,56 +70,28 @@ function Navbar() {
         </div>
 
         <div className={`hidden md:flex md:flex-row items-center`}>
-          <div>
-            <div className="flex">
-              {Object.keys(locales).map((locale) => (
-                <button
-                  key={locale}
-                  onClick={() => changeLanguage(locale)}
-                  className={`px-4 py-2 text-sm ${
-                    locale === activeLanguage
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                  }`}
-                >
-                  {locales[locale].flag}
-                </button>
-              ))}
-            </div>
-            <div>
-              {Object.keys(locales).map((locale) => (
-                <div
-                  key={locale}
-                  className={`${
-                    locale === activeLanguage ? "block" : "hidden"
-                  } text-gray-700`}
-                >
-                </div>
-              ))}
-            </div>
-          </div>
           <Link
             to="#"
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
             // onClick={()=>scrollToSection()}
           >
             {t("Home")}
           </Link>
           <button
             onClick={() => animateScroll.scrollTo(650)}
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
           >
             {t('Shops')}
           </button>
           <button
             onClick={() => animateScroll.scrollTo(1100)}
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
           >
             {t("Articles")}
           </button>
           <button
             onClick={() => animateScroll.scrollTo(2500)}
-            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+            className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
           >
             {t('Services')}
           </button>
@@ -128,10 +102,39 @@ function Navbar() {
             {t("Book Now!")}
           </Link>
         </div>
+
+        <div>
+            <div className="flex">
+              {Object.keys(locales).map((locale) => (
+                <button
+                  key={locale}
+                  onClick={() => changeLanguage(locale)}
+                  className={`px-4 py-2 rounded-xl mx-1 text-sm ${
+                    locale === activeLanguage
+                      ? "bg-gray-400 text-gray-900 shadow-2xl"
+                      : "text-gray-700 hover:bg-gray-500 hover:text-gray-900"
+                  }`}
+                >
+                  {locales[locale].flag}
+                </button>
+              ))}
+            </div>
+            <div>
+              {Object.keys(locales).map((locale) => (
+                <div
+                  key={locale}
+                  className={`${
+                    locale === activeLanguage ? "block" : "hidden"
+                  } text-gray-700`}
+                >
+                </div>
+              ))}
+            </div>
+          </div>
       </div>
       {/* Mobile menu */}
       <div className={`${isOpen ? "block" : "hidden"} md:hidden  py-2`}>
-      <div>
+      {/* <div>
             <div className="flex">
               {Object.keys(locales).map((locale) => (
                 <button
@@ -158,7 +161,7 @@ function Navbar() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
         <Link
           to="#"
           className="block py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
