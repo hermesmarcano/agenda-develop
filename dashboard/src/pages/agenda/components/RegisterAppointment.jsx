@@ -60,10 +60,6 @@ const RegisterAppointment = ({
     });
   };
 
-  const remove = () => {
-    Store.removeNotification({});
-  };
-
   useEffect(() => {
     instance
       .get(`customers/shop?shopId=${shopId}`, {

@@ -13,6 +13,7 @@ const SchedulerC = ({
   date,
   startWeekDate,
   workingHours,
+  workingDays,
   onSelectedDateChange,
   onSelectedWeekDateChange,
   selectedProfessional,
@@ -32,6 +33,7 @@ const SchedulerC = ({
   const [updateModelState, setUpdateModelState] = useState(false);
   const [viewModelState, setViewModelState] = useState(false);
   const [viewBlockingModelState, setViewBlockingModelState] = useState(false);
+
 
   const { shopId } = useContext(SidebarContext);
   const token = localStorage.getItem("ag_app_shop_token");
@@ -198,6 +200,7 @@ const SchedulerC = ({
           onTimeSlotSelect={handleTimeSlotSelect}
           selectedProfessionals={selectedProfessionals}
           workingHours={workingHours}
+          workingDays={workingDays}
           appointmentsList={appointmentsList}
           modelState={modelState}
           updateModelState={updateModelState}
@@ -218,6 +221,7 @@ const SchedulerC = ({
           selectedProfessional={selectedProfessional}
           startWeekDate={startWeekDate}
           workingHours={workingHours}
+          workingDays={workingDays}
           appointmentsList={appointmentsList}
           modelState={modelState}
           updateModelState={updateModelState}

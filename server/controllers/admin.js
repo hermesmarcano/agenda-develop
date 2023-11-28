@@ -19,6 +19,7 @@ const createAdmin = async (req, res) => {
     const admin = new Admin({
       username,
       password,
+      plans: {}
     });
     await admin.save();
     res.status(201).json(admin);
@@ -27,6 +28,7 @@ const createAdmin = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const loginAdmin = async (req, res) => {
   const { username, password } = req.body;
@@ -147,8 +149,10 @@ const getPlans = (req, res) => {
       if (!admin) {
         return res.status(404).json({ error: "Plans not found" });
       }
+      
+      const plans = admin.plans
 
-      res.json({ admin });
+      res.json({ plans });
     })
     .catch((err) => {
       console.error("Error fetching plan:", err);

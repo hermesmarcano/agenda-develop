@@ -4,19 +4,26 @@ import { MdOutlineEditCalendar } from "react-icons/md";
 import "./Styled.css";
 import { useTranslation } from "react-i18next";
 
-const AddButton = ({ onClick, disabled }) => {
+const AddButton = ({ onClick, disabled, counter }) => {
   const { t } = useTranslation();
   return (
-    <button
-      className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
-      onClick={onClick}
-      disabled={disabled}
-    >
-      <span className="absolute -end-full transition-all group-hover:end-4">
-        <FaPlus />
-      </span>
-      <span className="pr-2">{t("Add")}</span>
-    </button>
+    <div className="relative inline-block">
+      <button
+        className="mx-1 group relative inline-flex items-center overflow-hidden rounded bg-teal-600 px-8 py-3 text-white focus:outline-none focus:ring active:bg-teal-500"
+        onClick={onClick}
+        disabled={disabled}
+      >
+        <span className="absolute -end-full transition-all group-hover:end-4">
+          <FaPlus />
+        </span>
+        <span className="pr-2">{t("Add")}</span>
+      </button>
+      {counter >= 0 && (
+        <span className="absolute w-7 h-7 z-10 top-1 right-3 inline-flex items-center justify-center font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-teal-900 rounded-full">
+          {counter > 99 ? 99 : counter}
+        </span>
+      )}
+    </div>
   );
 };
 
@@ -243,6 +250,10 @@ const titleLightStyle = `text-2xl font-bold mb-5 text-center bg-white px-6 py-4 
 
 const titleDarkStyle = `text-2xl font-bold mb-5 text-center bg-gray-800 text-white" px-6 py-4 rounded-md shadow`;
 
+const tapLightStyle = `text-lg font-bold mb-5 text-center bg-white px-6 py-4 rounded-md shadow flex justify-center items-center`;
+
+const tapDarkStyle = `text-lg font-bold mb-5 text-center bg-gray-800 text-white" px-6 py-4 rounded-md shadow flex justify-center items-center`;
+
 export {
   AddButton,
   AddButtonWithTitle,
@@ -265,4 +276,6 @@ export {
   IconInputDarkStyle,
   titleLightStyle,
   titleDarkStyle,
+  tapLightStyle,
+  tapDarkStyle
 };

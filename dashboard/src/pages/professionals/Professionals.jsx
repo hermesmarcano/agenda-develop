@@ -17,6 +17,7 @@ import {
 import ProfessionalCard from "./components/ProfessionalCard";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import UpgradePlan from "../../components/upgeadePlan";
 
 const Professionals = () => {
   const { t } = useTranslation();
@@ -33,6 +34,8 @@ const Professionals = () => {
   const [workingHours, setWorkingHours] = useState([]);
   const { isDarkMode } = useContext(DarkModeContext);
   const [view, setView] = useState("table");
+  const [professionalPlanCounter, setProfessionalPlanCounter] = useState(0);
+  const [upgradePlan, setUpgradePlan] = useState(false);
 
   useEffect(() => {
     instance
@@ -56,6 +59,8 @@ const Professionals = () => {
       })
       .then((response) => {
         setWorkingHours(response.data.workingHours);
+        console.log(response.data);
+        setProfessionalPlanCounter(response.data?.plan?.professionals);
       });
   }, []);
 
@@ -176,6 +181,11 @@ const Professionals = () => {
           />
         }
       />
+      <Popup
+        isOpen={upgradePlan}
+        onClose={() => setUpgradePlan(!upgradePlan)}
+        children={<UpgradePlan />}
+      />
       <div className="p-6 overflow-y-auto h-full">
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
@@ -217,7 +227,10 @@ const Professionals = () => {
           </span>
         </div>
         <div className="flex items-center my-4">
-          <AddButton onClick={() => setRegisterModelState(true)} />
+          <AddButton
+            counter={professionalPlanCounter || 0}
+            onClick={() => {professionalPlanCounter > 0 ? setRegisterModelState(true) : setUpgradePlan(true)}}
+          />
           <Drawer
             modelState={registerModelState}
             setModelState={setRegisterModelState}
@@ -226,6 +239,8 @@ const Professionals = () => {
               <RegisterProfessional
                 setModelState={setRegisterModelState}
                 workingHours={workingHours}
+                professionalPlanCounter={professionalPlanCounter}
+                setProfessionalPlanCounter={setProfessionalPlanCounter}
               />
             }
           />

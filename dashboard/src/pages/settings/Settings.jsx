@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { FaSpinner, FaTrash } from "react-icons/fa";
+import { FaTrash } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
 import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";
@@ -9,7 +9,6 @@ import { TiPlus } from "react-icons/ti";
 import { SidebarContext } from "../../context/SidebarContext";
 import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
-import { AlertContext } from "../../context/AlertContext";
 import { NotificationContext } from "../../context/NotificationContext";
 import { storage } from "../../services/firebaseStorage";
 import {
@@ -73,11 +72,7 @@ const Settings = () => {
       onNotificationRemoval: () => this.remove(),
     });
   };
-
-  const remove = () => {
-    Store.removeNotification({});
-  };
-
+  
   useEffect(() => {
     instance
       .get("managers/id", {

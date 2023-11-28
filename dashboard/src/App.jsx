@@ -9,7 +9,7 @@ import Products from "./pages/products/Products";
 import Services from "./pages/services/Services";
 import Analytics from "./pages/analytics/Analytics";
 import NotFound from "./pages/notFound/NotFound";
-import Settings from "./pages/settings/Settings";
+import Settings from "./pages/settings/Settings2";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import ForgotPassword from "./pages/forgetPassword/ForgotPassword";
 import PasswordReset from "./pages/passwordReset/PasswordReset";
@@ -29,6 +29,8 @@ import { ShopNameContextWrapper } from "./context/ShopNameContext";
 import { useEffect, useState } from "react";
 import instance from "./axiosConfig/axiosConfig";
 import LogoutOnTokenExpiration from "./services/logoutTokenExpiration";
+import SubscriptionHandling from "./pages/subscriptionHandling/SubscriptionHandling";
+import SubscriptionRegister from "./pages/subscriptionRegister/SubscriptionRegister";
 
 function App() {
   const [logo, setLogo] = useState("");
@@ -102,6 +104,10 @@ function App() {
                               exact
                               element={<Notification />}
                             />
+                            <Route 
+                            path='/plan'
+                            element={<SubscriptionRegister />}
+                            />
                           </Route>
                           <Route
                             path="/register"
@@ -128,6 +134,11 @@ function App() {
                             path="/reset-password/:token"
                             exact
                             element={<PasswordReset />}
+                          />
+                          <Route 
+                            path="/subscribe"
+                            exact
+                            element={<SubscriptionHandling />}
                           />
                           <Route path="*" element={<NotFound />} />
                         </Routes>

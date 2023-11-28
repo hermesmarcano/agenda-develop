@@ -6,7 +6,7 @@ const Popup = ({ isOpen, onClose, children }) => {
   return (
     <>
       {isOpen && (
-        <div className="fixed z-10 inset-0 w-fit mx-auto">
+        <div className="fixed z-20 inset-0 w-fit mx-auto">
           <div className="flex items-center justify-center min-h-screen">
             <div
               className={`fixed inset-0 ${

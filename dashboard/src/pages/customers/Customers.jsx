@@ -16,6 +16,7 @@ import {
 } from "../../components/Styled";
 import CustomerCard from "./components/CustomerCard";
 import { useTranslation } from "react-i18next";
+import UpgradePlan from "../../components/upgeadePlan";
 
 const Customers = () => {
   const { t } = useTranslation();
@@ -30,6 +31,8 @@ const Customers = () => {
   const [isDeleting, setDeleting] = useState(false);
   const { isDarkMode } = useContext(DarkModeContext);
   const [view, setView] = useState("table");
+  const [customerPlanCounter, setCustomerPlanCounter] = useState(0);
+  const [upgradePlan, setUpgradePlan] = useState(false);
 
   const token = localStorage.getItem("ag_app_shop_token");
   useEffect(() => {
@@ -46,6 +49,19 @@ const Customers = () => {
         console.error(error.message);
       });
   }, [registerModelState, updateModelState, isDeleting]);
+
+  useEffect(() => {
+    instance
+      .get("managers/id", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setCustomerPlanCounter(response.data?.plan?.customers);
+      });
+  }, []);
 
   const filteredCustomers = customers.filter((customer) =>
     customer.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -155,6 +171,11 @@ const Customers = () => {
           />
         }
       />
+      <Popup
+        isOpen={upgradePlan}
+        onClose={() => setUpgradePlan(!upgradePlan)}
+        children={<UpgradePlan />}
+      />
       <div className="p-6 overflow-y-auto h-full">
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
@@ -198,9 +219,8 @@ const Customers = () => {
         </div>
         <div className="flex items-center my-4">
           <AddButton
-            onClick={() => {
-              setRegisterModelState(true);
-            }}
+            counter={customerPlanCounter || 0}
+            onClick={() => {customerPlanCounter > 0 ? setRegisterModelState(true) : setUpgradePlan(true)}}
           />
 
           <Drawer
@@ -208,7 +228,11 @@ const Customers = () => {
             setModelState={() => setRegisterModelState(!registerModelState)}
             title={t("Register Customer")}
             children={
-              <RegisterCustomer setModelState={setRegisterModelState} />
+              <RegisterCustomer
+                setModelState={setRegisterModelState}
+                customerPlanCounter={customerPlanCounter}
+                setCustomerPlanCounter={setCustomerPlanCounter}
+              />
             }
           />
 

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
@@ -16,7 +16,7 @@ import { Store } from "react-notifications-component";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 
-const RegisterProfessional = ({ setModelState, workingHours }) => {
+const RegisterProfessional = ({ setModelState, workingHours, professionalPlanCounter, setProfessionalPlanCounter }) => {
   const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
@@ -37,10 +37,6 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
       },
       onNotificationRemoval: () => this.remove(),
     });
-  };
-
-  const remove = () => {
-    Store.removeNotification({});
   };
 
   const validationSchema = Yup.object({
@@ -96,10 +92,6 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
     description: Yup.string().required("Required"),
   });
 
-  function getCurrentLanguage() {
-    return i18next.language || "en";
-  }
-
   return (
     <div
       className={`bg-${
@@ -121,26 +113,49 @@ const RegisterProfessional = ({ setModelState, workingHours }) => {
             managerId: shopId,
           };
 
-          const fetchRequest = async () => {
+          const fetchRequest = () => {
             try {
-              const response = await instance.post("professionals/", postData, {
+              instance.post("professionals/", postData, {
                 headers: {
                   "Content-Type": "application/json",
                   Authorization: localStorage.getItem("ag_app_shop_token"),
                 },
-              });
-              notify(
-                t("New Professional"),
-                `${t("New Professional")} "${values.name}" ${t(
-                  "has registered"
-                )}`,
-                "success"
-              );
-              sendNotification(
-                `${t("New Professional")} "${values.name}" ${t(
-                  "has registered"
-                )}`
-              );
+              }).then(() => {
+                instance.patch('managers/plan', {professionals: professionalPlanCounter-1}, {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: localStorage.getItem("ag_app_shop_token"),
+                  },
+                }).then((res) =>{
+                  console.log(res);
+                  setProfessionalPlanCounter(professionalPlanCounter-1)
+                })
+                setProfessionalPlanCounter(prev => {
+                  console.log("Current Counter: ", prev);
+                  let updatedCounter = prev-1
+                  console.log("After Counter: ", updatedCounter);
+                  instance.patch('managers/plan', {professionals: updatedCounter}, {
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: localStorage.getItem("ag_app_shop_token"),
+                    },
+                  }).then(() =>{
+                    return updatedCounter
+                  })
+                })
+                notify(
+                  t("New Professional"),
+                  `${t("New Professional")} "${values.name}" ${t(
+                    "has registered"
+                  )}`,
+                  "success"
+                );
+                sendNotification(
+                  `${t("New Professional")} "${values.name}" ${t(
+                    "has registered"
+                  )}`
+                );
+              })
             } catch (e) {
               notify(
                 t("Error"),

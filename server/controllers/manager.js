@@ -32,7 +32,21 @@ const getShops = async (req, res) => {
 const getManager = async (req, res) => {
   try {
     const manager = await Manager.findOne({ _id: req.id }).select(
-      "_id name shopName urlSlug profileImg discount workingHours expenses notifications"
+      "_id name shopName urlSlug profileImg discount workingHours selectedDays expenses notifications subscription plan"
+    );
+    if (!manager) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+    res.json(manager);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+const getPlan = async (req, res) => {
+  try {
+    const manager = await Manager.findOne({ _id: req.id }).select(
+      "subscription"
     );
     if (!manager) {
       return res.status(404).json({ message: "Manager not found" });
@@ -48,6 +62,8 @@ const createManager = async (req, res) => {
   try {
     // const { name, email, password, shopName, urlSlug } = req.body;
     // const imageName = req.file.filename;
+    const newManagerData = req.body
+    newManagerData.plan.name = 'personal' 
     const manager = new Manager(req.body);
     console.log(manager);
     const newManager = await manager.save();
@@ -82,6 +98,48 @@ const updateManager = async (req, res) => {
     res.json({
       message: "Profile updated successfully",
       manager: updatedManager,
+    });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+const updatePlan = async (req, res) => {
+  try {
+    const id = req.id;
+    const updatedPlan = await Manager.findById(id);
+    if (!updatedPlan) {
+      return res.status(404).json({ message: "Manager not found" });
+    }
+    if (req.body.name !== undefined) {
+      updatedPlan.plan.name = req.body.name;
+      updatedPlan.subscription.name = req.body.name;
+    }
+    if (req.body.customers !== undefined) {
+      updatedPlan.plan.customers = req.body.customers;
+    }
+    if (req.body.professionals !== undefined) {
+      updatedPlan.plan.professionals = req.body.professionals;
+    }
+    if (req.body.agenda !== undefined) {
+      updatedPlan.plan.agenda = req.body.agenda;
+    }
+    if (req.body.businessAdmin !== undefined) {
+      updatedPlan.plan.businessAdmin = req.body.businessAdmin;
+    }
+    if (req.body.whatsAppIntegration !== undefined) {
+      updatedPlan.plan.whatsAppIntegration = req.body.whatsAppIntegration;
+    }
+    if (req.body.appointmentReminders !== undefined) {
+      updatedPlan.plan.appointmentReminders = req.body.appointmentReminders;
+    }
+    if (req.body.expiryDate !== undefined) {
+      updatedPlan.subscription.expiryDate = req.body.expiryDate;
+    }
+    await updatedPlan.save();
+    res.json({
+      message: "Plan updated successfully",
+      manager: updatedPlan,
     });
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -187,6 +245,7 @@ const getShop = async (req, res) => {
       profileImg: manager.profileImg,
       discount: manager.discount,
       workingHours: manager.workingHours,
+      plan: manager.plan,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -212,9 +271,11 @@ module.exports = {
   getAllManagers,
   getShops,
   getManager,
+  getPlan,
   createManager,
   uploadProfileImg,
   updateManager,
+  updatePlan,
   deleteProfileImg,
   deleteManager,
   loginManager,

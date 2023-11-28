@@ -15,6 +15,7 @@ const DailyScheduler = ({
   onTimeSlotSelect,
   selectedProfessionals,
   workingHours,
+  workingDays,
   appointmentsList,
   modelState,
   updateModelState,
@@ -68,6 +69,11 @@ const DailyScheduler = ({
     blockedPeriod
   ) => {
     if (!workingHours) return;
+
+    const currentDay = time.toLocaleString("en-US", { weekday: "long" });
+    const isWorkingDay = workingDays.includes(currentDay);
+
+    if(!isWorkingDay) return;
 
     if (blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
@@ -178,6 +184,9 @@ const DailyScheduler = ({
                         }
                       );
 
+                      const currentDay = time.toLocaleString('en-US', { weekday: 'long' });
+                      const isWorkingDay = workingDays.includes(currentDay)
+
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
                           const isDateTimeMatch =
@@ -244,7 +253,7 @@ const DailyScheduler = ({
                               ? "border-t-gray-500 border"
                               : "border-gray-300 "
                           } min-w-[135px] ${
-                            time <= new Date() || !workingHours[0]
+                            time <= new Date() || !workingHours[0] || !isWorkingDay
                               ? "stripe-bg"
                               : "hover:bg-gray-100"
                           }`}

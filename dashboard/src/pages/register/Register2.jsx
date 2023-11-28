@@ -40,7 +40,6 @@ const Register = () => {
   const navigate = useNavigate();
   const [modelState, setModelState] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [plan, setPlan] = useState("business");
   const [plans, setPlans] = useState(null);
 
   const hoursOptions = [];
@@ -76,8 +75,8 @@ const Register = () => {
 
   useEffect(() => {
     instance.get("admin/plans").then((res) => {
-      console.log(JSON.stringify(res.data.admin.plans));
-      setPlans(res.data.admin.plans);
+      console.log(JSON.stringify(res.data.plans));
+      setPlans(res.data.plans);
     });
   }, []);
 
@@ -184,7 +183,6 @@ const Register = () => {
                   urlSlug: "",
                   workingHours: [{ startHour: 0, endHour: 0 }],
                   selectedDays: [],
-                  subscription: "",
                   profileImg: null,
                   agreeToTerms: false,
                 }}
@@ -224,7 +222,7 @@ const Register = () => {
                             profileImg = downloadURL;
                           })
                           .then(async () => {
-                            const planData = plans[values.subscription]
+                            const planData = plans['personal']
                             const postData = {
                               name: values.name,
                               email: values.email,
@@ -233,7 +231,6 @@ const Register = () => {
                               urlSlug: values.urlSlug,
                               workingHours: values.workingHours,
                               selectedDays: values.selectedDays,
-                              subscription: values.subscription,
                               plan: planData,
                               profileImg: profileImg,
                             };
@@ -683,7 +680,7 @@ const Register = () => {
                               </div>
                             </div>
                           )}
-                          {currentStep === 4 && (
+                          {/* {currentStep === 4 && (
                             <Field name="subscription">
                               {({ field }) => (
                                 <ul>
@@ -733,9 +730,9 @@ const Register = () => {
                                 </ul>
                               )}
                             </Field>
-                          )}
+                          )} */}
 
-                          {currentStep === 5 && (
+                          {currentStep === 4 && (
                             <div className="h-full flex flex-col justify-between">
                               <ImageUpload
                                 field={{
@@ -807,7 +804,7 @@ const Register = () => {
                               {t("Prev")}
                             </button>
                           )}
-                          {currentStep !== 5 && (
+                          {currentStep !== 4 && (
                             <button
                               type="button"
                               onClick={handleRegisterNextStep}
@@ -816,7 +813,7 @@ const Register = () => {
                               {t("Next")}
                             </button>
                           )}
-                          {currentStep === 5 && (
+                          {currentStep === 4 && (
                             <div>
                               <button
                                 type="submit"
@@ -851,17 +848,17 @@ const Register = () => {
 };
 export default Register;
 
-const PlanItem = ({ plan, icon, detailsLink }) => (
-  <li className="flex items-center justify-between p-4 bg-gray-100 rounded shadow-lg mb-4">
-    <div className="flex items-center">
-      <div className="p-3 rounded-full bg-teal-500">{icon}</div>
-      <h2 className="ml-4 text-lg font-semibold text-gray-700">{plan}</h2>
-    </div>
-    <a href={detailsLink} className="text-teal-500 hover:underline">
-      View Details
-    </a>
-  </li>
-);
+// const PlanItem = ({ plan, icon, detailsLink }) => (
+//   <li className="flex items-center justify-between p-4 bg-gray-100 rounded shadow-lg mb-4">
+//     <div className="flex items-center">
+//       <div className="p-3 rounded-full bg-teal-500">{icon}</div>
+//       <h2 className="ml-4 text-lg font-semibold text-gray-700">{plan}</h2>
+//     </div>
+//     <a href={detailsLink} className="text-teal-500 hover:underline">
+//       View Details
+//     </a>
+//   </li>
+// );
 
 const WeekdayPicker = () => {
   const formik = useFormikContext();

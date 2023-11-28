@@ -14,13 +14,10 @@ import { useNavigate } from "react-router-dom";
 import { HiCheck, HiX } from "react-icons/hi";
 import { BiChevronDown } from "react-icons/bi";
 import { SidebarContext } from "../../../context/SidebarContext";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import instance from "../../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../../context/DarkModeContext";
 import {
-  DefaultInputDarkStyle,
-  DefaultInputLightStyle,
   NoWidthInputDarkStyle,
   NoWidthInputLightStyle,
   SpecialInputDarkStyle,
@@ -29,12 +26,11 @@ import {
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import { Store } from "react-notifications-component";
+import Popup from "../../../components/Popup";
+import UpgradePlan from "../../../components/upgeadePlan";
+import { MdStars } from "react-icons/md";
 
 const UpdateAppointment = ({
-  amount,
-  bookingInfo,
-  setBookingInfo,
-  setAmount,
   setModelState,
   appointmentId,
   isOpen, 
@@ -55,6 +51,8 @@ const UpdateAppointment = ({
   const [allowManualDuration, setAllowManualDuration] = useState(true);
   const [appointmentData, setAppointmentData] = useState(null);
   const { sendNotification } = useContext(NotificationContext);
+  const [upgradePlan, setUpgradePlan] = useState(false);
+  const [currentPlan, setCurrentPlan] = useState('');
 
   const notify = (title, message, type) => {
     Store.addNotification({
@@ -73,11 +71,20 @@ const UpdateAppointment = ({
     });
   };
 
-  const remove = () => {
-    Store.removeNotification({});
-  };
-
   useEffect(() => {
+    const fetchShop = async () => {
+      try {
+        const response = await instance.get(`managers/id`, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        setCurrentPlan(response.data.subscription.name);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const fetchClients = async () => {
       try {
         const response = await instance.get(`customers/shop?shopId=${shopId}`, {
@@ -131,6 +138,7 @@ const UpdateAppointment = ({
     };
 
     Promise.all([
+      fetchShop(),
       fetchClients(),
       fetchServices(),
       fetchProducts(),
@@ -426,6 +434,11 @@ const UpdateAppointment = ({
 
   return (
     <>
+    <Popup
+        isOpen={upgradePlan}
+        onClose={() => setUpgradePlan(!upgradePlan)}
+        children={<UpgradePlan />}
+      />
     {isOpen && (
       <div
         className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto`}
@@ -904,11 +917,16 @@ const UpdateAppointment = ({
                   {/* WhatsApp Button */}
                   <button
                     type="button"
-                    className="whatsapp-button w-fit flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline"
-                    onClick={() => openWhatsApp(values.customer)}
+                    className={`whatsapp-button relative w-fit flex items-center ${currentPlan === 'personal' ? "bg-green-400" : "bg-green-500 hover:bg-green-600"} text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline`}
+                    onClick={() => {currentPlan === 'personal' ? setUpgradePlan(true) : openWhatsApp(values.customer)}}
                   >
                     <FaWhatsapp className="mr-1" />
                     {t("WA")}
+                    {currentPlan === 'personal' && (
+                      <span className="absolute z-10 -top-2 -right-2 p-0 bg-yellow-300 rounded-full inline-flex items-center justify-center font-bold leading-none">
+                        <MdStars size={25} className="text-teal-500 m-0" />
+                      </span>
+                    )}
                   </button>
                 </div>
               </Form>

@@ -3,10 +3,9 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { SidebarContext } from "../../../context/SidebarContext";
 import instance from "../../../axiosConfig/axiosConfig";
-import { AlertContext } from "../../../context/AlertContext";
 import { NotificationContext } from "../../../context/NotificationContext";
 import { DarkModeContext } from "../../../context/DarkModeContext";
-import { FaBirthdayCake, FaAddressCard, FaEnvelope } from "react-icons/fa"; // Import React Icons
+import { FaBirthdayCake, FaAddressCard } from "react-icons/fa";
 import {
   DefaultInputDarkStyle,
   DefaultInputLightStyle,
@@ -15,10 +14,9 @@ import {
   RegisterButton,
 } from "../../../components/Styled";
 import { Store } from "react-notifications-component";
-import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 
-const RegisterCustomer = ({ setModelState }) => {
+const RegisterCustomer = ({ setModelState, customerPlanCounter, setCustomerPlanCounter }) => {
   const { t } = useTranslation();
   const { sendNotification } = useContext(NotificationContext);
   const { shopId } = useContext(SidebarContext);
@@ -49,10 +47,6 @@ const RegisterCustomer = ({ setModelState }) => {
     });
   };
 
-  const remove = () => {
-    Store.removeNotification({});
-  };
-
   const validationSchema = Yup.object().shape({
     name: Yup.string().required(t("Name is required")),
     phone: Yup.string().required(t("Phone is required")),
@@ -80,26 +74,33 @@ const RegisterCustomer = ({ setModelState }) => {
       postData.address = values.address;
     }
 
-    function getCurrentLanguage() {
-      return i18next.language || "en";
-    }
-
     const fetchRequest = async () => {
       try {
-        const response = await instance.post("customers/", postData, {
+        await instance.post("customers/", postData, {
           headers: {
             "Content-Type": "application/json",
             Authorization: localStorage.getItem("ag_app_shop_token"),
           },
-        });
-        notify(
-          t("New Customer"),
-          `${t("New Customer")} "${values.name}" ${t("has registered")}`,
-          "success"
-        );
-        sendNotification(
-          `${t("New Customer")} "${values.name}" ${t("has registered")}`
-        );
+        }).then(() => {
+          instance.patch('managers/plan', {customers: customerPlanCounter-1}, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: localStorage.getItem("ag_app_shop_token"),
+            },
+          }).then((res) =>{
+            console.log(res);
+            setCustomerPlanCounter(customerPlanCounter-1)
+          })
+        
+          notify(
+            t("New Customer"),
+            `${t("New Customer")} "${values.name}" ${t("has registered")}`,
+            "success"
+          );
+          sendNotification(
+            `${t("New Customer")} "${values.name}" ${t("has registered")}`
+          );
+        })
       } catch (e) {
         notify(
           t("Error"),

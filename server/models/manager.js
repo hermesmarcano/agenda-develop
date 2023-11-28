@@ -19,17 +19,39 @@ const notificationSchema = new mongoose.Schema({
   isRead: Boolean,
   createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 const planSchema = new mongoose.Schema({
-  professionals: Number,
-  customers: Number,
-  agenda: Boolean,
-  businessAdmin: Boolean,
-  whatsappIntegration: Boolean,
-  appointmentReminders: Boolean,
+  name: {
+    type: String,
+    default: "personal",
+  },
+  professionals: {
+    type: Number,
+    default: 1,
+  },
+  customers: {
+    type: Number,
+    default: 250,
+  },
+  agenda: {
+    type: Boolean,
+    default: true,
+  },
+  businessAdmin: {
+    type: Boolean,
+    default: true,
+  },
+  whatsAppIntegration: {
+    type: Boolean,
+    default: false,
+  },
+  appointmentReminders: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const ManagerSchema = new Schema(
@@ -50,6 +72,7 @@ const ManagerSchema = new Schema(
     shopName: {
       type: String,
       default: "My Shop",
+      unique: true,
     },
     urlSlug: {
       type: String,
@@ -70,7 +93,15 @@ const ManagerSchema = new Schema(
     workingHours: [workingHoursSchema],
     selectedDays: {
       type: [String],
-      enum: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+      enum: [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ],
     },
     expenses: [expensesSchema],
     resetToken: {
@@ -85,14 +116,32 @@ const ManagerSchema = new Schema(
     notifications: [notificationSchema],
     isActive: {
       type: Boolean,
-      default: false
+      default: false,
     },
     subscription: {
-      type: String,
-      enum: ['pusiness', 'professional', 'personal', 'exclusive'],
-      default: 'personal'
+      name: {
+        type: String,
+        enum: ["business", "professional", "personal", "exclusive"],
+        default: "personal",
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+      updatedAt: {
+        type: Date,
+        default: Date.now,
+      },
+      expiryDate: {
+        type: Date,
+        default: function () {
+          var today = new Date();
+          var nextYear = new Date(today.setFullYear(today.getFullYear() + 1));
+          return nextYear;
+        },
+      },
     },
-    plan: planSchema
+    plan: planSchema,
   },
   { timestamps: true }
 );

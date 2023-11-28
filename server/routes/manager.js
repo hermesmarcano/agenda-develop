@@ -6,9 +6,11 @@ const fs = require("fs");
 const {
   getAllManagers,
   getManager,
+  getPlan,
   createManager,
   uploadProfileImg,
   updateManager,
+  updatePlan,
   deleteProfileImg,
   deleteManager,
   loginManager,
@@ -46,9 +48,11 @@ router.get("/shops", getShops);
 router.get("/shopImg", getShopImg);
 router.get("/", auth, getAllManagers);
 router.get("/id", auth, getManager);
+router.get("/plan", auth, getPlan);
 router.post("/", createManager);
 router.post("/profileImg", upload.single("profileImg"), uploadProfileImg);
 router.patch("/", auth, updateManager);
+router.patch("/plan", auth, updatePlan);
 router.delete("/profile/:filename", auth, deleteProfileImg);
 
 router.delete("/:id", auth, deleteManager);

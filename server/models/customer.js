@@ -13,7 +13,6 @@ const customerSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: true,
-      unique: true,
     },
     email: {
       type: String,
@@ -36,5 +35,8 @@ const customerSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+customerSchema.index({ managerId: 1, phone: 1 }, { unique: true });
+customerSchema.index({ managerId: 1, email: 1 }, { unique: true });
 
 module.exports = mongoose.model("Customer", customerSchema);

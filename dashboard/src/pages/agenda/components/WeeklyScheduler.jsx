@@ -17,6 +17,7 @@ const WeeklyScheduler = ({
   startWeekDate,
   selectedProfessional,
   workingHours,
+  workingDays,
   appointmentsList,
   modelState,
   updateModelState,
@@ -95,6 +96,11 @@ const WeeklyScheduler = ({
     blockedPeriod
   ) => {
     if (!workingHours) return;
+
+    const currentDay = day.toLocaleString("en-US", { weekday: "long" });
+    const isWorkingDay = workingDays.includes(currentDay);
+
+    if (!isWorkingDay) return;
 
     if (blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
@@ -210,6 +216,11 @@ const WeeklyScheduler = ({
                           }
                         );
 
+                      const currentDay = day.toLocaleString("en-US", {
+                        weekday: "long",
+                      });
+                      const isWorkingDay = workingDays.includes(currentDay);
+
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
                           const isDateTimeMatch =
@@ -276,7 +287,9 @@ const WeeklyScheduler = ({
                               ? "border-t-gray-500 border"
                               : "border-gray-300 "
                           } min-w-[135px] ${
-                            currentTime <= new Date() || !workingHours[0]
+                            currentTime <= new Date() ||
+                            !workingHours[0] ||
+                            !isWorkingDay
                               ? "stripe-bg"
                               : "hover:bg-gray-100"
                           }`}

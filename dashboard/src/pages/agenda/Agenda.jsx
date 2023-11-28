@@ -34,6 +34,7 @@ const Agenda = () => {
   const [professionals, setProfessionals] = useState([]);
   const [myShopImg, setMyShopImg] = useState("");
   const [workingHours, setWorkingHours] = useState([]);
+  const [workingDays, setWorkingDays] = useState([]);
   const [selectedProfessional, setSelectedProfessional] = useState(null);
   const [selectedProfessionals, setSelectedProfessionals] = useState([]);
   const { viewMode, setViewMode } = useContext(ViewModeContext);
@@ -65,6 +66,8 @@ const Agenda = () => {
         setMyShopImg(response.data.profileImg);
         response.data?.workingHours &&
           setWorkingHours(response.data?.workingHours);
+        response.data?.selectedDays &&
+          setWorkingDays(response.data?.selectedDays);
         instance
           .get(`professionals/shop?shopId=${response.data._id}`, {
             headers: {
@@ -152,8 +155,9 @@ const Agenda = () => {
       <div className="grid grid-cols-1 gap-1 md:flex md:mx-auto px-2 mt-2 pb-2">
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
           <div
-            className={`md:hidden flex justify-center w-full items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"
-              } shadow p-4 mb-3`}
+            className={`md:hidden flex justify-center w-full items-center rounded-md ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } shadow p-4 mb-3`}
           >
             <img
               className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
@@ -163,8 +167,9 @@ const Agenda = () => {
             <h1 className="text-lg font-bold">{`${shopName}`}</h1>
           </div>
           <div
-            className={`w-full md:w-auto mb-3 flex justify-center items-center ${isDarkMode ? "bg-gray-800" : "bg-teal-600"
-              } rounded-md shadow`}
+            className={`w-full md:w-auto mb-3 flex justify-center items-center ${
+              isDarkMode ? "bg-gray-800" : "bg-teal-600"
+            } rounded-md shadow`}
           >
             <CalendarBox
               selectedDate={date}
@@ -173,8 +178,9 @@ const Agenda = () => {
             />
           </div>
           <div
-            className={`hidden md:flex justify-center items-center rounded-md ${isDarkMode ? "bg-gray-800" : "bg-white"
-              } shadow p-4`}
+            className={`hidden md:flex justify-center items-center rounded-md ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } shadow p-4`}
           >
             <img
               className="h-11 w-11 rounded-full object-cover border border-gray-400 bg-white mr-2 mb-2 md:mb-0 md:mr-3 md:w-20 md:h-20"
@@ -183,12 +189,15 @@ const Agenda = () => {
             />
           </div>
           <div
-            className={`flex flex-col items-start  ${isDarkMode ? "bg-gray-800" : "bg-white"
-              } rounded-md shadow p-4 mt-3`}
+            className={`flex flex-col items-start  ${
+              isDarkMode ? "bg-gray-800" : "bg-white"
+            } rounded-md shadow p-4 mt-3`}
           >
             {viewMode === "daily" ? (
               <>
-                <label className="mb-1 font-bold">{t('Select Professionals')}:</label>
+                <label className="mb-1 font-bold">
+                  {t("Select Professionals")}:
+                </label>
                 <div>
                   <div className="flex items-center">
                     <input
@@ -207,10 +216,10 @@ const Agenda = () => {
                       <div className="checkmark w-4 h-4 mx-2 bg-gray-100 rounded-full flex items-center justify-center border border-gray-300">
                         {selectedProfessionals.length ===
                           professionals.length && (
-                            <FaCircle className="w-3 h-3 text-green-600" />
-                          )}
+                          <FaCircle className="w-3 h-3 text-green-600" />
+                        )}
                       </div>
-                      {t('Select All')}
+                      {t("Select All")}
                     </label>
                   </div>
                   {professionals.map((professional) => (
@@ -245,7 +254,9 @@ const Agenda = () => {
               </>
             ) : (
               <>
-                <label className="mb-1 font-bold">{t('Select Professional')}:</label>
+                <label className="mb-1 font-bold">
+                  {t("Select Professional")}:
+                </label>
                 <div>
                   {professionals.map((professional) => (
                     <div
@@ -285,10 +296,10 @@ const Agenda = () => {
             <div className="flex flex-col items-center justify-center h-full">
               <div className="text-3xl font-bold mb-4">
                 <AiOutlineInbox className="inline-block mr-2" />
-                {t('No Selected Professionals')}
+                {t("No Selected Professionals")}
               </div>
               <div className="text-gray-600 text-lg mb-8">
-                {t('Please select professionals to show the Schedular.')}
+                {t("Please select professionals to show the Schedular.")}
               </div>
               <HiEmojiSad className="text-6xl text-gray-500" />
             </div>
@@ -299,6 +310,7 @@ const Agenda = () => {
               startWeekDate={startWeekDate}
               date={date}
               workingHours={workingHours}
+              workingDays={workingDays}
               onSelectedDateChange={handleSelectedDateChange}
               onSelectedWeekDateChange={handleSelectedWeekDateChange}
             />

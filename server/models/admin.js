@@ -25,6 +25,7 @@ const plansSchema = new mongoose.Schema({
   business: {
     type: Object,
     default: {
+      price: '19.99',
       professionals: 10,
       customers: 50000,
       agenda: true,
@@ -36,6 +37,7 @@ const plansSchema = new mongoose.Schema({
   professional: {
     type: Object,
     default: {
+      price: '9.99',
       professionals: 5,
       customers: 600,
       agenda: true,
@@ -47,23 +49,13 @@ const plansSchema = new mongoose.Schema({
   personal: {
     type: Object,
     default: {
+      price: 'free',
       professionals: 1,
       customers: 250,
       agenda: true,
       businessAdmin: true,
       whatsAppIntegration: false,
       appointmentReminders: false
-    }
-  },
-  exclusive: {
-    type: String,
-    default: {
-      professionals: 50000,
-      customers: 50000,
-      agenda: true,
-      businessAdmin: true,
-      whatsAppIntegration: true,
-      appointmentReminders: true
     }
   }
 });

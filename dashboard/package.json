@@ -7,6 +7,8 @@
     "@devexpress/dx-react-scheduler": "^4.0.4",
     "@devexpress/dx-react-scheduler-material-ui": "^4.0.4",
     "@headlessui/react": "^1.7.13",
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.2.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
