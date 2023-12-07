@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FiHome, FiSettings } from "react-icons/fi";
 
 import { GiSwordsPower } from "react-icons/gi";
-import { FaBookOpen } from "react-icons/fa";
+import { FaBookOpen, FaCreditCard } from "react-icons/fa";
 import { RiToolsFill } from "react-icons/ri";
 import { BiStore } from "react-icons/bi";
 import { TfiLayoutMediaLeft } from "react-icons/tfi";
@@ -137,6 +137,20 @@ function Sidebar() {
             >
               <TfiLayoutMediaRight className="mr-3 h-6 w-6" />
               <span className="flex-1">{t('Section 2')}</span>
+            </Link>
+          </li>
+          <li className="my-px">
+            <Link
+              to="/ag-admin/subscription"
+              onClick={() => handleClick("subscription")}
+              className={`flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                activeLink === "subscription"
+                  ? "bg-gray-700 text-white"
+                  : "text-gray-400 hover:text-gray-200"
+              }`}
+            >
+              <FaCreditCard className="mr-3 h-6 w-6" />
+              <span className="flex-1">{t('Subscription Plans')}</span>
             </Link>
           </li>
           <li className="my-px">
@@ -315,6 +329,30 @@ function Sidebar() {
                   {showSection2Tooltip && (
                     <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
                       {t('sec2')}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </li>
+            <li className="my-px">
+              <Link
+                to="/ag-admin/subscription"
+                onMouseEnter={() => setShowSettingsTooltip(true)}
+                onMouseLeave={() => setShowSettingsTooltip(false)}
+                onClick={() => {
+                  handleClick("subscription");
+                }}
+                className={`flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  activeLink === "subscription"
+                    ? "bg-gray-700 text-white"
+                    : "text-gray-400 hover:text-gray-200"
+                }`}
+              >
+                <div className="relative">
+                  <FaCreditCard className="h-6 w-6" />
+                  {showSettingsTooltip && (
+                    <div className="bg-gray-800 text-white text-xs rounded-md px-1 py-0.5 absolute -left-2 bottom-8">
+                      {t('Subscription Plans')}
                     </div>
                   )}
                 </div>

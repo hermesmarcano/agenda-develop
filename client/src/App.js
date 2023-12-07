@@ -29,6 +29,7 @@ import BookingCompleted from "./pages/bookingCompleted/BookingCompleted";
 import { useState } from "react";
 import { useEffect } from "react";
 import instance from "./axiosConfig/axiosConfig";
+import DashboardSubscription from "./pages/admin/dashboard/DashboardSubscription";
 
 function App() {
   const [logo, setLogo] = useState("");
@@ -135,6 +136,11 @@ function App() {
                               path="/ag-admin/section2"
                               exact
                               element={<DashboardSectionTwo />}
+                            />
+                            <Route
+                              path="/ag-admin/subscription"
+                              exact
+                              element={<DashboardSubscription />}
                             />
                           </Route>
                           <Route
