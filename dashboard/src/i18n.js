@@ -15,10 +15,6 @@ i18n
     lng: localStorage.getItem('i18nextLng') || 'es',
     fallbackLng: 'en',
     whitelist: ['en', 'es'],
-
-    react: {
-      wait: true,
-    },
   })
 
 export default i18n

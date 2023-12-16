@@ -25,23 +25,29 @@ const plansSchema = new mongoose.Schema({
   business: {
     type: Object,
     default: {
-      price: '19.99',
+      price: '34.90',
+      promotionalPrice: '19.90',
+      annualPrice: '238.80',
       professionals: 10,
-      customers: 50000,
+      customers: 500000,
       agenda: true,
       businessAdmin: true,
+      agendaLinkPage: true,
       whatsAppIntegration: true,
-      appointmentReminders: true
+      appointmentReminders: true,
     }
   },
   professional: {
     type: Object,
     default: {
-      price: '9.99',
+      price: '29.90',
+      promotionalPrice: '16.90',
+      annualPrice: '202.80',
       professionals: 5,
-      customers: 600,
+      customers: 2000,
       agenda: true,
       businessAdmin: true,
+      agendaLinkPage: true,
       whatsAppIntegration: true,
       appointmentReminders: false
     }
@@ -49,11 +55,14 @@ const plansSchema = new mongoose.Schema({
   personal: {
     type: Object,
     default: {
-      price: 'free',
+      price: '19.90',
+      promotionalPrice: '9.90',
+      annualPrice: '108.80',
       professionals: 1,
       customers: 250,
       agenda: true,
       businessAdmin: true,
+      agendaLinkPage: true,
       whatsAppIntegration: false,
       appointmentReminders: false
     }

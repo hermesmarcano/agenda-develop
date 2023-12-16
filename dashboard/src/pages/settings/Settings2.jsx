@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { FaTrash, FaWhatsapp, FaBell, FaCheck } from "react-icons/fa";
+import { FaTrash, FaWhatsapp, FaBell, FaCheck, FaTimes } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
 import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";
@@ -109,26 +109,16 @@ const Settings = () => {
         },
       })
       .then((response) => {
+        console.log(response.data.plan);
         setShopData(response.data);
         const currentPlan = response.data.plan;
-        currentPlan.expiryDate = response.data.subscription.expiryDate;
-        if (
-          currentPlan &&
-          currentPlan.expiryDate &&
-          new Date(currentPlan.expiryDate.toString()).getTime() >
-            new Date().getTime()
-        ) {
-          console.log("true");
-          currentPlan.active = true;
-        } else {
-          currentPlan.active = false;
-        }
         currentPlan.expiryDate = new Intl.DateTimeFormat("en-GB", {
           day: "2-digit",
           month: "2-digit",
           year: "numeric",
-        }).format(new Date(currentPlan.expiryDate.toString()));
-        console.log(JSON.stringify(currentPlan));
+        }).format(new Date(response.data.subscription.planEndDate.toString()));
+        currentPlan.active = new Date(response.data.subscription.planEndDate.toString()).getTime() > new Date().getTime() ? true : false;
+        console.log(JSON.stringify(response.data.subscription));
         setPlan(currentPlan);
         setLoading(false);
       })
@@ -280,57 +270,7 @@ const Settings = () => {
   };
 
   const handlePlanChange = (p) => {
-    let currentDate = new Date();
-
-    let oneYearLater = new Date(currentDate);
-    oneYearLater.setFullYear(currentDate.getFullYear() + 1);
-    if (p.name === "personal") {
-      oneYearLater.setFullYear(currentDate.getFullYear() + 9);
-    }
-
-    oneYearLater = new Date(oneYearLater);
-
-    const planData = {
-      name: p.name,
-      customers: plan.customers + p.customers,
-      professionals: plan.customers + p.professionals,
-      agenda: p.agenda,
-      businessAdmin: p.businessAdmin,
-      appointmentReminders: p.appointmentReminders,
-      whatsAppIntegration: p.whatsAppIntegration,
-      expiryDate: oneYearLater,
-    };
-
-    console.log(planData);
-
-    instance
-      .patch(`managers/plan`, JSON.stringify(planData), {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        const currentPlan = response.data.manager.plan;
-        currentPlan.expiryDate = response.data.manager.subscription.expiryDate;
-        if (
-          currentPlan &&
-          currentPlan.expiryDate &&
-          new Date(currentPlan.expiryDate.toString()).getTime() >
-            new Date().getTime()
-        ) {
-          currentPlan.active = true;
-        } else {
-          currentPlan.active = false;
-        }
-        currentPlan.expiryDate = new Intl.DateTimeFormat("en-GB", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        }).format(new Date(currentPlan.expiryDate.toString()));
-        setPlan(currentPlan);
-        console.log(response);
-      });
+    checkout(p.name);
   };
 
   const handlePlanRenewal = () => {
@@ -779,6 +719,26 @@ const Settings = () => {
     }
   };
 
+  const checkout = (plan) => {
+    instance
+      .post("managers/create-subscription-checkout-session", JSON.stringify({ plan: plan}), {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        if (response.status === 200){
+          window.location = response.data.session.url;
+        }else{
+          return response.json().then((json) => Promise.reject(json));
+        }
+      })
+      .catch((e) => {
+        console.log(e.error);
+      });
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -855,79 +815,55 @@ const FeatureItem = ({ icon, label, value }) => {
 
 const PlanCard = ({ plan, current, onClick }) => {
   return (
-    <div
-      className={`flex-1 min-w-[250px] flex flex-col max-w-lg items-center p-4 border rounded-lg shadow-lg ${
-        current ? "bg-teal-500" : ""
-      }`}
-    >
-      <h3 className="text-lg font-bold">{plan.name.toUpperCase()}</h3>
-      <p className="text-xl font-bold mt-2">
-        {plan.price !== "free" ? (
-          <>
-            {" "}
-            <span>$</span>
-            {plan.price} <span className="self-end">/mo</span>
-          </>
-        ) : (
-          <>{plan.price}</>
-        )}
+    <div className="flex-1 min-w-[250px] flex flex-col max-w-lg items-center p-4 border rounded-lg shadow-lg bg-teal-500 m-4">
+      <h3 className="text-lg font-bold text-white">{plan.name.toUpperCase()}</h3>
+      <p className="text-xl font-bold mt-2 text-white">
+        <span>$</span>
+        {plan.price} <span className="self-end">/mo</span>
       </p>
-
-      <ul className="mt-4 text-sm text-gray-700 list-none">
+      {/* <p className="text-md font-bold mt-2 text-white">
+        Promotional Price: <span>$</span>
+        {plan.promotionalPrice} <span className="self-end">/mo</span>
+      </p> */}
+      <p className="text-md font-bold mt-2 text-white">
+        Annual Price: <span>$</span>
+        {plan.annualPrice}
+      </p>
+      <ul className="mt-4 text-sm text-white list-none">
         <li className="flex items-center">
-          <FaCheck
-            className={`mr-2 ${current ? "text-gray-700" : "text-green-500"}`}
-          />
+          <FaCheck className="mr-2 text-gray-700" />
           {plan.professionals} professionals
         </li>
         <li className="flex items-center">
-          <FaCheck
-            className={`mr-2 ${current ? "text-gray-700" : "text-green-500"}`}
-          />
+          <FaCheck className="mr-2 text-gray-700" />
           {plan.customers} customers
         </li>
         <li className="flex items-center">
-          <FaCheck
-            className={`mr-2 ${current ? "text-gray-700" : "text-green-500"}`}
-          />
+          {plan.agenda ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
           {plan.agenda ? "Agenda management" : "No agenda management"}
         </li>
         <li className="flex items-center">
-          <FaCheck
-            className={`mr-2 ${current ? "text-gray-700" : "text-green-500"}`}
-          />
-          {plan.businessAdmin
-            ? "Business administration"
-            : "No business administration"}
+          {plan.businessAdmin ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
+          {plan.businessAdmin ? "Business administration" : "No business administration"}
         </li>
         <li className="flex items-center">
-          <FaCheck
-            className={`mr-2 ${current ? "text-gray-700" : "text-green-500"}`}
-          />
-          {plan.whatsAppIntegration
-            ? "WhatsApp integration"
-            : "No WhatsApp integration"}
+          {plan.agendaLinkPage ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
+          {plan.agendaLinkPage ? "Reservation page" : "No Reservation page"}
         </li>
         <li className="flex items-center">
-          <FaCheck
-            className={`mr-2 ${current ? "text-gray-700" : "text-green-500"}`}
-          />
-          {plan.appointmentReminders
-            ? "Appointment reminders"
-            : "No appointment reminders"}
+          {plan.whatsAppIntegration ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
+          {plan.whatsAppIntegration ? "WhatsApp integration" : "No WhatsApp integration"}
         </li>
-        {/* <li className="flex items-center">
-          <FaCheck className={`mr-2 ${
-        current ? "text-gray-700" : "text-green-500"
-      }`} />
-          Plan expires on {plan.expiryDate}
-        </li> */}
+        <li className="flex items-center">
+          {plan.appointmentReminders ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
+          {plan.appointmentReminders ? "Appointment reminders" : "No appointment reminders"}
+        </li>
       </ul>
       <button
         className={`mt-4 px-4 py-2 rounded-md font-semibold ${
           current
             ? "bg-white border border-teal-600 text-teal-500 shadow-lg hover:bg-green-500 hover:text-white"
-            : "bg-teal-500 text-white"
+            : "bg-teal-500 border border-teal-600 text-white hover:bg-white hover:text-teal-500"
         } hover:opacity-80 transition-opacity duration-300`}
         onClick={onClick}
       >

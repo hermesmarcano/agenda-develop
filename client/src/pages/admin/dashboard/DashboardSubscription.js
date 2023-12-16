@@ -137,6 +137,35 @@ const DashboardSubscription = () => {
                           className="text-red-500 mt-1"
                         />
                       </label>
+
+                      <label className="block mt-4">
+                        <span className="text-gray-700 capitalize">Promotional price</span>
+                        <Field
+                          type="text"
+                          name="promotionalPrice"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        />
+                        <ErrorMessage
+                          name="promotionalPrice"
+                          component="div"
+                          className="text-red-500 mt-1"
+                        />
+                      </label>
+
+                      <label className="block mt-4">
+                        <span className="text-gray-700 capitalize">Annual Price</span>
+                        <Field
+                          type="text"
+                          name="annualPrice"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        />
+                        <ErrorMessage
+                          name="annualPrice"
+                          component="div"
+                          className="text-red-500 mt-1"
+                        />
+                      </label>
+
                       <label className="block mt-4">
                         <span className="text-gray-700 capitalize">
                           Professionals
@@ -152,9 +181,10 @@ const DashboardSubscription = () => {
                           className="text-red-500 mt-1"
                         />
                       </label>
+
                       <label className="flex items-center justify-between mt-4">
                         <span className="text-gray-700 capitalize">
-                          Agen mr-2da
+                          Agenda
                         </span>
                         <Field
                           as={CustomSwitch}
@@ -173,6 +203,18 @@ const DashboardSubscription = () => {
                           name="businessAdmin"
                           checked={values.businessAdmin}
                           onChange={(e) => setFieldValue("businessAdmin", e)}
+                        />
+                      </label>
+
+                      <label className="flex items-center justify-between mt-4">
+                        <span className="text-gray-700 capitalize mr-2">
+                          Reservation Page
+                        </span>
+                        <Field
+                          as={CustomSwitch}
+                          name="agendaLinkPage"
+                          checked={values.agendaLinkPage}
+                          onChange={(e) => setFieldValue("agendaLinkPage", e)}
                         />
                       </label>
 
@@ -220,7 +262,13 @@ const DashboardSubscription = () => {
                     {plan.name}
                   </h2>
                   <p className="text-gray-500 mb-4">
-                    Price: <span className="font-bold">{plan.price}</span>
+                    Monthly Price: <span className="font-bold">{plan.price}</span>
+                  </p>
+                  <p className="text-gray-500 mb-4">
+                    Promotional Price: <span className="font-bold">{plan.promotionalPrice}</span>
+                  </p>
+                  <p className="text-gray-500 mb-4">
+                    Annual Price: <span className="font-bold">{plan.annualPrice}</span>
                   </p>
                   <p className="text-gray-500 mb-4">
                     Professionals:{" "}
@@ -240,6 +288,12 @@ const DashboardSubscription = () => {
                     Business Admin:{" "}
                     <span className="font-bold">
                       {plan.businessAdmin ? "Yes" : "No"}
+                    </span>
+                  </p>
+                  <p className="text-gray-500 mb-4">
+                    Reservation Page:{" "}
+                    <span className="font-bold">
+                      {plan.agendaLinkPage ? "Yes" : "No"}
                     </span>
                   </p>
                   <p className="text-gray-500 mb-4">

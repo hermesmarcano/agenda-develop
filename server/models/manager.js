@@ -44,6 +44,10 @@ const planSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  agendaLinkPage: {
+    type: Boolean,
+    default: true,
+  },
   whatsAppIntegration: {
     type: Boolean,
     default: false,
@@ -52,6 +56,33 @@ const planSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+});
+
+const subscriptionSchema = new mongoose.Schema({
+  sessionId: {
+    type: String,
+    default: null
+  },
+  planId: {
+    type: String,
+    default: null
+  },
+  planType: {
+    type: String,
+    default: null
+  },
+  planStartDate: {
+    type: Date,
+    default: null
+  },
+  planEndDate: {
+    type: Date,
+    default: null
+  },
+  planDuration: {
+    type: Number,
+    default: null
+  }
 });
 
 const ManagerSchema = new Schema(
@@ -118,29 +149,30 @@ const ManagerSchema = new Schema(
       type: Boolean,
       default: false,
     },
-    subscription: {
-      name: {
-        type: String,
-        enum: ["business", "professional", "personal", "exclusive"],
-        default: "personal",
-      },
-      createdAt: {
-        type: Date,
-        default: Date.now,
-      },
-      updatedAt: {
-        type: Date,
-        default: Date.now,
-      },
-      expiryDate: {
-        type: Date,
-        default: function () {
-          var today = new Date();
-          var nextYear = new Date(today.setFullYear(today.getFullYear() + 1));
-          return nextYear;
-        },
-      },
-    },
+    // subscription: {
+    //   name: {
+    //     type: String,
+    //     enum: ["business", "professional", "personal", "exclusive"],
+    //     default: "personal",
+    //   },
+    //   createdAt: {
+    //     type: Date,
+    //     default: Date.now,
+    //   },
+    //   updatedAt: {
+    //     type: Date,
+    //     default: Date.now,
+    //   },
+    //   expiryDate: {
+    //     type: Date,
+    //     default: function () {
+    //       var today = new Date();
+    //       var nextYear = new Date(today.setFullYear(today.getFullYear() + 1));
+    //       return nextYear;
+    //     },
+    //   },
+    // },
+    subscription: subscriptionSchema,
     plan: planSchema,
   },
   { timestamps: true }

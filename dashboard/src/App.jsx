@@ -29,8 +29,10 @@ import { ShopNameContextWrapper } from "./context/ShopNameContext";
 import { useEffect, useState } from "react";
 import instance from "./axiosConfig/axiosConfig";
 import LogoutOnTokenExpiration from "./services/logoutTokenExpiration";
-import SubscriptionHandling from "./pages/subscriptionHandling/SubscriptionHandling";
+import PlanSelectionPage from "./pages/planSelectionPage/PlanSelectionPage";
 import SubscriptionRegister from "./pages/subscriptionRegister/SubscriptionRegister";
+import SubscriptionSuccess from "./pages/subscriptionSuccess/SubscriptionSuccess";
+import SubscriptionCancel from "./pages/subscriptionCancel/SubscriptionCancel";
 
 function App() {
   const [logo, setLogo] = useState("");
@@ -108,6 +110,14 @@ function App() {
                             path='/plan'
                             element={<SubscriptionRegister />}
                             />
+                            <Route 
+                            path='payment-success'
+                            element={<SubscriptionSuccess />}
+                            />
+                            <Route 
+                            path='payment-cancel'
+                            element={<SubscriptionCancel />}
+                            />
                           </Route>
                           <Route
                             path="/register"
@@ -138,7 +148,7 @@ function App() {
                           <Route 
                             path="/subscribe"
                             exact
-                            element={<SubscriptionHandling />}
+                            element={<PlanSelectionPage />}
                           />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
