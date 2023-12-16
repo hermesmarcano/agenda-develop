@@ -91,11 +91,7 @@ const Register = () => {
       .oneOf([Yup.ref("password")], t("Passwords must match")),
     shopName: Yup.string().required(t("Shop Name is required")),
     urlSlug: Yup.string()
-      .required(t("URL Slug is required"))
-      .matches(
-        /^[a-zA-Z0-9-_.]+$/,
-        t("URL Slug can only contain alphanumeric characters, '-', '_', or '.'")
-      ),
+      .required(t("URL Slug is required")),
     workingHours: Yup.array()
       .of(
         Yup.object().shape({
@@ -798,8 +794,8 @@ const Register = () => {
 export default Register;
 
 function createUrlSlug(shopName) {
-  let slug = shopName.toLowerCase().replace(/ /g, '-');
-  slug += '-' + v4();
+  let slug = shopName.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-_]/g, '');
+  slug += '-' + v4().split('-')[0];
   return slug;
 }
 

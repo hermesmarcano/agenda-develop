@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 export default function PlanSelectionPage() {
   const [plans, setPlans] = useState([]);
   const token = localStorage.getItem('ag_app_shop_token');
-
+  const navigate = useNavigate()
 
   const checkout = (plan) => {
     instance
@@ -27,6 +27,13 @@ export default function PlanSelectionPage() {
         console.log(e.error);
       });
   };
+
+
+  useEffect(() => {
+    if(!token){
+      navigate('/login')
+    }
+  }, [token])
 
   useEffect(() => {
     instance
