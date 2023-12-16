@@ -40,7 +40,6 @@ const Register = () => {
   const navigate = useNavigate();
   const [modelState, setModelState] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [plans, setPlans] = useState(null);
 
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
@@ -72,13 +71,6 @@ const Register = () => {
       onNotificationRemoval: () => this.remove(),
     });
   };
-
-  useEffect(() => {
-    instance.get("admin/plans").then((res) => {
-      console.log(JSON.stringify(res.data.plans));
-      setPlans(res.data.plans);
-    });
-  }, []);
 
   const handleRegisterPrevStep = () => {
     setCurrentStep((prev) => prev - 1);
@@ -222,7 +214,6 @@ const Register = () => {
                             profileImg = downloadURL;
                           })
                           .then(async () => {
-                            const planData = plans['personal']
                             const postData = {
                               name: values.name,
                               email: values.email,
@@ -231,7 +222,7 @@ const Register = () => {
                               urlSlug: values.urlSlug,
                               workingHours: values.workingHours,
                               selectedDays: values.selectedDays,
-                              plan: planData,
+                              plan: {},
                               profileImg: profileImg,
                             };
 

@@ -1,7 +1,15 @@
-import React from "react";
+import {useEffect} from "react";
 import { BsExclamationCircle } from "react-icons/bs";
+import { useNavigate } from "react-router-dom";
 
 const SubscriptionCancel = () => {
+  const navigate = useNavigate()
+  const token = localStorage.getItem('ag_app_shop_token')
+  useEffect(() => {
+    if(!token){
+      navigate('/login')
+    }
+  }, [token])
   return (
     <div className='flex flex-col items-center justify-center min-h-screen bg-gray-100'>
       <div className='p-8 bg-white rounded shadow-md w-full max-w-md mx-auto'>

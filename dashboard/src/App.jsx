@@ -106,17 +106,9 @@ function App() {
                               exact
                               element={<Notification />}
                             />
-                            <Route 
-                            path='/plan'
-                            element={<SubscriptionRegister />}
-                            />
-                            <Route 
-                            path='payment-success'
-                            element={<SubscriptionSuccess />}
-                            />
-                            <Route 
-                            path='payment-cancel'
-                            element={<SubscriptionCancel />}
+                            <Route
+                              path="/plan"
+                              element={<SubscriptionRegister />}
                             />
                           </Route>
                           <Route
@@ -145,10 +137,18 @@ function App() {
                             exact
                             element={<PasswordReset />}
                           />
-                          <Route 
+                          <Route
                             path="/subscribe"
                             exact
                             element={<PlanSelectionPage />}
+                          />
+                          <Route
+                            path="payment-success"
+                            element={<SubscriptionSuccess />}
+                          />
+                          <Route
+                            path="payment-cancel"
+                            element={<SubscriptionCancel />}
                           />
                           <Route path="*" element={<NotFound />} />
                         </Routes>

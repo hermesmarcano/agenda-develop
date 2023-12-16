@@ -26,27 +26,27 @@ const notificationSchema = new mongoose.Schema({
 const planSchema = new mongoose.Schema({
   name: {
     type: String,
-    default: "personal",
+    default: "basic",
   },
   professionals: {
     type: Number,
-    default: 1,
+    default: 0,
   },
   customers: {
     type: Number,
-    default: 250,
+    default: 0,
   },
   agenda: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   businessAdmin: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   agendaLinkPage: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   whatsAppIntegration: {
     type: Boolean,

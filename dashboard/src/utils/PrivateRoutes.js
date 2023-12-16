@@ -5,12 +5,16 @@ import Side from "../components/Side.jsx";
 import { SidebarContext } from "../context/SidebarContext";
 import { DarkModeContext } from "../context/DarkModeContext";
 import instance from "../axiosConfig/axiosConfig.js";
+import { FaSpinner } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 const PrivateRoutes = () => {
   const token = localStorage.getItem("ag_app_shop_token");
   const isAuthenticated = !!token;
   const { isSidebarOpen, toggleSidebar } = useContext(SidebarContext);
   const { isDarkMode } = useContext(DarkModeContext);
+  const [loading, setLoading] = useState(true);
+  const { t } = useTranslation()
 
   const [subscriptionId, setSubscriptionId] = useState(null);
 
@@ -23,6 +27,8 @@ const PrivateRoutes = () => {
           },
         })
         .then((response) => {
+          console.log(response.data?.subscription?._id);
+          setLoading(false)
           setSubscriptionId(response.data?.subscription?._id);
         });
     }
@@ -32,8 +38,15 @@ const PrivateRoutes = () => {
     return <Navigate to="/login" />;
   }
 
-  if (subscriptionId === null) {
-    return <Navigate to="/payment-success" />;
+  if(loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+          <div className="flex flex-col justify-center items-center space-x-2">
+            <FaSpinner className="animate-spin text-4xl text-blue-500" />
+            <span className="mt-2">{t('Loading...')}</span>
+          </div>
+        </div>
+    )
   }
 
   if (subscriptionId) {
