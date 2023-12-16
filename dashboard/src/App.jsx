@@ -78,7 +78,7 @@ function App() {
                     <SidebarContextWrapper>
                       <BrowserRouter>
                         <ReactNotifications />
-                        <LogoutOnTokenExpiration />
+                        {/* <LogoutOnTokenExpiration /> */}
                         <Routes>
                           <Route element={<PrivateRoutes />}>
                             <Route path="/" exact element={<Agenda />} />

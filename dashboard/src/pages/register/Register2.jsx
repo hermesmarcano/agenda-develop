@@ -262,7 +262,14 @@ const Register = () => {
                   setSubmitting(false);
             }}
               >
-                {(formikProps) => (
+                {(formikProps) => {
+                  const handleShopNameChange = (event) => {
+                    const shopName = event.target.value;
+                    const slug = createUrlSlug(shopName);
+                    formikProps.setFieldValue('shopName', shopName);
+                    formikProps.setFieldValue('urlSlug', slug);
+                  };
+                return(
                   <Form className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 min-h-[500px]">
                       <div className="flex justify-center items-center bg-teal-500 shadow-lg border-4 border-teal-500 rounded-md">
@@ -476,6 +483,7 @@ const Register = () => {
                                     id="shopName"
                                     name="shopName"
                                     type="shopName"
+                                    onChange={handleShopNameChange}
                                     autoComplete="shopName"
                                     className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
                                       formikProps.errors.shopName &&
@@ -508,6 +516,7 @@ const Register = () => {
                                     id="urlSlug"
                                     name="urlSlug"
                                     type="urlSlug"
+                                    disabled
                                     autoComplete="urlSlug"
                                     className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
                                       formikProps.errors.urlSlug &&
@@ -680,57 +689,6 @@ const Register = () => {
                               </div>
                             </div>
                           )}
-                          {/* {currentStep === 4 && (
-                            <Field name="subscription">
-                              {({ field }) => (
-                                <ul>
-                                  {Object.entries(plans).map(
-                                    ([key, value], index) => {
-                                      return (
-                                        <div
-                                          onClick={() => {
-                                            formikProps.setFieldValue(
-                                              field.name,
-                                              key.toString()
-                                            );
-                                            setPlan(key.toString());
-                                          }}
-                                          className={
-                                            plan === key.toString() &&
-                                            "outline outline-4 outline-teal-500"
-                                          }
-                                        >
-                                          <PlanItem
-                                            plan={`${
-                                              key
-                                                .toString()
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                              key.toString().slice(1)
-                                            } Plan`}
-                                            icon={
-                                              key.toString() === "business" ? (
-                                                <FaBusinessTime className="text-white" />
-                                              ) : key.toString() ===
-                                                "professional" ? (
-                                                <FaUserTie className="text-white" />
-                                              ) : (
-                                                key.toString() ===
-                                                  "personal" && (
-                                                  <FaUser className="text-white" />
-                                                )
-                                              )
-                                            }
-                                            detailsLink={`#${key.toString()}`}
-                                          />
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </ul>
-                              )}
-                            </Field>
-                          )} */}
 
                           {currentStep === 4 && (
                             <div className="h-full flex flex-col justify-between">
@@ -837,7 +795,7 @@ const Register = () => {
                       </div>
                     </div>
                   </Form>
-                )}
+                )}}
               </Formik>
             </div>
           </div>
@@ -848,17 +806,11 @@ const Register = () => {
 };
 export default Register;
 
-// const PlanItem = ({ plan, icon, detailsLink }) => (
-//   <li className="flex items-center justify-between p-4 bg-gray-100 rounded shadow-lg mb-4">
-//     <div className="flex items-center">
-//       <div className="p-3 rounded-full bg-teal-500">{icon}</div>
-//       <h2 className="ml-4 text-lg font-semibold text-gray-700">{plan}</h2>
-//     </div>
-//     <a href={detailsLink} className="text-teal-500 hover:underline">
-//       View Details
-//     </a>
-//   </li>
-// );
+function createUrlSlug(shopName) {
+  let slug = shopName.toLowerCase().replace(/ /g, '-');
+  slug += '-' + v4();
+  return slug;
+}
 
 const WeekdayPicker = () => {
   const formik = useFormikContext();
