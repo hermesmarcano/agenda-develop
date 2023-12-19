@@ -60,14 +60,24 @@ const stripeSession = async (plan) => {
 };
 
 router.post("/create-subscription-checkout-session", auth, async (req, res) => {
-  const { plan } = req.body;
+  const { plan, type } = req.body;
   let planId = null;
-  if (plan == "personal")
-    planId = process.env.STRIPE_SUBSCRIPTION_PERSONAL_PRICE_YEAR;
-  else if (plan == "professional") 
-    planId = process.env.STRIPE_SUBSCRIPTION_PROFESSIONAL_PRICE_YEAR;
-  else if (plan == "business")
-    planId = process.env.STRIPE_SUBSCRIPTION_BUSINESS_PRICE_YEAR;
+  if (type == "monthly") {
+    if (plan == "personal")
+      planId = process.env.STRIPE_SUBSCRIPTION_PERSONAL_PRICE_MONTH;
+    else if (plan == "professional") 
+      planId = process.env.STRIPE_SUBSCRIPTION_PROFESSIONAL_PRICE_MONTH;
+    else if (plan == "business")
+      planId = process.env.STRIPE_SUBSCRIPTION_BUSINESS_PRICE_MONTH;
+  } else if (type == "yearly") {
+    if (plan == "personal")
+      planId = process.env.STRIPE_SUBSCRIPTION_PERSONAL_PRICE_YEAR;
+    else if (plan == "professional") 
+      planId = process.env.STRIPE_SUBSCRIPTION_PROFESSIONAL_PRICE_YEAR;
+    else if (plan == "business")
+      planId = process.env.STRIPE_SUBSCRIPTION_BUSINESS_PRICE_YEAR;
+  }
+  
 
   try {
     const session = await stripeSession(planId);
@@ -113,9 +123,9 @@ router.patch("/payment-success", auth, async (req, res) => {
         const userId = req.id;
         const planId = subscription.plan.id;
         let planType;
-        if (subscription.plan.amount === 11880) planType = "personal";
-        else if (subscription.plan.amount === 20280) planType = "professional";
-        else if (subscription.plan.amount === 23880) planType = "business";
+        if (subscription.plan.amount === 10880 || subscription.plan.amount === 1990) planType = "personal";
+        else if (subscription.plan.amount === 20280 || subscription.plan.amount === 2990) planType = "professional";
+        else if (subscription.plan.amount === 23880 || subscription.plan.amount === 3490) planType = "business";
 
         const startDate = moment
           .unix(subscription.current_period_start)

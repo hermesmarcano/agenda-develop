@@ -6,17 +6,13 @@ import { FaSpinner } from "react-icons/fa";
 
 const SubscriptionSuccess = () => {
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState("");
   const token = localStorage.getItem("ag_app_shop_token");
-  const [loading, setLoading] = useState(false);
-
-  const [plans, setPlans] = useState([]);
 
   useEffect(() => {
-    if(!token){
-      navigate('/login')
+    if (!token) {
+      navigate("/login");
     }
-  }, [token])
+  }, [token]);
 
   useEffect(() => {
     instance
@@ -25,31 +21,29 @@ const SubscriptionSuccess = () => {
         const plansArr = Object.keys(response.data.plans).map((key) => {
           return { name: key, ...response.data.plans[key] };
         });
-        setPlans(plansArr);
+        instance
+          .get("managers/id", {
+            headers: {
+              Authorization: token,
+            },
+          })
+          .then((response) => {
+            console.log(response.data.subscription);
+            if (response.data.subscription.sessionId) {
+              handlePaymentSuccess(
+                response.data.subscription.sessionId,
+                plansArr
+              );
+            } else {
+              navigate("/");
+            }
+          })
+          .catch((error) => console.log(error));
       })
       .catch((error) => console.log(error));
   }, []);
 
-  useEffect(() => {
-    instance
-      .get("managers/id", {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((response) => {
-        console.log(response.data.subscription);
-        if (response.data.subscription.sessionId) {
-          setSessionId(response.data.subscription.sessionId);
-        } else {
-          navigate("/");
-        }
-      })
-      .catch((error) => console.log(error));
-  }, []);
-
-  const handlePaymentSuccess = () => {
-    setLoading(true);
+  const handlePaymentSuccess = (sessionId, plansArr) => {
     instance
       .patch(
         "managers/payment-success",
@@ -61,9 +55,9 @@ const SubscriptionSuccess = () => {
           },
         }
       )
-      .then((res) => {
-        if (res.status === 200) {
-          console.log(res.data.message);
+      .then((response) => {
+        if (response.status === 200) {
+          console.log();
           instance
             .get("managers/id", {
               headers: {
@@ -71,12 +65,10 @@ const SubscriptionSuccess = () => {
               },
             })
             .then((res) => {
-              const matchingPlan = plans.find(
+              const matchingPlan = plansArr.find(
                 (obj) => obj.name === res.data.subscription.planType
               );
-              console.log(res.data.subscription.planType);
-              console.log(plans);
-              console.log(matchingPlan);
+
               matchingPlan.expiryDate = res.data.subscription.planEndDate;
 
               const planData = {
@@ -94,8 +86,6 @@ const SubscriptionSuccess = () => {
                 whatsAppIntegration: matchingPlan.whatsAppIntegration,
                 expiryDate: matchingPlan.expiryDate,
               };
-
-              console.log(planData);
 
               instance
                 .patch(`managers/plan`, JSON.stringify(planData), {
@@ -125,11 +115,10 @@ const SubscriptionSuccess = () => {
                     year: "numeric",
                   }).format(new Date(currentPlan.expiryDate.toString()));
                 });
-              setLoading(false);
               navigate("/");
             });
         } else {
-          return res.json().then((json) => Promise.reject(json));
+          return response.json().then((json) => Promise.reject(json));
         }
       })
       .catch((e) => {
@@ -144,19 +133,10 @@ const SubscriptionSuccess = () => {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Payment Successful
         </h2>
-        <button
-          onClick={handlePaymentSuccess}
-          className="mt-8 w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-xl font-medium text-white bg-green-600 hover:bg-green-700"
-        >
-          {loading ? (
-            <span className="flex items-center justify-center">
-              <FaSpinner className="animate-spin mr-2" />
-              {" Updating plan data ..."}
-            </span>
-          ) : (
-            <span>Proceed</span>
-          )}
-        </button>
+        <p className="flex justify-center items-center mt-8 w-full text-xl font-medium">
+          <FaSpinner className="animate-spin mr-2" />
+          <span>Updating plan data ...</span>
+        </p>
       </div>
     </div>
   );

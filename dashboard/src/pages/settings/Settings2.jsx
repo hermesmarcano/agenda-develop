@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { FaTrash, FaWhatsapp, FaBell, FaCheck, FaTimes } from "react-icons/fa";
+import { FaTrash, FaWhatsapp, FaBell, FaCheckCircle } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
 import ImageUpload from "../../components/ImageUpload";
 import { RiCloseCircleLine } from "react-icons/ri";
@@ -11,8 +11,8 @@ import {
   AiOutlineUser,
   AiOutlineCreditCard,
 } from "react-icons/ai";
-import { BiCalendarCheck } from "react-icons/bi";
-import { BsFillPersonPlusFill, BsFillPeopleFill } from "react-icons/bs";
+import { BiCalendarCheck, BiCalendarEvent } from "react-icons/bi";
+import { BsFillPersonPlusFill, BsFillPeopleFill, BsFillCircleFill } from "react-icons/bs";
 import { SidebarContext } from "../../context/SidebarContext";
 import instance from "../../axiosConfig/axiosConfig";
 import { DarkModeContext } from "../../context/DarkModeContext";
@@ -41,6 +41,8 @@ import ProgressBar from "../../components/ProgressBar";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
+import PricingCard from "./components/PricingCard";
+import Popup from "../../components/Popup";
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -53,12 +55,15 @@ const Settings = () => {
   const [shopData, setShopData] = useState({});
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [openPlanPopup, setOpenPlanPopup] = useState(false);
 
   const [tabIndex, setTabIndex] = useState(0);
 
   const [plan, setPlan] = useState(null);
 
   const [plans, setPlans] = useState([]);
+
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
@@ -96,6 +101,7 @@ const Settings = () => {
         const plansArr = Object.keys(response.data.plans).map((key) => {
           return { name: key, ...response.data.plans[key] };
         });
+        console.log(JSON.stringify(plansArr));
         setPlans(plansArr);
       })
       .catch((error) => console.log(error));
@@ -117,7 +123,12 @@ const Settings = () => {
           month: "2-digit",
           year: "numeric",
         }).format(new Date(response.data.subscription.planEndDate.toString()));
-        currentPlan.active = new Date(response.data.subscription.planEndDate.toString()).getTime() > new Date().getTime() ? true : false;
+        currentPlan.active =
+          new Date(
+            response.data.subscription.planEndDate.toString()
+          ).getTime() > new Date().getTime()
+            ? true
+            : false;
         console.log(JSON.stringify(response.data.subscription));
         setPlan(currentPlan);
         setLoading(false);
@@ -269,13 +280,15 @@ const Settings = () => {
     setTabIndex(index);
   };
 
-  const handlePlanChange = (p) => {
-    checkout(p.name);
+  const handlePlanChangePopUp = (plan) => {
+    setSelectedPlan(plan)
+    setOpenPlanPopup(true)
+  }
+
+  const handlePlanChange = (plan, type) => {
+    checkout(plan.name, type);
   };
 
-  const handlePlanRenewal = () => {
-    alert("Your plan has been renewed.");
-  };
 
   const renderTabContent = () => {
     switch (tabIndex) {
@@ -650,34 +663,39 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                 <div>
                   <FeatureItem
-                    icon={<BsFillPersonPlusFill className="text-blue-500" />}
+                    icon={<BsFillPersonPlusFill className="text-teal-500" />}
                     label="Professionals:"
                     value={plan.professionals}
                   />
                   <FeatureItem
-                    icon={<BsFillPeopleFill className="text-blue-500" />}
+                    icon={<BsFillPeopleFill className="text-teal-500" />}
                     label="Customers:"
                     value={plan.customers}
                   />
                   <FeatureItem
-                    icon={<BiCalendarCheck className="text-blue-500" />}
+                    icon={<BiCalendarCheck className="text-teal-500" />}
                     label="Agenda:"
                     value={plan.agenda ? "Yes" : "No"}
                   />
                 </div>
                 <div>
                   <FeatureItem
-                    icon={<AiOutlineUser className="text-blue-500" />}
+                    icon={<AiOutlineUser className="text-teal-500" />}
                     label="Business Admin:"
                     value={plan.businessAdmin ? "Yes" : "No"}
                   />
                   <FeatureItem
-                    icon={<FaWhatsapp className="text-blue-500" />}
+                    icon={<BiCalendarEvent className="text-teal-500" />}
+                    label="Reservation Page:"
+                    value={plan.reservationPage ? "Yes" : "No"}
+                  />
+                  <FeatureItem
+                    icon={<FaWhatsapp className="text-teal-500" />}
                     label="WhatsApp Integration:"
                     value={plan.whatsAppIntegration ? "Yes" : "No"}
                   />
                   <FeatureItem
-                    icon={<FaBell className="text-blue-500" />}
+                    icon={<FaBell className="text-teal-500" />}
                     label="Appointment Reminders:"
                     value={plan.appointmentReminders ? "Yes" : "No"}
                   />
@@ -699,16 +717,11 @@ const Settings = () => {
               </div>
             </div>
             <div className="mt-4 flex flex-wrap justify-center items-center gap-4">
-              {plans.map((p, i) => (
-                <PlanCard
-                  key={i}
-                  plan={p}
-                  current={p.name === plan.name}
-                  onClick={
-                    p.name === plan.name
-                      ? handlePlanRenewal
-                      : () => handlePlanChange(p)
-                  }
+              {plans.map((props) => (
+                <PricingCard
+                  {...{ ...props, currentPlan: plan.name }}
+                  key={props.name}
+                  clickMe={() => handlePlanChangePopUp(props)}
                 />
               ))}
             </div>
@@ -719,18 +732,22 @@ const Settings = () => {
     }
   };
 
-  const checkout = (plan) => {
+  const checkout = (plan, type) => {
     instance
-      .post("managers/create-subscription-checkout-session", JSON.stringify({ plan: plan}), {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: token,
-        },
-      })
+      .post(
+        "managers/create-subscription-checkout-session",
+        JSON.stringify({ plan: plan, type: type }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      )
       .then((response) => {
-        if (response.status === 200){
+        if (response.status === 200) {
           window.location = response.data.session.url;
-        }else{
+        } else {
           return response.json().then((json) => Promise.reject(json));
         }
       })
@@ -748,6 +765,14 @@ const Settings = () => {
   }
 
   return (
+    <>
+    <Popup 
+    isOpen={openPlanPopup}
+    onClose={() => setOpenPlanPopup(false)}
+    children={
+      <PlanSelection handlePlanSelection={handlePlanChange} planData={selectedPlan} />
+    }
+    />
     <div className="flex w-full flex-col h-full p-6">
       <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
         <div className="flex items-center justify-center">
@@ -779,6 +804,7 @@ const Settings = () => {
         {renderTabContent()}
       </div>
     </div>
+    </>
   );
 };
 
@@ -813,61 +839,50 @@ const FeatureItem = ({ icon, label, value }) => {
   );
 };
 
-const PlanCard = ({ plan, current, onClick }) => {
+const PlanSelection = ({ handlePlanSelection, planData }) => {
+  const [selectedPlan, setSelectedPlan] = useState("monthly");
+  const handleSelectPlan = (plan) => {
+    setSelectedPlan(plan);
+  };
+
   return (
-    <div className="flex-1 min-w-[250px] flex flex-col max-w-lg items-center p-4 border rounded-lg shadow-lg bg-teal-500 m-4">
-      <h3 className="text-lg font-bold text-white">{plan.name.toUpperCase()}</h3>
-      <p className="text-xl font-bold mt-2 text-white">
-        <span>$</span>
-        {plan.price} <span className="self-end">/mo</span>
-      </p>
-      {/* <p className="text-md font-bold mt-2 text-white">
-        Promotional Price: <span>$</span>
-        {plan.promotionalPrice} <span className="self-end">/mo</span>
-      </p> */}
-      <p className="text-md font-bold mt-2 text-white">
-        Annual Price: <span>$</span>
-        {plan.annualPrice}
-      </p>
-      <ul className="mt-4 text-sm text-white list-none">
-        <li className="flex items-center">
-          <FaCheck className="mr-2 text-gray-700" />
-          {plan.professionals} professionals
-        </li>
-        <li className="flex items-center">
-          <FaCheck className="mr-2 text-gray-700" />
-          {plan.customers} customers
-        </li>
-        <li className="flex items-center">
-          {plan.agenda ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
-          {plan.agenda ? "Agenda management" : "No agenda management"}
-        </li>
-        <li className="flex items-center">
-          {plan.businessAdmin ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
-          {plan.businessAdmin ? "Business administration" : "No business administration"}
-        </li>
-        <li className="flex items-center">
-          {plan.agendaLinkPage ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
-          {plan.agendaLinkPage ? "Reservation page" : "No Reservation page"}
-        </li>
-        <li className="flex items-center">
-          {plan.whatsAppIntegration ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
-          {plan.whatsAppIntegration ? "WhatsApp integration" : "No WhatsApp integration"}
-        </li>
-        <li className="flex items-center">
-          {plan.appointmentReminders ? <FaCheck className="mr-2 text-gray-700" /> : <FaTimes className="mr-2 text-red-700" />}
-          {plan.appointmentReminders ? "Appointment reminders" : "No appointment reminders"}
-        </li>
-      </ul>
+    <div className="flex flex-col items-center justify-center p-5">
+      <h2 className="text-3xl font-bold mb-6">Choose Your Plan</h2>
+      <div className="flex sm:flex-row flex-col gap-4">
+        <div
+          className={`w-56 flex flex-col justify-center items-center cursor-pointer p-6 border-4 rounded-lg transition duration-300 ease-in-out hover:border-teal-500 ${
+            selectedPlan === "monthly" ? "border-teal-500" : "border-gray-300"
+          }`}
+          onClick={() => handleSelectPlan("monthly")}
+        >
+          <h3 className="text-2xl font-semibold mb-2">Monthly Plan</h3>
+          <p className="text-gray-600">${planData?.price} / month</p>
+          {selectedPlan === "monthly" ? (
+            <FaCheckCircle className="text-teal-500 mt-4 text-3xl" />
+          ) : (
+            <BsFillCircleFill className="text-gray-300 mt-4 text-3xl" />
+          )}
+        </div>
+        <div
+          className={`w-56 flex flex-col justify-center items-center cursor-pointer p-6 border-4 rounded-lg transition duration-300 ease-in-out hover:border-teal-500 ${
+            selectedPlan === "yearly" ? "border-teal-500" : "border-gray-300"
+          }`}
+          onClick={() => handleSelectPlan("yearly")}
+        >
+          <h3 className="text-2xl font-semibold mb-2">Yearly Plan</h3>
+          <p className="text-gray-600">${planData?.annualPrice} / year</p>
+          {selectedPlan === "yearly" ? (
+            <FaCheckCircle className="text-teal-500 mt-4 text-3xl" />
+          ) : (
+            <BsFillCircleFill className="text-gray-300 mt-4 text-3xl" />
+          )}
+        </div>
+      </div>
       <button
-        className={`mt-4 px-4 py-2 rounded-md font-semibold ${
-          current
-            ? "bg-white border border-teal-600 text-teal-500 shadow-lg hover:bg-green-500 hover:text-white"
-            : "bg-teal-500 border border-teal-600 text-white hover:bg-white hover:text-teal-500"
-        } hover:opacity-80 transition-opacity duration-300`}
-        onClick={onClick}
+        className="bg-teal-500 text-white px-6 py-3 rounded-lg mt-6 font-bold text-lg hover:bg-teal-600 transition duration-300 ease-in-out"
+        onClick={() => handlePlanSelection(planData.name, selectedPlan)}
       >
-        {current ? "Renew Plan" : "Subscribe Now"}
+        Confirm
       </button>
     </div>
   );

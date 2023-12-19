@@ -16,7 +16,8 @@ const PrivateRoutes = () => {
   const [loading, setLoading] = useState(true);
   const { t } = useTranslation()
 
-  const [subscriptionId, setSubscriptionId] = useState(null);
+  const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
+  const [subscriptionSessionId, setSubscriptionSessionId] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -27,9 +28,10 @@ const PrivateRoutes = () => {
           },
         })
         .then((response) => {
-          console.log(response.data?.subscription?._id);
+          console.log(response.data?.subscription?.planEndDate);
           setLoading(false)
-          setSubscriptionId(response.data?.subscription?._id);
+          setSubscriptionEndDate(response.data?.subscription?.planEndDate);
+          setSubscriptionSessionId(response.data?.subscription?.sessionId);
         });
     }
   }, [isAuthenticated, token]);
@@ -49,7 +51,7 @@ const PrivateRoutes = () => {
     )
   }
 
-  if (subscriptionId) {
+  if (subscriptionEndDate && new Date(subscriptionEndDate.toString()).getTime() > new Date().getTime()) {
     return (
       <>
         <Header />
