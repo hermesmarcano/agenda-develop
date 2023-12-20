@@ -157,7 +157,7 @@ const Register = () => {
         isOpen={modelState}
         onClose={() => setModelState(!modelState)}
       />
-      <div className="h-screen bg-gray-50 py-11 sm:px-6 lg:px-8 overflow-auto">
+      <div className="min-h-[calc(100vh-68px)] bg-gray-50 py-11 sm:px-6 lg:px-8 overflow-auto">
         <div className="flex flex-col justify-center min-h-screen">
           <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-5xl">
             <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">

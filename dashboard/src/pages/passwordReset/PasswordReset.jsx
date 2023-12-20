@@ -39,7 +39,7 @@ const PasswordReset = () => {
   return (
     <>
       {waiting ? (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 min-h-screen">
           <div className="flex flex-col items-center space-x-2 max-w-md mx-auto p-4 bg-white rounded-lg">
             <FaSpinner className="animate-spin text-6xl text-blue-500" />
             <span className="mt-2 text-gray-800">

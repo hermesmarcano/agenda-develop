@@ -152,7 +152,7 @@ const Agenda = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-1 md:flex md:mx-auto px-2 mt-2 pb-2">
+      <div className="grid grid-cols-1 gap-1 md:flex md:mx-auto px-2 mt-2 pb-2 min-h-[calc(100vh-68px)]">
         <div className="flex flex-col flex-wrap md:flex-nowrap mr-2 mb-4 md:w-52 w-full">
           <div
             className={`md:hidden flex justify-center w-full items-center rounded-md ${

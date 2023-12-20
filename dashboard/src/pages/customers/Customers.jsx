@@ -176,7 +176,7 @@ const Customers = () => {
         onClose={() => setUpgradePlan(!upgradePlan)}
         children={<UpgradePlan />}
       />
-      <div className="p-6 overflow-y-auto h-full">
+      <div className="p-6 overflow-y-auto min-h-[calc(100vh-68px)]">
         <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
           <div className="flex items-center justify-center">
             <FaUsers className="mr-2 text-xl" />

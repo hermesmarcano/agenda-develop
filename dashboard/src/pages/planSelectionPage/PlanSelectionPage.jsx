@@ -3,6 +3,7 @@ import { FaCheck, FaTimes } from 'react-icons/fa';
 import instance from '../../axiosConfig/axiosConfig';
 import { useNavigate } from 'react-router-dom';
 import './PlanSelectionPage.css'
+import { IoMdClose } from 'react-icons/io';
 
 export default function PlanSelectionPage() {
   const [plans, setPlans] = useState([]);
@@ -49,19 +50,6 @@ export default function PlanSelectionPage() {
       .catch((error) => console.log(error));
   }, []);
 
-  return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <h1 className="text-4xl font-bold mb-10">Choose Your Plan</h1>
-      <div className="flex flex-wrap justify-center items-center">
-        {plans.map((plan, index) => (
-          <PlanCard key={index} plan={plan} planType={planType} setPlanType={setPlanType} onClick={() => checkout(plan.name)} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const PlanCard = ({ plan, onClick, planType, setPlanType }) => {
   const [isMonthly, setIsMonthly] = useState(planType === 'monthly');
 
   const handleSwitch = () => {
@@ -70,15 +58,31 @@ const PlanCard = ({ plan, onClick, planType, setPlanType }) => {
   };
 
   return (
-    <div className="flex-1 min-w-[300px] flex flex-col max-w-lg items-center p-6 bg-white rounded-xl shadow-md space-y-6 m-4">
-      <div className="flex items-center space-x-4">
-        <span className="text-gray-600">Monthly</span>
-        <div className="relative inline-block w-10 align-middle select-none transition duration-200 ease-in">
-          <input type="checkbox" checked={isMonthly} onChange={handleSwitch} className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-teal-500 appearance-none cursor-pointer"/>
-          <label className="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-        </div>
-        <span className="text-gray-600">Yearly</span>
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-68px)] bg-gray-100">
+  <h1 className="text-4xl font-bold mb-10">Choose Your Plan</h1>
+  <div className="flex items-center space-x-4">
+    <div className="relative w-80 h-16 bg-gray-300 rounded-full flex items-center justify-between px-4 cursor-pointer" onClick={handleSwitch}>
+      <span className={`text-gray-600 w-1/2 text-left font-bold text-xl pl-5 ${isMonthly ? "opacity-0" : ""}`}>Monthly</span>
+      <div className={`absolute left-[50% ] w-40 h-16 font-bold text-xl text-white bg-teal-500 rounded-full flex items-center justify-center transform transition duration-200 ease-in-out ${isMonthly ? "-translate-x-[15px]" : "translate-x-[143px]"}`}>
+        {isMonthly ? "Monthly" : "Yearly"}
       </div>
+      <span className={`text-gray-600 w-1/2 text-right font-bold text-xl pr-5 ${isMonthly ? "" : "opacity-0"}`}>Yearly</span>
+    </div>
+  </div>
+  <div className="flex flex-wrap justify-center items-center">
+    {plans.map((plan, index) => (
+      <PlanCard key={index} plan={plan} isMonthly={isMonthly} handleSwitch={handleSwitch} onClick={() => checkout(plan.name)} />
+    ))}
+  </div>
+</div>
+  );
+}
+
+const PlanCard = ({ plan, onClick, isMonthly, handleSwitch }) => {
+  
+
+  return (
+    <div className="flex-1 min-w-[300px] flex flex-col max-w-lg items-center p-6 bg-white rounded-xl shadow-md space-y-6 m-4">
       <h2 className="text-2xl font-semibold text-gray-700 capitalize">{plan.name}</h2>
       <p className="text-xl text-gray-500">
         ${isMonthly ? plan.price : plan.annualPrice} <span className="text-sm">{isMonthly ? '/mo' : '/yr'}</span>

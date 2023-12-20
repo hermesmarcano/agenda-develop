@@ -60,7 +60,7 @@ const Header = () => {
   };
 
   return (
-    <header className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"}`}>
+    <header className={`${isDarkMode ? "bg-gray-800" : "bg-gray-50"} sticky top-0`}>
       <div className="w-full px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center sm:justify-between sm:gap-4">
           <div className="relative hidden sm:block">

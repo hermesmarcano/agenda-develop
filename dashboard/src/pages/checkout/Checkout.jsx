@@ -370,7 +370,7 @@ const Checkout = () => {
           />
         }
       />
-      <div className="container mx-auto p-4 pb-8">
+      <div className="container mx-auto p-4 pb-8 min-h-[calc(100vh-68px)]">
         <div className="flex flex-wrap">
           <div className="w-full lg:w-3/4 lg:pr-4">
             <div

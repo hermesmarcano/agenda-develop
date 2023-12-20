@@ -20,7 +20,7 @@ const Notification = () => {
   );
 
   return (
-    <div className="container mx-auto mt-8 p-4 pr-8">
+    <div className="container mx-auto mt-8 p-4 pr-8 min-h-[calc(100vh-68px)]">
       <h1 className="text-2xl font-semibold mb-4">{t("Notifications")}</h1>
       <div className="flex items-center mb-4">
         <input

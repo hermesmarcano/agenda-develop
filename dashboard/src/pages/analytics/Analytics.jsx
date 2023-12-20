@@ -172,7 +172,7 @@ const Analytics = () => {
   }, []);
 
   return (
-    <div className="flex w-full flex-col h-full p-6">
+    <div className="flex w-full flex-col min-h-[calc(100vh-68px)] p-6">
       <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
         <div className="flex items-center justify-center">
           <FaChartLine className="mr-2 text-xl" />
@@ -182,9 +182,9 @@ const Analytics = () => {
       <div className="flex w-full flex-col gap- h-full overflow-y-auto p-6">
         <div className="flex justify-between mb-4">
           <div className="grid grid-cols-4 gap-1 mx-auto">
-            <div>
+            
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 1
+                className={`w-full flex justify-center items-center py-2 rounded-md  ${currentSection === 1
                     ? ` text-blue-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
@@ -212,11 +212,11 @@ const Analytics = () => {
                 </span>
               </button>
 
-            </div>
+            
 
-            <div>
+            
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 2
+                className={`w-full flex justify-center items-center py-2 rounded-md  ${currentSection === 2
                     ? ` text-green-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
@@ -244,11 +244,11 @@ const Analytics = () => {
                 </span>
               </button>
 
-            </div>
+            
 
-            <div>
+            
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 3
+                className={`w-full flex justify-center items-center py-2 rounded-md  ${currentSection === 3
                     ? ` text-yellow-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
@@ -276,11 +276,11 @@ const Analytics = () => {
                 </span>
               </button>
 
-            </div>
+            
 
-            <div>
+            
               <button
-                className={`flex justify-center items-center py-2 rounded-md  ${currentSection === 4
+                className={`w-full flex justify-center items-center py-2 rounded-md  ${currentSection === 4
                     ? ` text-red-500 animate-drop nav-item-selected 
                     ${isDarkMode ? "bg-gray-500" : "bg-gray-300"}
                     `
@@ -308,7 +308,7 @@ const Analytics = () => {
                 </span>
               </button>
 
-            </div>
+            
           </div>
         </div>
 

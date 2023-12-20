@@ -773,7 +773,7 @@ const Settings = () => {
       <PlanSelection handlePlanSelection={handlePlanChange} planData={selectedPlan} />
     }
     />
-    <div className="flex w-full flex-col h-full p-6">
+    <div className="flex w-full flex-col min-h-[calc(100vh-68px)] p-6">
       <div className={isDarkMode ? titleDarkStyle : titleLightStyle}>
         <div className="flex items-center justify-center">
           <IoSettingsSharp className="mr-2 text-xl" />
