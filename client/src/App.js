@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Helmet } from "react-helmet";
 import NotFound from "./pages/notFound/NotFound";
 import Home from "./pages/home/Home";
 import ShopSelection from "./pages/shopSelection/ShopSelection";
@@ -9,8 +8,6 @@ import { ArticlesContextWrapper } from "./context/ArticlesContext";
 import { Section1ContextWrapper } from "./context/Section1Context";
 import { Section2ContextWrapper } from "./context/Section2Context";
 import { ServicesContextWrapper } from "./context/ServicesContext";
-import { WebsiteTitleContextWrapper } from "./context/WebsiteTitleContext";
-import { LogoContextWrapper } from "./context/LogoContext";
 import PrivateRoutes from "./utils/PrivateRoutes";
 import DashboardHome from "./pages/admin/dashboard/DashboardHome";
 import DashboardHero from "./pages/admin/dashboard/DashboardHero";
@@ -26,46 +23,11 @@ import BookingWizard from "./pages/bookingWizard/BookingWizard";
 import Checkout from "./pages/checkout/Checkout";
 import Shop from "./pages/shop/Shop";
 import BookingCompleted from "./pages/bookingCompleted/BookingCompleted";
-import { useState } from "react";
-import { useEffect } from "react";
-import instance from "./axiosConfig/axiosConfig";
 import DashboardSubscription from "./pages/admin/dashboard/DashboardSubscription";
 
 function App() {
-  const [logo, setLogo] = useState("");
-  const [title, setTitle] = useState("");
-
-  useEffect(() => {
-    fetchAdminData();
-  }, []);
-
-  const fetchAdminData = async () => {
-    try {
-      const response = await instance.get("admin");
-
-      if (response.data.admin.logo) {
-        setLogo((prev) => response.data.admin.logo);
-        setTitle((prev) => response.data.admin.websiteTitle);
-        if (
-          response.data.admin.logo === null ||
-          response.data.admin.logo === ""
-        ) {
-          setLogo("https://via.placeholder.com/50");
-          setTitle("Agenda");
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <div>
-      <Helmet>
-        <title>{title}</title>
-        <link rel="icon" type="image/png" href={logo} />
-      </Helmet>
-      <LogoContextWrapper>
-        <WebsiteTitleContextWrapper>
           <HeroContextWrapper>
             <ShopsContextWrapper>
               <ArticlesContextWrapper>
@@ -158,8 +120,6 @@ function App() {
               </ArticlesContextWrapper>
             </ShopsContextWrapper>
           </HeroContextWrapper>
-        </WebsiteTitleContextWrapper>
-      </LogoContextWrapper>
     </div>
   );
 }

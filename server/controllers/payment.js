@@ -49,6 +49,18 @@ const getPaymentById = async (req, res) => {
   }
 };
 
+const getPaymentByAppointmentId = async (req, res) => {
+  try {
+    const payment = await Payment.findOne({appointment: req.params.id});
+    if (!payment) {
+      return res.status(200).json({ payment: null });
+    }
+    res.status(200).json({ payment });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
+
 const updatePayment = async (req, res) => {
   try {
     const payment = await Payment.findByIdAndUpdate(req.params.id, req.body, {
@@ -79,6 +91,7 @@ module.exports = {
   createPayment,
   getAllPayments,
   getPaymentById,
+  getPaymentByAppointmentId,
   updatePayment,
   deletePayment,
 };

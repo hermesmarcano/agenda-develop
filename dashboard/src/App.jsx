@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Agenda from "./pages/agenda/Agenda";
 import Customers from "./pages/customers/Customers";
@@ -28,7 +27,7 @@ import { ReactNotifications } from "react-notifications-component";
 import { ShopNameContextWrapper } from "./context/ShopNameContext";
 import { useEffect, useState } from "react";
 import instance from "./axiosConfig/axiosConfig";
-import LogoutOnTokenExpiration from "./services/logoutTokenExpiration";
+// import LogoutOnTokenExpiration from "./services/logoutTokenExpiration";
 import PlanSelectionPage from "./pages/planSelectionPage/PlanSelectionPage";
 import SubscriptionRegister from "./pages/subscriptionRegister/SubscriptionRegister";
 import SubscriptionSuccess from "./pages/subscriptionSuccess/SubscriptionSuccess";
@@ -64,10 +63,6 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <Helmet>
-        <title>{title} - Dashboard</title>
-        <link rel="icon" type="image/png" href={logo} />
-      </Helmet>
       <NotificationContextWrapper>
         <AlertContextWrapper>
           <ShopNameContextWrapper>

@@ -6,6 +6,7 @@ import {
   FaPlus,
   FaRedo,
   FaSpinner,
+  FaTrashAlt,
   FaWhatsapp,
 } from "react-icons/fa";
 import Select from "react-select";
@@ -24,7 +25,6 @@ import {
   SpecialInputLightStyle,
 } from "../../../components/Styled";
 import { useTranslation } from "react-i18next";
-import i18next from "i18next";
 import { Store } from "react-notifications-component";
 import Popup from "../../../components/Popup";
 import UpgradePlan from "../../../components/upgeadePlan";
@@ -33,7 +33,7 @@ import { MdStars } from "react-icons/md";
 const UpdateAppointment = ({
   setModelState,
   appointmentId,
-  isOpen, 
+  isOpen,
   onClose,
 }) => {
   const { t } = useTranslation();
@@ -52,7 +52,9 @@ const UpdateAppointment = ({
   const [appointmentData, setAppointmentData] = useState(null);
   const { sendNotification } = useContext(NotificationContext);
   const [upgradePlan, setUpgradePlan] = useState(false);
-  const [currentPlan, setCurrentPlan] = useState('');
+  const [currentPlan, setCurrentPlan] = useState("");
+  const [deleteAppointmentModelState, setDeleteAppointmentModelState] =
+    useState(false);
 
   const notify = (title, message, type) => {
     Store.addNotification({
@@ -153,7 +155,6 @@ const UpdateAppointment = ({
   }, [shopId, appointmentId]);
 
   const validationSchema = Yup.object().shape({
-    // customer: Yup.string().required("Customer is required"),
     professional: Yup.string().required(t("Professional is required")),
     service: Yup.array()
       .test(
@@ -164,7 +165,6 @@ const UpdateAppointment = ({
         }
       )
       .of(Yup.string().required(t("A service name is required"))),
-    // dateTime: Yup.string().required("Start time is required"),
   });
 
   useEffect(() => {
@@ -217,10 +217,6 @@ const UpdateAppointment = ({
 
     return { totalPrice, totalDuration };
   };
-
-  function getCurrentLanguage() {
-    return i18next.language || "en";
-  }
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     values.dateTime = dateTime;
@@ -319,6 +315,127 @@ const UpdateAppointment = ({
     } else {
       updateAppointment(values.customer);
     }
+  };
+
+  const handleRemoveAppointment = () => {
+    let client = null;
+    instance
+      .get(`appointments/${appointmentId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
+      })
+      .then((response) => {
+        client = response.data.appointment.customer;
+        instance
+          .get(`payments/appt/${appointmentId}`, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+          })
+          .then((res) => {
+            if (res.data?.payment) {
+              const paidAppointmentAmount = res.data?.payment.amount;
+              const paymentId = res.data?.payment._id;
+              instance
+                .get(`customers/${client._id}`, {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                  },
+                })
+                .then((response) => {
+                  const customerPayments = response.data.payments;
+                  instance
+                    .patch(
+                      `customers/${client._id}`,
+                      {
+                        payments: customerPayments - paidAppointmentAmount,
+                      },
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: token,
+                        },
+                      }
+                    )
+                    .then((r) => {
+                      instance
+                        .delete(`payments/${paymentId}`, {
+                          headers: {
+                            Authorization: token,
+                          },
+                        })
+                        .then((resp) => {
+                          console.log(resp.data);
+                          instance
+                            .delete(`appointments/${appointmentId}`, {
+                              headers: {
+                                "Content-Type": "application/json",
+                                Authorization: token,
+                              },
+                            })
+                            .then((response) => {
+                              setDeleteAppointmentModelState(false);
+                              setModelState(false);
+                              notify(
+                                t("Reservation is Cancelled"),
+                                `${t("Reservation for customer")} ${
+                                  client.name
+                                } ${t("has been cancelled")}`,
+                                "success"
+                              );
+
+                              sendNotification(
+                                `${t("Reservation Cancelled for")} ${
+                                  client.name
+                                }`
+                              );
+                            })
+                            .catch((error) => {
+                              notify(t("Error"), error.message, "danger");
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                      console.error(error.message);
+                    });
+                });
+            } else {
+              instance
+                .delete(`appointments/${appointmentId}`, {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token,
+                  },
+                })
+                .then(() => {
+                  setDeleteAppointmentModelState(false);
+                  setModelState(false);
+                  notify(
+                    t("Reservation is Cancelled"),
+                    `${t("Reservation for customer")} ${client.name} ${t(
+                      "has been cancelled"
+                    )}`,
+                    "success"
+                  );
+
+                  sendNotification(
+                    `${t("Reservation Cancelled for")} ${client.name}`
+                  );
+                })
+                .catch((error) => {
+                  notify(t("Error"), error.message, "danger");
+                });
+            }
+          });
+      });
+  };
+
+  const openAppointmentDeletePopUp = () => {
+    setDeleteAppointmentModelState(true);
   };
 
   const handleCheckout = (values) => {
@@ -434,564 +551,524 @@ const UpdateAppointment = ({
 
   return (
     <>
-    <Popup
+      <Popup
+        isOpen={deleteAppointmentModelState}
+        onClose={() =>
+          setDeleteAppointmentModelState(!deleteAppointmentModelState)
+        }
+        children={
+          <div>
+            <h3 className="font-bold mt-2 mb-6">
+              Please Confirm that you want to delete this appointment
+            </h3>
+            <div className="flex justify-center items-center gap-2">
+              <button
+                onClick={handleRemoveAppointment}
+                className="px-4 py-2 font-semibold text-white bg-red-500 hover:bg-red-600 rounded-md"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setDeleteAppointmentModelState(false)}
+                className="px-4 py-2 font-semibold text-white bg-gray-400 hover:bg-gray-500 rounded-md"
+              >
+                Cancel
+              </button>
+            </div>
+            <p className="font-bold text-gray-500 text-sm mt-7 text-center">
+              Note: Deleted appiontment cannot be retrieved
+            </p>
+          </div>
+        }
+      />
+      <Popup
         isOpen={upgradePlan}
         onClose={() => setUpgradePlan(!upgradePlan)}
         children={<UpgradePlan />}
       />
-    {isOpen && (
-      <div
-        className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto`}
-      >
-        <div className="flex items-center justify-center min-h-screen">
-          <div
-            className="fixed inset-0 bg-gray-500 opacity-75"
-            onClick={onClose}
-          ></div>
-          <div
-            className={`rounded-lg overflow-hidden shadow-xl relative w-11/12 md:w-1/2 lg:w-2/3  ${
-              isDarkMode ? "bg-gray-800" : "bg-white"
-            }`}
-          >
-      {appointmentData ? (
-        <Formik
-          initialValues={{
-            customer: appointmentData?.customer?._id || "",
-            name: "",
-            phone: "",
-            professional: appointmentData?.professional?._id || "",
-            service: appointmentData?.service.map((s) => s?._id) || [],
-            product: appointmentData?.product.map((p) => p?._id) || [],
-            dateTime: new Date(appointmentData?.dateTime) || "",
-            date: new Date(appointmentData?.dateTime)
-              .toISOString()
-              .split("T")[0], // Set initial date value
-            time: new Date(appointmentData?.dateTime)
-              .toTimeString()
-              .slice(0, 5), // Set initial time value
-            // callTime: "",
-            appointmentDuration:
-              `${Math.floor(appointmentData?.duration / 60)
-                .toString()
-                .padStart(2, "0")}:${(appointmentData?.duration % 60)
-                .toString()
-                .padStart(2, "0")}` || "00:00",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
+      {isOpen && (
+        <div
+          className={`fixed z-10 inset-0 overflow-y-auto max-w-[950px] mx-auto`}
         >
-          {({
-            isSubmitting,
-            values,
-            getFieldProps,
-            handleChange,
-            handleBlur,
-            setFieldValue,
-          }) => {
-            function calculateTotalDuration(valueService, services) {
-              let totalDuration = 0;
+          <div className="flex items-center justify-center min-h-screen">
+            <div
+              className="fixed inset-0 bg-gray-500 opacity-75"
+              onClick={onClose}
+            ></div>
+            <div
+              className={`rounded-lg overflow-hidden shadow-xl relative w-11/12 md:w-1/2 lg:w-2/3  ${
+                isDarkMode ? "bg-gray-800" : "bg-white"
+              }`}
+            >
+              {appointmentData ? (
+                <Formik
+                  initialValues={{
+                    customer: appointmentData?.customer?._id || "",
+                    name: "",
+                    phone: "",
+                    professional: appointmentData?.professional?._id || "",
+                    service: appointmentData?.service.map((s) => s?._id) || [],
+                    product: appointmentData?.product.map((p) => p?._id) || [],
+                    dateTime: new Date(appointmentData?.dateTime) || "",
+                    date: new Date(appointmentData?.dateTime)
+                      .toISOString()
+                      .split("T")[0],
+                    time: new Date(appointmentData?.dateTime)
+                      .toTimeString()
+                      .slice(0, 5),
+                    appointmentDuration:
+                      `${Math.floor(appointmentData?.duration / 60)
+                        .toString()
+                        .padStart(2, "0")}:${(appointmentData?.duration % 60)
+                        .toString()
+                        .padStart(2, "0")}` || "00:00",
+                  }}
+                  validationSchema={validationSchema}
+                  onSubmit={handleSubmit}
+                >
+                  {({
+                    isSubmitting,
+                    values,
+                    getFieldProps,
+                    handleChange,
+                    setFieldValue,
+                  }) => {
+                    const handleDurationChange = (e) => {
+                      const { name, value } = e.target;
+                      let hours = parseInt(
+                        values.appointmentDuration.split(":")[0]
+                      );
+                      let minutes = parseInt(
+                        values.appointmentDuration.split(":")[1]
+                      );
 
-              // Iterate over each service ID in `value.service`
-              valueService.forEach((serviceId) => {
-                // Find the service in `services` array with matching ID
-                const service = services.find(
-                  (service) => service._id === serviceId
-                );
+                      if (name === "hours") {
+                        hours = parseInt(value) || 0;
+                      } else if (name === "minutes") {
+                        minutes = parseInt(value) || 0;
+                      }
 
-                // If the service is found, add its duration to the total duration
-                if (service) {
-                  totalDuration += service.duration;
-                }
-              });
+                      hours = Math.max(0, Math.min(hours, 23));
+                      minutes = Math.max(0, Math.min(minutes, 55));
 
-              return totalDuration;
-            }
+                      const updatedDuration = `${hours
+                        .toString()
+                        .padStart(2, "0")}:${minutes
+                        .toString()
+                        .padStart(2, "0")}`;
 
-            const handleDurationChange = (e) => {
-              const { name, value } = e.target;
-              let hours = parseInt(values.appointmentDuration.split(":")[0]);
-              let minutes = parseInt(values.appointmentDuration.split(":")[1]);
+                      handleChange({
+                        target: {
+                          name: "appointmentDuration",
+                          value: updatedDuration,
+                        },
+                      });
+                    };
 
-              if (name === "hours") {
-                hours = parseInt(value) || 0;
-              } else if (name === "minutes") {
-                minutes = parseInt(value) || 0;
-              }
+                    return (
+                      <Form
+                        className={`rounded-lg px-8 py-6 mb-4 overflow-y-auto `}
+                      >
+                        <div className="grid grid-cols-2 gap-5">
+                          <div>
+                            <div className="flex flex-col mb-4">
+                              <div>
+                                {!addCustomerClicked ? (
+                                  <CustomSelect
+                                    label={t("Customer")}
+                                    id="customer"
+                                    name="customer"
+                                    options={clients}
+                                  />
+                                ) : (
+                                  <>
+                                    <label
+                                      htmlFor="name"
+                                      className="block text-sm font-semibold  mb-2"
+                                    >
+                                      {t("New Client")}
+                                    </label>
+                                    <div className="mb-4">
+                                      <label
+                                        htmlFor="name"
+                                        className="block text-xs font-semibold  mb-2"
+                                      >
+                                        {t("Name")}
+                                      </label>
+                                      <input
+                                        type="text"
+                                        id="name"
+                                        name="name"
+                                        className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        {...getFieldProps("name")}
+                                      />
+                                      <ErrorMessage
+                                        name="name"
+                                        component="p"
+                                        className="text-red-500 text-xs italic"
+                                      />
+                                    </div>
+                                    <div className="mb-4">
+                                      <label
+                                        htmlFor="phone"
+                                        className="block text-xs font-semibold  mb-2"
+                                      >
+                                        {t("Phone")}
+                                      </label>
+                                      <input
+                                        type="text"
+                                        id="phone"
+                                        name="phone"
+                                        className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        {...getFieldProps("phone")}
+                                      />
+                                      <ErrorMessage
+                                        name="phone"
+                                        component="p"
+                                        className="text-red-500 text-xs italic"
+                                      />
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                              <div>
+                                <button
+                                  type="button"
+                                  className="add-customer-button w-full flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                  onClick={() =>
+                                    setAddCustomerClicked(!addCustomerClicked)
+                                  }
+                                >
+                                  {!addCustomerClicked ? (
+                                    <>
+                                      <FaPlus className="mr-2" />
+                                      {t("Add Customer")}
+                                    </>
+                                  ) : (
+                                    t("Select Customer")
+                                  )}
+                                </button>
+                              </div>
+                            </div>
 
-              hours = Math.max(0, Math.min(hours, 23));
-              minutes = Math.max(0, Math.min(minutes, 55));
+                            <div className="mb-4">
+                              <Field
+                                name="service"
+                                label={t("Service")}
+                                component={CustomSelectList}
+                                options={services}
+                                selectedOptions={values.service}
+                                setSelectedOptions={(selectedOptions) =>
+                                  setFieldValue("service", selectedOptions)
+                                }
+                              />
+                            </div>
 
-              const updatedDuration = `${hours
-                .toString()
-                .padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+                            <div className="mb-4">
+                              <Field
+                                name="product"
+                                label={t("Product")}
+                                component={CustomSelectList}
+                                options={products}
+                                selectedOptions={values.product}
+                                setSelectedOptions={(selectedOptions) =>
+                                  setFieldValue("product", selectedOptions)
+                                }
+                              />
+                            </div>
+                          </div>
 
-              handleChange({
-                target: {
-                  name: "appointmentDuration",
-                  value: updatedDuration,
-                },
-              });
-            };
+                          <div>
+                            <CustomSelect
+                              label={t("Professional")}
+                              id="professional"
+                              name="professional"
+                              options={professionals}
+                            />
+                            <div className="flex justify-start items-center">
+                              <label
+                                htmlFor="manualDuration"
+                                className={`block text-sm font-semibold  mb-2`}
+                              >
+                                {t("Set Duration Manually")}
+                              </label>
+                              <Switch
+                                id="manualDuration"
+                                name="manualDuration"
+                                checked={allowManualDuration}
+                                onChange={() =>
+                                  setAllowManualDuration(!allowManualDuration)
+                                }
+                                onColor="#86d3ff"
+                                onHandleColor="#2693e6"
+                                handleDiameter={20}
+                                uncheckedIcon={false}
+                                checkedIcon={false}
+                                boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                activeBoxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                                height={14}
+                                width={30}
+                                className="ml-2"
+                              />
+                            </div>
+                            <div className="mb-4">
+                              <label
+                                htmlFor="appointmentDuration"
+                                className="block text-sm font-semibold  mb-2"
+                              >
+                                {t("Appointment Duration")}
+                              </label>
+                              <div
+                                className={`flex flex-wrap sm:flex-nowrap items-center ${
+                                  !isDarkMode && "border border-gray-300"
+                                } rounded-lg ${
+                                  isDarkMode && "bg-gray-700"
+                                } overflow-hidden`}
+                              >
+                                <div className="flex items-center w-full">
+                                  <input
+                                    type="number"
+                                    id="hours"
+                                    name="hours"
+                                    value={
+                                      values.appointmentDuration.split(":")[0]
+                                    }
+                                    className={`${
+                                      isDarkMode
+                                        ? SpecialInputDarkStyle
+                                        : SpecialInputLightStyle
+                                    }`}
+                                    onChange={handleDurationChange}
+                                    disabled={!allowManualDuration}
+                                  />
+                                  <span
+                                    className={`${
+                                      isDarkMode
+                                        ? "text-white"
+                                        : "text-gray-600"
+                                    } px-2`}
+                                  >
+                                    :
+                                  </span>
+                                  <input
+                                    type="number"
+                                    id="minutes"
+                                    name="minutes"
+                                    value={
+                                      values.appointmentDuration.split(":")[1]
+                                    }
+                                    className={`${
+                                      isDarkMode
+                                        ? SpecialInputDarkStyle
+                                        : SpecialInputLightStyle
+                                    }`}
+                                    onChange={handleDurationChange}
+                                    step="5"
+                                    disabled={!allowManualDuration}
+                                  />
+                                </div>
+                                <div
+                                  className={`${
+                                    isDarkMode
+                                      ? "bg-gray-600 text-white"
+                                      : "bg-gray-200 text-gray-600"
+                                  } px-3 py-2 w-1/2 sm:w-fit`}
+                                >
+                                  <span className="text-xs">{t("HOURS")}</span>
+                                </div>
+                                <div
+                                  className={`${
+                                    isDarkMode
+                                      ? "bg-gray-600 text-white"
+                                      : "bg-gray-200 text-gray-600"
+                                  } px-3 py-2 w-1/2 sm:w-fit`}
+                                >
+                                  <span className="text-xs">
+                                    {t("MINUTES")}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
 
-            function handleServicesChange(selectedOptions) {
-              handleChange({
-                target: {
-                  name: "service",
-                  value: selectedOptions
-                    ? selectedOptions.map((option) => option.value)
-                    : [],
-                },
-              });
-            }
-
-            function handleProductsChange(selectedOptions) {
-              handleChange({
-                target: {
-                  name: "product",
-                  value: selectedOptions
-                    ? selectedOptions.map((option) => option.value)
-                    : [],
-                },
-              });
-            }
-
-            return (
-              <Form className={`rounded-lg px-8 py-6 mb-4 overflow-y-auto `}>
-                <div className="grid grid-cols-2 gap-5">
-                  <div>
-                    <div className="flex flex-col mb-4">
-                      <div>
-                        {!addCustomerClicked ? (
-                          <CustomSelect
-                            label={t("Customer")}
-                            id="customer"
-                            name="customer"
-                            options={clients}
-                          />
-                        ) : (
-                          <>
-                            <label
-                              htmlFor="name"
-                              className="block text-sm font-semibold  mb-2"
+                            <div className="mb-4">
+                              <label
+                                htmlFor="date"
+                                className="block text-sm font-semibold  mb-2"
+                              >
+                                {t("Date")}
+                              </label>
+                              <input
+                                type="date"
+                                id="date"
+                                name="date"
+                                value={values.date}
+                                className={`${
+                                  isDarkMode
+                                    ? NoWidthInputDarkStyle
+                                    : NoWidthInputLightStyle
+                                }`}
+                                {...getFieldProps("date")}
+                              />
+                              <ErrorMessage
+                                name="date"
+                                component="p"
+                                className="text-red-500 text-xs italic"
+                              />
+                            </div>
+                            <div className="mb-4">
+                              <label
+                                htmlFor="time"
+                                className="block text-sm font-semibold  mb-2"
+                              >
+                                {t("Time")}
+                              </label>
+                              <input
+                                type="time"
+                                id="time"
+                                name="time"
+                                value={values.time}
+                                className={`${
+                                  isDarkMode
+                                    ? NoWidthInputDarkStyle
+                                    : NoWidthInputLightStyle
+                                }`}
+                                {...getFieldProps("time")}
+                              />
+                              <ErrorMessage
+                                name="time"
+                                component="p"
+                                className="text-red-500 text-xs italic"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center">
+                            <button
+                              type="submit"
+                              disabled={isSubmitting}
+                              className="submit-button flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
-                              {t("New Client")}
-                            </label>
-                            <div className="mb-4">
-                              <label
-                                htmlFor="name"
-                                className="block text-xs font-semibold  mb-2"
-                              >
-                                {t("Name")}
-                              </label>
-                              <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                {...getFieldProps("name")}
-                              />
-                              <ErrorMessage
-                                name="name"
-                                component="p"
-                                className="text-red-500 text-xs italic"
-                              />
-                            </div>
-                            <div className="mb-4">
-                              <label
-                                htmlFor="phone"
-                                className="block text-xs font-semibold  mb-2"
-                              >
-                                {t("Phone")}
-                              </label>
-                              <input
-                                type="text"
-                                id="phone"
-                                name="phone"
-                                className="input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                {...getFieldProps("phone")}
-                              />
-                              <ErrorMessage
-                                name="phone"
-                                component="p"
-                                className="text-red-500 text-xs italic"
-                              />
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <div>
-                        <button
-                          type="button"
-                          className="add-customer-button w-full flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                          onClick={() =>
-                            setAddCustomerClicked(!addCustomerClicked)
-                          }
-                        >
-                          {!addCustomerClicked ? (
-                            <>
-                              <FaPlus className="mr-2" />
-                              {t("Add Customer")}
-                            </>
-                          ) : (
-                            t("Select Customer")
-                          )}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="mb-4">
-                      <Field
-                        name="service"
-                        label={t("Service")}
-                        component={CustomSelectList}
-                        options={services}
-                        selectedOptions={values.service}
-                        setSelectedOptions={(selectedOptions) =>
-                          setFieldValue("service", selectedOptions)
-                        }
-                      />
-                      {/* <label
-                        htmlFor="service"
-                        className="block text-sm font-semibold  mb-2"
-                      >
-                        Services
-                      </label>
-                      <Select
-                        id="service"
-                        name="service"
-                        className="input-field"
-                        options={services.map((service) => ({
-                          value: service._id,
-                          label: service.name,
-                        }))}
-                        isMulti
-                        value={values.service.map((serviceId) => ({
-                          value: serviceId,
-                          label: services.find(
-                            (service) => service._id === serviceId
-                          )?.name,
-                        }))}
-                        onChange={(selectedOptions) =>
-                          handleServicesChange(selectedOptions)
-                        }
-                        components={animatedComponents}
-                        placeholder="Select services"
-                        isClearable
-                      /> */}
-                    </div>
-
-                    <div className="mb-4">
-                      <Field
-                        name="product"
-                        label={t("Product")}
-                        component={CustomSelectList}
-                        options={products}
-                        selectedOptions={values.product}
-                        setSelectedOptions={(selectedOptions) =>
-                          setFieldValue("product", selectedOptions)
-                        }
-                      />
-                      {/* <label
-                        htmlFor="product"
-                        className="block text-sm font-semibold  mb-2"
-                      >
-                        Products
-                      </label> */}
-                      {/* <Select
-                        id="product"
-                        name="product"
-                        className="input-field"
-                        options={products.map((product) => ({
-                          value: product._id,
-                          label: product.name,
-                        }))}
-                        isMulti
-                        value={values.product.map((productId) => ({
-                          value: productId,
-                          label: products.find(
-                            (product) => product._id === productId
-                          )?.name,
-                        }))}
-                        onChange={(selectedOptions) =>
-                          handleProductsChange(selectedOptions)
-                        }
-                        components={animatedComponents}
-                        placeholder="Select products"
-                        isClearable
-                      />*/}
-                    </div>
-                  </div>
-
-                  <div>
-                    <CustomSelect
-                      label={t("Professional")}
-                      id="professional"
-                      name="professional"
-                      options={professionals}
-                    />
-                    <div className="flex justify-start items-center">
-                      <label
-                        htmlFor="manualDuration"
-                        className={`block text-sm font-semibold  mb-2`}
-                      >
-                        {t("Set Duration Manually")}
-                      </label>
-                      <Switch
-                        id="manualDuration"
-                        name="manualDuration"
-                        checked={allowManualDuration}
-                        onChange={() =>
-                          setAllowManualDuration(!allowManualDuration)
-                        }
-                        onColor="#86d3ff"
-                        onHandleColor="#2693e6"
-                        handleDiameter={20}
-                        uncheckedIcon={false}
-                        checkedIcon={false}
-                        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        activeBoxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-                        height={14}
-                        width={30}
-                        className="ml-2"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        htmlFor="appointmentDuration"
-                        className="block text-sm font-semibold  mb-2"
-                      >
-                        {t("Appointment Duration")}
-                      </label>
-                      <div className={`flex flex-wrap sm:flex-nowrap items-center ${!isDarkMode && "border border-gray-300"} rounded-lg ${
-                            isDarkMode
-                              && "bg-gray-700"
-                              
-                          } overflow-hidden`}>
-                        <div className="flex items-center w-full">
-                          <input
-                            type="number"
-                            id="hours"
-                            name="hours"
-                            value={values.appointmentDuration.split(":")[0]}
-                            className={`${
-                              isDarkMode
-                                ? SpecialInputDarkStyle
-                                : SpecialInputLightStyle
-                            }`}
-                            onChange={handleDurationChange}
-                            disabled={!allowManualDuration}
-                          />
-                          <span
-                            className={`${
-                              isDarkMode ? "text-white" : "text-gray-600"
-                            } px-2`}
-                          >
-                            :
-                          </span>
-                          <input
-                            type="number"
-                            id="minutes"
-                            name="minutes"
-                            value={values.appointmentDuration.split(":")[1]}
-                            className={`${
-                              isDarkMode
-                                ? SpecialInputDarkStyle
-                                : SpecialInputLightStyle
-                            }`}
-                            onChange={handleDurationChange}
-                            step="5"
-                            disabled={!allowManualDuration}
-                          />
+                              {isSubmitting ? (
+                                <FaSpinner className="animate-spin mr-2" />
+                              ) : (
+                                <FaRedo className="mr-2" />
+                              )}
+                              {t("Update")}
+                            </button>
+                            <button
+                              type="button"
+                              // disabled={isSubmitting}
+                              onClick={() => handleCheckout(values)}
+                              className="checkout-button w-fit mx-1 flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                              {isSubmitting ? (
+                                <FaSpinner className="animate-spin mr-2" />
+                              ) : (
+                                <FaCreditCard className="mr-2" />
+                              )}
+                              {t("Checkout")}
+                            </button>
+                            {/* WhatsApp Button */}
+                            <button
+                              type="button"
+                              className={`whatsapp-button relative w-fit flex items-center ${
+                                currentPlan === "personal"
+                                  ? "bg-green-400"
+                                  : "bg-green-500 hover:bg-green-600"
+                              } text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline`}
+                              onClick={() => {
+                                currentPlan === "personal"
+                                  ? setUpgradePlan(true)
+                                  : openWhatsApp(values.customer);
+                              }}
+                            >
+                              <FaWhatsapp className="mr-1" />
+                              {t("WA")}
+                              {currentPlan === "personal" && (
+                                <span className="absolute z-10 -top-2 -right-2 p-0 bg-yellow-300 rounded-full inline-flex items-center justify-center font-bold leading-none">
+                                  <MdStars
+                                    size={25}
+                                    className="text-teal-500 m-0"
+                                  />
+                                </span>
+                              )}
+                            </button>
+                          </div>
+                          <div>
+                            <button
+                              type="button"
+                              className={`whatsapp-button relative w-fit flex items-center bg-red-500 hover:bg-red-600 text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline`}
+                              onClick={openAppointmentDeletePopUp}
+                            >
+                              <FaTrashAlt className="mr-1" />
+                              {t("Remove")}
+                            </button>
+                          </div>
                         </div>
+                      </Form>
+                    );
+                  }}
+                </Formik>
+              ) : (
+                <div className="bg-white rounded-lg px-8 py-6 mb-4  w-[500px] sm:w-[700px] mx-auto overflow-y-auto">
+                  <div className="grid grid-cols-2 gap-5">
+                    <div>
+                      <div className="flex flex-col mb-4">
+                        <div>
+                          <div
+                            className="bg-gray-300 rounded-md animate-pulse"
+                            style={{ height: "66px" }}
+                          ></div>
+                        </div>
+                        <div>
+                          <div className="bg-gray-300 h-9 rounded-md animate-pulse my-1"></div>
+                        </div>
+                      </div>
+
+                      <div className="mb-4">
                         <div
-                          className={`${
-                            isDarkMode
-                              ? "bg-gray-600 text-white"
-                              : "bg-gray-200 text-gray-600"
-                          } px-3 py-2 w-1/2 sm:w-fit`}
-                        >
-                          <span className="text-xs">{t("HOURS")}</span>
-                        </div>
-                        <div
-                          className={`${
-                            isDarkMode
-                              ? "bg-gray-600 text-white"
-                              : "bg-gray-200 text-gray-600"
-                          } px-3 py-2 w-1/2 sm:w-fit`}
-                        >
-                          <span className="text-xs">{t("MINUTES")}</span>
-                        </div>
+                          className="bg-gray-300 rounded-md animate-pulse"
+                          style={{ height: "66px" }}
+                        ></div>
                       </div>
                     </div>
 
-                    <div className="mb-4">
-                      <label
-                        htmlFor="date"
-                        className="block text-sm font-semibold  mb-2"
-                      >
-                        {t("Date")}
-                      </label>
-                      <input
-                        type="date"
-                        id="date"
-                        name="date"
-                        value={values.date}
-                        className={`${
-                          isDarkMode
-                            ? NoWidthInputDarkStyle
-                            : NoWidthInputLightStyle
-                        }`}
-                        {...getFieldProps("date")}
-                      />
-                      <ErrorMessage
-                        name="date"
-                        component="p"
-                        className="text-red-500 text-xs italic"
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label
-                        htmlFor="time"
-                        className="block text-sm font-semibold  mb-2"
-                      >
-                        {t("Time")}
-                      </label>
-                      <input
-                        type="time"
-                        id="time"
-                        name="time"
-                        value={values.time}
-                        className={`${
-                          isDarkMode
-                            ? NoWidthInputDarkStyle
-                            : NoWidthInputLightStyle
-                        }`}
-                        {...getFieldProps("time")}
-                      />
-                      <ErrorMessage
-                        name="time"
-                        component="p"
-                        className="text-red-500 text-xs italic"
-                      />
+                    <div>
+                      <div
+                        className="bg-gray-300 rounded-md animate-pulse"
+                        style={{ height: "66px" }}
+                      ></div>
+                      <div className="flex justify-start items-center">
+                        <div className="bg-gray-300 h-7 rounded-md animate-pulse"></div>
+                      </div>
+                      <div className="mb-4">
+                        <div
+                          className="bg-gray-300 rounded-md animate-pulse"
+                          style={{ height: "70px" }}
+                        ></div>
+                      </div>
+
+                      <div className="mb-4">
+                        <div
+                          className="bg-gray-300 rounded-md animate-pulse"
+                          style={{ height: "54px" }}
+                        ></div>
+                      </div>
+                      <div className="mb-4">
+                        <div
+                          className="bg-gray-300 h- rounded-md animate-pulse"
+                          style={{ height: "54px" }}
+                        ></div>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center">
-                  {/* <button
-                type="submit"
-                disabled={isSubmitting}
-                className="checkout-button flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {isSubmitting ? (
-                  <FaSpinner className="animate-spin mr-2" />
-                ) : (
-                  <FaCheck className="mr-2" />
-                )}
-                Proceed to Checkout
-              </button> */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="submit-button flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    {isSubmitting ? (
-                      <FaSpinner className="animate-spin mr-2" />
-                    ) : (
-                      <FaRedo className="mr-2" />
-                    )}
-                    {t("Update")}
-                  </button>
-                  <button
-                    type="button"
-                    // disabled={isSubmitting}
-                    onClick={() => handleCheckout(values)}
-                    className="checkout-button w-fit mx-1 flex items-center bg-green-500 hover:bg-green-600 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  >
-                    {isSubmitting ? (
-                      <FaSpinner className="animate-spin mr-2" />
-                    ) : (
-                      <FaCreditCard className="mr-2" />
-                    )}
-                    {t("Checkout")}
-                  </button>
-                  {/* WhatsApp Button */}
-                  <button
-                    type="button"
-                    className={`whatsapp-button relative w-fit flex items-center ${currentPlan === 'personal' ? "bg-green-400" : "bg-green-500 hover:bg-green-600"} text-white text-sm font-bold py-2 px-2 rounded focus:outline-none focus:shadow-outline`}
-                    onClick={() => {currentPlan === 'personal' ? setUpgradePlan(true) : openWhatsApp(values.customer)}}
-                  >
-                    <FaWhatsapp className="mr-1" />
-                    {t("WA")}
-                    {currentPlan === 'personal' && (
-                      <span className="absolute z-10 -top-2 -right-2 p-0 bg-yellow-300 rounded-full inline-flex items-center justify-center font-bold leading-none">
-                        <MdStars size={25} className="text-teal-500 m-0" />
-                      </span>
-                    )}
-                  </button>
-                </div>
-              </Form>
-            );
-          }}
-        </Formik>
-      ) : (
-        <div className="bg-white rounded-lg px-8 py-6 mb-4  w-[500px] sm:w-[700px] mx-auto overflow-y-auto">
-          <div className="grid grid-cols-2 gap-5">
-            <div>
-              <div className="flex flex-col mb-4">
-                <div>
-                  <div
-                    className="bg-gray-300 rounded-md animate-pulse"
-                    style={{ height: "66px" }}
-                  ></div>
-                </div>
-                <div>
-                  <div className="bg-gray-300 h-9 rounded-md animate-pulse my-1"></div>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div
-                  className="bg-gray-300 rounded-md animate-pulse"
-                  style={{ height: "66px" }}
-                ></div>
-              </div>
-            </div>
-
-            <div>
-              <div
-                className="bg-gray-300 rounded-md animate-pulse"
-                style={{ height: "66px" }}
-              ></div>
-              <div className="flex justify-start items-center">
-                <div className="bg-gray-300 h-7 rounded-md animate-pulse"></div>
-              </div>
-              <div className="mb-4">
-                <div
-                  className="bg-gray-300 rounded-md animate-pulse"
-                  style={{ height: "70px" }}
-                ></div>
-              </div>
-
-              <div className="mb-4">
-                <div
-                  className="bg-gray-300 rounded-md animate-pulse"
-                  style={{ height: "54px" }}
-                ></div>
-              </div>
-              <div className="mb-4">
-                <div
-                  className="bg-gray-300 h- rounded-md animate-pulse"
-                  style={{ height: "54px" }}
-                ></div>
-              </div>
+              )}
             </div>
           </div>
         </div>
       )}
-      </div>
-      </div>
-    </div>
-  )}
     </>
   );
 };
@@ -1166,7 +1243,9 @@ const CustomSelectList = ({ options, label, field, form }) => {
               .map((option, index) => (
                 <div
                   key={index}
-                  className={`flex items-center justify-between px-4 py-2 cursor-pointer ${isDarkMode ? "hover:bg-gray-500" : "bg-gray-300"} `}
+                  className={`flex items-center justify-between px-4 py-2 cursor-pointer ${
+                    isDarkMode ? "hover:bg-gray-500" : "bg-gray-300"
+                  } `}
                   onClick={() => toggleOption(option._id)}
                 >
                   <span>{option.name}</span>

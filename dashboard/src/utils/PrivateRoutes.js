@@ -17,7 +17,6 @@ const PrivateRoutes = () => {
   const { t } = useTranslation()
 
   const [subscriptionEndDate, setSubscriptionEndDate] = useState(null);
-  const [subscriptionSessionId, setSubscriptionSessionId] = useState(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -31,7 +30,6 @@ const PrivateRoutes = () => {
           console.log(response.data?.subscription?.planEndDate);
           setLoading(false)
           setSubscriptionEndDate(response.data?.subscription?.planEndDate);
-          setSubscriptionSessionId(response.data?.subscription?.sessionId);
         });
     }
   }, [isAuthenticated, token]);
@@ -55,7 +53,7 @@ const PrivateRoutes = () => {
     return (
       <>
         <Header />
-        <div className="flex h-[calc(100%-72px)]">
+        <div className="flex h-[calc(100%-82px)]">
           <Side
             isSidebarOpen={isSidebarOpen}
             toggleSidebar={toggleSidebar}

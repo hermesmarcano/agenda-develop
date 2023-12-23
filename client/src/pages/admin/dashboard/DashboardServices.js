@@ -25,7 +25,6 @@ const DashboardServices = () => {
   const { t } = useTranslation();
   const [servicesDataArr, setServicesDataArr] = useState([]);
   const [dataFetched, setDataFetched] = useState(false);
-  const [hiddenImages, setHiddenImages] = useState([]);
   const { servicesData } = useContext(ServicesContext);
   const [loading, setLoading] = useState(false);
 

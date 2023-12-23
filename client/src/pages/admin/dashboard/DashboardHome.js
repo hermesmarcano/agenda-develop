@@ -15,7 +15,7 @@ const DashboardHome = () => {
   const [customers, setCustomers] = useState([]);
   const [transactions, setTransactions] = useState(0);
   const [payments, setPayments] = useState([]);
-  const [modelState, setModelState] = useState(false);
+  // const [modelState, setModelState] = useState(false);
   const [selectedShops, setSelectedShops] = useState([]);
   const [customersPerShop, setCustomersPerShop] = useState([]);
   const [paymentsPerShop, setPaymentsPerShop] = useState([]);

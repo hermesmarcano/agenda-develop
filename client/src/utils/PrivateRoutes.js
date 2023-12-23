@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from "react-router-dom";
-// import Header from "../components/Header";
+import Helmet from 'react-helmet'
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
@@ -8,6 +8,10 @@ const PrivateRoutes = () => {
 
   return isAuthenticated ? (
     <>
+      <Helmet>
+      <title>Icuts - admin</title>
+        <link rel="icon" type="image/png" href="logo.svg" />
+      </Helmet>
       <Header />
       <div className="flex h-screen bg-gray-50">
         <Sidebar />

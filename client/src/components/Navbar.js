@@ -1,18 +1,15 @@
-import React, { useContext } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { animateScroll } from "react-scroll";
-import { WebsiteTitleContext } from "../context/WebsiteTitleContext";
-import { LogoContext } from "../context/LogoContext";
 import { useTranslation } from "react-i18next";
 import en from "../assets/united-kingdom.png"
 import es from "../assets/spain.png"
+import logo from "../assets/logo.svg";
 
 function Navbar() {
   const { t, i18n } = useTranslation();
-  const [isOpen, setIsOpen] = React.useState(false);
-  const { websiteTitle } = useContext(WebsiteTitleContext);
-  const { logo } = useContext(LogoContext);
-  const [activeLanguage, setActiveLanguage] = React.useState("es");
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeLanguage, setActiveLanguage] = useState("es");
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -29,16 +26,15 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-400 fixed top-0 w-full z-40 bg-opacity-50 backdrop-blur-md shadow-2xl">
+    <nav className="bg-neutral-200 fixed top-0 w-full z-40 bg-opacity-80 backdrop-blur-md shadow-2xl">
       <div className="mx-auto px-4 py-2 max-w-screen-2xl flex items-center justify-between">
         <div className="flex items-center">
           <Link
             to="/"
             className="text-gray-800 font-bold text-lg flex items-center justify-center"
           >
-            <img src={logo} alt={logo} className="w-9 mr-1" />
+            <img src={logo} alt="logo" className="w-28" />
 
-            {websiteTitle}
           </Link>
           <button
             className="ml-4 md:hidden text-gray-800 focus:outline-none"

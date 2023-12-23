@@ -88,7 +88,7 @@ const getCustomerById = async (req, res) => {
   try {
     const id = req.params.id;
     const customer = await Customer.findById(id).select(
-      "_id shopName name phone email birthday address"
+      "_id shopName name phone email birthday address payments"
     );
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
