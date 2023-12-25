@@ -351,9 +351,10 @@ const UpdateAppointment = ({
                   instance
                     .patch(
                       `customers/${client._id}`,
-                      {
-                        payments: customerPayments - paidAppointmentAmount,
-                      },
+                      JSON.stringify({
+                        payments: (customerPayments - paidAppointmentAmount),
+                        lastTimeAppointmentStatus: 'Cancelled'
+                      }),
                       {
                         headers: {
                           "Content-Type": "application/json",
@@ -362,6 +363,7 @@ const UpdateAppointment = ({
                       }
                     )
                     .then((r) => {
+                      console.log(r.data);
                       instance
                         .delete(`payments/${paymentId}`, {
                           headers: {
@@ -369,7 +371,6 @@ const UpdateAppointment = ({
                           },
                         })
                         .then((resp) => {
-                          console.log(resp.data);
                           instance
                             .delete(`appointments/${appointmentId}`, {
                               headers: {
@@ -377,7 +378,7 @@ const UpdateAppointment = ({
                                 Authorization: token,
                               },
                             })
-                            .then((response) => {
+                            .then(() => {
                               setDeleteAppointmentModelState(false);
                               setModelState(false);
                               notify(
@@ -412,6 +413,19 @@ const UpdateAppointment = ({
                   },
                 })
                 .then(() => {
+                  instance
+                    .patch(
+                      `customers/${client._id}`,
+                      JSON.stringify({
+                        lastTimeAppointmentStatus: 'Cancelled'
+                      }),
+                      {
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: token,
+                        },
+                      }
+                    )
                   setDeleteAppointmentModelState(false);
                   setModelState(false);
                   notify(

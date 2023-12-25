@@ -27,10 +27,10 @@ const customerSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isManager: {
-      type: Boolean,
-      default: false,
-      enum: [false],
+    lastTimeAppointmentStatus: {
+      type: String,
+      default: "Not Booked",
+      enum: ["Not Booked", "Payment Pending", "Confirmed", "Cancelled"],
     },
   },
   { timestamps: true }

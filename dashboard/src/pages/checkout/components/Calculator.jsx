@@ -83,7 +83,10 @@ const Calculator = ({
             instance
               .patch(
                 `customers/${bookingInfo.customer}`,
-                JSON.stringify({ payments: updatedClientPayments }),
+                JSON.stringify({ 
+                  payments: updatedClientPayments,
+                  lastTimeAppointmentStatus: 'Confirmed'
+                }),
                 {
                   headers: {
                     "Content-Type": "application/json",
@@ -91,7 +94,7 @@ const Calculator = ({
                   },
                 }
               )
-              .then((response) => {
+              .then(() => {
                 confirmAppointmentPayment();
               })
               .catch((error) => {

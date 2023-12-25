@@ -151,8 +151,20 @@ const RegisterAppointment = ({
       totalDuration = parseInt(hours) * 60 + parseInt(minutes);
     }
 
-    function getCurrentLanguage() {
-      return i18next.language || "en";
+    const updateCustomerAppointmentStatus = (customer) => {
+      instance
+      .patch(
+        `customers/${customer}`,
+        JSON.stringify({
+          lastTimeAppointmentStatus: 'Payment Pending'
+        }),
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+        }
+      )
     }
 
     const createAppointment = (customer) => {
@@ -170,6 +182,7 @@ const RegisterAppointment = ({
       if (bookingInfo.product) {
         apptData.product = bookingInfo.product;
       }
+
       instance
         .post("appointments", apptData, {
           headers: {
@@ -200,11 +213,12 @@ const RegisterAppointment = ({
       instance
         .post(
           "customers/",
-          {
+          JSON.stringify({
             name: values.name,
             phone: values.phone,
             managerId: shopId,
-          },
+            lastTimeAppointmentStatus: 'Payment Pending'
+          }),
           {
             headers: {
               "Content-Type": "application/json",
@@ -224,6 +238,7 @@ const RegisterAppointment = ({
     if (addCustomerClicked) {
       registerCustomerWithAppointment();
     } else {
+      updateCustomerAppointmentStatus(values.customer);
       createAppointment(values.customer);
     }
   };

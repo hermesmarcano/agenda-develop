@@ -106,7 +106,10 @@ const CreditPayment = ({
           instance
             .patch(
               `customers/${bookingInfo.customer}`,
-              JSON.stringify({ payments: updatedClientPayments }),
+              JSON.stringify({
+              payments: updatedClientPayments,
+              lastTimeAppointmentStatus: 'Confirmed'
+            }),
               {
                 headers: {
                   "Content-Type": "application/json",
@@ -114,10 +117,11 @@ const CreditPayment = ({
                 },
               }
             )
-            .then((response) => {
+            .then(() => {
               linkPaymentToAppointment();
             })
             .catch((error) => {
+              console.error(error.message);
               deletePayment();
             });
         })

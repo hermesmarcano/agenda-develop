@@ -220,7 +220,11 @@ const Customers = () => {
         <div className="flex items-center my-4">
           <AddButton
             counter={customerPlanCounter || 0}
-            onClick={() => {customerPlanCounter > 0 ? setRegisterModelState(true) : setUpgradePlan(true)}}
+            onClick={() => {
+              customerPlanCounter > 0
+                ? setRegisterModelState(true)
+                : setUpgradePlan(true);
+            }}
           />
 
           <Drawer
@@ -382,6 +386,7 @@ const Customers = () => {
                   <th className="py-3 text-left">
                     {t("Payments")} {t("$")}
                   </th>
+                  <th className="py-3 text-left">{t("Last Appointment")}</th>
                   <th className="py-3 pr-6 text-center">{t("Actions")}</th>
                 </tr>
               </thead>
@@ -407,6 +412,27 @@ const Customers = () => {
                     <td className="py-2">
                       {customer.payments.toFixed(2) || 0}
                     </td>
+                    <td className="py-2">
+                      <div
+                        className={`w-fit flex items-center justify-center px-4 py-1 rounded-full text-xs font-medium ${
+                          customer?.lastTimeAppointmentStatus === "Not Booked"
+                            ? "bg-gray-200 text-gray-800"
+                            : customer?.lastTimeAppointmentStatus ===
+                              "Payment Pending"
+                            ? "bg-yellow-200 text-yellow-800"
+                            : customer?.lastTimeAppointmentStatus ===
+                              "Confirmed"
+                            ? "bg-green-200 text-green-800"
+                            : customer?.lastTimeAppointmentStatus ===
+                              "Cancelled"
+                            ? "bg-red-200 text-red-800"
+                            : ""
+                        }`}
+                      >
+                        {customer?.lastTimeAppointmentStatus}
+                      </div>
+                    </td>
+
                     <td className="py-2 pr-6 text-center">
                       <button
                         className="text-teal-500 hover:text-teal-700"
