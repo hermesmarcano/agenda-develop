@@ -598,7 +598,7 @@ const Register = () => {
                       name="agreeToTerms"
                       checked={formikProps.values.agreeToTerms}
                       onChange={() => {formikProps.setFieldValue("agreeToTerms", !formikProps.values.agreeToTerms)}}
-                      className="form-checkbox h-5 w-5 text-teal-600 transition duration-150 ease-in-out"
+                      className="form-checkbox h-5 w-5 text-sky-600 transition duration-150 ease-in-out"
                     />
                     <label htmlFor="agreeToTerms" className="text-gray-700 text-sm ml-2">
                       {t("I agree to the")}{" "}
@@ -620,7 +620,7 @@ const Register = () => {
                   <div>
                     <button
                       type="submit"
-                      className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-300 ${
+                      className={`group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded text-white bg-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-300 ${
                         isRegistering ? "cursor-not-allowed" : ""
                       }`}
                       disabled={isRegistering}

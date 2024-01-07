@@ -82,8 +82,8 @@ const SideMenu = () => {
                     to="/"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "agenda"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <IoCalendarOutline size={20} className="mr-2" />
@@ -102,8 +102,8 @@ const SideMenu = () => {
                     to="/customers"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "customers"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <HiOutlineUsers size={20} className="mr-2" />
@@ -121,8 +121,8 @@ const SideMenu = () => {
                     to="/professionals"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "professionals"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <BsPersonGear size={20} className="mr-2" />
@@ -140,8 +140,8 @@ const SideMenu = () => {
                     to="/services"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "services"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <AiOutlineTags size={20} className="mr-2" />
@@ -159,8 +159,8 @@ const SideMenu = () => {
                     to="/products"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "products"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <HiOutlineShoppingBag size={20} className="mr-2" />
@@ -178,8 +178,8 @@ const SideMenu = () => {
                     to="/analytics"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "analytics"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <BsGraphUpArrow size={20} className="mr-2" />
@@ -197,8 +197,8 @@ const SideMenu = () => {
                     to="/settings"
                     className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                       selectedTag === "settings"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <AiOutlineSetting size={20} className="mr-2" />
@@ -214,7 +214,7 @@ const SideMenu = () => {
           <div className="w-full flex">
           <button
                   onClick={logout}
-                  className="w-full flex items-center rounded-lg px-4 py-2 text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-teal-100 hover:text-gray-700"
+                  className="w-full flex items-center rounded-lg px-4 py-2 text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-sky-100 hover:text-gray-700"
                 >
                   <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -233,7 +233,7 @@ const SideMenu = () => {
 
                   <span className="ml-2">Logout</span>
                 </button>
-                <button className="flex justify-center items-center rounded-lg text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-teal-100 hover:text-gray-700 w-[25%]"
+                <button className="flex justify-center items-center rounded-lg text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-sky-100 hover:text-gray-700 w-[25%]"
                   onClick={handleExpansion}
                 >
                   {expanded ? <BsArrowBarLeft /> : <BsArrowBarRight />}
@@ -268,8 +268,8 @@ const SideMenu = () => {
                     to="/"
                     className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "agenda"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                   >
                     <IoCalendarOutline size={20} color="#555" />
@@ -291,8 +291,8 @@ const SideMenu = () => {
                     to="/customers"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "customers"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                     >
                       <HiOutlineUsers size={20} color="#555" />
@@ -312,8 +312,8 @@ const SideMenu = () => {
                     to="/professionals"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "professionals"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                     >
                       <BsPersonGear size={20} color="#555" />
@@ -334,8 +334,8 @@ const SideMenu = () => {
                     to="/services"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "services"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                     >
                       <AiOutlineTags size={20} color="#555" />
@@ -356,8 +356,8 @@ const SideMenu = () => {
                     to="/products"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "products"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                     >
                       <HiOutlineShoppingBag size={20} color="#555" />
@@ -378,8 +378,8 @@ const SideMenu = () => {
                     to="/analytics"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "analytics"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                     >
                       <BsGraphUpArrow size={20} color="#555" />
@@ -400,8 +400,8 @@ const SideMenu = () => {
                     to="/settings"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                       selectedTag === "settings"
-                        ? "bg-teal-600 text-white"
-                        : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                        ? "bg-sky-600 text-white"
+                        : "text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                     }`}
                     >
                       <AiOutlineSetting size={20} color="#555" />
@@ -418,7 +418,7 @@ const SideMenu = () => {
           </div>
 
           <div className="inset-x-0 bottom-0 border-t border-gray-100 p-2">
-              <button className="group relative flex w-full min-h-[32px] justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+              <button className="group relative flex w-full min-h-[32px] justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-sky-100 hover:text-gray-700"
                   onClick={handleExpansion}
                 >
                   {expanded ? <BsArrowBarLeft /> : <BsArrowBarRight />}
@@ -428,7 +428,7 @@ const SideMenu = () => {
                 </button>
               <button
                 onClick={logout}
-                className="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                className="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-sky-100 hover:text-gray-700"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

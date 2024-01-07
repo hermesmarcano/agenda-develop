@@ -418,7 +418,7 @@ const CommissionSection = () => {
                   ).toFixed(2)}
                 </div>
                 <button
-                  className="flex items-center justify-center text-sm bg-teal-600 text-white px-4 py-2 rounded-md transition-colors hover:bg-teal-500"
+                  className="flex items-center justify-center text-sm bg-sky-600 text-white px-4 py-2 rounded-md transition-colors hover:bg-sky-500"
                   onClick={() => handleUpdateCommission(professional._id)}
                 >
                   <FaSyncAlt className="mr-2" />

@@ -76,7 +76,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                           <div
                             className={`px-4 py-2 cursor-pointer ${
                               activeTab === "appointment"
-                                ? "bg-teal-600 text-white shadow-inner"
+                                ? "bg-sky-600 text-white shadow-inner"
                                 : ""
                             }`}
                             onClick={() => handleTabChange("appointment")}
@@ -86,7 +86,7 @@ const ProcessAppointment = ({ isOpen, onClose, setModelState }) => {
                           <div
                             className={`px-4 py-2 cursor-pointer ${
                               activeTab === "blockSchedule"
-                                ? "bg-teal-600 text-white shadow-inner"
+                                ? "bg-sky-600 text-white shadow-inner"
                                 : ""
                             }`}
                             onClick={() => handleTabChange("blockSchedule")}

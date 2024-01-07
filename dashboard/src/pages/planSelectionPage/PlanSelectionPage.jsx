@@ -63,7 +63,7 @@ export default function PlanSelectionPage() {
   <div className="flex items-center space-x-4">
     <div className="relative w-80 h-16 bg-gray-300 rounded-full flex items-center justify-between px-4 cursor-pointer" onClick={handleSwitch}>
       <span className={`text-gray-600 w-1/2 text-left font-bold text-xl pl-5 ${isMonthly ? "opacity-0" : ""}`}>Monthly</span>
-      <div className={`absolute left-[50% ] w-40 h-16 font-bold text-xl text-white bg-teal-500 rounded-full flex items-center justify-center transform transition duration-200 ease-in-out ${isMonthly ? "-translate-x-[15px]" : "translate-x-[143px]"}`}>
+      <div className={`absolute left-[50% ] w-40 h-16 font-bold text-xl text-white bg-sky-500 rounded-full flex items-center justify-center transform transition duration-200 ease-in-out ${isMonthly ? "-translate-x-[15px]" : "translate-x-[143px]"}`}>
         {isMonthly ? "Monthly" : "Yearly"}
       </div>
       <span className={`text-gray-600 w-1/2 text-right font-bold text-xl pr-5 ${isMonthly ? "" : "opacity-0"}`}>Yearly</span>
@@ -126,7 +126,7 @@ const PlanCard = ({ plan, onClick, isMonthly, handleSwitch }) => {
         </li>
       </ul>
       <button
-        className="px-4 py-2 text-white bg-teal-500 rounded-md hover:bg-teal-600 focus:outline-none focus:bg-teal-600"
+        className="px-4 py-2 text-white bg-sky-500 rounded-md hover:bg-sky-600 focus:outline-none focus:bg-sky-600"
         onClick={onClick}
       >
         Subscribe Now

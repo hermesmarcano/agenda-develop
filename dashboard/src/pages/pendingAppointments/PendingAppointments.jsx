@@ -299,7 +299,7 @@ const PendingAppointments = () => {
                 {t("Please choose an appointment to proceed.")}
               </p>
               <button
-                className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-md shadow-md hover:bg-gray-600"
+                className="mt-4 px-4 py-2 bg-sky-600 text-white rounded-md shadow-md hover:bg-sky-700"
                 onClick={() => navigate("/")}
               >
                 {t("Book Now")}

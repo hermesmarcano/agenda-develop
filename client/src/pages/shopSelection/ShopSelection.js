@@ -81,7 +81,7 @@ const ShopSelection = () => {
             placeholder={t("Search shops")}
             value={searchQuery}
             onChange={handleSearchQueryChange}
-            className="py-2 px-4 sm:w-64 rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm"
+            className="py-2 px-4 sm:w-64 rounded-md border-gray-300 shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
           />
           <FaSearch className="ml-2 text-gray-500" />
         </div>
@@ -143,7 +143,7 @@ const ShopSelection = () => {
             onClick={handlePrevClick}
             className={`${
               currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
-            } bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500`}
+            } bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-l-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500`}
             disabled={currentPage === 1}
           >
             {t('Prev')}
@@ -155,7 +155,7 @@ const ShopSelection = () => {
               className={`
                 ${
                   currentPage === number
-                    ? "bg-teal-600 text-white"
+                    ? "bg-sky-600 text-white"
                     : "bg-white text-gray-500 hover:bg-gray-50"
                 }
                 border border-gray-300
@@ -163,7 +163,7 @@ const ShopSelection = () => {
                 py-2 px-4
                 focus:outline-none
                 focus:ring-offset-2
-                focus:ring-teal-500
+                focus:ring-sky-500
               `}
             >
               {number}
@@ -175,7 +175,7 @@ const ShopSelection = () => {
               currentPage === pageNumbers.length
                 ? "opacity-50 cursor-not-allowed"
                 : ""
-            } bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500`}
+            } bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-r-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500`}
             disabled={currentPage === pageNumbers.length}
           >
             {t('Next')}

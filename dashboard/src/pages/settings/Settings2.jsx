@@ -299,83 +299,83 @@ const Settings = () => {
               initialValues={{
                 shopName: shopData.shopName,
                 name: shopData.name,
-                workingHours:
-                  shopData?.workingHours?.length === 0
-                    ? [{ startHour: 0, endHour: 0 }]
-                    : shopData?.workingHours || [{ startHour: 0, endHour: 0 }],
-                selectedDays: shopData?.selectedDays || [],
+                // workingHours:
+                //   shopData?.workingHours?.length === 0
+                //     ? [{ startHour: 0, endHour: 0 }]
+                //     : shopData?.workingHours || [{ startHour: 0, endHour: 0 }],
+                // selectedDays: shopData?.selectedDays || [],
               }}
-              validationSchema={Yup.object().shape({
-                workingHours: Yup.array()
-                  .of(
-                    Yup.object().shape({
-                      startHour: Yup.number()
-                        .required(t("Start hour is required"))
-                        .test(
-                          "startHour",
-                          t("Start hour must be less than end hour"),
-                          function (value) {
-                            return value < this.parent.endHour;
-                          }
-                        ),
-                      endHour: Yup.number()
-                        .required(t("End hour is required"))
-                        .test(
-                          "endHour",
-                          t("End hour must be greater than start hour"),
-                          function (value) {
-                            return value > this.parent.startHour;
-                          }
-                        ),
-                    })
-                  )
-                  .test(
-                    "noOverlap",
-                    t("Working hours cannot overlap"),
-                    function (value) {
-                      let isValid = true;
-                      for (let i = 0; i < value.length; i++) {
-                        for (let j = i + 1; j < value.length; j++) {
-                          const startHourA = value[i].startHour;
-                          const endHourA = value[i].endHour;
-                          const startHourB = value[j].startHour;
-                          const endHourB = value[j].endHour;
+              // validationSchema={Yup.object().shape({
+              //   workingHours: Yup.array()
+              //     .of(
+              //       Yup.object().shape({
+              //         startHour: Yup.number()
+              //           .required(t("Start hour is required"))
+              //           .test(
+              //             "startHour",
+              //             t("Start hour must be less than end hour"),
+              //             function (value) {
+              //               return value < this.parent.endHour;
+              //             }
+              //           ),
+              //         endHour: Yup.number()
+              //           .required(t("End hour is required"))
+              //           .test(
+              //             "endHour",
+              //             t("End hour must be greater than start hour"),
+              //             function (value) {
+              //               return value > this.parent.startHour;
+              //             }
+              //           ),
+              //       })
+              //     )
+              //     .test(
+              //       "noOverlap",
+              //       t("Working hours cannot overlap"),
+              //       function (value) {
+              //         let isValid = true;
+              //         for (let i = 0; i < value.length; i++) {
+              //           for (let j = i + 1; j < value.length; j++) {
+              //             const startHourA = value[i].startHour;
+              //             const endHourA = value[i].endHour;
+              //             const startHourB = value[j].startHour;
+              //             const endHourB = value[j].endHour;
 
-                          // Check if there is any overlap between the two periods
-                          if (
-                            (startHourA <= startHourB &&
-                              startHourB < endHourA) ||
-                            (startHourA < endHourB && endHourB <= endHourA) ||
-                            (startHourB <= startHourA &&
-                              startHourA < endHourB) ||
-                            (startHourB < endHourA && endHourA <= endHourB)
-                          ) {
-                            isValid = false;
-                            break;
-                          }
-                        }
-                        if (!isValid) {
-                          break;
-                        }
-                      }
-                      return isValid;
-                    }
-                  ),
-                selectedDays: Yup.array()
-                  .of(
-                    Yup.string().oneOf([
-                      "Monday",
-                      "Tuesday",
-                      "Wednesday",
-                      "Thursday",
-                      "Friday",
-                      "Saturday",
-                      "Sunday",
-                    ])
-                  )
-                  .min(1, t("At least one day must be selected"))
-                  .max(7, t("No more than seven days can be selected")),
-              })}
+              //             // Check if there is any overlap between the two periods
+              //             if (
+              //               (startHourA <= startHourB &&
+              //                 startHourB < endHourA) ||
+              //               (startHourA < endHourB && endHourB <= endHourA) ||
+              //               (startHourB <= startHourA &&
+              //                 startHourA < endHourB) ||
+              //               (startHourB < endHourA && endHourA <= endHourB)
+              //             ) {
+              //               isValid = false;
+              //               break;
+              //             }
+              //           }
+              //           if (!isValid) {
+              //             break;
+              //           }
+              //         }
+              //         return isValid;
+              //       }
+              //     ),
+              //   selectedDays: Yup.array()
+              //     .of(
+              //       Yup.string().oneOf([
+              //         "Monday",
+              //         "Tuesday",
+              //         "Wednesday",
+              //         "Thursday",
+              //         "Friday",
+              //         "Saturday",
+              //         "Sunday",
+              //       ])
+              //     )
+              //     .min(1, t("At least one day must be selected"))
+              //     .max(7, t("No more than seven days can be selected")),
+              // })}
               onSubmit={handleSubmit}
             >
               {(formikProps) => (
@@ -420,7 +420,7 @@ const Settings = () => {
                       }`}
                     />
                   </div>
-
+{/* 
                   <label
                     htmlFor="discount-value"
                     className="block text-lg font-semibold mb-2"
@@ -455,7 +455,7 @@ const Settings = () => {
                                         ?.startHour
                                         ? "border-red-500"
                                         : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm ${
+                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm ${
                                       isDarkMode
                                         ? "bg-gray-700 text-white"
                                         : "bg-white text-gray-800"
@@ -490,7 +490,7 @@ const Settings = () => {
                                         ?.endHour
                                         ? "border-red-500"
                                         : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-teal-500 focus:border-teal-500 sm:text-sm ${
+                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm ${
                                       isDarkMode
                                         ? "bg-gray-700 text-white"
                                         : "bg-white text-gray-800"
@@ -527,7 +527,7 @@ const Settings = () => {
                           {formikProps.values.workingHours.length < 3 && (
                             <button
                               type="button"
-                              className="flex items-center px-2 py-1 text-sm text-teal-600 hover:text-teal-800"
+                              className="flex items-center px-2 py-1 text-sm text-sky-600 hover:text-sky-800"
                               onClick={() => push({ startHour: 0, endHour: 0 })}
                             >
                               <TiPlus className="mr-1" />
@@ -561,7 +561,7 @@ const Settings = () => {
                           htmlFor={`day-${day}`}
                           className={`${
                             formikProps.values.selectedDays.includes(day)
-                              ? "bg-teal-600 text-white"
+                              ? "bg-sky-600 text-white"
                               : "bg-gray-200 text-gray-800"
                           } ${
                             isDarkMode
@@ -585,7 +585,7 @@ const Settings = () => {
                       component="div"
                       className="text-red-600 text-sm mt-1"
                     />
-                  </div>
+                  </div> */}
 
                   <div className="flex items-center justify-end">
                     <UpdateButton disabled={formikProps.isSubmitting} />
@@ -663,39 +663,39 @@ const Settings = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
                 <div>
                   <FeatureItem
-                    icon={<BsFillPersonPlusFill className="text-teal-500" />}
+                    icon={<BsFillPersonPlusFill className="text-sky-500" />}
                     label="Professionals:"
                     value={plan.professionals}
                   />
                   <FeatureItem
-                    icon={<BsFillPeopleFill className="text-teal-500" />}
+                    icon={<BsFillPeopleFill className="text-sky-500" />}
                     label="Customers:"
                     value={plan.customers}
                   />
                   <FeatureItem
-                    icon={<BiCalendarCheck className="text-teal-500" />}
+                    icon={<BiCalendarCheck className="text-sky-500" />}
                     label="Agenda:"
                     value={plan.agenda ? "Yes" : "No"}
                   />
                 </div>
                 <div>
                   <FeatureItem
-                    icon={<AiOutlineUser className="text-teal-500" />}
+                    icon={<AiOutlineUser className="text-sky-500" />}
                     label="Business Admin:"
                     value={plan.businessAdmin ? "Yes" : "No"}
                   />
                   <FeatureItem
-                    icon={<BiCalendarEvent className="text-teal-500" />}
+                    icon={<BiCalendarEvent className="text-sky-500" />}
                     label="Reservation Page:"
                     value={plan.reservationPage ? "Yes" : "No"}
                   />
                   <FeatureItem
-                    icon={<FaWhatsapp className="text-teal-500" />}
+                    icon={<FaWhatsapp className="text-sky-500" />}
                     label="WhatsApp Integration:"
                     value={plan.whatsAppIntegration ? "Yes" : "No"}
                   />
                   <FeatureItem
-                    icon={<FaBell className="text-teal-500" />}
+                    icon={<FaBell className="text-sky-500" />}
                     label="Appointment Reminders:"
                     value={plan.appointmentReminders ? "Yes" : "No"}
                   />
@@ -716,7 +716,7 @@ const Settings = () => {
                 </span>
               </div>
             </div>
-            <div className="mt-4 flex flex-wrap justify-center items-center gap-4">
+            <div className={`mt-4 flex flex-wrap justify-center items-center gap-4 ${isDarkMode ? "bg-gray-900" : "bg-gray-50"} rounded-md border border-gray-50 p-4`}>
               {plans.map((props) => (
                 <PricingCard
                   {...{ ...props, currentPlan: plan.name }}
@@ -783,19 +783,19 @@ const Settings = () => {
       <div className="w-full mx-auto">
         <div className={isDarkMode ? tapDarkStyle : tapLightStyle}>
           <TabButton
-            icon={<AiOutlineShop size={30} className="text-teal-500" />}
+            icon={<AiOutlineShop size={30} className="text-sky-500" />}
             label="Shop Configuration"
             active={tabIndex === 0}
             onClick={() => handleTabChange(0)}
           />
           <TabButton
-            icon={<AiOutlineUser size={30} className="text-teal-500" />}
+            icon={<AiOutlineUser size={30} className="text-sky-500" />}
             label="Profile Image"
             active={tabIndex === 1}
             onClick={() => handleTabChange(1)}
           />
           <TabButton
-            icon={<AiOutlineCreditCard size={30} className="text-teal-500" />}
+            icon={<AiOutlineCreditCard size={30} className="text-sky-500" />}
             label="Subscription"
             active={tabIndex === 2}
             onClick={() => handleTabChange(2)}
@@ -850,36 +850,36 @@ const PlanSelection = ({ handlePlanSelection, planData }) => {
       <h2 className="text-3xl font-bold mb-6">Choose Your Plan</h2>
       <div className="flex sm:flex-row flex-col gap-4">
         <div
-          className={`w-56 flex flex-col justify-center items-center cursor-pointer p-6 border-4 rounded-lg transition duration-300 ease-in-out hover:border-teal-500 ${
-            selectedPlan === "monthly" ? "border-teal-500" : "border-gray-300"
+          className={`w-56 flex flex-col justify-center items-center cursor-pointer p-6 border-4 rounded-lg transition duration-300 ease-in-out hover:border-sky-500 ${
+            selectedPlan === "monthly" ? "border-sky-500" : "border-gray-300"
           }`}
           onClick={() => handleSelectPlan("monthly")}
         >
           <h3 className="text-2xl font-semibold mb-2">Monthly Plan</h3>
           <p className="text-gray-600">${planData?.price} / month</p>
           {selectedPlan === "monthly" ? (
-            <FaCheckCircle className="text-teal-500 mt-4 text-3xl" />
+            <FaCheckCircle className="text-sky-500 mt-4 text-3xl" />
           ) : (
             <BsFillCircleFill className="text-gray-300 mt-4 text-3xl" />
           )}
         </div>
         <div
-          className={`w-56 flex flex-col justify-center items-center cursor-pointer p-6 border-4 rounded-lg transition duration-300 ease-in-out hover:border-teal-500 ${
-            selectedPlan === "yearly" ? "border-teal-500" : "border-gray-300"
+          className={`w-56 flex flex-col justify-center items-center cursor-pointer p-6 border-4 rounded-lg transition duration-300 ease-in-out hover:border-sky-500 ${
+            selectedPlan === "yearly" ? "border-sky-500" : "border-gray-300"
           }`}
           onClick={() => handleSelectPlan("yearly")}
         >
           <h3 className="text-2xl font-semibold mb-2">Yearly Plan</h3>
           <p className="text-gray-600">${planData?.annualPrice} / year</p>
           {selectedPlan === "yearly" ? (
-            <FaCheckCircle className="text-teal-500 mt-4 text-3xl" />
+            <FaCheckCircle className="text-sky-500 mt-4 text-3xl" />
           ) : (
             <BsFillCircleFill className="text-gray-300 mt-4 text-3xl" />
           )}
         </div>
       </div>
       <button
-        className="bg-teal-500 text-white px-6 py-3 rounded-lg mt-6 font-bold text-lg hover:bg-teal-600 transition duration-300 ease-in-out"
+        className="bg-sky-500 text-white px-6 py-3 rounded-lg mt-6 font-bold text-lg hover:bg-sky-600 transition duration-300 ease-in-out"
         onClick={() => handlePlanSelection(planData.name, selectedPlan)}
       >
         Confirm

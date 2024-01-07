@@ -281,7 +281,7 @@ const PaymentChoice = ({
         {paymentMethod && (
           <button
             onClick={confirmPayment}
-            className="mt-8 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none"
+            className="mt-8 bg-sky-600 hover:bg-sky-500 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none"
           >
             Confirm Payment
           </button>

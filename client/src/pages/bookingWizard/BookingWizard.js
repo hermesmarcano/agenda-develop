@@ -168,7 +168,7 @@ function BookingWizard() {
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={() => navigate(`/shops/${params.id}`)}
@@ -183,7 +183,7 @@ function BookingWizard() {
                     className={`text-white ${
                       !hasSelectedService
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                        : "bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800"
                     } transform transition-transform ${
                       !hasSelectedService
                         ? ""
@@ -214,7 +214,7 @@ function BookingWizard() {
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
@@ -229,7 +229,7 @@ function BookingWizard() {
                     className={`text-white ${
                       !hasSelectedProfessional
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                        : "bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800"
                     } transform transition-transform ${
                       !hasSelectedProfessional
                         ? ""
@@ -260,7 +260,7 @@ function BookingWizard() {
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
@@ -275,7 +275,7 @@ function BookingWizard() {
                     className={`text-white ${
                       !hasSelectedDate
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                        : "bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800"
                     } transform transition-transform ${
                       !hasSelectedDate ? "" : "hover:scale-105 hover:shadow-xl"
                     } py-3 px-6 rounded-md`}
@@ -304,7 +304,7 @@ function BookingWizard() {
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
@@ -319,7 +319,7 @@ function BookingWizard() {
                     className={`text-white ${
                       !hasSelectedHour
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800"
+                        : "bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800"
                     } transform transition-transform ${
                       !hasSelectedHour ? "" : "hover:scale-105 hover:shadow-xl"
                     } py-3 px-6 rounded-md`}
@@ -347,7 +347,7 @@ function BookingWizard() {
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
@@ -359,7 +359,7 @@ function BookingWizard() {
                 </div>
                 <div className="mt-4 flex justify-end">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Next"
                     onClick={handleNext}
@@ -385,7 +385,7 @@ function BookingWizard() {
               <div className="absolute -bottom-3 left-0 w-full flex justify-between">
                 <div className="mt-4 flex justify-start">
                   <button
-                    className={`text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
+                    className={`text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md`}
                     type="button"
                     title="Previous"
                     onClick={handlePrevious}
@@ -405,7 +405,7 @@ function BookingWizard() {
 
                     <button
                       onClick={confirmBooking}
-                      className="flex items-center text-white bg-gradient-to-r from-teal-600 to-teal-700 hover:bg-teal-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
+                      className="flex items-center text-white bg-gradient-to-r from-sky-600 to-sky-700 hover:bg-sky-800 transform transition-transform hover:scale-105 hover:shadow-xl py-3 px-6 rounded-md"
                     >
                       {t('Confirm Booking')} <FaCheckCircle className="ml-2" />
                     </button>

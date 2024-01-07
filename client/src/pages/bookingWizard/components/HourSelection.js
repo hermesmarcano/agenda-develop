@@ -200,7 +200,7 @@ const AccordionItem = ({
         className={`cursor-pointer h-full w-[80px] flex justify-center items-center rounded-lg ${
           isOpen
             ? "bg-gray-100 shadow-md"
-            : "bg-teal-600 text-gray-100 shadow-sm"
+            : "bg-sky-600 text-gray-100 shadow-sm"
         }`}
       >
         <span className="transform -rotate-90">Working Hours {index + 1}</span>
@@ -235,7 +235,7 @@ const AccordionItem = ({
                     type="button"
                     className={`px-2 py-3 gap-2 w-[100px] font-semibold text-center cursor-pointer ${
                       selectedHour === hour
-                        ? "bg-teal-600 text-white"
+                        ? "bg-sky-600 text-white"
                         : "bg-white shadow-inner hover:bg-gray-200"
                     } ${
                       isHourDisabled(hour) ||
@@ -283,7 +283,7 @@ const DateTimeCard = ({ date, setShowCard }) => {
   }).format(date);
 
   return (
-    <div className="bg-teal-600 rounded-lg shadow-md p-4 relative">
+    <div className="bg-sky-600 rounded-lg shadow-md p-4 relative">
       <button
         className="absolute top-0 right-0 p-2 text-gray-300 hover:text-red-500"
         onClick={() => setShowCard(false)}

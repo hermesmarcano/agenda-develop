@@ -109,7 +109,7 @@ const SignIn = ({ isOpen, onClose }) => {
                                 type="tel"
                                 name="phone"
                                 placeholder="Enter your phone number"
-                                className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-teal-500"
+                                className="border border-gray-300 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-sky-500"
                               />
                               <ErrorMessage
                                 name="phone"
@@ -120,7 +120,7 @@ const SignIn = ({ isOpen, onClose }) => {
                             <button
                               type="submit"
                               disabled={isSubmitting}
-                              className="bg-teal-600 hover:bg-teal-700 text-white text-xl font-medium py-4 px-8 rounded-md mt-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                              className="bg-sky-600 hover:bg-sky-700 text-white text-xl font-medium py-4 px-8 rounded-md mt-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
                             >
                               Sign In
                             </button>
@@ -131,7 +131,7 @@ const SignIn = ({ isOpen, onClose }) => {
                         Don't have an account?{" "}
                         <button
                           onClick={() => setSignIn(false)}
-                          className="text-teal-600"
+                          className="text-sky-600"
                         >
                           Register here
                         </button>
@@ -182,7 +182,7 @@ const SignIn = ({ isOpen, onClose }) => {
                         </div>
                         <button
                           type="submit"
-                          className="bg-teal-600 hover:bg-teal-700 text-white text-xl font-medium py-4 px-8 rounded-md mt-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                          className="bg-sky-600 hover:bg-sky-700 text-white text-xl font-medium py-4 px-8 rounded-md mt-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
                         >
                           Register
                         </button>
@@ -190,7 +190,7 @@ const SignIn = ({ isOpen, onClose }) => {
                           Already have an account?{" "}
                           <button
                             onClick={() => setSignIn(true)}
-                            className="text-teal-600 hover:text-teal-800"
+                            className="text-sky-600 hover:text-sky-800"
                           >
                             Login
                           </button>

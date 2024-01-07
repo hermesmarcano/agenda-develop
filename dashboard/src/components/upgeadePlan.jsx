@@ -31,7 +31,7 @@ const UpgradePlan = () => {
       </p>
       <Link
         to="/subscribe"
-        className="flex items-center justify-center bg-teal-500 text-white rounded-md px-4 py-2 mt-4 hover:bg-teal-600 transition-colors duration-200"
+        className="flex items-center justify-center bg-sky-500 text-white rounded-md px-4 py-2 mt-4 hover:bg-sky-600 transition-colors duration-200"
       >
         <FaArrowUp className="mr-2" />
         Upgrade Plan

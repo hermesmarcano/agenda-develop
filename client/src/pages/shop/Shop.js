@@ -50,7 +50,7 @@ const handleStartBooking = () => {
           {t('Start Booking Now!')}
         </h1>
         <div className="flex items-center justify-center space-x-4">
-            <button onClick={handleStartBooking} className="flex items-center bg-teal-600 hover:bg-teal-700 text-white text-xl font-medium py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button onClick={handleStartBooking} className="flex items-center bg-sky-600 hover:bg-sky-700 text-white text-xl font-medium py-3 px-6 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               {t('Book Now')}
               <span className="ml-2">
                 <FaBook />

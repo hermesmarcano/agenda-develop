@@ -176,7 +176,7 @@ const SchedulerC = ({
           <button
             onClick={() => handleViewChange("daily")}
             className={`p-2 rounded ${
-              viewMode === "daily" ? "bg-teal-600 text-white" : ""
+              viewMode === "daily" ? "bg-sky-600 text-white" : ""
             }`}
           >
             <FaCalendarDay className="inline-block mr-2" />
@@ -185,7 +185,7 @@ const SchedulerC = ({
           <button
             onClick={() => handleViewChange("weekly")}
             className={`p-2 rounded ${
-              viewMode === "weekly" ? "bg-teal-600 text-white" : ""
+              viewMode === "weekly" ? "bg-sky-600 text-white" : ""
             }`}
           >
             <FaCalendarWeek className="inline-block mr-2" />

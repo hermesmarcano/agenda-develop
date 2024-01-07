@@ -83,7 +83,7 @@ const PayLater = ({
                 onClick={handleConfirm}
                 className={`w-full mt-4 ${isDarkMode
                   ? "bg-gray-700 hover:bg-gray-600"
-                  : "bg-teal-800 hover:bg-teal-700"
+                  : "bg-sky-800 hover:bg-sky-700"
                   } text-white py-2 px-4 rounded-md font-semibold text-sm`}
               >
                 {t('Confirm Paying Later')}
@@ -135,7 +135,7 @@ const PaymentWaiting = () => {
         ) : (
           <>
             <FaClock
-              className={`text-4xl mr-4 ${isDarkMode ? "text-gray-300" : "text-teal-800"
+              className={`text-4xl mr-4 ${isDarkMode ? "text-gray-300" : "text-sky-800"
                 }`}
             />
             <h1

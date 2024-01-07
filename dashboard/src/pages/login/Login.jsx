@@ -152,7 +152,7 @@ const Login = () => {
                 <div>
                   <button
                     type="submit"
-                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded  text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-300"
+                    className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-semibold rounded  text-white bg-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-300"
                   >
                     {t("Sign in")}
                   </button>

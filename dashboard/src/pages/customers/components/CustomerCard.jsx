@@ -11,10 +11,10 @@ const CustomerCard = ({
     const { isDarkMode } = useContext(DarkModeContext);
     return (
       <div
-        className={`w-64 h-64 border-b-4 border-teal-500 ${
+        className={`w-64 h-64 border-b-4 border-sky-500 ${
           selectedIds.includes(customer._id) 
           ? 
-          isDarkMode ? "bg-teal-600" : "bg-teal-100" 
+          isDarkMode ? "bg-sky-600" : "bg-sky-100" 
           : 
           isDarkMode ? "bg-gray-800" : "bg-white"
         } shadow-md text-center rounded-lg p-4 mb-4 hover:shadow-lg`}

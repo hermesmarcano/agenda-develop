@@ -10,7 +10,8 @@ const SidebarContextWrapper = ({ children }) => {
   const token = localStorage.getItem("ag_app_shop_token");
 
   useEffect(() => {
-    instance
+    if(token) {
+      instance
       .get("managers/", {
         headers: {
           Authorization: token,
@@ -30,6 +31,7 @@ const SidebarContextWrapper = ({ children }) => {
       })
 
       .catch((errors) => console.log(errors));
+    }
   }, [shopId]);
 
   const contextValue = {

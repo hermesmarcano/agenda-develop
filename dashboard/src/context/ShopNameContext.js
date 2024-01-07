@@ -1,19 +1,23 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import instance from "../axiosConfig/axiosConfig";
 
 const ShopNameContext = createContext();
 
 const ShopNameContextWrapper = ({ children }) => {
   const token = localStorage.getItem("ag_app_shop_token");
-  const [shopName, setShopName] = useState(new Date());
+  const [shopName, setShopName] = useState('My Shop');
 
-  instance.get('/managers/id', {
-    headers: {
-      Authorization: token,
-    },
-  }).then((res) => {
-    setShopName(res.data.name)
-  })
+  useEffect(() => {
+    if(token) {
+      instance.get('/managers/id', {
+        headers: {
+          Authorization: token,
+        },
+      }).then((res) => {
+        setShopName(res.data.name)
+      })
+    }
+  }, [])
 
   const contextValue = {
     shopName,

@@ -38,7 +38,7 @@ const CustomerSignIn = ({toggleForm, setSignInPopup}) => {
             </div>
             <input
               type="tel"
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-sky-300"
               placeholder={t("Phone Number")}
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
@@ -46,7 +46,7 @@ const CustomerSignIn = ({toggleForm, setSignInPopup}) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+            className="w-full bg-sky-600 hover:bg-sky-500 text-white py-2 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
           >
             {t('Sign In')}
           </button>
@@ -54,7 +54,7 @@ const CustomerSignIn = ({toggleForm, setSignInPopup}) => {
         <div className="text-center">
           <p className="text-sm text-gray-600">
             {t("Don't have an account?")}{' '}
-            <button onClick={toggleForm} className="text-teal-600 hover:underline">
+            <button onClick={toggleForm} className="text-sky-600 hover:underline">
               {t('Register here')}
             </button>
           </p>

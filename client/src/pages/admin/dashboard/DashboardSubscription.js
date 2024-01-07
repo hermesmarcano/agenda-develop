@@ -248,7 +248,7 @@ const DashboardSubscription = () => {
 
                       <button
                         type="submit"
-                        className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full mt-4 flex items-center justify-center"
+                        className="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full mt-4 flex items-center justify-center"
                       >
                         <FiCheck className="mr-2" />
                         Update Plan
@@ -309,7 +309,7 @@ const DashboardSubscription = () => {
                     </span>
                   </p>
                   <button
-                    className="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-full mt-4 flex items-center justify-center"
+                    className="bg-sky-500 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded-full mt-4 flex items-center justify-center"
                     onClick={() => handleEditClick(plan)}
                   >
                     <FaEdit className="mr-2" />

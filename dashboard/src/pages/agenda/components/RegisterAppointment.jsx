@@ -506,7 +506,7 @@ const RegisterAppointment = ({
                                 type="text"
                                 id="name"
                                 name="name"
-                                className={`input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500  ${
+                                className={`input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500  ${
                                   isDarkMode ? "bg-gray-700" : "bg-white"
                                 }`}
                                 {...getFieldProps("name")}
@@ -528,7 +528,7 @@ const RegisterAppointment = ({
                                 type="text"
                                 id="phone"
                                 name="phone"
-                                className={`input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500   ${
+                                className={`input-field w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500   ${
                                   isDarkMode ? "bg-gray-700" : "bg-white"
                                 }`}
                                 {...getFieldProps("phone")}
@@ -748,7 +748,7 @@ const RegisterAppointment = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="submit-button flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  className="submit-button flex items-center bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 >
                   {isSubmitting ? (
                     <FaSpinner className="animate-spin mr-2" />

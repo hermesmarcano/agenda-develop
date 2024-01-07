@@ -38,7 +38,7 @@ const Header = () => {
       <div className="w-full px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center sm:justify-between sm:gap-4">
           <div className="relative hidden sm:block">
-            <Link className="flex items-center text-teal-600" to="/">
+            <Link className="flex items-center text-sky-600" to="/">
               <span className="sr-only">{t("Home")}</span>
                 <img
                   className="w-24"
@@ -53,7 +53,7 @@ const Header = () => {
 
               <button
                 className={`block shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
-                  isDarkMode ? "bg-teal-600" : "bg-white"
+                  isDarkMode ? "bg-sky-600" : "bg-white"
                 }`}
                 onClick={() => changeLanguage()}
               >
@@ -64,7 +64,7 @@ const Header = () => {
               <div className="relative">
                 <button
                   className={`block shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
-                    isDarkMode ? "bg-teal-600" : "bg-white"
+                    isDarkMode ? "bg-sky-600" : "bg-white"
                   }`}
                   onClick={handleMenuToggle}
                 >
@@ -107,14 +107,14 @@ const Header = () => {
 
               <button
                 className={`block shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
-                  !isDarkMode ? "bg-gray-700" : "bg-yellow-400"
+                  !isDarkMode ? "bg-gray-500" : "bg-yellow-500"
                 }`}
                 onClick={toggleDarkLightMode}
                 style={{ transition: "background-color 0.3s" }}
               >
                 <span className="sr-only">{t("Dark/Light")}</span>
                 {isDarkMode ? (
-                  <FiSun className="text-yellow-500 text-xl" />
+                  <FiSun className="text-yellow-700 text-xl" />
                 ) : (
                   <FiMoon className="text-white text-xl" />
                 )}
@@ -186,7 +186,7 @@ function NotificationMenu({ notifications, isDarkMode }) {
           <div className="flex justify-between items-center">
             <Link
               to="/notifications"
-              className="text-teal-600 text-xs flex items-center hover:underline"
+              className="text-sky-600 text-xs flex items-center hover:underline"
             >
               {t("View all")} <FaAngleRight />
             </Link>

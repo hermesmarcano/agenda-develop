@@ -240,7 +240,7 @@ const Scheduler = ({
         <div className="w-16">
           <button
             className={`px-2 py-1 text-sm rounded-md ${
-               viewMode === "daily" ? (isDarkMode ? "bg-teal-600" : "bg-teal-100") : (isDarkMode ? "text-white" : "text-gray-800")
+               viewMode === "daily" ? (isDarkMode ? "bg-sky-600" : "bg-sky-100") : (isDarkMode ? "text-white" : "text-gray-800")
             }`}
             onClick={() => setViewMode("daily")}
           >
@@ -250,7 +250,7 @@ const Scheduler = ({
         <div className="w-16">
           <button
             className={`px-2 py-1 text-sm rounded-md ${
-              viewMode === "weekly" ? (isDarkMode ? "bg-teal-600" : "bg-teal-100") : (isDarkMode ? "text-white" : "text-gray-800")
+              viewMode === "weekly" ? (isDarkMode ? "bg-sky-600" : "bg-sky-100") : (isDarkMode ? "text-white" : "text-gray-800")
             }`}
             onClick={() => setViewMode("weekly")}
           >
@@ -436,7 +436,7 @@ const Scheduler = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-teal-600 p-1
+                            className={`h-6 bg-sky-600 p-1
                       ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}
                       cursor-pointer  text-white font-medium text-xs flex items-center justify-center`}
                             disabled={isDisabled}
@@ -465,7 +465,7 @@ const Scheduler = ({
                         return (
                           <div
                             key={index}
-                            className={`h-6 bg-teal-600 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
+                            className={`h-6 bg-sky-600 z-10 p-1 cursor-pointer text-white font-medium text-xs flex items-center justify-start hover:text-gray-500 ${
                               isDisabled ? "opacity-50 cursor-not-allowed" : ""
                             }`}
                             onClick={() =>
@@ -697,7 +697,7 @@ const Scheduler = ({
                             className={`h-6 ${
                               proIndex % 2 === 0
                                 ? professionalsAppt[proIndex] % 2 === 0
-                                  ? "bg-teal-600"
+                                  ? "bg-sky-600"
                                   : "bg-slate-700"
                                 : professionalsAppt[proIndex] % 2 === 0
                                 ? "bg-cyan-700"
@@ -739,7 +739,7 @@ const Scheduler = ({
                             className={`h-6 ${
                               proIndex % 2 === 0
                                 ? appointmentIndex % 2 === 0
-                                  ? "bg-teal-600"
+                                  ? "bg-sky-600"
                                   : "bg-slate-700"
                                 : appointmentIndex % 2 === 0
                                 ? "bg-cyan-700"

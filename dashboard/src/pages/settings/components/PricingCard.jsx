@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { FaCheck, FaTimes } from 'react-icons/fa';
+import { DarkModeContext } from '../../../context/DarkModeContext';
 
 const CardDescription = ({ title, description }) => {	
 	return (
@@ -46,7 +47,7 @@ const CardAction = ({ currentPlan, type, clickMe }) => {
 	return (
 		<div className="w-full p-4 mt-auto border-t border-gray-200">
 			<button
-				className={`w-full px-4 py-2 border-2 rounded-md focus:outline-none ${currentPlan === type ? "bg-teal-500 text-white border-teal-500 hover:bg-white hover:text-teal-500 focus:bg-white" : "text-teal-500 border-teal-500 hover:bg-teal-500 hover:text-white focus:bg-teal-500"}`}
+				className={`w-full px-4 py-2 border-2 rounded-md focus:outline-none ${currentPlan === type ? "bg-sky-500 text-white border-sky-500 hover:bg-white hover:text-sky-500 focus:bg-white" : "text-sky-500 border-sky-500 hover:bg-sky-500 hover:text-white focus:bg-sky-500"}`}
 				onClick={clickMe}
 			>
 				{currentPlan === type ? "REPURCHASE" : "SUBSCRIBE NOW"}
@@ -56,6 +57,7 @@ const CardAction = ({ currentPlan, type, clickMe }) => {
 };
 
 const PricingCard = (props) => {	
+	const { isDarkMode } = useContext(DarkModeContext)
 	const { 
     name,
     price,
@@ -82,7 +84,7 @@ const PricingCard = (props) => {
     appointmentReminders ? "Appointment reminders" : ""
   ];
 	return (
-		<div className={`relative flex flex-col items-center rounded-lg overflow-hidden border border-t-4 border-teal-500 min-h-[530px]`}>
+		<div className={`relative flex flex-col items-center rounded-lg overflow-hidden border-t-8 border-sky-500 ${isDarkMode ? "bg-gray-800" : "bg-gray-50"} ${name === 'professional' && 'border-2'} shadow-2xl min-h-[530px]`}>
             { (name === 'professional') ? 
             <span className="most-popular">Most Popular</span> 
             :

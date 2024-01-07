@@ -95,7 +95,7 @@ const ServicesSelection = ({ paramsId, setHasSelectedService }) => {
                   selectedServices.some(
                     (selectedService) => selectedService._id === service._id
                   )
-                    ? "ring-2 ring-teal-500"
+                    ? "ring-2 ring-sky-500"
                     : ""
                 }`}
                 onMouseEnter={() => setIsHovered(true)}

@@ -126,7 +126,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
 
   return (
     <div
-      className={`h-[calc(100%-40px)] z-10 shadow-lg fixed left-0 w-56 ${isDarkMode ? "bg-gray-600" : "bg-teal-800"
+      className={`h-[calc(100%-40px)] z-10 shadow-lg fixed left-0 w-56 ${isDarkMode ? "bg-gray-600" : "bg-sky-800"
         } overflow-y-auto transition-all duration-300 ${isSidebarOpen
           ? "translate-x-0 ease-out px-1"
           : "-translate-x-36 ease-in"
@@ -159,7 +159,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
               activeTab === tab.name ? "bg-gray-700" : "bg-gray-900"
               :
 
-              activeTab === tab.name ? "bg-teal-700" : "bg-teal-900"
+              activeTab === tab.name ? "bg-sky-700" : "bg-sky-900"
               } ${isSidebarOpen && "rounded-lg"}`}
             onClick={() => {
               handleClick(tab.name, tab.link);
@@ -180,7 +180,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
       {!isSmallScreen && (
         <div className="absolute bottom-0 right-0 mb-8">
           <button
-            className={`flex items-center mx-auto px-3 py-2 ${isDarkMode ? "bg-gray-700" : "bg-teal-700"} rounded-lg`}
+            className={`flex items-center mx-auto px-3 py-2 ${isDarkMode ? "bg-gray-700" : "bg-sky-700"} rounded-lg`}
             onClick={() => toggleSidebar(!isSidebarOpen)}
           >
             {isSidebarOpen ? (

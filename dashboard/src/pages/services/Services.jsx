@@ -190,7 +190,7 @@ const Services = () => {
           </label>
 
           <input
-            className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
+            className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-sky-600"
             id="search"
             type="search"
             placeholder={t("Search service...")}
@@ -300,10 +300,10 @@ const Services = () => {
               className={`inline-flex h-10 w-10 items-center justify-center rounded-l ${
                 isDarkMode
                   ? view === "cards"
-                    ? "bg-teal-600 text-white"
+                    ? "bg-sky-600 text-white"
                     : "bg-gray-800 text-white"
                   : view === "cards"
-                  ? "bg-teal-100 text-gray-600"
+                  ? "bg-sky-100 text-gray-600"
                   : "bg-white text-gray-600"
               } transition hover:bg-gray-50 hover:text-gray-700`}
               onClick={() => setView("cards")}
@@ -328,10 +328,10 @@ const Services = () => {
               className={`inline-flex h-10 w-10 items-center justify-center rounded-r ${
                 isDarkMode
                   ? view === "table"
-                    ? "bg-teal-600 text-white"
+                    ? "bg-sky-600 text-white"
                     : "bg-gray-800 text-white"
                   : view === "table"
-                  ? "bg-teal-100 text-gray-600"
+                  ? "bg-sky-100 text-gray-600"
                   : "bg-white text-gray-600"
               } transition hover:bg-gray-50 hover:text-gray-700`}
               onClick={() => setView("table")}
@@ -403,7 +403,7 @@ const Services = () => {
                     <td className="py-2 px-4">{service.duration}</td>
                     <td className="py-2 text-center pr-4">
                       <button
-                        className="text-teal-500 hover:text-teal-700"
+                        className="text-sky-500 hover:text-sky-700"
                         onClick={() => {
                           setUpdateModelState(service._id);
                           setSelectedServiceId(service._id);

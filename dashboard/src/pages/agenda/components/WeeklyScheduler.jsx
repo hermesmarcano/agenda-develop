@@ -31,13 +31,14 @@ const WeeklyScheduler = ({
   const { t } = useTranslation();
   const { isDarkMode } = useContext(DarkModeContext);
   const [selectedAppointmentId, setSelectedAppointmentId] = React.useState("");
-  const { dateTime, setDateTime } = useContext(DateTimeContext);
+  const { setDateTime } = useContext(DateTimeContext);
   const { setProfessionalId } = useContext(ProfessionalIdContext);
   const [blockingPeriod, setBlockingPeriod] = React.useState(null);
 
   const timeSlotDuration = 15;
-
-  const timeSlotsArray = workingHours.map((item) => {
+  let options = { weekday: 'long' };
+  const today = new Intl.DateTimeFormat('en-US', options).format(selectedWeekDate); 
+  const timeSlotsArray = workingHours[today].map((item) => {
     const startHour = item.startHour;
     const endHour = item.endHour;
 
@@ -96,11 +97,6 @@ const WeeklyScheduler = ({
     blockedPeriod
   ) => {
     if (!workingHours) return;
-
-    const currentDay = day.toLocaleString("en-US", { weekday: "long" });
-    const isWorkingDay = workingDays.includes(currentDay);
-
-    if (!isWorkingDay) return;
 
     if (blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
@@ -198,7 +194,7 @@ const WeeklyScheduler = ({
                       currentTime.setMinutes(time.getMinutes());
 
                       const workingHours =
-                        selectedProfessional?.officeHours.filter(
+                        selectedProfessional?.workingHours[today].filter(
                           (officeHour) => {
                             const professionalStartTime = new Date(currentTime);
                             professionalStartTime.setHours(
@@ -215,11 +211,6 @@ const WeeklyScheduler = ({
                             );
                           }
                         );
-
-                      const currentDay = day.toLocaleString("en-US", {
-                        weekday: "long",
-                      });
-                      const isWorkingDay = workingDays.includes(currentDay);
 
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
@@ -288,14 +279,13 @@ const WeeklyScheduler = ({
                               : "border-gray-300 "
                           } min-w-[135px] ${
                             currentTime <= new Date() ||
-                            !workingHours[0] ||
-                            !isWorkingDay
+                            !workingHours
                               ? "stripe-bg"
                               : "hover:bg-gray-100"
                           }`}
                           onClick={() =>
                             handleBooking(
-                              workingHours[0],
+                              workingHours,
                               day,
                               currentTime,
                               matchingAppointments[0],

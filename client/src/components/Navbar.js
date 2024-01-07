@@ -26,7 +26,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-neutral-200 fixed top-0 w-full z-40 bg-opacity-80 backdrop-blur-md shadow-2xl">
+    <nav className="bg-sky-200 fixed top-0 w-full z-40 bg-opacity-80 backdrop-blur-md shadow-2xl">
       <div className="mx-auto px-4 py-2 max-w-screen-2xl flex items-center justify-between">
         <div className="flex items-center">
           <Link

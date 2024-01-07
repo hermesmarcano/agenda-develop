@@ -51,7 +51,7 @@ const Drawer = ({ modelState, setModelState, title, children }) => {
                   </h1>
                   <button
                     onClick={closeDrawer}
-                    className="text-sm p-3 flex items-center justify-center font-semibold rounded-full hover:bg-teal-100"
+                    className="text-sm p-3 flex items-center justify-center font-semibold rounded-full hover:bg-sky-100"
                   >
                     
                     <MdClose />

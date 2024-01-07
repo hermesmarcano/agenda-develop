@@ -209,7 +209,7 @@ const BlockSchedule = ({ setModelState }) => {
     return (
       <div className="flex items-center justify-center">
         <div className="flex flex-col justify-center items-center space-x-2">
-          <FaSpinner className="animate-spin text-4xl text-teal-500" />
+          <FaSpinner className="animate-spin text-4xl text-sky-500" />
           <span className="mt-2">{t("Loading...")}</span>
         </div>
       </div>

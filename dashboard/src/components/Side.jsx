@@ -137,7 +137,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
   return (
     <div
       className={`h-[calc(100%-82px)] z-10 shadow-lg fixed left-0 ${
-        isDarkMode ? "bg-gray-800" : "bg-white"
+        isDarkMode ? "bg-gray-800" : "bg-sky-600"
       } overflow-y-auto overflow-x-hidden transition-all duration-300 flex flex-col justify-between 
       ${isSidebarOpen ? "w-[190px]" : "w-16 ease-in"}
       `}
@@ -145,7 +145,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
       {isSidebarOpen ? (
         <>
           <div className="px-4 py-6">
-            <span className="grid mx-auto h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">
+            <span className="grid mx-auto h-10 w-32 place-content-center rounded-lg bg-gray-100 text-xs text-sky-600 font-bold">
               {shopName}
             </span>
 
@@ -164,8 +164,8 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
                           to="/"
                           className={`flex items-center rounded-lg px-4 py-2 text-sm font-medium ${
                             activeTab === tab.name
-                              ? "bg-teal-600 text-white"
-                              : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                              ? "bg-gray-600 text-white"
+                              : "text-gray-50 hover:bg-sky-100 hover:text-gray-700"
                           }`}
                         >
                           {tab.icon}
@@ -183,7 +183,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
             <div className="w-full flex">
               <button
                 onClick={logout}
-                className="w-full flex items-center rounded-lg px-4 py-2 text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-teal-100 hover:text-gray-700"
+                className="w-full flex items-center rounded-lg px-4 py-2 text-sm font-medium text-gray-50 [text-align:_inherit] hover:bg-sky-100 hover:text-gray-700"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -203,7 +203,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
                 <span className="ml-2">{t("Logout")}</span>
               </button>
               <button
-                className="flex justify-center items-center rounded-lg text-sm font-medium text-gray-500 [text-align:_inherit] hover:bg-teal-100 hover:text-gray-700 w-[25%]"
+                className="flex justify-center items-center rounded-lg text-sm font-medium text-gray-50 [text-align:_inherit] hover:bg-sky-100 hover:text-gray-700 w-[25%]"
                 onClick={() => toggleSidebar(!isSidebarOpen)}
               >
                 {isSidebarOpen ? <BsArrowBarLeft /> : <BsArrowBarRight />}
@@ -233,8 +233,8 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
                       to="/"
                       className={`group relative flex justify-center rounded px-2 py-1.5 ${
                         activeTab === tabs[0].name
-                          ? "bg-teal-600 text-white"
-                          : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                          ? "bg-gray-600 text-white"
+                          : "text-gray-50 hover:bg-sky-100 hover:text-gray-700"
                       }`}
                     >
                       {tabs[0].icon2}
@@ -257,8 +257,8 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
                               to="/customers"
                               className={`group relative flex justify-center rounded px-2 py-1.5 ${
                                 activeTab === tab.name
-                                  ? "bg-teal-600 text-white"
-                                  : "text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+                                  ? "bg-gray-600 text-white"
+                                  : "text-gray-50 hover:bg-sky-100 hover:text-gray-700"
                               }`}
                             >
                               {tab.icon2}
@@ -275,7 +275,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
 
           <div className="mt-auto inset-x-0 border-t border-gray-100 p-2">
             <button
-              className="group relative flex w-full min-h-[32px] justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+              className="group relative flex w-full min-h-[32px] justify-center rounded-lg px-2 py-1.5 text-sm text-gray-50 hover:bg-sky-100 hover:text-gray-700"
               onClick={() => toggleSidebar(!isSidebarOpen)}
             >
               {isSidebarOpen ? <BsArrowBarLeft /> : <BsArrowBarRight />}
@@ -285,7 +285,7 @@ const Side = ({ isSidebarOpen, toggleSidebar }) => {
             </button>
             <button
               onClick={logout}
-              className="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-teal-100 hover:text-gray-700"
+              className="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-50 hover:bg-sky-100 hover:text-gray-700"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -2,9 +2,19 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bcrypt = require("bcrypt");
 
-const workingHoursSchema = new mongoose.Schema({
+const timeSlotSchema = new mongoose.Schema({
   startHour: Number,
   endHour: Number,
+});
+
+const workingHoursSchema = new mongoose.Schema({
+  Monday: { type: [timeSlotSchema], default: [] },
+  Tuesday: { type: [timeSlotSchema], default: [] },
+  Wednesday: { type: [timeSlotSchema], default: [] },
+  Thursday: { type: [timeSlotSchema], default: [] },
+  Friday: { type: [timeSlotSchema], default: [] },
+  Saturday: { type: [timeSlotSchema], default: [] },
+  Sunday: { type: [timeSlotSchema], default: [] }
 });
 
 const expensesSchema = new mongoose.Schema({
@@ -121,7 +131,7 @@ const ManagerSchema = new Schema(
         type: Number,
       },
     },
-    workingHours: [workingHoursSchema],
+    workingHours: workingHoursSchema,
     selectedDays: {
       type: [String],
       enum: [

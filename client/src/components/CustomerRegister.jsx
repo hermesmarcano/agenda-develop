@@ -76,7 +76,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             <input
               type="text"
               name="name"
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-sky-300"
               placeholder={t("Full Name")}
               value={formData.name}
               onChange={handleChange}
@@ -90,7 +90,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             <input
               type="tel"
               name="phone"
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-sky-300"
               placeholder={t("Phone Number")}
               value={formData.phone}
               onChange={handleChange}
@@ -104,7 +104,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             <input
               type="email"
               name="email"
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-sky-300"
               placeholder={t("Email (Optional)")}
               value={formData.email}
               onChange={handleChange}
@@ -117,7 +117,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             <input
               type="date"
               name="birthday"
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-sky-300"
               placeholder={t("Date of Birth (Optional)")}
               value={formData.dob}
               onChange={handleChange}
@@ -130,7 +130,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             <input
               type="text"
               name="address"
-              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-teal-300"
+              className="w-full pl-10 pr-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-sky-300"
               placeholder={t("Address (Optional)")}
               value={formData.address}
               onChange={handleChange}
@@ -138,7 +138,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
           </div>
           <button
             type="submit"
-            className="w-full bg-teal-600 hover:bg-teal-500 text-white py-2 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
+            className="w-full bg-sky-600 hover:bg-sky-500 text-white py-2 rounded-md transition duration-300 ease-in-out transform hover:scale-105"
           >
             {t('Register')}
           </button>
@@ -148,7 +148,7 @@ const CustomerRegister = ({ toggleForm, shopId }) => {
             Already have an account?{" "}
             <button
               onClick={toggleForm}
-              className="text-teal-600 hover:underline"
+              className="text-sky-600 hover:underline"
             >
               {t('Sign In here')}
             </button>

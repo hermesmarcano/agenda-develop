@@ -9,8 +9,10 @@ import {
 } from "formik";
 import * as Yup from "yup";
 import { Link } from "react-router-dom";
+import Switch from "react-switch";
 import {
-  FaBusinessTime,
+  FaCalendarAlt,
+  FaCalendarCheck,
   FaEnvelope,
   FaEye,
   FaEyeSlash,
@@ -19,7 +21,6 @@ import {
   FaLock,
   FaSpinner,
   FaUser,
-  FaUserTie,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../components/ImageUpload";
@@ -31,16 +32,16 @@ import { Store } from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import { useTranslation } from "react-i18next";
 import TermsConditions from "./components/TermsConditions";
-import { RiCloseCircleLine } from "react-icons/ri";
-import { TiPlus } from "react-icons/ti";
-import { IoIosCheckbox, IoIosCheckboxOutline } from "react-icons/io";
+import {
+  IoIosAddCircleOutline,
+  IoIosRemoveCircleOutline,
+} from "react-icons/io";
 
 const Register = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [modelState, setModelState] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
     const hour12 = hour % 12 || 12;
@@ -90,57 +91,16 @@ const Register = () => {
       .required(t("Required"))
       .oneOf([Yup.ref("password")], t("Passwords must match")),
     shopName: Yup.string().required(t("Shop Name is required")),
-    urlSlug: Yup.string()
-      .required(t("URL Slug is required")),
-    workingHours: Yup.array()
-      .of(
-        Yup.object().shape({
-          startHour: Yup.number()
-            .required(t("Start hour is required"))
-            .test(
-              "startHour",
-              t("Start hour must be less than end hour"),
-              function (value) {
-                return value < this.parent.endHour;
-              }
-            ),
-          endHour: Yup.number()
-            .required(t("End hour is required"))
-            .test(
-              "endHour",
-              t("End hour must be greater than start hour"),
-              function (value) {
-                return value > this.parent.startHour;
-              }
-            ),
-        })
-      )
-      .test("noOverlap", "Working hours cannot overlap", function (value) {
-        let isValid = true;
-        for (let i = 0; i < value.length; i++) {
-          for (let j = i + 1; j < value.length; j++) {
-            const startHourA = value[i].startHour;
-            const endHourA = value[i].endHour;
-            const startHourB = value[j].startHour;
-            const endHourB = value[j].endHour;
-
-            if (
-              (startHourA <= startHourB && startHourB < endHourA) ||
-              (startHourA < endHourB && endHourB <= endHourA) ||
-              (startHourB <= startHourA && startHourA < endHourB) ||
-              (startHourB < endHourA && endHourA <= endHourB)
-            ) {
-              isValid = false;
-              break;
-            }
-          }
-          if (!isValid) {
-            break;
-          }
-        }
-        return isValid;
-      }),
-    selectedDays: Yup.array().min(1, "Please select at least one day."),
+    urlSlug: Yup.string().required(t("URL Slug is required")),
+    workingHours: Yup.object().shape({
+      Monday: Yup.array(),
+      Tuesday: Yup.array(),
+      Wednesday: Yup.array(),
+      Thursday: Yup.array(),
+      Friday: Yup.array(),
+      Saturday: Yup.array(),
+      Sunday: Yup.array(),
+    }),
     profileImg: Yup.mixed().required(t("Profile image is required")),
     agreeToTerms: Yup.boolean().oneOf(
       [true],
@@ -169,8 +129,7 @@ const Register = () => {
                   confirmPassword: "",
                   shopName: "",
                   urlSlug: "",
-                  workingHours: [{ startHour: 0, endHour: 0 }],
-                  selectedDays: [],
+                  workingHours: {},
                   profileImg: null,
                   agreeToTerms: false,
                 }}
@@ -217,7 +176,6 @@ const Register = () => {
                               shopName: values.shopName,
                               urlSlug: values.urlSlug,
                               workingHours: values.workingHours,
-                              selectedDays: values.selectedDays,
                               plan: {},
                               profileImg: profileImg,
                             };
@@ -247,542 +205,407 @@ const Register = () => {
                     console.log(error);
                   }
                   setSubmitting(false);
-            }}
+                }}
               >
                 {(formikProps) => {
                   const handleShopNameChange = (event) => {
                     const shopName = event.target.value;
                     const slug = createUrlSlug(shopName);
-                    formikProps.setFieldValue('shopName', shopName);
-                    formikProps.setFieldValue('urlSlug', slug);
+                    formikProps.setFieldValue("shopName", shopName);
+                    formikProps.setFieldValue("urlSlug", slug);
                   };
-                return(
-                  <Form className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 min-h-[500px]">
-                      <div className="flex justify-center items-center bg-teal-500 shadow-lg border-4 border-teal-500 rounded-md">
-                        <div className="sm:mx-auto sm:w-full">
-                          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                            {t("Create a new account")}
-                          </h2>
-                          <p className="mt-2 text-center text-sm text-gray-600">
-                            {t("Already have an account?")}{" "}
-                            <Link
-                              to="/login"
-                              className="font-medium text-indigo-600 hover:text-indigo-500"
-                            >
-                              {t("Sign in")}
-                            </Link>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex flex-col justify-between">
-                        <div className="h-[calc(100%-55px)] my-auto">
-                          {currentStep === 1 && (
-                            <div>
-                              <div>
-                                <label htmlFor="name" className="sr-only">
-                                  {t("Name")}
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                  <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
-                                    <FaUser
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  <Field
-                                    id="name"
-                                    name="name"
-                                    type="name"
-                                    autoComplete="name"
-                                    className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
-                                      formikProps.errors.name &&
-                                      formikProps.touched.name
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                    placeholder={t("Name")}
-                                  />
-                                </div>
-                                {formikProps.errors.name &&
-                                formikProps.touched.name ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {formikProps.errors.name}
-                                  </div>
-                                ) : null}
-                              </div>
-
-                              <div>
-                                <label htmlFor="email" className="sr-only">
-                                  {t("Email address")}
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                  <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
-                                    <FaEnvelope
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  <Field
-                                    id="email"
-                                    name="email"
-                                    type="email"
-                                    autoComplete="email"
-                                    className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
-                                      formikProps.errors.email &&
-                                      formikProps.touched.email
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                    placeholder={t("Email address")}
-                                  />
-                                </div>
-                                {formikProps.errors.email &&
-                                formikProps.touched.email ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {formikProps.errors.email}
-                                  </div>
-                                ) : null}
-                                {!registered ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {t("This email has been registered before")}
-                                  </div>
-                                ) : null}
-                              </div>
-
-                              <div>
-                                <label htmlFor="password" className="sr-only">
-                                  {t("Password")}
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                  <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
-                                    <FaLock
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  <Field
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? "text" : "password"}
-                                    autoComplete="new-password"
-                                    className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
-                                      formikProps.errors.password &&
-                                      formikProps.touched.password
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                    placeholder={t("Password")}
-                                  />
-                                  <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
-                                    <button
-                                      type="button"
-                                      className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
-                                      onClick={() =>
-                                        setShowPassword(!showPassword)
-                                      }
-                                    >
-                                      {showPassword ? (
-                                        <FaEye size={20} />
-                                      ) : (
-                                        <FaEyeSlash size={20} />
-                                      )}
-                                    </button>
-                                  </div>
-                                </div>
-                                {formikProps.errors.password &&
-                                formikProps.touched.password ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {formikProps.errors.password}
-                                  </div>
-                                ) : null}
-                              </div>
-                              <div>
-                                <label
-                                  htmlFor="confirmPassword"
-                                  className="sr-only"
-                                >
-                                  {t("Confirm Password")}
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                  <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
-                                    <FaLock
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  <Field
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type={
-                                      showConfirmPassword ? "text" : "password"
-                                    }
-                                    autoComplete="new-password"
-                                    className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
-                                      formikProps.errors.confirmPassword &&
-                                      formikProps.touched.confirmPassword
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                    placeholder={t("Confirm Password")}
-                                  />
-                                  <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
-                                    <button
-                                      type="button"
-                                      className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
-                                      onClick={() =>
-                                        setShowConfirmPassword(
-                                          !showConfirmPassword
-                                        )
-                                      }
-                                    >
-                                      {showConfirmPassword ? (
-                                        <FaEye size={20} />
-                                      ) : (
-                                        <FaEyeSlash size={20} />
-                                      )}
-                                    </button>
-                                  </div>
-                                </div>
-                                {formikProps.errors.confirmPassword &&
-                                formikProps.touched.confirmPassword ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {formikProps.errors.confirmPassword}
-                                  </div>
-                                ) : null}
-                              </div>
-                            </div>
-                          )}
-                          {currentStep === 2 && (
-                            <div>
-                              <div>
-                                <label htmlFor="shopName" className="sr-only">
-                                  {t("Shop Name")}
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                  <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
-                                    <FaIdCard
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  <Field
-                                    id="shopName"
-                                    name="shopName"
-                                    type="shopName"
-                                    onChange={handleShopNameChange}
-                                    autoComplete="shopName"
-                                    className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
-                                      formikProps.errors.shopName &&
-                                      formikProps.touched.shopName
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                    placeholder={t("Shop Name")}
-                                  />
-                                </div>
-                                {formikProps.errors.shopName &&
-                                formikProps.touched.shopName ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {formikProps.errors.shopName}
-                                  </div>
-                                ) : null}
-                              </div>
-                              <div>
-                                <label htmlFor="urlSlug" className="sr-only">
-                                  {t("URL Slug")}
-                                </label>
-                                <div className="relative rounded-md shadow-sm">
-                                  <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
-                                    <FaLink
-                                      className="h-5 w-5 text-gray-400"
-                                      aria-hidden="true"
-                                    />
-                                  </div>
-                                  <Field
-                                    id="urlSlug"
-                                    name="urlSlug"
-                                    type="urlSlug"
-                                    disabled
-                                    autoComplete="urlSlug"
-                                    className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
-                                      formikProps.errors.urlSlug &&
-                                      formikProps.touched.urlSlug
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                    placeholder={t("URL Sulg")}
-                                  />
-                                </div>
-                                {formikProps.errors.urlSlug &&
-                                formikProps.touched.urlSlug ? (
-                                  <div className="mt-2 text-sm text-red-500">
-                                    {formikProps.errors.urlSlug}
-                                  </div>
-                                ) : null}
-                              </div>
-                            </div>
-                          )}
-                          {currentStep === 3 && (
-                            <div>
-                              <div className="w-full flex justify-center items-center">
-                                <FieldArray name="workingHours">
-                                  {({ remove, push }) => (
-                                    <div>
-                                      {formikProps.values.workingHours.map(
-                                        (workingHour, index) => (
-                                          <>
-                                            <div
-                                              key={index}
-                                              className="flex w-full items-center space-x-2 my-2 relative"
-                                            >
-                                              <div className="w-[47.5%]">
-                                                <label
-                                                  htmlFor={`workingHours[${index}].startHour`}
-                                                  className="sr-only"
-                                                >
-                                                  {t("Start Hour")}
-                                                </label>
-                                                <Field
-                                                  id={`workingHours[${index}].startHour`}
-                                                  name={`workingHours[${index}].startHour`}
-                                                  as="select"
-                                                  className={`block appearance-none rounded-md w-full px-3 py-2 border ${
-                                                    formikProps.errors
-                                                      .workingHours?.[index]
-                                                      ?.startHour &&
-                                                    formikProps.touched
-                                                      .workingHours?.[index]
-                                                      ?.startHour
-                                                      ? "border-red-500"
-                                                      : "border-gray-300"
-                                                  } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                                >
-                                                  <option value="">
-                                                    {t("Select start hour")}
-                                                  </option>
-                                                  {hoursOptions}
-                                                </Field>
-                                              </div>
-                                              <div className="flex w-[5%] justify-center items-center">
-                                                -
-                                              </div>
-                                              <div className="w-[47.5%]">
-                                                <label
-                                                  htmlFor={`workingHours[${index}].endHour`}
-                                                  className="sr-only"
-                                                >
-                                                  {t("End Hour")}
-                                                </label>
-                                                <Field
-                                                  id={`workingHours[${index}].endHour`}
-                                                  name={`workingHours[${index}].endHour`}
-                                                  as="select"
-                                                  className={`block appearance-none rounded-md w-full px-3 py-2 border ${
-                                                    formikProps.errors
-                                                      .workingHours?.[index]
-                                                      ?.endHour &&
-                                                    formikProps.touched
-                                                      .workingHours?.[index]
-                                                      ?.endHour
-                                                      ? "border-red-500"
-                                                      : "border-gray-300"
-                                                  } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                                                >
-                                                  <option value="">
-                                                    {t("Select end hour")}
-                                                  </option>
-                                                  {hoursOptions}
-                                                </Field>
-                                              </div>
-
-                                              <div className="absolute -right-5 -top-3">
-                                                {index > 0 && (
-                                                  <div>
-                                                    <button
-                                                      type="button"
-                                                      className="flex items-center px-2 py-1 text-sm text-red-600 hover:text-red-800"
-                                                      onClick={() =>
-                                                        remove(index)
-                                                      }
-                                                    >
-                                                      <RiCloseCircleLine
-                                                        size={20}
-                                                        className="mr-1 bg-white rounded-full"
-                                                      />
-                                                      {/* {t("Remove")} */}
-                                                    </button>
-                                                  </div>
-                                                )}
-                                              </div>
-                                            </div>
-                                          </>
-                                        )
-                                      )}
-                                      <ErrorMessage
-                                        name={`workingHours[0].startHour`}
-                                        component="div"
-                                        className="mt-2 text-sm text-red-500"
-                                      />
-                                      <ErrorMessage
-                                        name={`workingHours[1].startHour`}
-                                        component="div"
-                                        className="mt-2 text-sm text-red-500"
-                                      />
-                                      <ErrorMessage
-                                        name={`workingHours[2].startHour`}
-                                        component="div"
-                                        className="mt-2 text-sm text-red-500"
-                                      />
-                                      <ErrorMessage
-                                        name={`workingHours[0].endHour`}
-                                        component="div"
-                                        className="mt-2 text-sm text-red-500"
-                                      />
-                                      <ErrorMessage
-                                        name={`workingHours[1].endHour`}
-                                        component="div"
-                                        className="mt-2 text-sm text-red-500"
-                                      />
-                                      <ErrorMessage
-                                        name={`workingHours[2].endHour`}
-                                        component="div"
-                                        className="mt-2 text-sm text-red-500"
-                                      />
-                                      <div className="flex justify-center mt-2">
-                                        {formikProps.values.workingHours
-                                          .length < 3 && (
-                                          <button
-                                            type="button"
-                                            className="flex items-center px-2 py-1 text-sm text-blue-600 hover:text-blue-800"
-                                            onClick={() =>
-                                              push({ startHour: 0, endHour: 0 })
-                                            }
-                                          >
-                                            <TiPlus className="mr-1" />
-                                            {t("Add Working Hour")}
-                                          </button>
-                                        )}
-                                      </div>
-                                    </div>
-                                  )}
-                                </FieldArray>
-                              </div>
-                              <div>
-                                <Field
-                                  name="selectedDays"
-                                  component={WeekdayPicker}
-                                />
-                              </div>
-                            </div>
-                          )}
-
-                          {currentStep === 4 && (
-                            <div className="h-full flex flex-col justify-between">
-                              <ImageUpload
-                                field={{
-                                  name: `profileImg`,
-                                  value: formikProps.values.profileImg,
-                                  onChange: (file) =>
-                                    formikProps.setFieldValue(
-                                      `profileImg`,
-                                      file
-                                    ),
-                                  onBlur: formikProps.handleBlur,
-                                }}
-                                form={formikProps}
-                              />
-
-                              <div>
-                                <div className="flex items-center space-x-2 my-2">
-                                  <input
-                                    type="checkbox"
-                                    id="agreeToTerms"
-                                    name="agreeToTerms"
-                                    checked={formikProps.values.agreeToTerms}
-                                    onChange={() => {
-                                      formikProps.setFieldValue(
-                                        "agreeToTerms",
-                                        !formikProps.values.agreeToTerms
-                                      );
-                                    }}
-                                    className="form-checkbox h-5 w-5 text-teal-600 transition duration-150 ease-in-out"
-                                  />
-                                  <label
-                                    htmlFor="agreeToTerms"
-                                    className="text-gray-700 text-sm ml-2"
-                                  >
-                                    {t("I agree to the")}{" "}
-                                    <button
-                                      type="button"
-                                      className="text-blue-600 hover:text-blue-800"
-                                      onClick={() => setModelState(!modelState)}
-                                    >
-                                      {t("terms and conditions")}
-                                    </button>
-                                  </label>
-                                </div>
-                                <ErrorMessage
-                                  name={`agreeToTerms`}
-                                  component="div"
-                                  className="mt-2 text-sm text-red-500"
-                                />
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                        <div
-                          className={`flex ${
-                            currentStep === 1
-                              ? "justify-end"
-                              : currentStep === 1
-                              ? "justify-start"
-                              : "justify-between"
-                          } items-center`}
-                        >
-                          {currentStep !== 1 && (
-                            <button
-                              type="button"
-                              onClick={handleRegisterPrevStep}
-                              className="bg-teal-500 shadow-lg px-6 py-3 font-semibold hover:bg-teal-600 rounded text-white"
-                            >
-                              {t("Prev")}
-                            </button>
-                          )}
-                          {currentStep !== 4 && (
-                            <button
-                              type="button"
-                              onClick={handleRegisterNextStep}
-                              className="bg-teal-500 shadow-lg px-6 py-3 font-semibold hover:bg-teal-600 rounded text-white"
-                            >
-                              {t("Next")}
-                            </button>
-                          )}
-                          {currentStep === 4 && (
-                            <div>
-                              <button
-                                type="submit"
-                                className={`group relative flex justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded text-white bg-teal-500 hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-300 ${
-                                  isRegistering ? "cursor-not-allowed" : ""
-                                }`}
-                                disabled={isRegistering}
+                  return (
+                    <Form className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 min-h-[500px]">
+                        <div className="flex justify-center items-center bg-sky-500 shadow-lg border-4 border-sky-500 rounded-md">
+                          <div className="sm:mx-auto sm:w-full">
+                            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                              {t("Create a new account")}
+                            </h2>
+                            <p className="mt-2 text-center text-sm text-gray-600">
+                              {t("Already have an account?")}{" "}
+                              <Link
+                                to="/login"
+                                className="font-medium text-indigo-600 hover:text-indigo-500"
                               >
-                                {isRegistering ? (
-                                  <span className="flex items-center justify-center">
-                                    <FaSpinner className="animate-spin mr-2" />
-                                    {t("Registering...")}
-                                  </span>
-                                ) : (
-                                  t("Register")
-                                )}
+                                {t("Sign in")}
+                              </Link>
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col justify-between">
+                          <div className="h-[calc(100%-55px)] my-auto">
+                            {currentStep === 1 && (
+                              <div>
+                                <div>
+                                  <label htmlFor="name" className="sr-only">
+                                    {t("Name")}
+                                  </label>
+                                  <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                                      <FaUser
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <Field
+                                      id="name"
+                                      name="name"
+                                      type="name"
+                                      autoComplete="name"
+                                      className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
+                                        formikProps.errors.name &&
+                                        formikProps.touched.name
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                      placeholder={t("Name")}
+                                    />
+                                  </div>
+                                  {formikProps.errors.name &&
+                                  formikProps.touched.name ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {formikProps.errors.name}
+                                    </div>
+                                  ) : null}
+                                </div>
+
+                                <div>
+                                  <label htmlFor="email" className="sr-only">
+                                    {t("Email address")}
+                                  </label>
+                                  <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                                      <FaEnvelope
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <Field
+                                      id="email"
+                                      name="email"
+                                      type="email"
+                                      autoComplete="email"
+                                      className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
+                                        formikProps.errors.email &&
+                                        formikProps.touched.email
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                      placeholder={t("Email address")}
+                                    />
+                                  </div>
+                                  {formikProps.errors.email &&
+                                  formikProps.touched.email ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {formikProps.errors.email}
+                                    </div>
+                                  ) : null}
+                                  {!registered ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {t(
+                                        "This email has been registered before"
+                                      )}
+                                    </div>
+                                  ) : null}
+                                </div>
+
+                                <div>
+                                  <label htmlFor="password" className="sr-only">
+                                    {t("Password")}
+                                  </label>
+                                  <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                                      <FaLock
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <Field
+                                      id="password"
+                                      name="password"
+                                      type={showPassword ? "text" : "password"}
+                                      autoComplete="new-password"
+                                      className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
+                                        formikProps.errors.password &&
+                                        formikProps.touched.password
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                      placeholder={t("Password")}
+                                    />
+                                    <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
+                                      <button
+                                        type="button"
+                                        className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
+                                        onClick={() =>
+                                          setShowPassword(!showPassword)
+                                        }
+                                      >
+                                        {showPassword ? (
+                                          <FaEye size={20} />
+                                        ) : (
+                                          <FaEyeSlash size={20} />
+                                        )}
+                                      </button>
+                                    </div>
+                                  </div>
+                                  {formikProps.errors.password &&
+                                  formikProps.touched.password ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {formikProps.errors.password}
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div>
+                                  <label
+                                    htmlFor="confirmPassword"
+                                    className="sr-only"
+                                  >
+                                    {t("Confirm Password")}
+                                  </label>
+                                  <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                                      <FaLock
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <Field
+                                      id="confirmPassword"
+                                      name="confirmPassword"
+                                      type={
+                                        showConfirmPassword
+                                          ? "text"
+                                          : "password"
+                                      }
+                                      autoComplete="new-password"
+                                      className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
+                                        formikProps.errors.confirmPassword &&
+                                        formikProps.touched.confirmPassword
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                      placeholder={t("Confirm Password")}
+                                    />
+                                    <div className="absolute inset-y-0 right-5 pr-3 flex items-center text-sm leading-5">
+                                      <button
+                                        type="button"
+                                        className="text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-500"
+                                        onClick={() =>
+                                          setShowConfirmPassword(
+                                            !showConfirmPassword
+                                          )
+                                        }
+                                      >
+                                        {showConfirmPassword ? (
+                                          <FaEye size={20} />
+                                        ) : (
+                                          <FaEyeSlash size={20} />
+                                        )}
+                                      </button>
+                                    </div>
+                                  </div>
+                                  {formikProps.errors.confirmPassword &&
+                                  formikProps.touched.confirmPassword ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {formikProps.errors.confirmPassword}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
+                            )}
+                            {currentStep === 2 && (
+                              <div>
+                                <div>
+                                  <label htmlFor="shopName" className="sr-only">
+                                    {t("Shop Name")}
+                                  </label>
+                                  <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                                      <FaIdCard
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <Field
+                                      id="shopName"
+                                      name="shopName"
+                                      type="shopName"
+                                      onChange={handleShopNameChange}
+                                      autoComplete="shopName"
+                                      className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
+                                        formikProps.errors.shopName &&
+                                        formikProps.touched.shopName
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                      placeholder={t("Shop Name")}
+                                    />
+                                  </div>
+                                  {formikProps.errors.shopName &&
+                                  formikProps.touched.shopName ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {formikProps.errors.shopName}
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div>
+                                  <label htmlFor="urlSlug" className="sr-only">
+                                    {t("URL Slug")}
+                                  </label>
+                                  <div className="relative rounded-md shadow-sm">
+                                    <div className="absolute inset-y-0 right-2 pl-3 flex items-center pointer-events-none">
+                                      <FaLink
+                                        className="h-5 w-5 text-gray-400"
+                                        aria-hidden="true"
+                                      />
+                                    </div>
+                                    <Field
+                                      id="urlSlug"
+                                      name="urlSlug"
+                                      type="urlSlug"
+                                      disabled
+                                      autoComplete="urlSlug"
+                                      className={`appearance-none rounded-md block w-full my-2 px-3 py-2 border ${
+                                        formikProps.errors.urlSlug &&
+                                        formikProps.touched.urlSlug
+                                          ? "border-red-500"
+                                          : "border-gray-300"
+                                      } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
+                                      placeholder={t("URL Sulg")}
+                                    />
+                                  </div>
+                                  {formikProps.errors.urlSlug &&
+                                  formikProps.touched.urlSlug ? (
+                                    <div className="mt-2 text-sm text-red-500">
+                                      {formikProps.errors.urlSlug}
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
+                            )}
+                            {currentStep === 3 && (
+                              <div className="p-4">
+                                <label
+                                  htmlFor="workingHours"
+                                  className={`block text-black font-bold mb-2`}
+                                >
+                                  {t("Working Hours")}
+                                </label>
+                                <WeekDayHours />
+                              </div>
+                            )}
+
+                            {currentStep === 4 && (
+                              <div className="h-full flex flex-col justify-between">
+                                <ImageUpload
+                                  field={{
+                                    name: `profileImg`,
+                                    value: formikProps.values.profileImg,
+                                    onChange: (file) =>
+                                      formikProps.setFieldValue(
+                                        `profileImg`,
+                                        file
+                                      ),
+                                    onBlur: formikProps.handleBlur,
+                                  }}
+                                  form={formikProps}
+                                />
+
+                                <div>
+                                  <div className="flex items-center space-x-2 my-2">
+                                    <input
+                                      type="checkbox"
+                                      id="agreeToTerms"
+                                      name="agreeToTerms"
+                                      checked={formikProps.values.agreeToTerms}
+                                      onChange={() => {
+                                        formikProps.setFieldValue(
+                                          "agreeToTerms",
+                                          !formikProps.values.agreeToTerms
+                                        );
+                                      }}
+                                      className="form-checkbox h-5 w-5 text-sky-600 transition duration-150 ease-in-out"
+                                    />
+                                    <label
+                                      htmlFor="agreeToTerms"
+                                      className="text-gray-700 text-sm ml-2"
+                                    >
+                                      {t("I agree to the")}{" "}
+                                      <button
+                                        type="button"
+                                        className="text-blue-600 hover:text-blue-800"
+                                        onClick={() =>
+                                          setModelState(!modelState)
+                                        }
+                                      >
+                                        {t("terms and conditions")}
+                                      </button>
+                                    </label>
+                                  </div>
+                                  <ErrorMessage
+                                    name={`agreeToTerms`}
+                                    component="div"
+                                    className="mt-2 text-sm text-red-500"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <div
+                            className={`flex ${
+                              currentStep === 1
+                                ? "justify-end"
+                                : currentStep === 1
+                                ? "justify-start"
+                                : "justify-between"
+                            } items-center`}
+                          >
+                            {currentStep !== 1 && (
+                              <button
+                                type="button"
+                                onClick={handleRegisterPrevStep}
+                                className="border border-sky-500 hover:shadow-innter transition-all px-6 py-2 font-semibold hover:bg-sky-600 rounded text-sm text-sky-600 hover:text-white"
+                              >
+                                {t("Prev")}
                               </button>
-                            </div>
-                          )}
+                            )}
+                            {currentStep !== 4 && (
+                              <button
+                                type="button"
+                                onClick={handleRegisterNextStep}
+                                className="border border-sky-500 hover:shadow-innter transition-all px-6 py-2 font-semibold hover:bg-sky-600 rounded text-sm text-sky-600 hover:text-white"
+                              >
+                                {t("Next")}
+                              </button>
+                            )}
+                            {currentStep === 4 && (
+                              <div>
+                                <button
+                                  type="submit"
+                                  className={`group relative flex justify-center px-6 py-2 hover:shadow-innter transition-all font-semibold rounded text-sm text-sky-600 hover:text-white border border-sky-500 hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-300 ${
+                                    isRegistering ? "cursor-not-allowed" : ""
+                                  }`}
+                                  disabled={isRegistering}
+                                >
+                                  {isRegistering ? (
+                                    <span className="flex items-center justify-center">
+                                      <FaSpinner className="animate-spin mr-2" />
+                                      {t("Registering...")}
+                                    </span>
+                                  ) : (
+                                    t("Register")
+                                  )}
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Form>
-                )}}
+                    </Form>
+                  );
+                }}
               </Formik>
             </div>
           </div>
@@ -794,14 +617,15 @@ const Register = () => {
 export default Register;
 
 function createUrlSlug(shopName) {
-  let slug = shopName.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-_]/g, '');
-  slug += '-' + v4().split('-')[0];
+  let slug = shopName
+    .toLowerCase()
+    .replace(/ /g, "-")
+    .replace(/[^a-z0-9-_]/g, "");
+  slug += "-" + v4().split("-")[0];
   return slug;
 }
 
-const WeekdayPicker = () => {
-  const formik = useFormikContext();
-
+const WeekDayHours = () => {
   const days = [
     "Monday",
     "Tuesday",
@@ -811,45 +635,202 @@ const WeekdayPicker = () => {
     "Saturday",
     "Sunday",
   ];
+  const { values, setFieldValue } = useFormikContext();
+  const [activeTab, setActiveTab] = useState(days[0]);
 
-  const toggleDay = (day) => {
-    const selectedDays = formik.values.selectedDays || [];
+  const addTimeRange = (day) => {
+    const daySchedule = [...(values.workingHours[day] || [])];
+    if (daySchedule.length < 3) {
+      daySchedule.push({ startHour: "", endHour: "" });
+      setFieldValue(`workingHours.${day}`, daySchedule, false, () => {
+        const index = daySchedule.length - 1;
+        const startHourOptions = getFilteredHours(day, index, false);
+        const endHourOptions = getFilteredHours(day, index, true);
 
-    if (selectedDays.includes(day)) {
-      formik.setFieldValue(
-        "selectedDays",
-        selectedDays.filter((d) => d !== day)
-      );
-    } else {
-      formik.setFieldValue("selectedDays", [...selectedDays, day]);
+        const startHour =
+          startHourOptions.length > 0 ? startHourOptions[0].value : "";
+        const endHour =
+          endHourOptions.length > 0 ? endHourOptions[0].value : "";
+
+        setFieldValue(`workingHours.${day}.${index}.startHour`, startHour);
+        setFieldValue(`workingHours.${day}.${index}.endHour`, endHour);
+      });
     }
   };
 
+  useEffect(() => {
+    days.forEach((day) => {
+      const daySchedule = values.workingHours[day] || [];
+      daySchedule.forEach((_, index) => {
+        const startHourOptions = getFilteredHours(day, index, false);
+        const endHourOptions = getFilteredHours(day, index, true);
+
+        const startHour =
+          startHourOptions.length > 0 ? startHourOptions[0].value : "";
+        const endHour =
+          endHourOptions.length > 0 ? endHourOptions[0].value : "";
+
+        if (values.workingHours[day][index].startHour === "") {
+          setFieldValue(`workingHours.${day}.${index}.startHour`, startHour);
+        }
+        if (values.workingHours[day][index].endHour === "") {
+          setFieldValue(`workingHours.${day}.${index}.endHour`, endHour);
+        }
+      });
+    });
+  }, [values.workingHours]);
+
+  const removeTimeRange = (day, index) => {
+    const daySchedule = values.workingHours[day];
+    if (daySchedule) {
+      daySchedule.splice(index, 1);
+      setFieldValue(`workingHours.${day}`, daySchedule);
+    }
+  };
+
+  const handleSwitchChange = (day, checked) => {
+    if (checked) {
+      addTimeRange(day);
+    } else {
+      setFieldValue(`workingHours.${day}`, []);
+    }
+  };
+
+  const hours = Array.from({ length: 24 }, (_, i) => {
+    const hour = i % 12 || 12;
+    const ampm = i < 12 ? "AM" : "PM";
+    return {
+      display: `${hour.toString().padStart(2, "0")}:00 ${ampm}`,
+      value: i,
+    };
+  });
+
+  const getFilteredHours = (day, index, isEndHour) => {
+    let filteredHours;
+    if (values.workingHours[day] && values.workingHours[day][index]) {
+      if (isEndHour) {
+        const startHour = values.workingHours[day][index].startHour;
+        const previousEndHour =
+          index > 0 ? values.workingHours[day][index - 1].endHour : null;
+        filteredHours = hours.filter(
+          (hour) =>
+            hour.value >
+            Math.max(Number(startHour), Number(previousEndHour) + 1 || -1)
+        );
+      } else {
+        const previousEndHour =
+          index > 0 ? values.workingHours[day][index - 1].endHour : null;
+        filteredHours = hours.filter(
+          (hour) => previousEndHour === null || hour.value > previousEndHour
+        );
+      }
+    }
+    return filteredHours || [];
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center my-2">
-      <div className="grid grid-cols-3 gap-3">
-        {days.map((day) => (
-          <div
-            key={day}
-            className={`p-4 border rounded-lg cursor-pointer ${
-              formik.values.selectedDays?.includes(day)
-                ? "bg-teal-500 text-white"
-                : "bg-white"
-            }`}
-            onClick={() => toggleDay(day)}
-          >
-            {formik.values.selectedDays?.includes(day) ? (
-              <IoIosCheckbox size={24} />
-            ) : (
-              <IoIosCheckboxOutline size={24} />
-            )}
-            <span className="ml-2">{day}</span>
-          </div>
-        ))}
-      </div>
-      {formik.touched.selectedDays && formik.errors.selectedDays && (
-        <div className="text-red-500">{formik.errors.selectedDays}</div>
-      )}
+    <div className="grid grid-cols-1 gap-4 w-full max-h-[300px] overflow-y-auto no-scrollbar">
+      {days.map((day) => (
+        <div>
+          <Tab
+            icon={<FaCalendarAlt />}
+            label={day}
+            isActive={activeTab === day}
+            isSelected={values.workingHours[day] && values.workingHours[day].length > 0}
+            onClick={() => setActiveTab(day)}
+          />
+          {activeTab === day && (
+            <div
+              key={day}
+              className="flex flex-col items-center bg-gray-100 p-4 rounded-b-lg shadow-lg w-full"
+            >
+              <Switch
+                onChange={(checked) => handleSwitchChange(day, checked)}
+                checked={
+                  values.workingHours[day] &&
+                  values.workingHours[day].length > 0
+                }
+                className="mt-2 mb-4"
+              />
+              <FieldArray name={`workingHours.${day}`}>
+                {() =>
+                  (values.workingHours[day] || []).map((_, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-2 border-b border-gray-300 pb-2 mb-2"
+                    >
+                      <Field
+                        as="select"
+                        name={`workingHours.${day}.${index}.startHour`}
+                        className="border p-2 rounded hide-scrollbar"
+                        value={
+                          values.workingHours[day][index].startHour ||
+                          getFilteredHours(day, index, false)[0]?.value
+                        }
+                      >
+                        {getFilteredHours(day, index, false).map((hour) => (
+                          <option key={hour.value} value={hour.value}>
+                            {hour.display}
+                          </option>
+                        ))}
+                      </Field>
+                      <span className="text-gray-600">to</span>
+                      <Field
+                        as="select"
+                        name={`workingHours.${day}.${index}.endHour`}
+                        className="border p-2 rounded hide-scrollbar"
+                        value={
+                          values.workingHours[day][index].endHour ||
+                          getFilteredHours(day, index, true)[0]?.value
+                        }
+                      >
+                        {getFilteredHours(day, index, true).map((hour) => (
+                          <option key={hour.value} value={hour.value}>
+                            {hour.display}
+                          </option>
+                        ))}
+                      </Field>
+                      <button
+                        type="button"
+                        onClick={() => removeTimeRange(day, index)}
+                        className="flex items-center space-x-2 text-red-500"
+                      >
+                        <IoIosRemoveCircleOutline />
+                      </button>
+                    </div>
+                  ))
+                }
+              </FieldArray>
+              {values.workingHours[day] &&
+                values.workingHours[day].length < 3 &&
+                values.workingHours[day][values.workingHours[day].length - 1] &&
+                values.workingHours[day][values.workingHours[day].length - 1]
+                  .endHour < 21 && (
+                  <button
+                    type="button"
+                    onClick={() => addTimeRange(day)}
+                    className="flex items-center space-x-2 text-blue-500"
+                  >
+                    <IoIosAddCircleOutline />
+                    <span>Add Time Range</span>
+                  </button>
+                )}
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
+
+const Tab = ({ icon, label, isActive, isSelected, onClick }) => (
+  <div
+    className={`cursor-pointer px-4 py-2 flex items-center space-x-2 ${
+      isActive ? "bg-sky-500 text-white rounded-t-md" : "text-sky-500"
+    }`}
+    onClick={onClick}
+  >
+    {isSelected ? <FaCalendarCheck color="#22543d" /> : icon}
+    <span className={isSelected && "text-green-900"}>{label}</span>
+  </div>
+);

@@ -10,7 +10,7 @@ const HeroContextWrapper = ({ children }) => {
   const heroDemo = {
     heroText: t('Find The Right Shop for Your Need'),
     heroColor: "white",
-    heroBgColor: "teal-800",
+    heroBgColor: "sky-800",
     heroStyle: "hero",
     sliderDataImgs: [
       "https://via.placeholder.com/800x300",

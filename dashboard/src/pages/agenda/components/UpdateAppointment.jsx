@@ -748,7 +748,7 @@ const UpdateAppointment = ({
                               <div>
                                 <button
                                   type="button"
-                                  className="add-customer-button w-full flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                  className="add-customer-button w-full flex items-center bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                                   onClick={() =>
                                     setAddCustomerClicked(!addCustomerClicked)
                                   }
@@ -961,7 +961,7 @@ const UpdateAppointment = ({
                             <button
                               type="submit"
                               disabled={isSubmitting}
-                              className="submit-button flex items-center bg-teal-600 hover:bg-teal-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                              className="submit-button flex items-center bg-sky-600 hover:bg-sky-500 text-white text-sm font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                               {isSubmitting ? (
                                 <FaSpinner className="animate-spin mr-2" />
@@ -1003,7 +1003,7 @@ const UpdateAppointment = ({
                                 <span className="absolute z-10 -top-2 -right-2 p-0 bg-yellow-300 rounded-full inline-flex items-center justify-center font-bold leading-none">
                                   <MdStars
                                     size={25}
-                                    className="text-teal-500 m-0"
+                                    className="text-sky-500 m-0"
                                   />
                                 </span>
                               )}

@@ -39,7 +39,7 @@ const StepIndicator = ({ currentStep, totalSteps }) => {
         <div
           key={index}
           className={`relative w-4 h-4 mx-1 rounded-full ${
-            index + 1 === currentStep ? "bg-teal-600" : "bg-gray-300"
+            index + 1 === currentStep ? "bg-sky-600" : "bg-gray-300"
           }`}
         >
           {index + 1 === currentStep && (
@@ -416,13 +416,13 @@ const Checkout = () => {
                             ? extraServices.find(
                                 (eservice) => eservice._id === service._id
                               )
-                              ? "bg-teal-600 text-gray-200"
+                              ? "bg-sky-600 text-gray-200"
                               : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                             : extraServices.find(
                                 (eservice) => eservice._id === service._id
                               )
-                            ? "bg-teal-600 text-gray-200"
-                            : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
+                            ? "bg-sky-600 text-gray-200"
+                            : "bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white"
                         }`}
                         onClick={() => handleAddExtraService(service)}
                       >
@@ -444,7 +444,7 @@ const Checkout = () => {
                         : `bg-gray-200 text-gray-800
                       ${
                         extraServices.length > 0 &&
-                        "hover:bg-teal-600 hover:text-white"
+                        "hover:bg-sky-600 hover:text-white"
                       }
                      `
                     }`}
@@ -513,7 +513,7 @@ const Checkout = () => {
                     ${
                       isDarkMode
                         ? `bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-white`
-                        : `bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white`
+                        : `bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white`
                     }`}
                       onClick={() => setCurrentStep(1)}
                     >
@@ -528,13 +528,13 @@ const Checkout = () => {
                             ? products.find(
                                 (eproduct) => eproduct._id === product._id
                               )
-                              ? "bg-teal-600 text-gray-200"
+                              ? "bg-sky-600 text-gray-200"
                               : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                             : products.find(
                                 (eproduct) => eproduct._id === product._id
                               )
-                            ? "bg-teal-600 text-gray-200"
-                            : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
+                            ? "bg-sky-600 text-gray-200"
+                            : "bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white"
                         }`}
                         onClick={() => handleAddProduct(product)}
                       >
@@ -548,7 +548,7 @@ const Checkout = () => {
                     ${
                       isDarkMode
                         ? `bg-gray-700 text-gray-200 hover:bg-gray-600 hover:text-white`
-                        : `bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white`
+                        : `bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white`
                     }`}
                       onClick={() => setCurrentStep(3)}
                     >
@@ -614,7 +614,7 @@ const Checkout = () => {
                       className={`flex flex-col items-center justify-center min-h-[104px] ${
                         isDarkMode
                           ? "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
-                          : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
+                          : "bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white"
                       } p-4 rounded transition-all duration-300`}
                       onClick={() => setCurrentStep(2)}
                     >
@@ -626,11 +626,11 @@ const Checkout = () => {
                     ${
                       isDarkMode
                         ? paymentMethod === "cash"
-                          ? "bg-teal-600 text-white"
+                          ? "bg-sky-600 text-white"
                           : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                         : paymentMethod === "cash"
-                        ? "bg-teal-600 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
+                        ? "bg-sky-600 text-white"
+                        : "bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white"
                     }`}
                       onClick={() => handleChoosePaymentMethod("cash")}
                     >
@@ -641,11 +641,11 @@ const Checkout = () => {
                       className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${
                         isDarkMode
                           ? paymentMethod === "credit"
-                            ? "bg-teal-600 text-white"
+                            ? "bg-sky-600 text-white"
                             : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                           : paymentMethod === "credit"
-                          ? "bg-teal-600 text-white"
-                          : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
+                          ? "bg-sky-600 text-white"
+                          : "bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white"
                       }`}
                       onClick={() => handleChoosePaymentMethod("credit")}
                     >
@@ -657,11 +657,11 @@ const Checkout = () => {
                       className={`flex flex-col items-center justify-center min-h-[104px] rounded p-4 transition-all duration-300 ${
                         isDarkMode
                           ? paymentMethod === "payLater"
-                            ? "bg-teal-600 text-white"
+                            ? "bg-sky-600 text-white"
                             : "bg-gray-700 text-white hover:bg-gray-600 hover:text-gray-200"
                           : paymentMethod === "payLater"
-                          ? "bg-teal-600 text-white"
-                          : "bg-gray-200 text-gray-800 hover:bg-teal-600 hover:text-white"
+                          ? "bg-sky-600 text-white"
+                          : "bg-gray-200 text-gray-800 hover:bg-sky-600 hover:text-white"
                       }`}
                       onClick={() => handleChoosePaymentMethod("payLater")}
                     >
@@ -682,7 +682,7 @@ const Checkout = () => {
                       className={`${
                         isDarkMode
                           ? "bg-gray-700 hover:bg-gray-600"
-                          : "bg-gray-200 hover:bg-teal-600 text-gray-800"
+                          : "bg-gray-200 hover:bg-sky-600 text-gray-800"
                       } min-h-[104px] px-4 py-2 rounded flex items-center justify-center`}
                       onClick={handlePreviousStep}
                     >
@@ -693,7 +693,7 @@ const Checkout = () => {
                       className={`${
                         isDarkMode
                           ? "bg-gray-700 hover:bg-gray-600"
-                          : "bg-gray-200 hover:bg-teal-600 text-gray-800"
+                          : "bg-gray-200 hover:bg-sky-600 text-gray-800"
                       } min-h-[104px] px-4 py-2 rounded flex items-center justify-center`}
                       // onClick={handleConfirmPayment}
                       onClick={() => {
@@ -768,7 +768,7 @@ const Checkout = () => {
                       className={`mt-4 px-4 py-2 ${
                         isDarkMode
                           ? "bg-gray-700 hover:bg-gray-600"
-                          : "bg-gray-200 hover:bg-teal-600 text-gray-800"
+                          : "bg-gray-200 hover:bg-sky-600 text-gray-800"
                       } rounded`}
                       onClick={handleCheckoutComplete}
                     >
@@ -793,7 +793,7 @@ const Checkout = () => {
                     className={`${
                       isDarkMode
                         ? "bg-gray-700 hover:bg-gray-600"
-                        : "bg-gray-200 hover:bg-teal-600 text-gray-800"
+                        : "bg-gray-200 hover:bg-sky-600 text-gray-800"
                     } text-sm flex justify-center items-center px-4 py-2 rounded w-full mb-4`}
                     onClick={handleAddCustomerDetails}
                   >

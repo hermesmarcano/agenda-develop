@@ -210,7 +210,7 @@ const AppointmentsList = () => {
         </label>
 
         <input
-          className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-teal-600"
+          className="h-10 w-full rounded-lg border-none bg-white pe-10 ps-4 text-sm shadow-sm outline-sky-600"
           id="search"
           type="search"
           placeholder={t("Search service...")}
@@ -459,7 +459,7 @@ const AppointmentButton = ({
               ? `${
                   isDarkMode
                     ? "text-gray-700 bg-gray-400 hover:bg-gray-400"
-                    : "text-teal-800 bg-teal-500 hover:bg-teal-600"
+                    : "text-sky-800 bg-sky-500 hover:bg-sky-600"
                 }`
               : `${
                   isDarkMode

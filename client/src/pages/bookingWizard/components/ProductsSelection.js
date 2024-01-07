@@ -87,7 +87,7 @@ const ProductsSelection = ({ paramsId }) => {
                   selectedProducts.some(
                     (selectedProduct) => selectedProduct._id === product._id
                   )
-                    ? "ring-2 ring-teal-500"
+                    ? "ring-2 ring-sky-500"
                     : ""
                 }`}
                 onMouseEnter={() => setIsHovered(true)}

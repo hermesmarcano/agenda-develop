@@ -10,12 +10,13 @@ import { ProfessionalIdContext } from "../../../context/ProfessionalIdContext";
 import { FaUserCircle } from "react-icons/fa";
 import BlockCard from "./BlockCard";
 import { useTranslation } from "react-i18next";
+import { AiOutlineCalendar } from "react-icons/ai";
+import { HiEmojiSad } from "react-icons/hi";
 const DailyScheduler = ({
   date,
   onTimeSlotSelect,
   selectedProfessionals,
   workingHours,
-  workingDays,
   appointmentsList,
   modelState,
   updateModelState,
@@ -28,13 +29,14 @@ const DailyScheduler = ({
 }) => {
   const { t } = useTranslation();
   const { isDarkMode } = useContext(DarkModeContext);
-  const { dateTime, setDateTime } = useContext(DateTimeContext);
+  const { setDateTime } = useContext(DateTimeContext);
   const { setProfessionalId } = useContext(ProfessionalIdContext);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState("");
   const [blockingPeriod, setBlockingPeriod] = useState(null);
-
+  let options = { weekday: 'long' };
+  const today = new Intl.DateTimeFormat('en-US', options).format(date); 
   const timeSlotDuration = 15;
-  const timeSlotsArray = workingHours.map((item) => {
+  const timeSlotsArray = workingHours[today]?.map((item) => {
     const startHour = item.startHour;
     const endHour = item.endHour;
 
@@ -69,11 +71,6 @@ const DailyScheduler = ({
     blockedPeriod
   ) => {
     if (!workingHours) return;
-
-    const currentDay = time.toLocaleString("en-US", { weekday: "long" });
-    const isWorkingDay = workingDays.includes(currentDay);
-
-    if(!isWorkingDay) return;
 
     if (blockedPeriod?.blocking > 0) {
       setBlockingPeriod(blockedPeriod);
@@ -131,6 +128,8 @@ const DailyScheduler = ({
           isDarkMode ? "bg-gray-800" : "bg-white"
         }`}
       >
+                    {
+              timeSlotsArray.length > 0 ?
         <table className="w-full ">
           <thead>
             <tr>
@@ -168,7 +167,7 @@ const DailyScheduler = ({
                     {selectedProfessionals.map((professional, proIndex) => {
                       let appointmentIndex = 0;
 
-                      const workingHours = professional?.officeHours.filter(
+                      const workingHours = professional?.workingHours[today].filter(
                         (officeHour) => {
                           const professionalStartTime = new Date(time);
                           professionalStartTime.setHours(officeHour.startHour);
@@ -184,8 +183,8 @@ const DailyScheduler = ({
                         }
                       );
 
-                      const currentDay = time.toLocaleString('en-US', { weekday: 'long' });
-                      const isWorkingDay = workingDays.includes(currentDay)
+                      // const currentDay = time.toLocaleString('en-US', { weekday: 'long' });
+                      // const isWorkingDay = workingDays.includes(currentDay)
 
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
@@ -253,7 +252,7 @@ const DailyScheduler = ({
                               ? "border-t-gray-500 border"
                               : "border-gray-300 "
                           } min-w-[135px] ${
-                            time <= new Date() || !workingHours[0] || !isWorkingDay
+                            time <= new Date() || !workingHours
                               ? "stripe-bg"
                               : "hover:bg-gray-100"
                           }`}
@@ -332,6 +331,18 @@ const DailyScheduler = ({
             ))}
           </tbody>
         </table>
+            :
+            <div className="w-[100%] flex flex-col items-center justify-center h-full">
+              <div className="text-3xl font-bold mb-4">
+                <AiOutlineCalendar className="inline-block mr-2" />
+                {t("There is No Working Hours in the Current Day")}
+              </div>
+              <div className="text-gray-600 text-lg mb-8">
+                {t("Please select another day to show the Schedular.")}
+              </div>
+              <HiEmojiSad className="text-6xl text-gray-500" />
+            </div>
+            }
       </div>
     </>
   );

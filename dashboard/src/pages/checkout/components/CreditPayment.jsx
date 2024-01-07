@@ -240,7 +240,7 @@ const CreditPayment = ({
                 onClick={handleConfirm}
                 className={`w-full mt-4 ${isDarkMode
                   ? "bg-gray-700 hover:bg-gray-600"
-                  : "bg-teal-800 hover:bg-teal-700"
+                  : "bg-sky-800 hover:bg-sky-700"
                   } text-white py-2 px-4 rounded-md font-semibold text-sm`}
               >
                 {/* Pay Now */}
@@ -281,7 +281,7 @@ const PaymentWaiting = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <FaCreditCard
-              className={`text-4xl ${isDarkMode ? "text-gray-200" : "text-teal-800"
+              className={`text-4xl ${isDarkMode ? "text-gray-200" : "text-sky-800"
                 } mr-4`}
             />
             <h1
@@ -292,7 +292,7 @@ const PaymentWaiting = () => {
             </h1>
           </div>
           <div
-            className={`w-6 h-6 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-teal-800"
+            className={`w-6 h-6 rounded-full ${isDarkMode ? "bg-gray-600" : "bg-sky-800"
               } animate-pulse`}
           />
         </div>

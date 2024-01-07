@@ -168,7 +168,7 @@ const Agenda = () => {
           </div>
           <div
             className={`w-full md:w-auto mb-3 flex justify-center items-center ${
-              isDarkMode ? "bg-gray-800" : "bg-teal-600"
+              isDarkMode ? "bg-gray-800" : "bg-sky-600"
             } rounded-md shadow`}
           >
             <CalendarBox

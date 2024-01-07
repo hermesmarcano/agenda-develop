@@ -13,11 +13,11 @@ const ProductCard = ({
   const { isDarkMode } = useContext(DarkModeContext);
   return (
     <div
-      className={`w-64 h-64 border-b-4 border-teal-500 ${
+      className={`w-64 h-64 border-b-4 border-sky-500 ${
         selectedIds.includes(product._id)
           ? isDarkMode
-            ? "bg-teal-600"
-            : "bg-teal-100"
+            ? "bg-sky-600"
+            : "bg-sky-100"
           : isDarkMode
           ? "bg-gray-800"
           : "bg-white"
