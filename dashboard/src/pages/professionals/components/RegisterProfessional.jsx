@@ -251,7 +251,7 @@ const RegisterProfessional = ({
                     isDarkMode ? "white" : "gray-700"
                   } font-bold mb-2`}
                 >
-                  {t("Working Hours")}<span className="text-xs ml-2">({t("Choose within the range. Don't choose out of the range")})</span>
+                  {t("Working Hours")}<span className="text-xs ml-2">({t("Don't choose out of the current range")})</span>
                 </label>
                 <WeekDayHours workingHours={workingHours} />
                 {/* <ErrorMessage

@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
+import { Formik, Form, Field, FieldArray, useFormikContext } from "formik";
+import Switch from "react-switch";
 import * as Yup from "yup";
-import { FaTrash, FaWhatsapp, FaBell, FaCheckCircle } from "react-icons/fa";
+import { FaTrash, FaWhatsapp, FaBell, FaCheckCircle, FaCalendarCheck, FaCalendarAlt } from "react-icons/fa";
 import { IoSettingsSharp } from "react-icons/io5";
 import ImageUpload from "../../components/ImageUpload";
-import { RiCloseCircleLine } from "react-icons/ri";
-import { TiPlus } from "react-icons/ti";
 import {
   AiOutlineShop,
   AiOutlineUser,
@@ -43,6 +42,7 @@ import { useTranslation } from "react-i18next";
 import i18next from "i18next";
 import PricingCard from "./components/PricingCard";
 import Popup from "../../components/Popup";
+import { IoIosAddCircleOutline, IoIosRemoveCircleOutline } from "react-icons/io";
 
 const Settings = () => {
   const { t } = useTranslation();
@@ -64,6 +64,15 @@ const Settings = () => {
   const [plans, setPlans] = useState([]);
 
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const daysOfWeek = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
 
   const hoursOptions = [];
   for (let hour = 0; hour < 24; hour++) {
@@ -299,83 +308,27 @@ const Settings = () => {
               initialValues={{
                 shopName: shopData.shopName,
                 name: shopData.name,
-                // workingHours:
-                //   shopData?.workingHours?.length === 0
-                //     ? [{ startHour: 0, endHour: 0 }]
-                //     : shopData?.workingHours || [{ startHour: 0, endHour: 0 }],
-                // selectedDays: shopData?.selectedDays || [],
+                workingHours: shopData.workingHours,
               }}
-              // validationSchema={Yup.object().shape({
-              //   workingHours: Yup.array()
-              //     .of(
-              //       Yup.object().shape({
-              //         startHour: Yup.number()
-              //           .required(t("Start hour is required"))
-              //           .test(
-              //             "startHour",
-              //             t("Start hour must be less than end hour"),
-              //             function (value) {
-              //               return value < this.parent.endHour;
-              //             }
-              //           ),
-              //         endHour: Yup.number()
-              //           .required(t("End hour is required"))
-              //           .test(
-              //             "endHour",
-              //             t("End hour must be greater than start hour"),
-              //             function (value) {
-              //               return value > this.parent.startHour;
-              //             }
-              //           ),
-              //       })
-              //     )
-              //     .test(
-              //       "noOverlap",
-              //       t("Working hours cannot overlap"),
-              //       function (value) {
-              //         let isValid = true;
-              //         for (let i = 0; i < value.length; i++) {
-              //           for (let j = i + 1; j < value.length; j++) {
-              //             const startHourA = value[i].startHour;
-              //             const endHourA = value[i].endHour;
-              //             const startHourB = value[j].startHour;
-              //             const endHourB = value[j].endHour;
-
-              //             // Check if there is any overlap between the two periods
-              //             if (
-              //               (startHourA <= startHourB &&
-              //                 startHourB < endHourA) ||
-              //               (startHourA < endHourB && endHourB <= endHourA) ||
-              //               (startHourB <= startHourA &&
-              //                 startHourA < endHourB) ||
-              //               (startHourB < endHourA && endHourA <= endHourB)
-              //             ) {
-              //               isValid = false;
-              //               break;
-              //             }
-              //           }
-              //           if (!isValid) {
-              //             break;
-              //           }
-              //         }
-              //         return isValid;
-              //       }
-              //     ),
-              //   selectedDays: Yup.array()
-              //     .of(
-              //       Yup.string().oneOf([
-              //         "Monday",
-              //         "Tuesday",
-              //         "Wednesday",
-              //         "Thursday",
-              //         "Friday",
-              //         "Saturday",
-              //         "Sunday",
-              //       ])
-              //     )
-              //     .min(1, t("At least one day must be selected"))
-              //     .max(7, t("No more than seven days can be selected")),
-              // })}
+              validationSchema={Yup.object().shape({
+                workingHours: Yup.object().shape(
+                  daysOfWeek.reduce((acc, day) => {
+                    acc[day] = Yup.array().of(
+                      Yup.object().shape({
+                        startHour: Yup.number()
+                          .required("Start hour is required")
+                          .min(0)
+                          .max(23),
+                        endHour: Yup.number()
+                          .required("End hour is required")
+                          .min(Yup.ref("startHour"), "End hour must be greater than start hour")
+                          .max(23)
+                      })
+                    );
+                    return acc;
+                  }, {})
+                ),
+              })}
               onSubmit={handleSubmit}
             >
               {(formikProps) => (
@@ -420,172 +373,22 @@ const Settings = () => {
                       }`}
                     />
                   </div>
-{/* 
-                  <label
-                    htmlFor="discount-value"
-                    className="block text-lg font-semibold mb-2"
-                  >
-                    {t("Working Hours")}:
-                  </label>
-                  <FieldArray name="workingHours">
-                    {({ remove, push }) => (
-                      <div className="space-y-4 mb-4">
-                        {formikProps.values.workingHours.map(
-                          (workingHour, index) => (
-                            <div
-                              key={index}
-                              className="flex items-center space-x-2"
-                            >
-                              <div className="flex items-center space-x-2 w-64">
-                                <div>
-                                  <label
-                                    htmlFor={`workingHours[${index}].startHour`}
-                                    className="sr-only"
-                                  >
-                                    {t("Start Hour")}
-                                  </label>
-                                  <Field
-                                    id={`workingHours[${index}].startHour`}
-                                    name={`workingHours[${index}].startHour`}
-                                    as="select"
-                                    className={`block appearance-none rounded-md w-full px-3 py-2 border ${
-                                      formikProps.errors.workingHours?.[index]
-                                        ?.startHour &&
-                                      formikProps.touched.workingHours?.[index]
-                                        ?.startHour
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm ${
-                                      isDarkMode
-                                        ? "bg-gray-700 text-white"
-                                        : "bg-white text-gray-800"
-                                    }`}
-                                  >
-                                    <option value="">
-                                      {t("Select start hour")}
-                                    </option>
-                                    {hoursOptions}
-                                  </Field>
-                                  <ErrorMessage
-                                    name={`workingHours[${index}].startHour`}
-                                    component="div"
-                                    className="mt-1 text-sm text-red-500"
-                                  />
-                                </div>
-                                <div>
-                                  <label
-                                    htmlFor={`workingHours[${index}].endHour`}
-                                    className="sr-only"
-                                  >
-                                    {t("End Hour")}
-                                  </label>
-                                  <Field
-                                    id={`workingHours[${index}].endHour`}
-                                    name={`workingHours[${index}].endHour`}
-                                    as="select"
-                                    className={`block appearance-none rounded-md w-full px-3 py-2 border ${
-                                      formikProps.errors.workingHours?.[index]
-                                        ?.endHour &&
-                                      formikProps.touched.workingHours?.[index]
-                                        ?.endHour
-                                        ? "border-red-500"
-                                        : "border-gray-300"
-                                    } placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm ${
-                                      isDarkMode
-                                        ? "bg-gray-700 text-white"
-                                        : "bg-white text-gray-800"
-                                    }`}
-                                  >
-                                    <option value="">
-                                      {t("Select end hour")}
-                                    </option>
-                                    {hoursOptions}
-                                  </Field>
-                                  <ErrorMessage
-                                    name={`workingHours[${index}].endHour`}
-                                    component="div"
-                                    className="mt-1 text-sm text-red-500"
-                                  />
-                                </div>
-                              </div>
-                              {index > 0 && (
-                                <div>
-                                  <button
-                                    type="button"
-                                    className="flex items-center px-2 py-1 text-sm text-red-600 hover:text-red-800"
-                                    onClick={() => remove(index)}
-                                  >
-                                    <RiCloseCircleLine className="mr-1" />
-                                    {t("Remove")}
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          )
-                        )}
-                        <div className="flex justify-start">
-                          {formikProps.values.workingHours.length < 3 && (
-                            <button
-                              type="button"
-                              className="flex items-center px-2 py-1 text-sm text-sky-600 hover:text-sky-800"
-                              onClick={() => push({ startHour: 0, endHour: 0 })}
-                            >
-                              <TiPlus className="mr-1" />
-                              {t("Add Working Hour")}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </FieldArray>
-
-                  <div className="mb-6">
-                    <label
-                      htmlFor="selected-days"
-                      className="block text-lg font-semibold mb-2"
-                    >
-                      {t("Selected Days")}:
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday",
-                        "Sunday",
-                      ].map((day) => (
-                        <label
-                          key={day}
-                          htmlFor={`day-${day}`}
-                          className={`${
-                            formikProps.values.selectedDays.includes(day)
-                              ? "bg-sky-600 text-white"
-                              : "bg-gray-200 text-gray-800"
-                          } ${
-                            isDarkMode
-                              ? "dark:bg-gray-700 dark:text-gray-300"
-                              : ""
-                          } px-4 py-2 rounded-lg cursor-pointer`}
-                        >
-                          <Field
-                            type="checkbox"
-                            id={`day-${day}`}
-                            name="selectedDays"
-                            value={day}
-                            className="hidden"
-                          />
-                          {t(day)}
-                        </label>
-                      ))}
-                    </div>
-                    <ErrorMessage
-                      name="selectedDays"
-                      component="div"
-                      className="text-red-600 text-sm mt-1"
-                    />
-                  </div> */}
+                  <div className="mb-4">
+                <label
+                  htmlFor="workingHours"
+                  className={`block text-sm text-${
+                    isDarkMode ? "white" : "gray-700"
+                  } font-bold mb-2`}
+                >
+                  {t("Working Hours")}
+                </label>
+                <WeekDayHours workingHours={shopData?.workingHours} />
+                {/* <ErrorMessage
+                  name="workingHours"
+                  component="p"
+                  className="text-red-500 text-xs italic"
+                /> */}
+              </div>
 
                   <div className="flex items-center justify-end">
                     <UpdateButton disabled={formikProps.isSubmitting} />
@@ -887,3 +690,220 @@ const PlanSelection = ({ handlePlanSelection, planData }) => {
     </div>
   );
 };
+
+
+const WeekDayHours = ({ workingHours }) => {
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const { values, setFieldValue } = useFormikContext();
+  const [activeTab, setActiveTab] = useState(days[0]);
+
+  const addTimeRange = (day) => {
+    const daySchedule = [...(values.workingHours[day] || [])];
+    if (daySchedule.length < 3) {
+      daySchedule.push({ startHour: "", endHour: "" });
+      setFieldValue(`workingHours.${day}`, daySchedule, false, () => {
+        const index = daySchedule.length - 1;
+        const startHourOptions = getFilteredHours(day, index, false);
+        const endHourOptions = getFilteredHours(day, index, true);
+
+        const startHour =
+          startHourOptions.length > 0 ? startHourOptions[0].value : "";
+        const endHour =
+          endHourOptions.length > 0 ? endHourOptions[0].value : "";
+
+        setFieldValue(`workingHours.${day}.${index}.startHour`, startHour);
+        setFieldValue(`workingHours.${day}.${index}.endHour`, endHour);
+      });
+    }
+  };
+
+  useEffect(() => {
+    days.forEach((day) => {
+      const daySchedule = values.workingHours[day] || [];
+      daySchedule.forEach((_, index) => {
+        const startHourOptions = getFilteredHours(day, index, false);
+        const endHourOptions = getFilteredHours(day, index, true);
+
+        const startHour =
+          startHourOptions.length > 0 ? startHourOptions[0].value : "";
+        const endHour =
+          endHourOptions.length > 0 ? endHourOptions[0].value : "";
+
+        if (values.workingHours[day][index].startHour === "") {
+          setFieldValue(`workingHours.${day}.${index}.startHour`, startHour);
+        }
+        if (values.workingHours[day][index].endHour === "") {
+          setFieldValue(`workingHours.${day}.${index}.endHour`, endHour);
+        }
+      });
+    });
+  }, [values.workingHours]);
+
+  const removeTimeRange = (day, index) => {
+    const daySchedule = values.workingHours[day];
+    if (daySchedule) {
+      daySchedule.splice(index, 1);
+      setFieldValue(`workingHours.${day}`, daySchedule);
+    }
+  };
+
+  const handleSwitchChange = (day, checked) => {
+    if (checked) {
+      addTimeRange(day);
+    } else {
+      setFieldValue(`workingHours.${day}`, []);
+    }
+  };
+
+  const hours = Array.from({ length: 24 }, (_, i) => {
+    const hour = i % 12 || 12;
+    const ampm = i < 12 ? "AM" : "PM";
+    return {
+      display: `${hour.toString().padStart(2, "0")}:00 ${ampm}`,
+      value: i,
+    };
+  });
+
+  const getFilteredHours = (day, index, isEndHour) => {
+    let filteredHours;
+    if (values.workingHours[day] && values.workingHours[day][index]) {
+      if (isEndHour) {
+        const startHour = values.workingHours[day][index].startHour;
+        const previousEndHour =
+          index > 0 ? values.workingHours[day][index - 1].endHour : null;
+        filteredHours = hours.filter(
+          (hour) =>
+            hour.value >
+            Math.max(Number(startHour), Number(previousEndHour) + 1 || -1)
+        );
+      } else {
+        const previousEndHour =
+          index > 0 ? values.workingHours[day][index - 1].endHour : null;
+        filteredHours = hours.filter(
+          (hour) => previousEndHour === null || hour.value > previousEndHour
+        );
+      }
+    }
+    return filteredHours || [];
+  };
+
+  return (
+    <div className="grid grid-cols-1 gap-4 w-full max-h-[300px] overflow-y-auto no-scrollbar">
+      {days.map((day) => (
+            <div>
+              <Tab
+                icon={<FaCalendarAlt />}
+                label={day}
+                isActive={activeTab === day}
+                isSelected={
+                  values.workingHours[day] &&
+                  values.workingHours[day].length > 0
+                }
+                onClick={() => setActiveTab(day)}
+              />
+              {activeTab === day && (
+                <div
+                  key={day}
+                  className="flex flex-col items-center bg-gray-100 p-4 rounded-b-lg shadow-lg w-full"
+                >
+                  <Switch
+                    onChange={(checked) => handleSwitchChange(day, checked)}
+                    checked={
+                      values.workingHours[day] &&
+                      values.workingHours[day].length > 0
+                    }
+                    className="mt-2 mb-4"
+                  />
+                  <FieldArray name={`workingHours.${day}`}>
+                    {() =>
+                      (values.workingHours[day] || []).map((_, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2 border-b border-gray-300 pb-2 mb-2"
+                        >
+                          <Field
+                            as="select"
+                            name={`workingHours.${day}.${index}.startHour`}
+                            className="border p-2 rounded hide-scrollbar"
+                            value={
+                              values.workingHours[day][index].startHour ||
+                              getFilteredHours(day, index, false)[0]?.value
+                            }
+                          >
+                            {getFilteredHours(day, index, false).map((hour) => (
+                              <option key={hour.value} value={hour.value}>
+                                {hour.display}
+                              </option>
+                            ))}
+                          </Field>
+                          <span className="text-gray-600">to</span>
+                          <Field
+                            as="select"
+                            name={`workingHours.${day}.${index}.endHour`}
+                            className="border p-2 rounded hide-scrollbar"
+                            value={
+                              values.workingHours[day][index].endHour ||
+                              getFilteredHours(day, index, true)[0]?.value
+                            }
+                          >
+                            {getFilteredHours(day, index, true).map((hour) => (
+                              <option key={hour.value} value={hour.value}>
+                                {hour.display}
+                              </option>
+                            ))}
+                          </Field>
+                          <button
+                            type="button"
+                            onClick={() => removeTimeRange(day, index)}
+                            className="flex items-center space-x-2 text-red-500"
+                          >
+                            <IoIosRemoveCircleOutline />
+                          </button>
+                        </div>
+                      ))
+                    }
+                  </FieldArray>
+                  {values.workingHours[day] &&
+                    values.workingHours[day].length < 3 &&
+                    values.workingHours[day][
+                      values.workingHours[day].length - 1
+                    ] &&
+                    values.workingHours[day][
+                      values.workingHours[day].length - 1
+                    ].endHour < 21 && (
+                      <button
+                        type="button"
+                        onClick={() => addTimeRange(day)}
+                        className="flex items-center space-x-2 text-blue-500"
+                      >
+                        <IoIosAddCircleOutline />
+                        <span>Add Time Range</span>
+                      </button>
+                    )}
+                </div>
+              )}
+            </div>
+          ))}
+    </div>
+  );
+};
+
+const Tab = ({ icon, label, isActive, isSelected, onClick }) => (
+  <div
+    className={`cursor-pointer px-4 py-2 flex items-center space-x-2 ${
+      isActive ? "bg-sky-500 text-white rounded-t-md" : "text-sky-500"
+    }`}
+    onClick={onClick}
+  >
+    {isSelected ? <FaCalendarCheck color="#22543d" /> : icon}
+    <span className={isSelected && "text-green-900"}>{label}</span>
+  </div>
+);
