@@ -57,6 +57,32 @@ const DailyScheduler = ({
     return timeSlots;
   });
 
+  console.log(selectedProfessionals[0].workingHours);
+
+  let selectedProfessionalWorkingHours = selectedProfessionals.flatMap(selectedProfessional => {
+    return selectedProfessional.workingHours[today]?.map((item) => {
+      const startHour = item.startHour;
+      const endHour = item.endHour;
+  
+      const startTime = new Date(date);
+      startTime.setHours(startHour, 0, 0, 0);
+  
+      const endTime = new Date(date);
+      endTime.setHours(endHour, 0, 0, 0);
+  
+      const timeSlots = [];
+  
+      while (startTime < endTime) {
+        const currentTime = new Date(startTime);
+        timeSlots.push(currentTime);
+        startTime.setMinutes(startTime.getMinutes() + timeSlotDuration);
+      }
+  
+      return timeSlots;
+    }) || [];
+  }).reduce((acc, val) => acc.concat(val), []);
+  
+
   const timeFormat = new Intl.DateTimeFormat([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -166,21 +192,25 @@ const DailyScheduler = ({
                       {selectedProfessionals.map((professional, proIndex) => {
                         let appointmentIndex = 0;
 
-                        const workingHours = professional?.workingHours[
-                          today
-                        ].filter((officeHour) => {
-                          const professionalStartTime = new Date(time);
-                          professionalStartTime.setHours(officeHour.startHour);
-                          professionalStartTime.setMinutes(0);
-                          const professionalEndTime = new Date(time);
-                          professionalEndTime.setHours(officeHour.endHour);
-                          professionalEndTime.setMinutes(0);
+                        // const workingHours = professional?.workingHours[
+                        //   today
+                        // ].filter((officeHour) => {
+                        //   const professionalStartTime = new Date(time);
+                        //   professionalStartTime.setHours(officeHour.startHour);
+                        //   professionalStartTime.setMinutes(0);
+                        //   const professionalEndTime = new Date(time);
+                        //   professionalEndTime.setHours(officeHour.endHour);
+                        //   professionalEndTime.setMinutes(0);
 
-                          return (
-                            professionalStartTime <= time &&
-                            professionalEndTime > time
-                          );
-                        });
+                        //   return (
+                        //     professionalStartTime <= time &&
+                        //     professionalEndTime > time
+                        //   );
+                        // });  
+
+                        const workingHours = selectedProfessionalWorkingHours.find(period => {
+                          return period.getTime() === time.getTime();
+                        })
 
                         // const currentDay = time.toLocaleString('en-US', { weekday: 'long' });
                         // const isWorkingDay = workingDays.includes(currentDay)
@@ -257,7 +287,7 @@ const DailyScheduler = ({
                             }`}
                             onClick={() =>
                               handleBooking(
-                                workingHours[0],
+                                workingHours,
                                 time,
                                 professional._id,
                                 matchingAppointments[0],
