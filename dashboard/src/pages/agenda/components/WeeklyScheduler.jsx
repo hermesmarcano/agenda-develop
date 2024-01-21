@@ -35,6 +35,24 @@ const WeeklyScheduler = ({
   const { setProfessionalId } = useContext(ProfessionalIdContext);
   const [blockingPeriod, setBlockingPeriod] = React.useState(null);
 
+  const getStartOfWeek = (date) => {
+    const startOfWeek = new Date(date);
+    const diff =
+      startOfWeek.getDate() -
+      startOfWeek.getDay() +
+      (startOfWeek.getDay() === 0 ? -6 : 1);
+    startOfWeek.setDate(diff);
+    startOfWeek.setHours(0, 0, 0, 0);
+    return startOfWeek;
+  };
+
+  const weekDays = Array.from({length: 7}, (_, i) => {
+    const day = new Date(getStartOfWeek(selectedWeekDate));
+    day.setDate(day.getDate() + i);
+    return day;
+  });
+  console.log(weekDays);
+
   const timeSlotDuration = 15;
   let options = { weekday: 'long' };
   const today = new Intl.DateTimeFormat('en-US', options).format(selectedWeekDate); 
@@ -59,6 +77,33 @@ const WeeklyScheduler = ({
     return timeSlots;
   });
 
+let professionalWeekTimeSlots = {};
+
+for (let day in selectedProfessional.workingHours) {
+  professionalWeekTimeSlots[day] = day !== '_id' && selectedProfessional.workingHours[day].map((item) => {
+    const startHour = item.startHour;
+    const endHour = item.endHour;
+
+    const startTime = new Date(selectedWeekDate);
+    startTime.setHours(startHour, 0, 0, 0);
+
+    const endTime = new Date(selectedWeekDate);
+    endTime.setHours(endHour, 0, 0, 0);
+
+    const timeSlots = [];
+
+    while (startTime < endTime) {
+      const currentTime = new Date(startTime);
+      timeSlots.push(currentTime);
+      startTime.setMinutes(startTime.getMinutes() + timeSlotDuration);
+    }
+
+    return timeSlots;
+  }).reduce((acc, val) => acc.concat(val), []);
+}
+
+  console.log(professionalWeekTimeSlots);
+
   const timeFormat = new Intl.DateTimeFormat([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -73,17 +118,6 @@ const WeeklyScheduler = ({
     currentDate.setDate(startDate.getDate() + i);
     daysOfWeek.push(currentDate);
   }
-
-  const getStartOfWeek = (date) => {
-    const startOfWeek = new Date(date);
-    const diff =
-      startOfWeek.getDate() -
-      startOfWeek.getDay() +
-      (startOfWeek.getDay() === 0 ? -6 : 1);
-    startOfWeek.setDate(diff);
-    startOfWeek.setHours(0, 0, 0, 0);
-    return startOfWeek;
-  };
 
   function getCurrentLanguage() {
     return i18next.language || "en";
@@ -193,24 +227,30 @@ const WeeklyScheduler = ({
                       currentTime.setHours(time.getHours());
                       currentTime.setMinutes(time.getMinutes());
 
-                      const workingHours =
-                        selectedProfessional?.workingHours[today].filter(
-                          (officeHour) => {
-                            const professionalStartTime = new Date(currentTime);
-                            professionalStartTime.setHours(
-                              officeHour.startHour
-                            );
-                            professionalStartTime.setMinutes(0);
-                            const professionalEndTime = new Date(currentTime);
-                            professionalEndTime.setHours(officeHour.endHour);
-                            professionalEndTime.setMinutes(0);
+                      // const workingHours =
+                      //   selectedProfessional?.workingHours[today].filter(
+                      //     (officeHour) => {
+                      //       const professionalStartTime = new Date(currentTime);
+                      //       professionalStartTime.setHours(
+                      //         officeHour.startHour
+                      //       );
+                      //       professionalStartTime.setMinutes(0);
+                      //       const professionalEndTime = new Date(currentTime);
+                      //       professionalEndTime.setHours(officeHour.endHour);
+                      //       professionalEndTime.setMinutes(0);
 
-                            return (
-                              professionalStartTime <= currentTime &&
-                              professionalEndTime > currentTime
-                            );
-                          }
-                        );
+                      //       return (
+                      //         professionalStartTime <= currentTime &&
+                      //         professionalEndTime > currentTime
+                      //       );
+                      //     }
+                      //   );
+
+                        const currentWeekDay =  new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(currentTime)
+
+                        const workingHours = professionalWeekTimeSlots[currentWeekDay].find(period => {
+                          return period.getTime() === time.getTime();
+                        })
 
                       const matchingAppointmentsFirstSlot =
                         appointmentsList.filter((appt, apptIndex) => {
