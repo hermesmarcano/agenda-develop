@@ -57,8 +57,6 @@ const DailyScheduler = ({
     return timeSlots;
   });
 
-  console.log(selectedProfessionals[0].workingHours);
-
   let selectedProfessionalWorkingHours = selectedProfessionals.flatMap(selectedProfessional => {
     return selectedProfessional.workingHours[today]?.map((item) => {
       const startHour = item.startHour;

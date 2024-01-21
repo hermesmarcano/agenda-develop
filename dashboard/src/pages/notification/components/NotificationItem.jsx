@@ -45,9 +45,9 @@ const NotificationItem = ({ notification, onDelete }) => {
           onClick={() => onDelete(_id)}
           className={`${
             isDarkMode ? "icon-trash icon-trash-white" : "icon-trash"
-          }`}
+          } lower-z-index`}
         >
-          <span class="icon-trash"></span>
+          <span class="icon-trash lower-z-index"></span>
         </button>
       </div>
     </div>

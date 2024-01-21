@@ -45,3 +45,7 @@
   .icon-trash-white {
     filter: brightness(0) invert(1);
   }
+
+  .lower-z-index {
+    z-index: 5;
+  }

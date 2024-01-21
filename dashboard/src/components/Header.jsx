@@ -63,7 +63,7 @@ const Header = () => {
 
               <div className="relative">
                 <button
-                  className={`block shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
+                  className={`block min-w-[40px] min-h-[44px] shrink-0 rounded-lg p-2.5 text-gray-600 shadow-sm hover:text-gray-700 ${
                     isDarkMode ? "bg-sky-600" : "bg-white"
                   }`}
                   onClick={handleMenuToggle}
@@ -101,6 +101,7 @@ const Header = () => {
                   <NotificationMenu
                     notifications={notifications}
                     isDarkMode={isDarkMode}
+                    closeMenu={() => setShowMenu(false)}
                   />
                 )}
               </div>
@@ -129,7 +130,7 @@ const Header = () => {
 
 export default Header;
 
-function NotificationMenu({ notifications, isDarkMode }) {
+function NotificationMenu({ notifications, isDarkMode, closeMenu }) {
   const { t } = useTranslation();
   function calculateTimeDifference(startDate) {
     const currentTime = new Date();
@@ -175,11 +176,12 @@ function NotificationMenu({ notifications, isDarkMode }) {
     <div
       className={`absolute right-0 mt-2 w-64 ${
         isDarkMode ? "bg-gray-700" : "bg-white"
-      } rounded-lg shadow-lg z-10`}
+      } rounded-lg shadow-lg z-20`}
     >
-      <div className="max-h-64 overflow-y-auto no-scrollbar">
+            <div className="fixed top-0 left-0 w-screen h-screen opacity-10 bg-gray-200 z-30" onClick={closeMenu}/>
+      <div className="max-h-64 overflow-y-auto no-scrollbar z-40">
         <div
-          className={`p-4 border-b border-gray-300 sticky top-0 z-10 ${
+          className={`p-4 border-b border-gray-300 sticky top-0 z-50 ${
             isDarkMode ? "bg-gray-700" : "bg-white"
           }`}
         >
@@ -199,16 +201,16 @@ function NotificationMenu({ notifications, isDarkMode }) {
               key={index}
               className={`p-4 ${
                 isDarkMode ? "hover:bg-gray-600" : "hover:bg-gray-100"
-              } rounded-lg cursor-pointer`}
+              } rounded-lg cursor-pointer z-50`}
             >
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center z-50">
                 <div className="flex items-center">
                   <div className="text-gray-600 flex items-center text-sm">
                     <FaBell size={20} className="mr-2" />
                     {notification.content}
                   </div>
                 </div>
-                <div className="flex justify-center items-center">
+                <div className="flex justify-center items-center z-50">
                   <FaClock className="text-xs text-gray-400 mr-1" />{" "}
                   <span className="flex items-center text-xxs text-gray-400">
                     {notification.createdAt &&
@@ -219,7 +221,7 @@ function NotificationMenu({ notifications, isDarkMode }) {
             </div>
           ))
         ) : (
-          <div className={`p-4 text-center text-gray-400`}>
+          <div className={`p-4 text-center text-gray-400 z-50`}>
             {t("No notifications")}
           </div>
         )}
