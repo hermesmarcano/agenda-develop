@@ -57,8 +57,8 @@ const DailyScheduler = ({
     return timeSlots;
   });
 
-  let selectedProfessionalWorkingHours = selectedProfessionals.flatMap(selectedProfessional => {
-    return selectedProfessional.workingHours[today]?.map((item) => {
+  let selectedProfessionalWorkingHours = selectedProfessionals.reduce((acc, selectedProfessional) => {
+    const timeSlots = selectedProfessional.workingHours[today]?.map((item) => {
       const startHour = item.startHour;
       const endHour = item.endHour;
   
@@ -68,18 +68,20 @@ const DailyScheduler = ({
       const endTime = new Date(date);
       endTime.setHours(endHour, 0, 0, 0);
   
-      const timeSlots = [];
+      const slots = [];
   
       while (startTime < endTime) {
         const currentTime = new Date(startTime);
-        timeSlots.push(currentTime);
+        slots.push(currentTime);
         startTime.setMinutes(startTime.getMinutes() + timeSlotDuration);
       }
   
-      return timeSlots;
+      return slots;
     }) || [];
-  }).reduce((acc, val) => acc.concat(val), []);
-  
+
+    acc[selectedProfessional._id] = timeSlots.flat();
+    return acc;
+}, {});
 
   const timeFormat = new Intl.DateTimeFormat([], {
     hour: "2-digit",
@@ -206,7 +208,7 @@ const DailyScheduler = ({
                         //   );
                         // });  
 
-                        const workingHours = selectedProfessionalWorkingHours.find(period => {
+                        const workingHours = selectedProfessionalWorkingHours[professional?._id].find(period => {
                           return period.getTime() === time.getTime();
                         })
 
