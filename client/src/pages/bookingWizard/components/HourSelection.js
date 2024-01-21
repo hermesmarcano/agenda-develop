@@ -99,20 +99,47 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
     return arr;
   }, [date, workingHours]);
 
-  const selectedProfessionalWorkingHours = (hour, index) => {
-    const professionalStartTime = new Date(hour);
-    const professionalEndTime = new Date(hour);
+const currentWeekDay =  new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(selectedHour)
 
-    professionalStartTime.setHours(
-      selectedProfessional?.officeHours[index]?.startHour
-    );
-    professionalStartTime.setMinutes(0);
-    professionalEndTime.setHours(
-      selectedProfessional?.officeHours[index]?.endHour
-    );
-    professionalEndTime.setMinutes(0);
-    return hour >= professionalStartTime && hour < professionalEndTime;
-  };
+const timeSlotDuration = 15;
+  let professionalWeekTimeSlots = [];
+
+  professionalWeekTimeSlots = selectedProfessional.workingHours[currentWeekDay].map((item) => {
+    const startHour = item.startHour;
+    const endHour = item.endHour;
+
+    const startTime = new Date(selectedHour);
+    startTime.setHours(startHour, 0, 0, 0);
+
+    const endTime = new Date(selectedHour);
+    endTime.setHours(endHour, 0, 0, 0);
+
+    const timeSlots = [];
+
+    while (startTime < endTime) {
+      const currentTime = new Date(startTime);
+      timeSlots.push(currentTime);
+      startTime.setMinutes(startTime.getMinutes() + timeSlotDuration);
+    }
+
+    return timeSlots;
+  }).reduce((acc, val) => acc.concat(val), []);
+
+
+  // const selectedProfessionalWorkingHours = (hour, index) => {
+  //   const professionalStartTime = new Date(hour);
+  //   const professionalEndTime = new Date(hour);
+
+  //   professionalStartTime.setHours(
+  //     selectedProfessional?.officeHours[index]?.startHour
+  //   );
+  //   professionalStartTime.setMinutes(0);
+  //   professionalEndTime.setHours(
+  //     selectedProfessional?.officeHours[index]?.endHour
+  //   );
+  //   professionalEndTime.setMinutes(0);
+  //   return hour >= professionalStartTime && hour < professionalEndTime;
+  // };
 
   const isHourDisabled = (hour) => {
     for (let i = 0; i < reservedAppts.length; i++) {
@@ -164,8 +191,8 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
                 isHourDisabled={isHourDisabled}
                 selectedHour={selectedHour}
                 handleHourChange={handleHourChange}
-                selectedProfessionalWorkingHours={
-                  selectedProfessionalWorkingHours
+                professionalWeekTimeSlots={
+                  professionalWeekTimeSlots
                 }
                 index={index}
               />
@@ -184,7 +211,7 @@ const AccordionItem = ({
   isHourDisabled,
   selectedHour,
   handleHourChange,
-  selectedProfessionalWorkingHours,
+  professionalWeekTimeSlots,
   index,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -225,10 +252,8 @@ const AccordionItem = ({
           >
             <div className="p-4 max-h-[540px] overflow-auto no-scrollbar flex justify-center flex-wrap">
               {hoursRange.map((hour, ind) => {
-                const proNonBlokedHours = selectedProfessionalWorkingHours(
-                  hour,
-                  index
-                );
+                const proBlokedHours = professionalWeekTimeSlots.find(matchedHour => matchedHour.getTime() === hour.getTime())
+                
                 return (
                   <button
                     key={ind}
@@ -240,7 +265,7 @@ const AccordionItem = ({
                     } ${
                       isHourDisabled(hour) ||
                       hour < new Date() ||
-                      !proNonBlokedHours
+                      proBlokedHours
                         ? "line-through"
                         : ""
                     }`}
@@ -250,7 +275,7 @@ const AccordionItem = ({
                     disabled={
                       isHourDisabled(hour) ||
                       hour < new Date() ||
-                      !proNonBlokedHours
+                      proBlokedHours
                     }
                   >
                     {hour.toLocaleTimeString([], {
