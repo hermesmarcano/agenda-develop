@@ -16,11 +16,12 @@ function Home() {
     <div>
       <Navbar />
       <Hero />
-      <RecommendedShops />
-      <Articles />
+       {/* <RecommendedShops />  */}
       <PhotoText />
       <PhotoTextReversed />
-      <RecommendedServices />
+      <PhotoText />
+      <Articles />
+      {/* <RecommendedServices /> */}
       <Subscription />
       <Footer />
     </div>

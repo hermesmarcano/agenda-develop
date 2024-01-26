@@ -26,7 +26,7 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-white fixed top-0 w-full z-40 bg-opacity-80 backdrop-blur-md shadow-2xl">
+    <nav className="bg-sky-200 fixed top-0 w-full z-40 bg-opacity-80 backdrop-blur-md shadow-2xl">
       <div className="mx-auto px-4 py-2 max-w-screen-2xl flex items-center justify-between">
         <div className="flex items-center">
           <Link
@@ -71,31 +71,41 @@ function Navbar() {
             className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
             // onClick={()=>scrollToSection()}
           >
-            {t("Home")}
+            {t("Features")}
           </Link>
           <button
             onClick={() => animateScroll.scrollTo(650)}
             className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
           >
-            {t('Shops')}
+            {t('Prices')}
           </button>
           <button
             onClick={() => animateScroll.scrollTo(1100)}
             className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
           >
-            {t("Articles")}
+            {t("Cases")}
           </button>
           <button
             onClick={() => animateScroll.scrollTo(2500)}
             className="py-2 px-4 text-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-gray-500 hover:text-gray-50 rounded-xl"
           >
-            {t('Services')}
+            {t('F.A.Q')}
           </button>
+          
+        </div>
+
+        <div>
+        <Link
+            to="http://localhost:3000/login"
+            className="py-2 px-4 ml-12 text-black bg-slate-50 text-lg rounded-full  md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+          >
+            {t("Log In")}
+          </Link>
           <Link
-            to="/shops"
+            to="http://localhost:3000/register"
             className="py-2 px-4 text-white rounded-full bg-gray-800 md:mx-2 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           >
-            {t("Book Now!")}
+            {t("Free Trial")}
           </Link>
         </div>
 
@@ -163,26 +173,26 @@ function Navbar() {
           className="block py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           // onClick={()=>scrollToSection()}
         >
-          {t("Home")}
+          {t("Features")}
         </Link>
         <button
           onClick={() => animateScroll.scrollTo(800)}
           className="block w-full py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
           // onClick={scrollToShopSection}
         >
-          {t("Shops")}
+          {t("Prices")}
         </button>
         <button
           onClick={() => animateScroll.scrollTo(1300)}
           className="block w-full py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         >
-          {t("Articles")}
+          {t("Cases")}
         </button>
         <button
           onClick={() => animateScroll.scrollTo(3550)}
           className="block w-full py-2 px-4 text-gray-800 text-center transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110"
         >
-          {t("Services")}
+          {t("F.A.Q")}
         </button>
         <Link
           to="/shops"
@@ -196,3 +206,4 @@ function Navbar() {
 }
 
 export default Navbar;
+
