@@ -17,6 +17,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   const selectedProfessional = JSON.parse(
     localStorage.getItem(`professional_${paramsId}`)
   );
+  const currentWeekDay =  new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(selectedHour)
 
   useEffect(() => {
     localStorage.setItem(`dateTime_${paramsId}`, selectedHour);
@@ -61,12 +62,13 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
   }, []);
 
   const date = localStorage.getItem(`dateTime_${paramsId}`);
+  // console.log(workingHours);
   const hoursArrs = useMemo(() => {
     const arr = [];
-    if (workingHours && workingHours.length > 0) {
-      for (let i = 0; i < workingHours.length; i++) {
+    if (workingHours[currentWeekDay] && workingHours[currentWeekDay].length > 0) {
+      for (let i = 0; i < workingHours[currentWeekDay].length; i++) {
         const range = [];
-        const { startHour, endHour } = workingHours[i];
+        const { startHour, endHour } = workingHours[currentWeekDay][i];
         for (let hour = startHour; hour <= endHour; hour++) {
           const maxMinute = hour === endHour ? 0 : 45;
           for (let minute = 0; minute <= maxMinute; minute += 15) {
@@ -98,8 +100,7 @@ const HourSelection = ({ paramsId, setHasSelectedHour }) => {
     }
     return arr;
   }, [date, workingHours]);
-
-const currentWeekDay =  new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(selectedHour)
+console.log(workingHours[currentWeekDay]);
 
 const timeSlotDuration = 15;
   let professionalWeekTimeSlots = [];
@@ -265,7 +266,7 @@ const AccordionItem = ({
                     } ${
                       isHourDisabled(hour) ||
                       hour < new Date() ||
-                      proBlokedHours
+                      !proBlokedHours
                         ? "line-through"
                         : ""
                     }`}
@@ -275,7 +276,7 @@ const AccordionItem = ({
                     disabled={
                       isHourDisabled(hour) ||
                       hour < new Date() ||
-                      proBlokedHours
+                      !proBlokedHours
                     }
                   >
                     {hour.toLocaleTimeString([], {
